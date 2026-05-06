@@ -1,10 +1,8 @@
+@import "../styles/design-system.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
 
 @layer base {
   :root {
@@ -27,11 +25,6 @@ body {
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
 
@@ -55,32 +48,37 @@ body {
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  html, body {
+    overflow-x: clip;
   }
-
   body {
-    @apply bg-background text-foreground;
+    background: #ffffff;
+    min-height: 100vh;
+  }
+
+  body.dz-theme-dark {
+    background: #0a0820;
+    color: #f5f3ff;
+    color-scheme: dark;
   }
 }
 
-.gradient-text {
-  background: linear-gradient(270deg, #7301FF 0%, #A34BF5 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
+@keyframes dzFloat {
+  0%, 100% { transform: translateY(-30%); }
+  50% { transform: translateY(calc(-30% - 14px)); }
 }
 
-.gradient {
-  background: linear-gradient(270deg, #7301FF 0%, #A34BF5 100%);
+@theme inline {
+  @keyframes moveBackground {
+  from {
+    background-position: 0% 0%;
+    }
+  to {
+    background-position: 0% -1000%;
+    }
+  }
 }

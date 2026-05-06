@@ -56,7 +56,30 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
-			}
+			},
+			keyframes: {
+				marquee: {
+					from: { transform: 'translateX(0)' },
+					to: { transform: 'translateX(calc(-100% - var(--gap, 2rem)))' },
+				},
+				'marquee-reverse': {
+					from: { transform: 'translateX(calc(-100% - var(--gap, 2rem)))' },
+					to: { transform: 'translateX(0)' },
+				},
+				'dz-shimmer': {
+					'0%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '200% 0' },
+				},
+			},
+			animation: {
+				marquee: 'marquee var(--duration, 40s) linear infinite',
+				'marquee-reverse': 'marquee-reverse var(--duration, 40s) linear infinite',
+				'dz-shimmer': 'dz-shimmer 3s linear infinite',
+			},
+			transitionTimingFunction: {
+				'liquid': 'cubic-bezier(0.16, 1, 0.3, 1)',
+				'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+			},
 		}
 	},
 	plugins: [

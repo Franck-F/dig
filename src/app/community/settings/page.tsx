@@ -1,0 +1,60 @@
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+
+import { getCommunityViewer } from '../_components/viewer';
+import SettingsForm from './_components/SettingsForm';
+
+export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Modifier mon profil · Digizelle' };
+
+export default async function CommunitySettingsPage() {
+  const viewer = await getCommunityViewer();
+
+  if (viewer.kind === 'guest') {
+    redirect('/login?next=/community/settings');
+  }
+  if (viewer.kind === 'logged-in-no-member') {
+    redirect('/community/onboarding?next=/community/settings');
+  }
+
+  const m = viewer.member;
+  const dateFmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 1240, margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        <Link
+          href={`/community/members/${m.handle}`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '8px 14px',
+            borderRadius: 999,
+            background: '#fff',
+            border: '1px solid rgba(115,1,255,0.20)',
+            color: '#7301FF',
+            fontSize: 13,
+            fontWeight: 700,
+            textDecoration: 'none',
+          }}
+        >
+          ← Voir mon profil public
+        </Link>
+        <div style={{ fontSize: 12, color: '#8b91ad' }}>
+          Membre depuis le {dateFmt.format(m.joinedAt)}
+        </div>
+      </div>
+
+      <SettingsForm
+        initial={{
+          handle: m.handle,
+          displayName: m.displayName ?? '',
+          bio: m.bio ?? '',
+          avatarUrl: m.avatarUrl ?? '',
+          bannerColor: m.bannerColor,
+        }}
+      />
+    </div>
+  );
+}

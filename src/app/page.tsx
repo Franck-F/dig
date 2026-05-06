@@ -1,252 +1,574 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
-import Hero from '@/components/Hero';
-import ProgramCard from '@/components/ProgramCard';
-import EventCard from '@/components/EventCard';
-import TeamMemberCard from '@/components/TeamMemberCard';
-import NewsletterForm from '@/components/NewsletterForm';
+import AnimatedNumber from '@/components/AnimatedNumber';
+import Frame from '@/components/Frame';
+import HeroParallax from '@/components/HeroParallax';
+import Mascot3D from '@/components/Mascot3D';
+import Reveal from '@/components/Reveal';
+import { BrandScroller, BrandScrollerReverse } from '@/components/ui/brand-scoller';
+import {
+  breadcrumbJsonLd,
+  faqPageJsonLd,
+  jsonLdScriptProps,
+} from '@/lib/seo/jsonld';
 
-export default function Home() {
-  const programs = [
-    {
-      title: 'Atelier Immersif',
-      description: 'Lorem Ipsum is not Simply Random Text. It Has Roots',
-      buttonText: 'DÉCOUVRIR'
-    },
-    {
-      title: 'Masterclass',
-      description: 'Lorem Ipsum is not Simply Random Text. It Has Roots',
-      buttonText: 'DÉCOUVRIR',
-      featured: true
-    },
-    {
-      title: 'Hackathon',
-      description: 'Lorem Ipsum is not Simply Random Text. It Has Roots',
-      buttonText: 'DÉCOUVRIR'
-    }
-  ];
+export default async function HomePage() {
+  const t = await getTranslations('home');
+  const tCommon = await getTranslations('common');
+
+  const programItems = [
+    { key: 'atelier', color: '#F46FB1' },
+    { key: 'masterclass', color: '#A34BF5' },
+    { key: 'hackathon', color: '#3B7BFF' },
+    { key: 'mentora', color: '#24325F' },
+  ] as const;
 
   const events = [
-    {
-      id: '1',
-      title: 'Prix Du Numéro Bla',
-      description: 'Lorem Ipsum is not Simply Random Text. It Has Roots',
-      imageUrl: '/images/exemple.png',
-      width: 400,
-      height: 300
-    },
-    {
-      id: '2',
-      title: 'Prix Du Numéro Bla',
-      description: 'Lorem Ipsum is not Simply Random Text. It Has Roots',
-      imageUrl: '/images/exemple.png',
-      width: 400,
-      height: 300
-    },
-    {
-      id: '3',
-      title: 'Prix Du Numéro Bla',
-      description: 'Lorem Ipsum is not Simply Random Text. It Has Roots',
-      imageUrl: '/images/exemple.png',
-      width: 400,
-      height: 300
-    },
-  ];
+    { key: '0', span: 'span 2', big: true },
+    { key: '1' },
+    { key: '2' },
+    { key: '3' },
+    { key: '4' },
+  ] as const;
 
-  const teamMembers = [
-    {
-      name: 'Priscillia Meza',
-      role: 'Co-Fondatrice',
-      imageUrl: '/images/robot.png',
-      width: 128,
-      height: 128
-    },
-    {
-      name: 'Priscillia Meza',
-      role: 'Co-Fondatrice',
-      imageUrl: '/images/robot.png',
-      width: 128,
-      height: 128
-    },
-    {
-      name: 'Priscillia Meza',
-      role: 'Co-Fondatrice',
-      imageUrl: '/images/robot.png',
-      width: 128,
-      height: 128
-    },
-    {
-      name: 'Priscillia Meza',
-      role: 'Co-Fondatrice',
-      imageUrl: '/images/robot.png',
-      width: 128,
-      height: 128
-    },
-  ];
+  // Real partners pulled from LinkedIn + public posts (Digizelle Impact 2026
+  // speakers and program) — Microsoft, EY, Allianz, AWS, Epitech, HEC Paris,
+  // Station F, BECOMTECH. Each gets a distinct typographic identity so the
+  // wordmark marquee feels like a logo cloud instead of a list of names.
+  const trustLogos = ['microsoft', 'ey', 'allianz', 'aws', 'epitech', 'hec', 'stationf', 'becomtech'] as const;
+  const trustLogoStyles: Record<
+    (typeof trustLogos)[number],
+    { weight?: number; italic?: boolean; letterSpacing?: string; fontFamily?: string }
+  > = {
+    microsoft: { weight: 600, letterSpacing: '-0.01em' },
+    ey: { weight: 900, letterSpacing: '0.16em' },
+    allianz: { weight: 800, letterSpacing: '-0.01em' },
+    aws: { weight: 800, letterSpacing: '-0.04em' },
+    epitech: { weight: 900, letterSpacing: '0.04em' },
+    hec: { weight: 700, fontFamily: 'Georgia, serif', italic: true, letterSpacing: '0.02em' },
+    stationf: { weight: 800, letterSpacing: '-0.03em' },
+    becomtech: { weight: 700, italic: true, letterSpacing: '-0.01em' },
+  };
+  const partnerLogos = trustLogos.map((k) => ({
+    name: t(`trust.logos.${k}`),
+    ...trustLogoStyles[k],
+  }));
+
+  const testimonialKeys = ['0', '1', '2'] as const;
+
+  const faqItems = ([0, 1, 2, 3] as const).map((i) => ({
+    q: t(`faq.items.${i}.q`),
+    a: t(`faq.items.${i}.a`),
+  }));
 
   return (
-    <main className="min-h-screen">
-      <Hero />
+    <Frame active="home">
+      <script {...jsonLdScriptProps(faqPageJsonLd(faqItems))} />
+      <script
+        {...jsonLdScriptProps(
+          breadcrumbJsonLd([{ name: tCommon('breadcrumbHome'), url: '/' }]),
+        )}
+      />
 
-      <div className="relative w-full">
-        <div className="w-full h-32 overflow-hidden -mb-1">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 1440 320"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="waveGradient" x1="100%" y1="50%" x2="0%" y2="50%">
-                <stop offset="0%" stopColor="#7301FF" />
-                <stop offset="100%" stopColor="#A34BF5" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,266.7C672,267,768,245,864,229.3C960,213,1056,203,1152,202.7C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-              fill="url(#waveGradient)"
-            />
-          </svg>
-        </div>
-
-        <section className="relative gradient px-6">
-          <div className="relative max-w-7xl mx-auto py-16">
-            <div className="hidden lg:block absolute left-[calc(-8rem-2vw)] lg:left-[calc(-10rem-5vw)] xl:left-[calc(-12rem-8vw)] top-1/2 transform -translate-y-1/2 w-32 lg:w-40 xl:w-48 aspect-square">
-              <Image src="/images/robot.png" alt="Robot mascot" className="w-full h-full object-contain" width={100} height={100} />
+      {/* HERO — 80vw on desktop, full width on mobile (the inline 80vw was
+          fighting with the small viewport and pushing the mascot off-screen) */}
+      <section
+        className="dz-section dz-hero"
+        style={{
+          paddingTop: 40,
+          paddingBottom: 60,
+          maxWidth: 1760,
+        }}
+      >
+        <div className="dz-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 40, alignItems: 'center' }}>
+          <div>
+            <div className="dz-eyebrow">
+              <span className="dot" />
+              {t('eyebrow')}
             </div>
-
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <h2 className="text-white text-3xl font-bold">DIGIZELLE</h2>
+            <h1 className="dz-h1" style={{ marginTop: 18 }}>
+              {t('heroTitleLine1')}
+              <br />
+              <span className="dz-shimmer-text">{t('heroTitleHighlight')}</span>
+              {t('heroTitleSuffix')}
+            </h1>
+            <p className="dz-body" style={{ fontSize: 20, marginTop: 24, maxWidth: 680 }}>
+              {t('heroBody')}
+            </p>
+            <div style={{ display: 'flex', gap: 12, marginTop: 32, flexWrap: 'wrap' }}>
+              <Link href="/contact" className="dz-btn dz-btn-primary dz-btn-lg">
+                {t('ctaJoin')}
+              </Link>
+              <Link href="/programs" className="dz-btn dz-btn-ghost dz-btn-lg">
+                {t('ctaPrograms')}
+              </Link>
+            </div>
+            <div className="dz-hero-stats" style={{ display: 'flex', gap: 40, marginTop: 48, flexWrap: 'wrap' }}>
+              <div className="dz-stat">
+                <div className="num dz-grad-text">
+                  <AnimatedNumber value={200} prefix="+ " />
+                </div>
+                <div className="lbl">{t('stats.youthsLabel')}</div>
               </div>
-              <p className="text-white max-w-4xl mx-auto">
-                fondée en 2023 par deux passionnées du digital, c&apos;est une association dédiée à l&apos;inclusion et à l&apos;épanouissement des jeunes dans le domaine numérique. Sa mission est de créer un espace où chacun, quel que soit son niveau, peut se développer.
+              <div className="dz-stat">
+                <div className="num dz-grad-text">
+                  <AnimatedNumber value={5} prefix="+ " />
+                </div>
+                <div className="lbl">{t('stats.eventsLabel')}</div>
+              </div>
+              <div className="dz-stat">
+                <div className="num dz-grad-text">
+                  <AnimatedNumber value={12} prefix="+ " />
+                </div>
+                <div className="lbl">{t('stats.partnersLabel')}</div>
+              </div>
+            </div>
+          </div>
+          <HeroParallax>
+            <div className="dz-hero-mascot" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 560 }}>
+              <Mascot3D
+                src="/images/robot-mascotte.png"
+                alt={tCommon('mascotAlt')}
+                width={580}
+                intensity={22}
+                priority
+                phrases={t.raw('mascot.phrases') as string[]}
+              />
+            </div>
+          </HeroParallax>
+        </div>
+      </section>
+
+      {/* TRUST BAR — partners marquee with new BrandScroller */}
+      <Reveal>
+        <section style={{ padding: '32px 64px 48px', textAlign: 'center', borderTop: '1px solid rgba(115,1,255,0.06)', borderBottom: '1px solid rgba(115,1,255,0.06)' }}>
+          <p style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 12, fontWeight: 600, color: '#8b91ad', margin: '0 0 24px' }}>
+            {t('trust.label')}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <BrandScroller logos={partnerLogos} durationSeconds={48} gapRem={4.5} />
+            <BrandScrollerReverse logos={partnerLogos} durationSeconds={56} gapRem={4.5} />
+          </div>
+        </section>
+      </Reveal>
+
+      {/* MANIFESTO — sticky scroll-driven layered section */}
+      <Reveal>
+        <section className="dz-section" style={{ paddingTop: 64, paddingBottom: 80 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'start' }}>
+            <div className="dz-stack-card" style={{ paddingTop: 12 }}>
+              <div className="dz-eyebrow">
+                <span className="dot" />
+                {t('manifesto.eyebrow')}
+              </div>
+              <h2 className="dz-h2" style={{ marginTop: 14 }}>
+                {t('manifesto.titleLine1')}
+                <br />
+                <span className="dz-grad-text">{t('manifesto.titleHighlight')}</span>
+              </h2>
+              <p className="dz-body" style={{ marginTop: 18, fontSize: 17, maxWidth: 480 }}>
+                {t('manifesto.body')}
               </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-              {programs.map((program, index) => (
-                <ProgramCard key={index} program={program} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {(['inclusion', 'mentorship', 'community'] as const).map((k, i) => (
+                <Reveal key={k} delay={i * 110}>
+                  <div className="dz-lg --strong" style={{ padding: '28px 32px' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--brand-violet)' }}>
+                      {t(`manifesto.cards.${k}.tag`)}
+                    </div>
+                    <h3 className="dz-h3" style={{ marginTop: 8, fontSize: 22 }}>
+                      {t(`manifesto.cards.${k}.title`)}
+                    </h3>
+                    <p className="dz-body" style={{ marginTop: 8, fontSize: 15 }}>
+                      {t(`manifesto.cards.${k}.body`)}
+                    </p>
+                  </div>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
+      </Reveal>
 
-        <div className="w-full h-32 overflow-hidden -mt-1">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 1440 320"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="waveGradient2" x1="100%" y1="50%" x2="0%" y2="50%">
-                <stop offset="0%" stopColor="#7301FF" />
-                <stop offset="100%" stopColor="#A34BF5" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0,96L48,90.7C96,85,192,75,288,58.7C384,43,480,21,576,21.3C672,21,768,43,864,58.7C960,75,1056,85,1152,85.3C1248,85,1344,75,1392,69.3L1440,64L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-              fill="url(#waveGradient2)"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <section className="py-8 md:py-12">
-        <div className="flex flex-col max-w-7xl mx-auto px-4 md:px-6">
+      {/* PROGRAMMES — bandeau violet à vagues, glass cards */}
+      <Reveal>
+      <section style={{ position: 'relative', marginTop: 40 }}>
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: 80, marginBottom: -1 }} aria-hidden>
+          <path d="M0,80 C240,0 480,80 720,40 C960,0 1200,80 1440,30 L1440,80 L0,80 Z" fill="#7301FF" />
+        </svg>
+        <div style={{ background: 'linear-gradient(180deg, #7301FF 0%, #8B1AFF 100%)', padding: '40px 0 80px', position: 'relative' }}>
           <Image
-            src="/images/robot-mascotte-1.png"
-            alt="Events"
-            width={150}
-            height={150}
-            className="w-24 md:w-32 lg:w-36 mb-8 md:mb-12 mx-auto"
+            src="/images/robot.png"
+            alt=""
+            width={220}
+            height={220}
+            aria-hidden
+            style={{
+              position: 'absolute',
+              left: '2%',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: 220,
+              height: 'auto',
+              zIndex: 2,
+              animation: 'dzFloat 5s ease-in-out infinite',
+              opacity: 0.95,
+            }}
           />
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center text-[#333333]">
-            QUELQUES ÉVÉNEMENTS MARQUANT
-          </h2>
-          <div className="space-y-4 md:space-y-6">
-            {events.map(event => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="relative w-full">
-        <div className="w-full h-24 md:h-32 overflow-hidden -mb-1">
-          <svg className="w-full h-full" viewBox="0 0 1440 200" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="waveGradient3" x1="100%" y1="50%" x2="0%" y2="50%">
-                <stop offset="0%" stopColor="#7301FF" />
-                <stop offset="100%" stopColor="#A34BF5" />
-              </linearGradient>
-            </defs>
-            <path d="M0,160 L1440,140 L1440,200 L0,200 Z" fill="url(#waveGradient3)" />
-          </svg>
-        </div>
-
-        <section className="gradient px-4 md:px-6 py-8 md:py-16">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-white text-xl md:text-3xl font-bold mb-8 md:mb-12 text-center max-w-4xl mx-auto px-4">
-              VOUS ÊTES PASSIONNÉ PAR LE NUMÉRIQUE ET SOUHAITEZ FAIRE PARTIE D&apos;UNE COMMUNAUTÉ DYNAMIQUE ET INCLUSIVE ?
+          <div style={{ maxWidth: 1180, margin: '0 auto', textAlign: 'center', padding: '0 40px', position: 'relative', zIndex: 3 }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 14px',
+                borderRadius: 999,
+                background: 'rgba(255,255,255,0.18)',
+                color: 'white',
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                marginBottom: 14,
+              }}
+            >
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'white' }} />
+              {t('programs.eyebrow')}
+            </div>
+            <h2 style={{ color: 'white', fontSize: 38, fontWeight: 800, margin: 0, lineHeight: 1.15 }}>
+              {t('programs.titleLine1')}
+              <br />
+              <span style={{ background: 'linear-gradient(90deg,#FFE5F1,#F46FB1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                {t('programs.titleLine2')}
+              </span>
             </h2>
 
-            <div className="flex flex-col md:flex-row px-4 md:px-12 items-center font-bold gap-8">
-              <div className="order-2 md:order-1 md:w-1/2">
-                <Image
-                  src="/images/robot-mascotte-2.png"
-                  alt="Robot mascot"
-                  width={5000}
-                  height={5000}
-                  className="w-full max-w-sm mx-auto"
-                  priority
-                />
-              </div>
-              <div className="order-1 md:order-2 md:w-1/2">
-                <p className="text-white text-center md:text-left text-base md:text-lg">
-                  Devenez membre de DIGIZELLE et participez à nos événements, formations et projets innovants ! Ensemble, inspirons et soutenons les jeunes talents dans leur parcours digital. N&apos;attendez plus, rejoignez-nous et faites la différence !
-                </p>
-                <div className="flex justify-center md:justify-start mt-6 md:mt-8">
-                  <button className="bg-white text-purple-600 px-6 md:px-8 py-2 md:py-3 rounded-md font-medium hover:bg-opacity-90 transition-colors">
-                    REJOIGNEZ-NOUS
-                  </button>
-                </div>
-              </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginTop: 64, alignItems: 'stretch' }}>
+              {programItems.map((p, i) => (
+                <Reveal key={p.key} delay={i * 110}>
+                  <div style={{ position: 'relative', display: 'flex' }}>
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '50%',
+                        background: p.color,
+                        position: 'absolute',
+                        top: -20,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 4,
+                        boxShadow: '0 10px 24px rgba(0,0,0,0.32)',
+                      }}
+                    />
+                    <div
+                      style={{
+                        padding: '40px 24px 24px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 14,
+                        flex: 1,
+                        minHeight: 340,
+                        background: '#ffffff',
+                        borderRadius: 24,
+                        boxShadow:
+                          '0 24px 60px -20px rgba(15,18,40,0.45), 0 8px 18px -8px rgba(115,1,255,0.25)',
+                      }}
+                    >
+                      <span style={{ fontSize: 13, color: p.color, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase' }}>
+                        {t(`programs.items.${p.key}.tag`)}
+                      </span>
+                      <h3 style={{ color: '#1a1f3a', fontSize: 24, fontWeight: 700, margin: 0, textAlign: 'center' }}>
+                        {t(`programs.items.${p.key}.title`)}
+                      </h3>
+                      <p style={{ color: '#545b7a', fontSize: 16, lineHeight: 1.65, margin: 0, textAlign: 'center', flex: 1 }}>
+                        {t(`programs.items.${p.key}.desc`)}
+                      </p>
+                      <Link
+                        href="/programs"
+                        style={{
+                          background: p.color,
+                          color: 'white',
+                          border: 'none',
+                          padding: '14px 22px',
+                          borderRadius: 999,
+                          fontWeight: 700,
+                          fontSize: 13,
+                          letterSpacing: '0.10em',
+                          textTransform: 'uppercase',
+                          cursor: 'pointer',
+                          width: '100%',
+                          textAlign: 'center',
+                          textDecoration: 'none',
+                          boxShadow: '0 8px 18px rgba(0,0,0,0.20)',
+                          transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)',
+                        }}
+                      >
+                        {tCommon('discoverAction')}
+                      </Link>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
             </div>
           </div>
-        </section>
-
-        <div className="w-full h-24 md:h-32 overflow-hidden -mt-1">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 1440 320"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="waveGradient2" x1="100%" y1="50%" x2="0%" y2="50%">
-                <stop offset="0%" stopColor="#7301FF" />
-                <stop offset="100%" stopColor="#A34BF5" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0,96L48,90.7C96,85,192,75,288,58.7C384,43,480,21,576,21.3C672,21,768,43,864,58.7C960,75,1056,85,1152,85.3C1248,85,1344,75,1392,69.3L1440,64L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-              fill="url(#waveGradient2)"
-            />
-          </svg>
         </div>
-      </div>
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: 80, marginTop: -1 }} aria-hidden>
+          {/* Match the gradient's end color (#8B1AFF) so the wave reads as a
+              continuation of the section, not a darker stripe pasted on top. */}
+          <path d="M0,0 C240,80 480,0 720,40 C960,80 1200,0 1440,50 L1440,0 L0,0 Z" fill="#8B1AFF" />
+        </svg>
+      </section>
+      </Reveal>
 
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold mb-12 text-center text-[#333333]">NOTRE ÉQUIPE</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <TeamMemberCard key={index} member={member} />
-            ))}
+      {/* CTA MENTORA */}
+      <Reveal>
+      <section className="dz-section">
+        <div
+          className="dz-lg --strong"
+          style={{
+            padding: 48,
+            display: 'grid',
+            gridTemplateColumns: '1fr 320px',
+            gap: 40,
+            alignItems: 'center',
+          }}
+        >
+          <div
+            aria-hidden
+            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(80% 80% at 90% 50%, rgba(163,75,245,0.25), transparent 70%)', pointerEvents: 'none' }}
+          />
+          <div style={{ position: 'relative' }}>
+            <span className="dz-chip --pink">{t('mentoraCta.chip')}</span>
+            <h2 className="dz-h2" style={{ marginTop: 14 }}>
+              {t('mentoraCta.title')} <span className="dz-grad-text">{t('mentoraCta.titleHighlight')}</span>
+            </h2>
+            <p className="dz-body" style={{ marginTop: 16, maxWidth: 540, fontSize: 17 }}>
+              {t('mentoraCta.body')}
+            </p>
+            <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
+              <Link href="/mentora" className="dz-btn dz-btn-primary dz-btn-lg">
+                {t('mentoraCta.discover')}
+              </Link>
+              <Link href="/mentora" className="dz-btn dz-btn-ghost dz-btn-lg">
+                {tCommon('viewDemo')}
+              </Link>
+            </div>
+          </div>
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+            <Mascot3D src="/images/robot-mascotte-1.png" width={260} intensity={12} />
           </div>
         </div>
       </section>
+      </Reveal>
 
-      <NewsletterForm />
-    </main>
+      {/* TÉMOIGNAGES — voix humaines */}
+      <Reveal>
+        <section className="dz-section">
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div className="dz-eyebrow" style={{ display: 'inline-flex' }}>
+              <span className="dot" />
+              {t('testimonials.eyebrow')}
+            </div>
+            <h2 className="dz-h2" style={{ marginTop: 14 }}>
+              {t('testimonials.title')} <span className="dz-grad-text">{t('testimonials.titleHighlight')}</span>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+            {testimonialKeys.map((k, i) => {
+              const color = t(`testimonials.items.${k}.color`);
+              const name = t(`testimonials.items.${k}.name`);
+              const initials = name.split(/[ ,]/)[0].slice(0, 2).toUpperCase();
+              return (
+                <Reveal key={k} delay={i * 120}>
+                  <article
+                    className="dz-lg"
+                    style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 20, height: '100%' }}
+                  >
+                    <span aria-hidden style={{ fontSize: 56, lineHeight: 0.7, color, opacity: 0.6, fontFamily: 'Georgia, serif' }}>“</span>
+                    <p className="dz-body" style={{ fontSize: 16, lineHeight: 1.65, margin: 0, color: '#1a1f3a', flex: 1 }}>
+                      {t(`testimonials.items.${k}.quote`)}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, paddingTop: 16, borderTop: '1px solid rgba(115,1,255,0.10)' }}>
+                      <div
+                        aria-hidden
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: '50%',
+                          background: `linear-gradient(135deg, ${color}, ${color}aa)`,
+                          color: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 700,
+                          fontSize: 16,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {initials}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 15 }}>{name}</div>
+                        <div className="dz-small" style={{ marginTop: 2 }}>{t(`testimonials.items.${k}.role`)}</div>
+                      </div>
+                    </div>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
+        </section>
+      </Reveal>
+
+      {/* ÉVÉNEMENTS */}
+      <Reveal>
+      <section className="dz-section">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+          <div>
+            <div className="dz-eyebrow">
+              <span className="dot" />
+              {t('events.eyebrow')}
+            </div>
+            <h2 className="dz-h2" style={{ marginTop: 14 }}>
+              {t('events.title')} <span className="dz-grad-text">{t('events.titleHighlight')}</span>
+            </h2>
+          </div>
+          <Link href="/events" className="dz-btn dz-btn-ghost">
+            {t('events.all')}
+          </Link>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gridTemplateRows: 'repeat(2, 220px)', gap: 16 }}>
+          {events.map((e, i) => (
+            <Reveal key={e.key} delay={i * 80}>
+              <div
+                className="dz-card"
+                style={{
+                  padding: 0,
+                  overflow: 'hidden',
+                  gridRow: 'span' in e ? e.span : undefined,
+                  position: 'relative',
+                  height: '100%',
+                  background: 'linear-gradient(135deg,#7301FF,#A34BF5)',
+                  transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+                }}
+              >
+                <Image
+                  src="/images/exemple.png"
+                  alt=""
+                  width={600}
+                  height={400}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'multiply', opacity: 0.85 }}
+                />
+                <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(36,50,95,0.85))' }} />
+                <div style={{ position: 'absolute', left: 18, right: 18, bottom: 16, color: 'white' }}>
+                  <div style={{ fontSize: 11, opacity: 0.85, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
+                    {t(`events.items.${e.key}.date`)}
+                  </div>
+                  <div style={{ fontSize: 'big' in e && e.big ? 22 : 15, fontWeight: 700, marginTop: 4 }}>
+                    {t(`events.items.${e.key}.title`)}
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+      </Reveal>
+
+      {/* FAQ — Liquid glass cards */}
+      <Reveal>
+        <section className="dz-section">
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <div className="dz-eyebrow" style={{ display: 'inline-flex' }}>
+              <span className="dot" />
+              {t('faq.eyebrow')}
+            </div>
+            <h2 className="dz-h2" style={{ marginTop: 14 }}>
+              {t('faq.title')} <span className="dz-grad-text">{t('faq.titleHighlight')}</span>
+            </h2>
+          </div>
+          <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {([0, 1, 2, 3] as const).map((i) => (
+              <Reveal key={i} delay={i * 80}>
+                <details
+                  className="dz-lg"
+                  style={{ padding: 0, borderRadius: 'var(--r-lg)', overflow: 'hidden' }}
+                >
+                  <summary
+                    style={{
+                      padding: '22px 28px',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      fontSize: 17,
+                      listStyle: 'none',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      color: '#1a1f3a',
+                    }}
+                  >
+                    {t(`faq.items.${i}.q`)}
+                    <span aria-hidden style={{ fontSize: 24, color: '#7301FF', fontWeight: 300, transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)' }}>
+                      +
+                    </span>
+                  </summary>
+                  <div style={{ padding: '0 28px 24px', color: '#545b7a', fontSize: 16, lineHeight: 1.65 }}>
+                    {t(`faq.items.${i}.a`)}
+                  </div>
+                </details>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      </Reveal>
+
+      {/* COMMUNITY CTA */}
+      <Reveal>
+      <section className="dz-section">
+        <div
+          style={{
+            position: 'relative',
+            borderRadius: 32,
+            overflow: 'hidden',
+            padding: 64,
+            background: 'linear-gradient(135deg, #7301FF 0%, #A34BF5 60%, #F46FB1 100%)',
+            color: 'white',
+          }}
+        >
+          <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'radial-gradient(60% 80% at 100% 0%, rgba(255,255,255,0.25), transparent 60%)' }} />
+          <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 50%, black 35%, transparent 90%)' }} />
+          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 280px', gap: 48, alignItems: 'center' }}>
+            <div>
+              <span className="dz-chip --white">{t('communityCta.chip')}</span>
+              <h2 className="dz-h2" style={{ color: 'white', marginTop: 14 }}>
+                {t('communityCta.title')}
+              </h2>
+              <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.85)', marginTop: 16, maxWidth: 600 }}>
+                {t('communityCta.body')}
+              </p>
+              <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
+                <Link href="/community" className="dz-btn dz-btn-lg" style={{ background: 'white', color: '#7301FF' }}>
+                  {t('communityCta.joinUs')}
+                </Link>
+                <Link
+                  href="/about"
+                  className="dz-btn dz-btn-lg"
+                  style={{ background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
+                >
+                  {t('communityCta.more')}
+                </Link>
+              </div>
+            </div>
+            <Mascot3D src="/images/robot-mascotte-2.png" width={260} intensity={14} />
+          </div>
+        </div>
+      </section>
+      </Reveal>
+    </Frame>
   );
 }
