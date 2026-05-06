@@ -33,11 +33,15 @@ export async function GET(request: Request): Promise<Response> {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 
+  // Vercel Hobby limits crons to once per day. We run at 09:00 UTC every
+  // morning and look at every SCHEDULED session in the next 0-48h. The
+  // SESSION_REMINDER idempotency check below ensures each session is only
+  // reminded once even though the window covers it on multiple days.
   const now = new Date();
   const due = await prisma.session.findMany({
     where: {
       status: 'SCHEDULED',
-      scheduledAt: { gte: addHours(now, 23), lt: addHours(now, 25) },
+      scheduledAt: { gte: now, lt: addHours(now, 48) },
     },
     include: {
       mentorship: {
