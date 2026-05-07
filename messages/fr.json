@@ -2915,7 +2915,8 @@
         "channels": "Salons",
         "badges": "Badges",
         "users": "Membres",
-        "challenges": "Défis"
+        "challenges": "Défis",
+        "auditLog": "Journal admin"
       },
       "moderation": {
         "title": "File de modération",

@@ -12,6 +12,7 @@ import {
   requireCommunityAdmin,
 } from '../_helpers';
 import { createCommunityNotification } from '@/lib/community/notifications';
+import { logAdmin } from '@/lib/audit/log';
 
 /** Admin channel CRUD + pin/approve. Spec §5.2 channels admin. */
 
@@ -53,6 +54,16 @@ export async function createChannel(
       },
       select: { id: true, slug: true },
     });
+    await logAdmin(ctx.userId, {
+      action: 'channel.create',
+      targetType: 'Channel',
+      targetId: channel.id,
+      payload: {
+        slug: parsed.data.slug,
+        name: parsed.data.name,
+        type: parsed.data.type,
+      },
+    });
     revalidatePath('/community/channels');
     revalidatePath('/community/admin/channels');
     return ok(channel);
@@ -67,7 +78,7 @@ export async function updateChannel(
   input: z.input<typeof updateSchema>,
 ): Promise<ActionResult> {
   try {
-    await requireCommunityAdmin();
+    const ctx = await requireCommunityAdmin();
     const parsed = updateSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
     const { id, ...rest } = parsed.data;
@@ -75,6 +86,12 @@ export async function updateChannel(
       where: { id },
       data: rest,
       select: { slug: true },
+    });
+    await logAdmin(ctx.userId, {
+      action: 'channel.update',
+      targetType: 'Channel',
+      targetId: id,
+      payload: { changedFields: Object.keys(rest) },
     });
     revalidatePath('/community/channels');
     revalidatePath(`/community/c/${channel.slug}`);
@@ -91,12 +108,17 @@ export async function archiveChannel(
   input: z.input<typeof idSchema>,
 ): Promise<ActionResult> {
   try {
-    await requireCommunityAdmin();
+    const ctx = await requireCommunityAdmin();
     const parsed = idSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
     await prisma.channel.update({
       where: { id: parsed.data.id },
       data: { archivedAt: new Date() },
+    });
+    await logAdmin(ctx.userId, {
+      action: 'channel.archive',
+      targetType: 'Channel',
+      targetId: parsed.data.id,
     });
     revalidatePath('/community/channels');
     revalidatePath('/community/admin/channels');
@@ -140,6 +162,12 @@ export async function pinPost(input: z.input<typeof pinSchema>): Promise<ActionR
         },
       }),
     ]);
+    await logAdmin(ctx.userId, {
+      action: 'channel.pin_post',
+      targetType: 'Post',
+      targetId: parsed.data.postId,
+      payload: { channelId: channel.id, channelSlug: channel.slug },
+    });
     revalidatePath(`/community/c/${channel.slug}`);
     return ok();
   } catch (e) {
@@ -173,6 +201,12 @@ export async function unpinPost(input: z.input<typeof pinSchema>): Promise<Actio
         },
       }),
     ]);
+    await logAdmin(ctx.userId, {
+      action: 'channel.unpin_post',
+      targetType: 'Post',
+      targetId: parsed.data.postId,
+      payload: { channelId: channel.id, channelSlug: channel.slug },
+    });
     revalidatePath(`/community/c/${channel.slug}`);
     return ok();
   } catch (e) {
@@ -216,6 +250,12 @@ export async function approveChannelJoin(
       channelSlug: m.channel.slug,
       channelId: m.channelId,
     });
+    await logAdmin(ctx.userId, {
+      action: 'channel.approve_join',
+      targetType: 'CommunityMember',
+      targetId: m.memberId,
+      payload: { channelId: m.channelId, channelSlug: m.channel.slug },
+    });
     revalidatePath(`/community/c/${m.channel.slug}`);
     revalidatePath('/community/admin/channels');
     return ok();
@@ -256,6 +296,12 @@ export async function denyChannelJoin(
         },
       }),
     ]);
+    await logAdmin(ctx.userId, {
+      action: 'channel.deny_join',
+      targetType: 'CommunityMember',
+      targetId: m.memberId,
+      payload: { channelId: m.channelId, reason: parsed.data.reason ?? null },
+    });
     revalidatePath('/community/admin/channels');
     return ok();
   } catch (e) {

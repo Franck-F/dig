@@ -12,6 +12,7 @@ import {
   requireCommunityAdmin,
 } from '../_helpers';
 import { createCommunityNotification } from '@/lib/community/notifications';
+import { logAdmin } from '@/lib/audit/log';
 
 /**
  * Admin badge actions. Spec §5.2 badges admin.
@@ -73,6 +74,17 @@ export async function awardBadge(
       badgeSlug: badge.slug,
       manual: true,
     });
+    await logAdmin(ctx.userId, {
+      action: 'badge.award',
+      targetType: 'CommunityMember',
+      targetId: member.id,
+      payload: {
+        badgeKind: parsed.data.badgeKind,
+        badgeSlug: badge.slug,
+        memberHandle: member.handle,
+        note: parsed.data.note ?? null,
+      },
+    });
     revalidatePath(`/community/members/${member.handle}`);
     revalidatePath('/community/admin/badges');
     return ok({ memberBadgeId: created.id });
@@ -106,6 +118,12 @@ export async function revokeBadge(
         },
       }),
     ]);
+    await logAdmin(ctx.userId, {
+      action: 'badge.revoke',
+      targetType: 'CommunityMember',
+      targetId: mb.member.id,
+      payload: { badgeId: mb.badgeId, memberHandle: mb.member.handle },
+    });
     revalidatePath(`/community/members/${mb.member.handle}`);
     revalidatePath('/community/admin/badges');
     return ok();

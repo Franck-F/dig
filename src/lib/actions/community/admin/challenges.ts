@@ -13,6 +13,7 @@ import {
 } from '../_helpers';
 import { createCommunityNotification } from '@/lib/community/notifications';
 import { evaluateBadges } from '@/lib/community/badges';
+import { logAdmin } from '@/lib/audit/log';
 
 /**
  * Admin challenge lifecycle. Spec §5.2 challenges admin.
@@ -79,6 +80,18 @@ export async function createChallenge(
       },
       select: { id: true, slug: true },
     });
+    await logAdmin(ctx.userId, {
+      action: 'challenge.create',
+      targetType: 'Challenge',
+      targetId: created.id,
+      payload: {
+        slug: parsed.data.slug,
+        title: parsed.data.title,
+        submissionOpensAt: parsed.data.submissionOpensAt,
+        submissionClosesAt: parsed.data.submissionClosesAt,
+        votingClosesAt: parsed.data.votingClosesAt,
+      },
+    });
     revalidatePath('/community/challenges');
     revalidatePath('/community/admin/challenges');
     return ok(created);
@@ -93,7 +106,7 @@ export async function updateChallenge(
   input: z.input<typeof updateSchema>,
 ): Promise<ActionResult> {
   try {
-    await requireCommunityAdmin();
+    const ctx = await requireCommunityAdmin();
     const parsed = updateSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
     const { id, submissionOpensAt, submissionClosesAt, votingClosesAt, ...rest } = parsed.data;
@@ -109,6 +122,12 @@ export async function updateChallenge(
         votingClosesAt: votingClosesAt ? new Date(votingClosesAt) : undefined,
       },
     });
+    await logAdmin(ctx.userId, {
+      action: 'challenge.update',
+      targetType: 'Challenge',
+      targetId: id,
+      payload: { changedFields: Object.keys(parsed.data).filter((k) => k !== 'id') },
+    });
     revalidatePath(`/community/challenges/${id}`);
     return ok();
   } catch (e) {
@@ -122,7 +141,7 @@ export async function publishChallenge(
   input: z.input<typeof idSchema>,
 ): Promise<ActionResult> {
   try {
-    await requireCommunityAdmin();
+    const ctx = await requireCommunityAdmin();
     const parsed = idSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
     const c = await prisma.challenge.findUnique({ where: { id: parsed.data.id } });
@@ -131,6 +150,12 @@ export async function publishChallenge(
     await prisma.challenge.update({
       where: { id: c.id },
       data: { status: 'OPEN' },
+    });
+    await logAdmin(ctx.userId, {
+      action: 'challenge.publish',
+      targetType: 'Challenge',
+      targetId: c.id,
+      payload: { slug: c.slug, title: c.title },
     });
     // Broadcast CHALLENGE_NEW.
     const members = await prisma.communityMember.findMany({
@@ -158,7 +183,7 @@ export async function closeChallengeManually(
   input: z.input<typeof idSchema>,
 ): Promise<ActionResult<{ status: ChallengeStatus; winnerSubmissionIds: string[] }>> {
   try {
-    await requireCommunityAdmin();
+    const ctx = await requireCommunityAdmin();
     const parsed = idSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
     const c = await prisma.challenge.findUnique({ where: { id: parsed.data.id } });
@@ -169,12 +194,24 @@ export async function closeChallengeManually(
         where: { id: c.id },
         data: { status: 'VOTING' },
       });
+      await logAdmin(ctx.userId, {
+        action: 'challenge.advance_to_voting',
+        targetType: 'Challenge',
+        targetId: c.id,
+        payload: { slug: c.slug },
+      });
       revalidatePath(`/community/challenges/${c.id}`);
       return ok({ status: 'VOTING', winnerSubmissionIds: [] });
     }
 
     if (c.status === 'VOTING') {
       const winners = await pickWinnersAndAnnounce(c.id);
+      await logAdmin(ctx.userId, {
+        action: 'challenge.close',
+        targetType: 'Challenge',
+        targetId: c.id,
+        payload: { slug: c.slug, winnerCount: winners.length },
+      });
       revalidatePath(`/community/challenges/${c.id}`);
       return ok({ status: 'CLOSED', winnerSubmissionIds: winners });
     }

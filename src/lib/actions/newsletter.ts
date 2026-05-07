@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireUser } from './_shared';
 import { sendEmail } from '@/lib/email/resend';
+import { logAdmin } from '@/lib/audit/log';
 
 export type NewsletterState =
   | { status: 'idle' }
@@ -162,6 +163,19 @@ export async function sendNewsletterCampaign(input: {
         }
       }
     }
+
+    await logAdmin(me.userId, {
+      action: 'newsletter.send',
+      targetType: 'Newsletter',
+      payload: {
+        audience,
+        subject: subject.slice(0, 200),
+        recipientCount: emails.length,
+        sent,
+        failed,
+        mocked,
+      },
+    });
 
     return { status: 'success', sent, failed, total: emails.length, mocked };
   } catch {

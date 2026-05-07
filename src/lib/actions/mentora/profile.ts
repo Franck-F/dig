@@ -14,6 +14,7 @@ import {
   successResult,
 } from './_helpers';
 import { notify } from '@/lib/mentora/notifications';
+import { logAdmin } from '@/lib/audit/log';
 
 // ─────────────── Mentor profile ───────────────────────────────────────────
 
@@ -368,6 +369,12 @@ export async function adminApproveMentor(input: { mentorProfileId: string }): Pr
       prisma.user.update({ where: { id: profile.userId }, data: { role: 'MENTOR' } }),
     ]);
     await notify(profile.userId, 'MENTOR_APPROVED', { mentorProfileId: profile.id });
+    await logAdmin(ctx.userId, {
+      action: 'mentor.approve',
+      targetType: 'MentorProfile',
+      targetId: profile.id,
+      payload: { mentorUserId: profile.userId },
+    });
     revalidatePath('/mentora/discover');
     return successResult();
   } catch (err) {
@@ -392,6 +399,15 @@ export async function adminRejectMentor(input: { mentorProfileId: string; review
       data: { status: 'DRAFT', reviewNote: input.reviewNote },
     });
     await notify(profile.userId, 'MENTOR_REJECTED', { reviewNote: input.reviewNote });
+    await logAdmin(ctx.userId, {
+      action: 'mentor.reject',
+      targetType: 'MentorProfile',
+      targetId: profile.id,
+      payload: {
+        mentorUserId: profile.userId,
+        reviewNote: input.reviewNote.slice(0, 500),
+      },
+    });
     return successResult();
   } catch (err) {
     return handleError(err);

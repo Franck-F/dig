@@ -49,6 +49,9 @@ model User {
 
   // ── Community back-relation (1↔1; all community models hang off CommunityMember) ──
   communityMember   CommunityMember?
+
+  // ── Audit log (admin actions) ─────────────────────────────────────────
+  auditLogs         AuditLog[]
 }
 
 enum UserRole {
@@ -1006,4 +1009,36 @@ model MemberBadge {
 
   @@unique([memberId, badgeId])
   @@index([memberId])
+}
+
+/// Append-only audit trail of every admin action across the platform.
+/// Distinct from `ModerationAction` (which is community-scoped + ties to
+/// posts/comments/members in the modération workflow) — `AuditLog` covers
+/// the full admin pilotage surface: mentor approvals, challenge lifecycle,
+/// newsletter sends, channel CRUD, badge grants, role changes, etc.
+///
+/// Ground rules:
+///  - Inserts only — never UPDATE or DELETE rows from app code. Use a DB
+///    retention cron to purge entries older than the retention window.
+///  - `actorUserId` is the user who acted (never the target).
+///  - `payload` should be small (kbs, not megabytes). Don't dump full
+///    entities — just the deltas / parameters relevant to the action.
+///  - `action` follows `<area>.<verb>` naming: `mentor.approve`,
+///    `challenge.publish`, `newsletter.send`, `member.suspend`, etc.
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String
+  actor       User     @relation(fields: [actorUserId], references: [id], onDelete: Cascade)
+  action      String   // <area>.<verb>, max 80 chars
+  targetType  String?  // model name e.g. "MentorProfile", "Challenge", "User"
+  targetId    String?  // id of the target entity (no FK — entities may be deleted)
+  payload     Json?    // small contextual blob; PII-minimised
+  ip          String?  // client IP at action time
+  userAgent   String?  // truncated to 200 chars
+  createdAt   DateTime @default(now())
+
+  @@index([actorUserId, createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@index([targetType, targetId, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
 }

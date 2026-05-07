@@ -13,6 +13,7 @@ import {
 } from '../_helpers';
 import { createCommunityNotification } from '@/lib/community/notifications';
 import { sendCommunityTemplatedEmail } from '@/lib/community/email';
+import { logAdmin } from '@/lib/audit/log';
 
 /**
  * Admin moderation queue actions. Spec §5.2 moderation.
@@ -151,6 +152,16 @@ export async function resolveReport(
       }
     }
 
+    await logAdmin(ctx.userId, {
+      action: `report.resolve.${parsed.data.resolution}`,
+      targetType: report.post ? 'Post' : report.comment ? 'Comment' : 'CommunityMember',
+      targetId: report.post?.id ?? report.comment?.id ?? report.againstMember?.id ?? report.id,
+      payload: {
+        reportId: report.id,
+        note: parsed.data.resolutionNote ?? null,
+      },
+    });
+
     revalidatePath('/community/admin/moderation');
     return ok({ id: report.id });
   } catch (e) {
@@ -237,6 +248,12 @@ export async function warnAuthor(
       'community.emails.warned',
       '[Digizelle] Avertissement modération',
     );
+    await logAdmin(ctx.userId, {
+      action: 'member.warn',
+      targetType: 'CommunityMember',
+      targetId: parsed.data.memberId,
+      payload: { reason: parsed.data.reason.slice(0, 500) },
+    });
     revalidatePath('/community/admin/moderation');
     return ok();
   } catch (e) {
@@ -261,6 +278,15 @@ export async function muteUser(
       'community.emails.muted',
       '[Digizelle] Restriction de votre compte communauté',
     );
+    await logAdmin(ctx.userId, {
+      action: 'member.mute',
+      targetType: 'CommunityMember',
+      targetId: parsed.data.memberId,
+      payload: {
+        reason: parsed.data.reason.slice(0, 500),
+        until: parsed.data.until ?? null,
+      },
+    });
     revalidatePath('/community/admin/moderation');
     return ok();
   } catch (e) {
@@ -285,6 +311,15 @@ export async function suspendUser(
       'community.emails.suspended',
       '[Digizelle] Suspension de votre compte communauté',
     );
+    await logAdmin(ctx.userId, {
+      action: 'member.suspend',
+      targetType: 'CommunityMember',
+      targetId: parsed.data.memberId,
+      payload: {
+        reason: parsed.data.reason.slice(0, 500),
+        until: parsed.data.until ?? null,
+      },
+    });
     revalidatePath('/community/admin/moderation');
     return ok();
   } catch (e) {
@@ -309,6 +344,12 @@ export async function banUser(
       'community.emails.banned',
       '[Digizelle] Bannissement de votre compte communauté',
     );
+    await logAdmin(ctx.userId, {
+      action: 'member.ban',
+      targetType: 'CommunityMember',
+      targetId: parsed.data.memberId,
+      payload: { reason: parsed.data.reason.slice(0, 500) },
+    });
     revalidatePath('/community/admin/moderation');
     return ok();
   } catch (e) {
@@ -335,6 +376,11 @@ export async function unbanUser(
       'community.emails.unbanned',
       '[Digizelle] Reactivation de votre compte communauté',
     );
+    await logAdmin(ctx.userId, {
+      action: 'member.unban',
+      targetType: 'CommunityMember',
+      targetId: parsed.data.memberId,
+    });
     revalidatePath('/community/admin/moderation');
     return ok();
   } catch (e) {
@@ -376,6 +422,12 @@ export async function dismissReport(
         },
       }),
     ]);
+    await logAdmin(ctx.userId, {
+      action: 'report.dismiss',
+      targetType: 'Comment',
+      targetId: r.id,
+      payload: { note: parsed.data.note ?? null },
+    });
     revalidatePath('/community/admin/moderation');
     return ok();
   } catch (e) {
