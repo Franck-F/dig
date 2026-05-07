@@ -136,6 +136,12 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Ship the RGPD doc set with the serverless bundle so the admin viewer at
+  // /community/admin/rgpd can read the markdown source at runtime. Next.js
+  // would otherwise tree-shake non-imported files out of the deployment.
+  outputFileTracingIncludes: {
+    '/community/admin/rgpd': ['./docs/rgpd/**'],
+  },
 };
 
 // Wrap order: next-intl is the innermost plugin (transforms imports), then

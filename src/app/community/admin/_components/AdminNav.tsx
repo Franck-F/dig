@@ -11,6 +11,7 @@ const SECTIONS = [
   { key: 'users', href: '/community/admin/users' },
   { key: 'challenges', href: '/community/admin/challenges' },
   { key: 'auditLog', href: '/community/admin/audit-log' },
+  { key: 'rgpd', href: '/community/admin/rgpd' },
 ] as const;
 
 /**

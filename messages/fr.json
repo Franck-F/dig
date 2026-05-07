@@ -2159,7 +2159,10 @@
       "submit": "Créer mon compte →",
       "submitting": "Création…",
       "terms": "En continuant, vous acceptez nos CGU et notre politique de confidentialité.",
-      "ageDeclaration": "Je certifie avoir au moins 15 ans (en dessous, le consentement parental est requis — contacte-nous via /contact)."
+      "ageDeclaration": "Je certifie avoir au moins 15 ans (en dessous, le consentement parental est requis — contacte-nous via /contact).",
+      "birthYearLabel": "Année de naissance",
+      "birthYearPlaceholder": "ex. 2007",
+      "birthYearHelper": "Requis pour respecter l'âge minimum d'inscription (15 ans, RGPD Art. 8). Année uniquement, jamais la date complète."
     },
     "feedback": {
       "successPrefix": "✓ ",
@@ -2178,6 +2181,8 @@
       "oauthDisabled": "Connexion sociale indisponible.",
       "rateLimited": "Trop de tentatives. Réessaie dans quelques minutes.",
       "ageRequired": "Tu dois certifier avoir au moins 15 ans pour créer un compte.",
+      "belowMinAge": "L'inscription est réservée aux 15 ans et plus (RGPD Art. 8). Si tu as moins de 15 ans, tes parents peuvent contacter dpo@calebasse.com pour discuter d'un accès encadré.",
+      "invalidBirthYear": "Année de naissance invalide. Saisis l'année à 4 chiffres (ex. 2007).",
       "generic": "Une erreur est survenue. Réessaie."
     },
     "oauth": {
@@ -2238,13 +2243,13 @@
     "eyebrow": "Mentions légales",
     "title": "Informations",
     "titleHighlight": "légales.",
-    "intro": "Ce site est édité par l'association Digizelle, association loi 1901, dont le siège est situé à Paris. Les présentes mentions légales régissent l'utilisation de digizelle.fr et de ses sous-domaines, conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).",
+    "intro": "Ce site est édité par le Laboratoire Calebasse (Digizelle), association loi 1901, dont le siège est situé à EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre. Les présentes mentions légales régissent l'utilisation de digizelle.fr et de ses sous-domaines, conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).",
     "lastUpdated": "Dernière mise à jour : mai 2026",
     "toc": "Sommaire",
     "sections": {
       "publisher": {
         "title": "Éditeur du site",
-        "body": "Digizelle — association loi 1901, déclarée en préfecture en 2023.\nSiège social : Paris, France\nEmail : contact@digizelle.fr\nDirectrice de la publication : Priscillia Meza Samira, co-fondatrice et présidente.\n\nL'association a pour objet l'inclusion et l'épanouissement des jeunes dans le numérique : ateliers, masterclasses, hackathons, programme de mentorat Mentora et événements publics."
+        "body": "Laboratoire Calebasse (Digizelle) — association loi 1901, déclarée en préfecture en 2023.\nSiège social : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\nEmail public : contact@digizelle.fr\nEmail RGPD / DPO : dpo@calebasse.com\nEmail communication : communication@calebasse.com\n\nL'association a pour objet l'inclusion et l'épanouissement des jeunes dans le numérique : ateliers, masterclasses, hackathons, programme de mentorat Mentora et événements publics. La direction de la publication est assurée par le bureau de l'association."
       },
       "registration": {
         "title": "Immatriculation & RNA",
@@ -2252,11 +2257,11 @@
       },
       "host": {
         "title": "Hébergement",
-        "body": "Le site est hébergé par Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis. Site : https://vercel.com — Contact : https://vercel.com/contact\n\nLa base de données et l'authentification sont opérées par Supabase, Inc., 970 Toa Payoh North #07-04, Singapour 318992. Site : https://supabase.com\n\nLes emails transactionnels sont expédiés via Resend, Inc., 2261 Market Street #5039, San Francisco, CA 94114, États-Unis."
+        "body": "Le site est hébergé sur la plateforme Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis (région d'exécution : Europe — CDG / Paris). Site : https://vercel.com — Contact : https://vercel.com/contact\n\nLa base de données PostgreSQL, l'authentification et le stockage de fichiers sont opérés par Supabase, Inc., 970 Toa Payoh North #07-04, Singapour 318992 (région applicative : eu-west-3 / Paris). Site : https://supabase.com\n\nLes emails transactionnels et les campagnes newsletter sont expédiés via Resend, Inc., 2261 Market Street #5039, San Francisco, CA 94114, États-Unis (routage Union européenne).\n\nL'observabilité et le reporting d'erreurs sont assurés par Functional Software Inc. (Sentry), 132 Hawthorne Street, San Francisco, CA 94107, États-Unis (région UE : sentry.de.io)."
       },
       "director": {
         "title": "Direction de la publication",
-        "body": "La direction éditoriale est assurée par les co-fondatrices et le bureau de l'association Digizelle. Les contenus publiés sur ce site sont relus et validés collégialement avant mise en ligne. Toute demande de rectification, de droit de réponse ou relative au contenu peut être adressée à contact@digizelle.fr ; nous nous engageons à y répondre sous 30 jours."
+        "body": "La direction éditoriale est assurée par le bureau de l'association Digizelle. Les contenus publiés sur ce site sont relus et validés collégialement avant mise en ligne. Toute demande de rectification, de droit de réponse ou relative au contenu peut être adressée à contact@digizelle.fr ; nous nous engageons à y répondre sous 30 jours."
       },
       "ip": {
         "title": "Propriété intellectuelle",
@@ -2276,7 +2281,7 @@
       },
       "contact": {
         "title": "Contact",
-        "body": "Pour toute question relative aux présentes mentions légales, à l'usage du site ou pour exercer un droit de réponse : contact@digizelle.fr.\n\nCourrier postal : Digizelle — Paris, France (adresse exacte communiquée sur demande à des fins de traitement légitime)."
+        "body": "Pour toute question relative aux présentes mentions légales, à l'usage du site ou pour exercer un droit de réponse : contact@digizelle.fr.\nPour toute question RGPD : dpo@calebasse.com.\n\nCourrier postal : Digizelle — Laboratoire Calebasse, EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France."
       },
       "updates": {
         "title": "Mise à jour des mentions",
@@ -2296,7 +2301,7 @@
     "sections": {
       "controller": {
         "title": "Responsable de traitement",
-        "body": "Digizelle, association loi 1901, agit en tant que responsable de traitement (au sens de l'article 4.7 du RGPD) des données personnelles collectées via ce site et l'application Mentora.\n\nContact :\n• Email : contact@digizelle.fr\n• Courrier : Digizelle — Paris, France (adresse complète sur demande)\n\nDigizelle n'est pas tenue de désigner un délégué à la protection des données (DPO) au sens de l'article 37 du RGPD. Le bureau de l'association assure cette mission de référent."
+        "body": "Digizelle, opéré par le Laboratoire Calebasse (association loi 1901, à but non lucratif), agit en tant que responsable de traitement au sens de l'article 4.7 du RGPD pour l'ensemble des données personnelles collectées via ce site et la plateforme Mentora & Communauté.\n\nCoordonnées :\n• Siège : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\n• Contact général : communication@calebasse.com\n• Contact RGPD / DPO : dpo@calebasse.com\n• Site public : contact@digizelle.fr (formulaire en ligne)\n\nUn point de contact RGPD dédié (dpo@calebasse.com) a été désigné pour répondre à toutes les demandes d'exercice de droits, signaler une violation, ou échanger sur la conformité des traitements. Le titulaire de ce rôle est le Tech Lead de l'association jusqu'à recrutement d'un délégué externalisé. Les coordonnées de la CNIL (autorité de contrôle française) figurent en fin de document."
       },
       "data": {
         "title": "Données collectées",
@@ -2312,19 +2317,19 @@
       },
       "rights": {
         "title": "Vos droits RGPD",
-        "body": "Vous disposez à tout moment des droits suivants :\n• Droit d'accès (article 15) : obtenir une copie de vos données\n• Droit de rectification (article 16) : corriger des données inexactes\n• Droit à l'effacement / « droit à l'oubli » (article 17)\n• Droit à la limitation du traitement (article 18)\n• Droit à la portabilité (article 20) : récupérer vos données dans un format ouvert\n• Droit d'opposition (article 21), notamment pour la newsletter\n• Droit de retirer votre consentement à tout moment\n• Droit de définir des directives post-mortem sur vos données (loi Informatique & Libertés)\n\nPour exercer un droit, écrivez à contact@digizelle.fr en précisant la nature de votre demande et en joignant un justificatif d'identité si nécessaire. Réponse sous 30 jours. En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — ou via www.cnil.fr."
+        "body": "Vous disposez à tout moment des droits suivants, exerçables directement depuis votre compte ou par email :\n\n• Droit d'accès (article 15) : récapitulatif des données détenues, accessible depuis Communauté → Paramètres.\n• Droit de rectification (article 16) : modification directe depuis votre profil.\n• Droit à l'effacement / « droit à l'oubli » (article 17) : bouton « Supprimer mon compte » dans Paramètres → délai de grâce de 30 jours puis purge irréversible.\n• Droit à la limitation du traitement (article 18) : sur demande au DPO.\n• Droit à la portabilité (article 20) : export JSON téléchargeable depuis Paramètres, format machine-readable.\n• Droit d'opposition (article 21) : opt-out marketing 1-clic dans chaque email ou via Paramètres.\n• Droit de retirer votre consentement à tout moment.\n• Droit de définir des directives post-mortem sur vos données (loi Informatique & Libertés).\n\nPour exercer un droit qui ne serait pas couvert par les outils intégrés, écrivez à dpo@calebasse.com en précisant la nature de votre demande. Réponse sous 30 jours (90 jours en cas de complexité, sur notification). En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
       },
       "subprocessors": {
         "title": "Sous-traitants & partenaires techniques",
-        "body": "Pour fonctionner, le site fait appel à des sous-traitants au sens de l'article 28 du RGPD. Tous ont été sélectionnés pour leur conformité au RGPD et sont liés par des accords de traitement (DPA) :\n\n— Vercel Inc. (États-Unis) : hébergement web, CDN, fonctions serveur. Données traitées : logs techniques, contenu des requêtes.\n— Supabase Inc. (Singapour, infrastructure UE-Francfort) : base de données PostgreSQL, authentification, stockage. Données traitées : comptes utilisateurs, contenus applicatifs.\n— Auth.js (open-source) : gestion des sessions sur le serveur Digizelle.\n— Resend Inc. (États-Unis) : envoi d'emails transactionnels (confirmation d'inscription, réinitialisation de mot de passe). Données traitées : email, prénom.\n— Outils de mesure d'audience open-source auto-hébergés (le cas échéant), sans transfert hors UE.\n\nAucun de ces sous-traitants n'utilise vos données pour son propre compte."
+        "body": "Pour fonctionner, le site fait appel à des sous-traitants au sens de l'article 28 du RGPD. Tous ont été sélectionnés pour leur conformité RGPD et sont liés par un accord de traitement (DPA). La liste, à jour de la dernière révision, est :\n\n— Vercel Inc. (États-Unis, infrastructure UE) : hébergement Next.js, CDN, fonctions serverless. Région d'exécution : Europe (CDG / Paris). Données traitées : logs HTTP, contenu des requêtes pendant l'exécution.\n— Supabase Inc. (États-Unis, infrastructure UE) : base PostgreSQL, authentification, stockage de fichiers. Région : eu-west-3 (Paris). Données traitées : comptes, profils, contenus communautaires, sessions de mentorat.\n— Resend Inc. (États-Unis, routage EU disponible) : envoi des emails transactionnels (vérification, réinitialisation, notifications) et des campagnes newsletter. Données traitées : email, prénom, statut de délivrabilité.\n— Functional Software Inc. (Sentry) : observabilité et reporting d'erreurs côté serveur et navigateur. Région : sentry.de.io (UE). Les sessions enregistrées (replay) masquent tous les textes (`maskAllText`) et bloquent les médias (`blockAllMedia`) ; les corps de requête sont filtrés avant envoi.\n— Auth.js v5 (open-source, exécuté sur l'infrastructure Digizelle) : gestion des sessions et de l'authentification.\n— Google LLC, GitHub Inc., Discord Inc. : fournisseurs OAuth optionnels pour la connexion sociale. Si vous n'utilisez pas ces options, aucune donnée ne leur est transmise.\n\nAucun de ces sous-traitants n'est autorisé à utiliser vos données pour son propre compte."
       },
       "transfers": {
         "title": "Transferts hors Union européenne",
-        "body": "Certains sous-traitants (Vercel, Resend) sont établis aux États-Unis ; Supabase peut traiter des données dans plusieurs régions. Ces transferts sont encadrés par :\n• Les clauses contractuelles types (CCT) de la Commission européenne, version 2021\n• Le cadre Data Privacy Framework (DPF) UE-États-Unis pour les sous-traitants certifiés\n• Des mesures supplémentaires : chiffrement TLS, chiffrement au repos, segmentation des accès\n\nLes données les plus sensibles (mots de passe hachés, contenus communautaires) sont stockées sur des instances Supabase situées en Union européenne (Francfort)."
+        "body": "Les données applicatives (comptes, profils, contenus, journaux) sont stockées et traitées exclusivement en Union européenne (Supabase eu-west-3 Paris, Vercel CDG, Sentry sentry.de.io). Aucun transfert applicatif n'a lieu vers les États-Unis ni d'autres pays tiers.\n\nLes maisons-mères des prestataires (Vercel Inc., Supabase Inc., Resend Inc., Functional Software Inc.) étant établies aux États-Unis, des transferts administratifs (facturation, support) peuvent intervenir. Ils sont encadrés par :\n• les clauses contractuelles types (CCT) de la Commission européenne, version 2021 (décision 2021/914) ;\n• le cadre EU-U.S. Data Privacy Framework lorsque le prestataire y est certifié ;\n• des mesures techniques complémentaires : TLS 1.3, chiffrement au repos AES-256, principe du moindre privilège.\n\nSi vous utilisez la connexion OAuth Google, GitHub ou Discord, le fournisseur OAuth applique sa propre politique de transfert."
       },
       "minors": {
         "title": "Mineurs & protection des jeunes",
-        "body": "Digizelle s'adresse en priorité à un public jeune. La législation française fixe à 15 ans l'âge du consentement numérique (article 8 du RGPD, transposé à l'article 45 de la loi Informatique & Libertés).\n\n• Pour toute personne de moins de 15 ans : le consentement parental est obligatoire avant la création d'un compte ou l'inscription à la newsletter.\n• Le formulaire d'inscription comporte une déclaration sur l'honneur d'âge ; nous pouvons demander une attestation parentale signée en cas de doute.\n• Les contenus communautaires sont modérés ; un signalement immédiat est possible pour tout comportement inapproprié.\n• Les parents ou tuteurs peuvent à tout moment demander l'accès, la rectification ou la suppression des données de leur enfant à l'adresse contact@digizelle.fr."
+        "body": "Digizelle s'adresse en priorité à un public jeune. La législation française fixe à 15 ans l'âge du consentement numérique (article 8 du RGPD, transposé à l'article 45 de la loi Informatique & Libertés modifiée).\n\n• Le formulaire d'inscription comporte une déclaration obligatoire sur l'honneur d'avoir au moins 15 ans (case à cocher non pré-cochée). Sans cette déclaration, l'inscription est refusée.\n• Pour toute personne entre 15 et 17 ans, l'inscription est autorisée mais aucun profilage publicitaire n'est appliqué et la modération renforce sa vigilance.\n• Pour toute personne de moins de 15 ans, l'inscription est interdite. En cas de découverte ultérieure (signalement, contradiction au profil), le compte est suspendu sous 24 heures puis supprimé après vérification.\n• Les parents ou tuteurs peuvent à tout moment demander l'accès, la rectification ou la suppression des données de leur enfant à dpo@calebasse.com en justifiant de leur qualité.\n• Une analyse d'impact relative à la protection des données (AIPD) est en cours d'élaboration pour les volets qui touchent les mineurs (profils publics, communauté UGC)."
       },
       "security": {
         "title": "Mesures de sécurité",
@@ -2335,8 +2340,8 @@
         "body": "Le site utilise un nombre minimal de cookies, principalement techniques (session, préférence de thème). Aucun cookie de tracking publicitaire ou de profilage tiers n'est déposé sans votre consentement explicite, conformément à l'article 82 de la loi Informatique & Libertés et aux recommandations de la CNIL. Voir notre page Cookies dédiée pour la liste détaillée et les options de gestion."
       },
       "contact": {
-        "title": "Référent données personnelles",
-        "body": "Digizelle n'est pas tenue de désigner un délégué à la protection des données (DPO) au sens de l'article 37 du RGPD ; toutes les demandes liées aux données personnelles sont centralisées par le bureau de l'association.\n\nContact dédié : contact@digizelle.fr (objet : « RGPD »)\nDélai de réponse : 30 jours, prolongeable de 60 jours en cas de demande complexe (avec justification)."
+        "title": "Délégué à la protection des données (DPO)",
+        "body": "Digizelle a désigné un point de contact RGPD (DPO interne) dédié, indépendant des fonctions opérationnelles concernées par les traitements :\n\n• Email DPO : dpo@calebasse.com\n• Courrier : Digizelle — Délégué à la protection des données — EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre\n\nMissions du DPO (article 39 RGPD) : informer et conseiller le responsable de traitement, contrôler la conformité, point de contact unique pour les personnes concernées et la CNIL, suivi des incidents et notifications éventuelles (articles 33-34).\n\nDélai de réponse aux demandes : 30 jours (extensible à 90 jours en cas de complexité, sur notification motivée). En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
       }
     }
   },
@@ -2918,7 +2923,8 @@
         "badges": "Badges",
         "users": "Membres",
         "challenges": "Défis",
-        "auditLog": "Journal admin"
+        "auditLog": "Journal admin",
+        "rgpd": "Registre RGPD"
       },
       "moderation": {
         "title": "File de modération",

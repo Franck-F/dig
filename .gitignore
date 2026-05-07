@@ -47,3 +47,9 @@ next-env.d.ts
 
 # Anthropic skills bundles (tooling cache, not part of the app)
 /skills/
+
+# RGPD — instantiated DPA contracts and AIPD drafts containing signatures
+# or third-party identifiers are kept out of the repo. Templates and the
+# registry stay committed.
+docs/rgpd/dpa/
+docs/rgpd/aipd-*.draft.md
