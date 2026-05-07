@@ -33,6 +33,11 @@ model User {
   passwordHash  String?
   role          UserRole  @default(STUDENT)
   image         String?
+  /// Soft-delete marker. When non-null, the row is hidden from the live
+  /// app (auth refuses sign-in, lookups skip these). A J+30 cron purges
+  /// rows where `deletedAt` is older than 30 days. Restoration before
+  /// purge is supported by setting deletedAt back to null.
+  deletedAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -288,6 +293,7 @@ model MentorProfile {
   responseTime         ResponseTime @default(WITHIN_WEEK)
   status               MentorStatus @default(DRAFT)
   reviewNote           String?      // admin moderator note on rejection
+  deletedAt            DateTime?    // soft-delete; cascades from User soft-delete
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
   publishedAt          DateTime?    // set when status moves to ACTIVE first time
@@ -314,6 +320,7 @@ model MenteeProfile {
   currentChallenges String?         // <= 2000
   preferredFormat   PreferredFormat @default(REMOTE)
   discoveredVia     DiscoveredVia   @default(SEARCH)
+  deletedAt         DateTime?       // soft-delete; cascades from User soft-delete
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
@@ -681,6 +688,7 @@ model CommunityMember {
   lastDigestSentAt         DateTime?
   lastSeenAt               DateTime?       // updated on any community page view
   onboardedAt              DateTime?       // null = needs /community/onboarding
+  deletedAt                DateTime?       // soft-delete; cascades from User soft-delete
   createdAt                DateTime        @default(now())
   updatedAt                DateTime        @updatedAt
 

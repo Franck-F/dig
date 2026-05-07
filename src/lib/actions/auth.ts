@@ -125,6 +125,12 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
 
   const user = await prisma.user.findUnique({ where: { email } });
+  // Soft-deleted accounts: present a generic invalid-credentials error so
+  // we don't leak that the account was deleted (the user is presumed to
+  // know — but their stalker / abuser might not).
+  if (user && user.deletedAt) {
+    return { status: 'error', error: 'invalidCredentials' };
+  }
   if (user && user.passwordHash && !user.emailVerified) {
     // Don't even attempt the credentials sign-in — return a status the
     // UI can use to re-open the verification modal.

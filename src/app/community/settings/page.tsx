@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { getCommunityViewer } from '../_components/viewer';
 import SettingsForm from './_components/SettingsForm';
+import DangerZone from './_components/DangerZone';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Modifier mon profil · Digizelle' };
@@ -55,6 +56,8 @@ export default async function CommunitySettingsPage() {
           bannerColor: m.bannerColor,
         }}
       />
+
+      <DangerZone />
     </div>
   );
 }

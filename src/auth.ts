@@ -34,6 +34,10 @@ const providers: Provider[] = [
 
       const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
       if (!user || !user.passwordHash) return null;
+      // Soft-deleted accounts are tombstones — the email has been
+      // anonymised, but we double-check defensively so a partially-rolled
+      // delete still can't authenticate.
+      if (user.deletedAt) return null;
 
       const ok = await compare(parsed.data.password, user.passwordHash);
       if (!ok) return null;
