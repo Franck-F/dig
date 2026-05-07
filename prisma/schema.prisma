@@ -486,6 +486,11 @@ model Session {
   cancellationReason String?
   cancelledById      String?
   cancelledBy        User?         @relation("sessionCancelledBy", fields: [cancelledById], references: [id], onDelete: SetNull)
+  /// Set by the daily cron when a SESSION_REMINDER notification has been
+  /// sent to both parties. Replaces the previous N+1 query on
+  /// `Notification.payload.sessionId` (JSONB path predicate, no GIN index)
+  /// with a single column predicate. Idempotency is now O(1) per session.
+  reminderSentAt     DateTime?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
@@ -493,6 +498,9 @@ model Session {
 
   @@index([mentorshipId, scheduledAt])
   @@index([scheduledAt, status])
+  /// Targets the cron's selection: SCHEDULED sessions in the next 48h
+  /// that haven't been reminded yet.
+  @@index([status, reminderSentAt, scheduledAt])
 }
 
 model Review {

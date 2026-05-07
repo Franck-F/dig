@@ -13,13 +13,16 @@ export const dynamic = 'force-dynamic';
  *
  * Authenticated via `Authorization: Bearer ${CRON_SECRET}`.
  *
- * NOTE: spec §8.3 mentions a `reminderSentAt` column on Session OR a
- * `SessionReminderLog` table for idempotency. Neither was added to the
- * shipped schema by Agent 2B-1. We use idempotency by checking whether a
- * SESSION_REMINDER notification already exists for either party referencing
- * `payload.sessionId`. This is correct but slightly slower (extra query per
- * candidate). The spec should be amended to add a reliable idempotency
- * column on Session in a follow-up migration.
+ * Idempotency: `Session.reminderSentAt` is stamped after both parties
+ * receive their SESSION_REMINDER notif. The cron's selection filters on
+ * `reminderSentAt: null`, so a session is reminded exactly once across
+ * any number of cron runs (Hobby = daily, but the same code is safe at
+ * any cadence).
+ *
+ * Window: Vercel Hobby caps crons to once per day. We pick up every
+ * SCHEDULED session in the next 48h that hasn't been reminded — gives
+ * users a 1-2 day heads-up depending on when in the cron window the
+ * session lands.
  */
 
 function addHours(d: Date, h: number): Date {
@@ -33,14 +36,11 @@ export async function GET(request: Request): Promise<Response> {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 
-  // Vercel Hobby limits crons to once per day. We run at 09:00 UTC every
-  // morning and look at every SCHEDULED session in the next 0-48h. The
-  // SESSION_REMINDER idempotency check below ensures each session is only
-  // reminded once even though the window covers it on multiple days.
   const now = new Date();
   const due = await prisma.session.findMany({
     where: {
       status: 'SCHEDULED',
+      reminderSentAt: null,
       scheduledAt: { gte: now, lt: addHours(now, 48) },
     },
     include: {
@@ -54,30 +54,33 @@ export async function GET(request: Request): Promise<Response> {
   });
 
   let remindersSent = 0;
+  let stampFailures = 0;
   for (const s of due) {
-    // Idempotency: skip if a SESSION_REMINDER notification already exists for this session
-    const existing = await prisma.notification.findFirst({
-      where: {
-        type: 'SESSION_REMINDER',
-        payload: { path: ['sessionId'], equals: s.id },
-      },
-      select: { id: true },
-    });
-    if (existing) continue;
-
     const mentorUserId = s.mentorship.mentorProfile.userId;
     const menteeUserId = s.mentorship.menteeProfile.userId;
-    await notify(mentorUserId, 'SESSION_REMINDER', {
-      sessionId: s.id,
-      mentorshipId: s.mentorshipId,
-      scheduledAt: s.scheduledAt.toISOString(),
-    });
-    await notify(menteeUserId, 'SESSION_REMINDER', {
-      sessionId: s.id,
-      mentorshipId: s.mentorshipId,
-      scheduledAt: s.scheduledAt.toISOString(),
-    });
-    remindersSent += 2;
+    try {
+      await notify(mentorUserId, 'SESSION_REMINDER', {
+        sessionId: s.id,
+        mentorshipId: s.mentorshipId,
+        scheduledAt: s.scheduledAt.toISOString(),
+      });
+      await notify(menteeUserId, 'SESSION_REMINDER', {
+        sessionId: s.id,
+        mentorshipId: s.mentorshipId,
+        scheduledAt: s.scheduledAt.toISOString(),
+      });
+      // Stamp only on full success — if either notify() throws we'll
+      // retry on the next run rather than leave a half-notified session
+      // marked as done.
+      await prisma.session.update({
+        where: { id: s.id },
+        data: { reminderSentAt: new Date() },
+      });
+      remindersSent += 2;
+    } catch (err) {
+      console.error('[cron.sessions-reminder] failed for session', s.id, err);
+      stampFailures += 1;
+    }
   }
 
   // Also expire stale PENDING requests (per spec §8.4)
@@ -93,6 +96,7 @@ export async function GET(request: Request): Promise<Response> {
     ok: true,
     candidates: due.length,
     remindersSent,
+    stampFailures,
     expiredRequests,
   });
 }
