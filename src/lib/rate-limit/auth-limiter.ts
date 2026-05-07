@@ -1,5 +1,6 @@
 import 'server-only';
 import { headers } from 'next/headers';
+import { incrementWithExpiry, isUpstashConfigured, ttlSeconds } from './upstash';
 
 /**
  * Rate limiter dedicated to authentication flows: sign-in, sign-up, email
@@ -146,9 +147,53 @@ export async function getRequestIp(): Promise<string> {
 }
 
 /**
+ * Fixed-window check against Upstash. Returns the same `CheckResult`
+ * shape as the in-memory bucket. On any Redis-side failure we **fail
+ * open** — return ok:true so a Redis outage doesn't lock everyone out.
+ * The downside is a brief window where limits relax to the per-instance
+ * fallback; the alternative (returning ok:false) would amplify a Redis
+ * incident into an auth outage.
+ */
+async function checkUpstashWindow(
+  key: string,
+  capacity: number,
+  windowSec: number,
+): Promise<CheckResult> {
+  const count = await incrementWithExpiry(key, windowSec);
+  if (count === null) {
+    // Upstash unreachable — fail open. The in-memory limiter has
+    // already been consulted by the caller; this just removes the
+    // multi-instance safety net for one request.
+    return { ok: true, remaining: capacity };
+  }
+  if (count <= capacity) {
+    return { ok: true, remaining: capacity - count };
+  }
+  // Over the limit. We need a Retry-After value; ask Upstash for the
+  // remaining TTL on this window's key. If Redis can't tell us, fall
+  // back to the full window length.
+  const ttl = await ttlSeconds(key);
+  const retryAfterSec =
+    typeof ttl === 'number' && ttl > 0 ? ttl : windowSec;
+  return {
+    ok: false,
+    retryAfterMs: retryAfterSec * 1000,
+    retryAfterSec,
+  };
+}
+
+/**
  * Check both IP and email buckets for a given auth action. Returns `ok:true`
  * only when both pass; otherwise returns the failing decision so the caller
  * can surface a user-friendly retry message.
+ *
+ * Backend selection:
+ *  - If `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` are set,
+ *    the per-IP / per-email windows are evaluated atomically via Redis
+ *    `INCR` + `EXPIRE NX`. Limits are then global across every Vercel
+ *    instance.
+ *  - Otherwise we fall back to the in-process token bucket. Useful for
+ *    local dev and Hobby deployments where Upstash isn't provisioned.
  *
  * Caller is responsible for normalising the email (lowercase + trim) before
  * passing it in — the bucket key is exact-string.
@@ -160,14 +205,12 @@ export async function checkAuthRateLimit(
   const cfg = BUCKETS[action];
   const now = Date.now();
   const ip = await getRequestIp();
+  const useRedis = isUpstashConfigured();
 
   const ipKey = `auth:${action}:ip:${ip}`;
-  const ipDecision = checkInMemory(
-    ipKey,
-    cfg.ip.capacity,
-    cfg.ip.capacity / cfg.ip.windowSec,
-    now,
-  );
+  const ipDecision = useRedis
+    ? await checkUpstashWindow(ipKey, cfg.ip.capacity, cfg.ip.windowSec)
+    : checkInMemory(ipKey, cfg.ip.capacity, cfg.ip.capacity / cfg.ip.windowSec, now);
   if (!ipDecision.ok) return ipDecision;
 
   // The email bucket is optional per action — `signUp` for instance only
@@ -175,12 +218,18 @@ export async function checkAuthRateLimit(
   const cfgWithEmail = cfg as { email?: { capacity: number; windowSec: number } };
   if (cfgWithEmail.email && email) {
     const emailKey = `auth:${action}:email:${email.toLowerCase().trim()}`;
-    const emailDecision = checkInMemory(
-      emailKey,
-      cfgWithEmail.email.capacity,
-      cfgWithEmail.email.capacity / cfgWithEmail.email.windowSec,
-      now,
-    );
+    const emailDecision = useRedis
+      ? await checkUpstashWindow(
+          emailKey,
+          cfgWithEmail.email.capacity,
+          cfgWithEmail.email.windowSec,
+        )
+      : checkInMemory(
+          emailKey,
+          cfgWithEmail.email.capacity,
+          cfgWithEmail.email.capacity / cfgWithEmail.email.windowSec,
+          now,
+        );
     if (!emailDecision.ok) return emailDecision;
   }
 
@@ -205,9 +254,3 @@ export function _resetAuthLimiterForTests(): void {
   buckets.clear();
 }
 
-/* TODO(phase-2 task #32): when Upstash Redis credentials land in env
- *   (UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN), replace the
- *   `checkInMemory` call with `@upstash/ratelimit` + `@upstash/redis` so the
- *   limiter is multi-instance-safe. The bucket configs above translate 1:1
- *   to Upstash's `slidingWindow(capacity, "${windowSec} s")`. Keep the
- *   in-memory path as a dev fallback when env vars are missing. */

@@ -34,7 +34,7 @@ export async function GET(_req: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  const limit = checkUserActionRateLimit('dataExport', userId);
+  const limit = await checkUserActionRateLimit('dataExport', userId);
   if (!limit.ok) {
     const headers = new Headers({ 'Retry-After': String(limit.retryAfterSec) });
     return NextResponse.json(
