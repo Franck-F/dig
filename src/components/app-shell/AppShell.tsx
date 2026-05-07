@@ -89,10 +89,14 @@ export default function AppShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const isDark = theme === 'dark';
 
-  // Close the mobile drawer whenever the user navigates to a new page so
-  // it doesn't stay stuck open after a tap on a nav link. Also close on
-  // Esc and lock body scroll while open.
+  // Close the mobile drawer whenever the user navigates to a new page.
+  // The setState-in-effect rule flags this as cascading, but the
+  // alternative (ref-during-render or onClick handler on every nav
+  // link) is strictly worse here — pathname change is the canonical
+  // source of truth for "navigation just happened" and the drawer
+  // closes once per change.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileOpen(false);
   }, [pathname]);
 

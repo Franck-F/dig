@@ -529,7 +529,7 @@ function ConfirmView({
         {body}
       </div>
       <div style={{ ...hintStyle, marginTop: 12 }}>
-        L'envoi est définitif. Vérifiez bien le contenu avant de confirmer.
+        L&apos;envoi est définitif. Vérifiez bien le contenu avant de confirmer.
       </div>
     </>
   );
@@ -573,7 +573,7 @@ function ResultView({
           }}
         />
         <p style={{ margin: 0, color: '#3a2960', fontWeight: 600 }}>
-          Mise en file d'attente…
+          Mise en file d&apos;attente…
         </p>
         <style>{`@keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }`}</style>
       </div>
@@ -668,7 +668,7 @@ function ResultView({
               fontSize: 13,
             }}
           >
-            <strong>RESEND_API_KEY</strong> manquante : les emails ont été simulés (logs serveur uniquement). Configurez la clé pour activer l'envoi réel.
+            <strong>RESEND_API_KEY</strong> manquante : les emails ont été simulés (logs serveur uniquement). Configurez la clé pour activer l&apos;envoi réel.
           </p>
         )}
       </div>
