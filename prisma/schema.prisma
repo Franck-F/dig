@@ -33,6 +33,12 @@ model User {
   passwordHash  String?
   role          UserRole  @default(STUDENT)
   image         String?
+  /// Marketing email opt-out. RGPD + CAN-SPAM require a 1-click way to
+  /// unsubscribe; the /email/unsubscribe page flips this to false. We
+  /// keep transactional emails (verification, password reset, session
+  /// reminders) flowing regardless — only newsletter / digest blasts
+  /// honour this flag.
+  marketingEmailsEnabled Boolean @default(true)
   /// Soft-delete marker. When non-null, the row is hidden from the live
   /// app (auth refuses sign-in, lookups skip these). A J+30 cron purges
   /// rows where `deletedAt` is older than 30 days. Restoration before

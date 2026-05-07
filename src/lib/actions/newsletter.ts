@@ -9,6 +9,7 @@ import {
   enqueueEmails,
   getCampaignStatus,
 } from '@/lib/email/queue';
+import { buildUnsubscribeUrl } from '@/lib/email/unsubscribe-token';
 
 export type NewsletterState =
   | { status: 'idle' }
@@ -59,8 +60,15 @@ const campaignSchema = z.object({
   audience: z.enum(['subscribers', 'mentors', 'mentees', 'community', 'all']),
 });
 
-async function resolveAudienceEmails(audience: Audience): Promise<string[]> {
-  const set = new Set<string>();
+type AudienceRecipient = { email: string; userId: string | null };
+
+async function resolveAudienceEmails(audience: Audience): Promise<AudienceRecipient[]> {
+  // De-dup by email; map to userId when the recipient has an account
+  // (for the unsubscribe token). NewsletterSubscriber rows have no
+  // User.id so they get null — those receive a generic unsub message
+  // pointing at /contact for now (full subscriber-side unsub flow is
+  // tracked as a follow-up).
+  const map = new Map<string, string | null>();
   const wantsAll = audience === 'all';
 
   if (wantsAll || audience === 'subscribers') {
@@ -68,34 +76,51 @@ async function resolveAudienceEmails(audience: Audience): Promise<string[]> {
       where: { active: true },
       select: { email: true },
     });
-    for (const r of rows) set.add(r.email.toLowerCase());
+    for (const r of rows) {
+      const e = r.email.toLowerCase();
+      if (!map.has(e)) map.set(e, null);
+    }
   }
+
+  // For all User-backed audiences we apply two filters at the DB layer:
+  //  1. Soft-deleted accounts must not receive marketing.
+  //  2. Users who explicitly opted out (marketingEmailsEnabled=false)
+  //     must not receive marketing — this is the RGPD opt-out honoured
+  //     here so an existing unsub stays effective on the next campaign.
+  const userQuery = (
+    extra: import('@prisma/client').Prisma.UserWhereInput,
+  ): import('@prisma/client').Prisma.UserWhereInput => ({
+    ...extra,
+    deletedAt: null,
+    marketingEmailsEnabled: true,
+    email: { not: '' },
+  });
 
   if (wantsAll || audience === 'mentors') {
     const rows = await prisma.user.findMany({
-      where: { mentorProfile: { isNot: null }, email: { not: '' } },
-      select: { email: true },
+      where: userQuery({ mentorProfile: { isNot: null } }),
+      select: { id: true, email: true },
     });
-    for (const r of rows) if (r.email) set.add(r.email.toLowerCase());
+    for (const r of rows) if (r.email) map.set(r.email.toLowerCase(), r.id);
   }
 
   if (wantsAll || audience === 'mentees') {
     const rows = await prisma.user.findMany({
-      where: { menteeProfile: { isNot: null }, email: { not: '' } },
-      select: { email: true },
+      where: userQuery({ menteeProfile: { isNot: null } }),
+      select: { id: true, email: true },
     });
-    for (const r of rows) if (r.email) set.add(r.email.toLowerCase());
+    for (const r of rows) if (r.email) map.set(r.email.toLowerCase(), r.id);
   }
 
   if (wantsAll || audience === 'community') {
     const rows = await prisma.user.findMany({
-      where: { communityMember: { isNot: null }, email: { not: '' } },
-      select: { email: true },
+      where: userQuery({ communityMember: { isNot: null } }),
+      select: { id: true, email: true },
     });
-    for (const r of rows) if (r.email) set.add(r.email.toLowerCase());
+    for (const r of rows) if (r.email) map.set(r.email.toLowerCase(), r.id);
   }
 
-  return [...set];
+  return [...map.entries()].map(([email, userId]) => ({ email, userId }));
 }
 
 export async function countAudience(
@@ -145,22 +170,33 @@ export async function sendNewsletterCampaign(input: {
     }
 
     const { subject, body, audience } = parsed.data;
-    const emails = await resolveAudienceEmails(audience);
+    const recipients = await resolveAudienceEmails(audience);
 
-    if (emails.length === 0) {
+    if (recipients.length === 0) {
       return { status: 'error', error: 'no_recipients' };
     }
 
-    const html = renderNewsletterHtml({ subject, body });
-    const text = body;
     // Campaign tag = audience + ISO timestamp. Stable across an enqueue
     // call; if the admin re-clicks Send within the same second the
     // (audienceTag, to) unique constraint dedups, so no duplicate emails.
     const campaignTag = `newsletter:${audience}:${new Date().toISOString()}`;
 
+    // Render per-recipient: each user gets a unique unsubscribe link
+    // bound to their userId via signed token. NewsletterSubscriber
+    // entries (no userId) get a generic "contact us to unsubscribe"
+    // line — full subscriber-side flow is a follow-up.
     const enqueued = await enqueueEmails(
       campaignTag,
-      emails.map((to) => ({ to, subject, html, text })),
+      recipients.map(({ email, userId }) => {
+        const unsubUrl = userId ? buildUnsubscribeUrl(userId, 'marketing') : null;
+        const html = renderNewsletterHtml({ subject, body, unsubUrl });
+        return {
+          to: email,
+          subject,
+          html,
+          text: body + (unsubUrl ? `\n\nSe désabonner : ${unsubUrl}` : ''),
+        };
+      }),
     );
 
     // Best-effort first drain pass to start delivering immediately. We
@@ -181,7 +217,7 @@ export async function sendNewsletterCampaign(input: {
       payload: {
         audience,
         subject: subject.slice(0, 200),
-        recipientCount: emails.length,
+        recipientCount: recipients.length,
         enqueued,
         campaignTag,
       },
@@ -190,7 +226,7 @@ export async function sendNewsletterCampaign(input: {
     return {
       status: 'success',
       campaignTag,
-      recipientCount: emails.length,
+      recipientCount: recipients.length,
       mocked,
     };
   } catch {
@@ -267,9 +303,11 @@ function escapeHtml(s: string): string {
 function renderNewsletterHtml({
   subject,
   body,
+  unsubUrl,
 }: {
   subject: string;
   body: string;
+  unsubUrl: string | null;
 }): string {
   // Plain-text body: split on blank lines into <p>, single newline → <br>.
   // URL auto-linker: anything starting with http(s):// becomes <a>.
@@ -314,7 +352,14 @@ function renderNewsletterHtml({
             <tr>
               <td style="padding:8px 32px 28px;color:#7a6a9a;font-size:13px;line-height:1.6;border-top:1px solid #ece5fb;margin-top:24px;">
                 <p style="margin:24px 0 6px;">— L'équipe Digizelle</p>
-                <p style="margin:0;">Vous recevez cet email car vous êtes membre, mentor, mentoré·e ou inscrit·e à la newsletter Digizelle.</p>
+                <p style="margin:0 0 14px;">Vous recevez cet email car vous êtes membre, mentor, mentoré·e ou inscrit·e à la newsletter Digizelle.</p>
+                <p style="margin:0;font-size:12px;color:#a097c0;">
+                  ${
+                    unsubUrl
+                      ? `<a href="${unsubUrl}" style="color:#7a6a9a;text-decoration:underline">Se désabonner en 1 clic</a> · `
+                      : 'Pour vous désabonner, écrivez à dpo@digizelle.fr · '
+                  }<a href="mailto:dpo@digizelle.fr" style="color:#7a6a9a;text-decoration:underline">DPO</a> · Digizelle, EPITECH Le Kremlin-Bicêtre, France
+                </p>
               </td>
             </tr>
           </table>

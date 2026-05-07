@@ -17,6 +17,13 @@ export type SendEmailParams = {
   text?: string;
   /** Optional reply-to override; defaults to noreply (none). */
   replyTo?: string;
+  /**
+   * Extra SMTP-style headers to attach. Used by the newsletter sender
+   * to inject `List-Unsubscribe` + `List-Unsubscribe-Post` so Gmail's
+   * one-click button works (RFC 8058) and so any RFC 2369 reader
+   * displays a native unsubscribe action.
+   */
+  headers?: Record<string, string>;
 };
 
 export type SendEmailResult =
@@ -31,6 +38,7 @@ export async function sendEmail({
   html,
   text,
   replyTo,
+  headers,
 }: SendEmailParams): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
 
@@ -57,6 +65,7 @@ export async function sendEmail({
         html,
         ...(text ? { text } : {}),
         ...(replyTo ? { replyTo } : {}),
+        ...(headers ? { headers } : {}),
       }),
     });
 
