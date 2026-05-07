@@ -90,7 +90,11 @@ const BUCKETS = {
   },
   signUp: {
     ip: { capacity: 5, windowSec: 60 * 60 },
-    // sign-up by definition doesn't have a prior email; only IP applies.
+    // We also bucket on email so a distributed attacker who rotates IPs
+    // can't repeatedly probe a single address to enumerate verified vs
+    // new accounts. 3 attempts per email per hour is plenty for a
+    // legitimate user retrying a typo.
+    email: { capacity: 3, windowSec: 60 * 60 },
   },
   resendVerificationCode: {
     ip: { capacity: 10, windowSec: 60 * 60 },

@@ -32,6 +32,19 @@ const CODE_TTL_MINUTES = 10;
 const MAX_CODE_ATTEMPTS = 5;
 const RESEND_COOLDOWN_SECONDS = 60;
 
+/**
+ * Pre-computed bcrypt hash of a random secret nobody knows. Used by the
+ * `signIn` flow to keep the wall-clock cost of "user does not exist"
+ * indistinguishable from "user exists, password wrong." Generated once at
+ * cost 12 (same as the real `hash(password, 12)` calls below) — DO NOT
+ * regenerate at lower cost or the timing channel reopens.
+ *
+ * The plaintext that produced this hash is irrelevant: bcrypt.compare()
+ * over any input will spend the same ~100ms before returning false.
+ */
+const DUMMY_BCRYPT_HASH =
+  '$2b$12$XqKSb0s6M1W39muJsR4L9.uqi4iuCQ4rwdvo2vBocH8FBdTqlpWYG';
+
 /* ──────────────────────────────────────────────────────────────────────
    Schemas
    ────────────────────────────────────────────────────────────────────── */
@@ -162,15 +175,37 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
 
   const user = await prisma.user.findUnique({ where: { email } });
+  // Anti-enumeration via timing: bcrypt is deliberately slow, and
+  // skipping the compare for non-existent users gave attackers a clear
+  // ~100ms response-time gap between "this email doesn't exist" and
+  // "this email exists, password wrong." We run a constant-cost compare
+  // against a fixed dummy hash whenever there is no match, so the wall
+  // clock looks the same either way.
+  if (!user || !user.passwordHash) {
+    await compare(password, DUMMY_BCRYPT_HASH);
+    return { status: 'error', error: 'invalidCredentials' };
+  }
   // Soft-deleted accounts: present a generic invalid-credentials error so
   // we don't leak that the account was deleted (the user is presumed to
   // know — but their stalker / abuser might not).
-  if (user && user.deletedAt) {
+  if (user.deletedAt) {
+    await compare(password, DUMMY_BCRYPT_HASH);
     return { status: 'error', error: 'invalidCredentials' };
   }
-  if (user && user.passwordHash && !user.emailVerified) {
-    // Don't even attempt the credentials sign-in — return a status the
-    // UI can use to re-open the verification modal.
+  // Anti-enumeration: we used to short-circuit here on
+  // `passwordHash && !emailVerified` and return `emailNotVerified`. That
+  // gave attackers a free yes/no oracle on email existence (just guess
+  // any password — a verified email would fail with `invalidCredentials`
+  // while an unverified one would say `emailNotVerified`). We now run
+  // the bcrypt compare unconditionally and only surface the
+  // `emailNotVerified` hint AFTER a successful password match — so the
+  // only way to learn the verification status of an email is to know
+  // its password.
+  if (!user.emailVerified) {
+    const ok = await compare(password, user.passwordHash);
+    if (!ok) return { status: 'error', error: 'invalidCredentials' };
+    // Password is right but the account is unverified — surface the hint
+    // so the UI can re-open the verification modal.
     return { status: 'error', error: 'emailNotVerified' };
   }
 
