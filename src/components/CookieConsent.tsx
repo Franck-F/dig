@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCookieConsent } from './CookieConsentProvider';
 import { useScrollLock } from '@/hooks/useScrollLock';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 /* ------------------------------------------------------------------
    Inline switch — violet brand, accessible, no extra css file
@@ -116,6 +117,9 @@ export default function CookieConsent() {
 
   // Lock body scroll when modal is open (shared, ref-counted)
   useScrollLock(isPreferencesOpen);
+
+  // Trap focus inside the preferences dialog while open (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(isPreferencesOpen);
 
   // Close on Escape
   useEffect(() => {
@@ -281,6 +285,7 @@ export default function CookieConsent() {
           }}
         >
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="dz-cookie-pref-title"
