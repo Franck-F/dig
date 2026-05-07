@@ -15,7 +15,9 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "_comment_test": "requires Node 22+ for stable type-stripping; Node 25 needs no flag",
-    "test": "node --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts"
+    "test": "node --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts",
+    "test:coverage": "node --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts",
+    "test:coverage:lcov": "node --test --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test-reporter=spec --test-reporter-destination=stdout --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

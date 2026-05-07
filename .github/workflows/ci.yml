@@ -54,6 +54,14 @@ jobs:
       - name: Run unit tests
         run: npm test
 
+      - name: Compute coverage
+        # Node's `--experimental-test-coverage` writes coverage to stdout
+        # in the same run, so we re-execute the suite once with coverage.
+        # Cheap because the test surface is small. Output goes to the
+        # workflow log so reviewers can see line/branch percentages
+        # without leaving GitHub.
+        run: npm run test:coverage
+
   build:
     name: Build (Next.js)
     runs-on: ubuntu-24.04
