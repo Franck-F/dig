@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { sendCommunityTemplatedEmail } from '@/lib/community/email';
 import { evaluateBadges } from '@/lib/community/badges';
 import { pickWinnersAndAnnounce } from '@/lib/actions/community/admin/challenges';
+import { buildAndQueueWeeklyDigest, type WeeklyDigestStats } from '@/lib/community/weekly-digest';
 
 // Force Node runtime — Prisma + Resend fetch require it.
 export const runtime = 'nodejs';
@@ -38,6 +39,7 @@ export async function GET(request: Request): Promise<Response> {
   let challengesAdvanced = 0;
   let suspensionsRestored = 0;
   let anniversaryBadges = 0;
+  let weeklyDigest: WeeklyDigestStats = { enqueued: 0, skipped: 0, reason: {} };
 
   // ─── 1. Digest ─────────────────────────────────────────────────────────
   try {
@@ -158,6 +160,16 @@ export async function GET(request: Request): Promise<Response> {
     console.error('[community digest] step 4 failed', e);
   }
 
+  // ─── 5. Weekly content recap (Mondays only) ───────────────────────────
+  // P4 task #50. Runs from this same daily cron to avoid burning a
+  // second cron slot. The function self-gates on day-of-week + a
+  // 6-day per-member fence so re-running mid-Monday is idempotent.
+  try {
+    weeklyDigest = await buildAndQueueWeeklyDigest(now);
+  } catch (e) {
+    console.error('[community digest] step 5 (weekly) failed', e);
+  }
+
   return NextResponse.json({
     ok: true,
     sent: digestsSent,
@@ -165,5 +177,6 @@ export async function GET(request: Request): Promise<Response> {
     challengesAdvanced,
     suspensionsRestored,
     anniversaryBadges,
+    weeklyDigest,
   });
 }
