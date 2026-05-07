@@ -15,9 +15,9 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "_comment_test": "requires Node 22+ for stable type-stripping; Node 25 needs no flag",
-    "test": "node --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts",
-    "test:coverage": "node --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts",
-    "test:coverage:lcov": "node --test --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test-reporter=spec --test-reporter-destination=stdout --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts"
+    "test": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts",
+    "test:coverage": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts",
+    "test:coverage:lcov": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test-reporter=spec --test-reporter-destination=stdout --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -60,6 +60,7 @@
     "eslint-config-next": "^16.2.4",
     "postcss": "^8",
     "prisma": "^6.19.3",
+    "server-only": "^0.0.1",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.21.0",
     "typescript": "^5"

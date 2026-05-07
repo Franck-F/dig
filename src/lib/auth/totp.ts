@@ -112,7 +112,13 @@ export function buildOtpAuthUri(opts: {
    ────────────────────────────────────────────────────────────────────── */
 
 function counterFromTime(unixMs: number, step = 0): Buffer {
-  const counter = Math.floor(unixMs / 1000 / PERIOD_SECONDS) + step;
+  // Clamp at zero — RFC 6238 counters are unsigned, and `step` of -1
+  // when the current counter is 0 (only happens in tests with
+  // `nowMs = 0`) would otherwise blow up `writeUInt32BE`. Real
+  // production calls use `Date.now()` so the counter is always
+  // ~58 million and the clamp is a no-op.
+  const raw = Math.floor(unixMs / 1000 / PERIOD_SECONDS) + step;
+  const counter = Math.max(0, raw);
   const buf = Buffer.alloc(8);
   // 64-bit big-endian — JS bitwise ops are 32-bit, so split.
   buf.writeUInt32BE(Math.floor(counter / 0x1_0000_0000), 0);
@@ -144,7 +150,16 @@ function generateCodeForCounter(secret: Buffer, counter: Buffer): string {
 export function verifyTotp(secretBase32: string, userCode: string, nowMs: number = Date.now()): boolean {
   const cleaned = userCode.replace(/\s+/g, '');
   if (!/^[0-9]{6}$/.test(cleaned)) return false;
-  const secret = base32Decode(secretBase32);
+  // base32Decode throws on invalid characters. A malformed secret
+  // never matches a real authenticator app's output, so we return
+  // false rather than propagate the exception — callers (server
+  // actions) treat that as `invalid_code`.
+  let secret: Buffer;
+  try {
+    secret = base32Decode(secretBase32);
+  } catch {
+    return false;
+  }
 
   const userBuf = Buffer.from(cleaned, 'utf8');
   for (let drift = -ALLOWED_DRIFT_STEPS; drift <= ALLOWED_DRIFT_STEPS; drift += 1) {

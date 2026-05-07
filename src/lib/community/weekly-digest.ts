@@ -7,6 +7,10 @@ import {
   communityWeeklyDigestEmail,
   type WeeklyDigestPostHighlight,
 } from '@/lib/email/templates/community-weekly-digest';
+import { isoWeekTag, isoWeekLabel } from './iso-week';
+
+// Re-exported so the existing public API is unchanged.
+export { isoWeekTag, isoWeekLabel };
 
 /**
  * Weekly community recap. Runs from the daily cron but gates on the
@@ -34,27 +38,6 @@ import {
 const SIX_DAYS_MS = 6 * 24 * 60 * 60 * 1000;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const POSTS_PER_DIGEST = 5;
-
-/** ISO 8601 week number ("YYYY-W##"). Used for the campaign tag. */
-function isoWeekTag(d: Date): string {
-  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-  const dayNum = date.getUTCDay() || 7;
-  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  const weekNum = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-  return `${date.getUTCFullYear()}-W${String(weekNum).padStart(2, '0')}`;
-}
-
-function isoWeekLabel(d: Date): string {
-  const fmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
-  const start = new Date(d);
-  // Monday of current week
-  const dayNum = (start.getUTCDay() + 6) % 7;
-  start.setUTCDate(start.getUTCDate() - dayNum);
-  const end = new Date(start);
-  end.setUTCDate(end.getUTCDate() + 6);
-  return `du ${fmt.format(start)} au ${fmt.format(end)}`;
-}
 
 export type WeeklyDigestStats = {
   enqueued: number;

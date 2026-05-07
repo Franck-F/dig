@@ -1,6 +1,9 @@
 import 'server-only';
 
 import { prisma } from '@/lib/prisma';
+import { normaliseQuery } from './search-query';
+
+export { normaliseQuery };
 
 /**
  * Postgres full-text search over published Posts.
@@ -39,25 +42,6 @@ export type PostSearchHit = {
   publishedAt: Date | null;
   rank: number;
 };
-
-const TSQUERY_TOKEN_MAX_LEN = 40;
-
-function normaliseQuery(raw: string): string | null {
-  // Strip everything that isn't a letter, digit, or whitespace. Keeps
-  // accented French chars via the unicode property escape.
-  const cleaned = raw.normalize('NFC').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim();
-  if (cleaned.length === 0) return null;
-  const tokens = cleaned
-    .split(/\s+/)
-    .filter((t) => t.length >= 2 && t.length <= TSQUERY_TOKEN_MAX_LEN)
-    .slice(0, 6); // Cap at 6 — beyond that the query is too narrow / costly.
-  if (tokens.length === 0) return null;
-  // Last token gets a prefix wildcard: "men" → "men:*"
-  const withPrefix = tokens.map((t, i) =>
-    i === tokens.length - 1 ? `${t}:*` : t,
-  );
-  return withPrefix.join(' & ');
-}
 
 export async function searchPosts(
   rawQuery: string,
