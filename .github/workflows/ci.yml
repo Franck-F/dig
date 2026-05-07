@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same branch — saves CI minutes when a
+# contributor pushes several commits in quick succession.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Read-only by default. Each job opts in to anything broader.
+permissions:
+  contents: read
+
+jobs:
+  lint-typecheck-test:
+    name: Lint, typecheck, test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # `prisma generate` populates `node_modules/.prisma/client` which the
+      # TS compiler needs to resolve `@prisma/client` types. Skip download
+      # of the query engine binary because we won't run queries here.
+      - name: Generate Prisma client
+        run: npx prisma generate
+        env:
+          PRISMA_SKIP_POSTINSTALL_GENERATE: '1'
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+
+      - name: Run unit tests
+        run: npm test
+
+  build:
+    name: Build (Next.js)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    needs: lint-typecheck-test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # Build with placeholder secrets. Real production env vars live on
+      # Vercel and are injected by their build pipeline; this CI build is
+      # only checking that the bundle compiles cleanly. We disable Sentry
+      # source map upload here (no auth token) so the step doesn't fail
+      # on missing credentials.
+      - name: Build
+        run: npm run build
+        env:
+          AUTH_SECRET: ci-placeholder-do-not-use-in-prod
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          DIRECT_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          NEXT_PUBLIC_SITE_URL: https://example.invalid
+          # Skip Sentry plugin entirely — it tries to upload sourcemaps on
+          # `next build` when an auth token is set.
+          SENTRY_DSN: ''
+          NEXT_PUBLIC_SENTRY_DSN: ''
+          SENTRY_AUTH_TOKEN: ''
