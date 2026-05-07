@@ -57,6 +57,20 @@ model User {
   /// consent floor of 15. Year-only (not full DOB) so we minimise the data
   /// stored. Nullable: existing users who pre-date this column have null.
   birthYear     Int?
+  /// TOTP secret in base32, only present once 2FA setup has been
+  /// confirmed. Stored as-is because the secret is required by the HMAC
+  /// verification step at sign-in time; we compensate with strict access
+  /// control + audit logging on read paths. Set to null when 2FA is
+  /// disabled.
+  totpSecret    String?
+  /// Set the moment 2FA setup is confirmed (first valid TOTP code seen).
+  /// Null = 2FA not enabled. ADMIN role users without this set are forced
+  /// through the setup flow before they can enter `/community/admin/*` or
+  /// `/mentora/admin/*`.
+  totpEnabledAt DateTime?
+  /// Bcrypt-hashed single-use backup codes. 10 codes generated at setup
+  /// time; consumed individually when used. Empty array = no codes left.
+  totpBackupCodeHashes String[] @default([])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

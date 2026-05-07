@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import AppShell, { type AppShellNavItem } from '@/components/app-shell/AppShell';
 import { auth, signOut } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 
 /**
  * Shared shell for every `/mentora/admin/*` route.
@@ -30,10 +31,22 @@ export default async function MentoraAdminLayout({ children }: { children: React
       firstName: true,
       lastName: true,
       role: true,
+      totpEnabledAt: true,
     },
   });
 
   if (!user || user.role !== 'ADMIN') redirect('/app');
+
+  // Phase 1 mandate: every ADMIN must clear a TOTP challenge before
+  // entering the pilotage. Two-state redirect:
+  //   - 2FA never set up → /account/2fa/setup?required=1
+  //   - 2FA set up but cookie stale → /account/2fa/challenge
+  if (!user.totpEnabledAt) {
+    redirect('/account/2fa/setup?required=1&next=/mentora/admin');
+  }
+  if (!(await hasFreshAdmin2faCookie(userId))) {
+    redirect('/account/2fa/challenge?next=/mentora/admin');
+  }
 
   const [unreadCount, tShell] = await Promise.all([
     prisma.notification.count({ where: { userId, readAt: null } }),

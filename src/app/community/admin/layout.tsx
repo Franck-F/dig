@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
+import { auth } from '@/auth';
+import { prisma } from '@/lib/prisma';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import { getCommunityViewer } from '../_components/viewer';
 import AdminNav from './_components/AdminNav';
 
@@ -19,6 +22,27 @@ export default async function CommunityAdminLayout({ children }: { children: Rea
   if (viewer.kind !== 'member' || !viewer.isModerator) {
     // Soft denial — don't reveal the route to non-mods.
     redirect('/community');
+  }
+
+  // Phase 1: enforce 2FA for ADMIN role users entering /community/admin/*.
+  // Moderators without ADMIN role are not yet subject to the gate (Phase 2).
+  // We refetch role + totpEnabledAt from the DB rather than trusting the
+  // session token, which may be stale.
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (userId) {
+    const me = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true, totpEnabledAt: true },
+    });
+    if (me?.role === 'ADMIN') {
+      if (!me.totpEnabledAt) {
+        redirect('/account/2fa/setup?required=1&next=/community/admin');
+      }
+      if (!(await hasFreshAdmin2faCookie(userId))) {
+        redirect('/account/2fa/challenge?next=/community/admin');
+      }
+    }
   }
 
   const t = await getTranslations('community.admin');

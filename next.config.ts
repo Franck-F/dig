@@ -61,7 +61,7 @@ const cspDirectives = [
   // Styles: every page uses `style={{…}}` and styled-jsx → unsafe-inline
   // is required. We compensate by hardening other directives.
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://*.supabase.co https://*.public.blob.vercel-storage.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://cdn.discordapp.com",
+  "img-src 'self' data: blob: https://*.supabase.co https://*.public.blob.vercel-storage.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://cdn.discordapp.com https://api.qrserver.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   // XHR / fetch: same origin + Supabase (REST + Realtime WS) + Resend +
   // Sentry (both EU and US ingestion regions) + Vercel.

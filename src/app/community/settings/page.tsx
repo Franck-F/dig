@@ -58,6 +58,34 @@ export default async function CommunitySettingsPage() {
         }}
       />
 
+      <Link
+        href="/account/2fa"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          padding: 18,
+          borderRadius: 18,
+          background: 'rgba(115,1,255,0.04)',
+          border: '1px solid rgba(115,1,255,0.20)',
+          textDecoration: 'none',
+          color: 'inherit',
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: '#7301FF' }}>
+            Sécurité
+          </div>
+          <h3 style={{ margin: '4px 0 2px', fontSize: 16, fontWeight: 800, color: '#1a1f3a' }}>
+            Double authentification (2FA)
+          </h3>
+          <p style={{ margin: 0, fontSize: 13, color: '#3a2960' }}>
+            Active une 2FA TOTP pour protéger ton compte au-delà du mot de passe.
+          </p>
+        </div>
+        <div style={{ fontSize: 18, color: '#7301FF' }}>→</div>
+      </Link>
+
       <DataPortabilityPanel />
 
       <DangerZone />
