@@ -10,6 +10,7 @@ const SECTIONS = [
   { key: 'badges', href: '/community/admin/badges' },
   { key: 'users', href: '/community/admin/users' },
   { key: 'challenges', href: '/community/admin/challenges' },
+  { key: 'flags', href: '/community/admin/flags' },
   { key: 'auditLog', href: '/community/admin/audit-log' },
   { key: 'rgpd', href: '/community/admin/rgpd' },
 ] as const;
