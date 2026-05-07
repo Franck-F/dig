@@ -30,13 +30,15 @@ export default async function TwoFactorPage() {
       totpEnabledAt: true,
       totpBackupCodeHashes: true,
       communityMember: { select: { isModerator: true } },
+      mentorProfile: { select: { status: true } },
     },
   });
   if (!me) redirect('/login');
 
   const isAdmin = me.role === 'ADMIN';
   const isModerator = Boolean(me.communityMember?.isModerator);
-  const isPrivileged = isAdmin || isModerator;
+  const isActiveMentor = me.mentorProfile?.status === 'ACTIVE';
+  const isPrivileged = isAdmin || isModerator || isActiveMentor;
   const enabled = Boolean(me.totpEnabledAt);
 
   return (
@@ -75,6 +77,7 @@ export default async function TwoFactorPage() {
         Une étape supplémentaire pour protéger ton compte.
         {isAdmin && ' Obligatoire pour les administrateurs.'}
         {!isAdmin && isModerator && ' Obligatoire pour les modérateurs et modératrices.'}
+        {!isAdmin && !isModerator && isActiveMentor && ' Obligatoire pour les mentors actifs.'}
       </p>
 
       {!enabled ? (
@@ -149,8 +152,16 @@ export default async function TwoFactorPage() {
                 lineHeight: 1.6,
               }}
             >
-              <strong>2FA verrouillée pour {isAdmin ? 'les administrateurs' : 'les modérateurs et modératrices'}.</strong>{' '}
-              Pour désactiver ou réinitialiser, demande à un autre administrateur ou contacte
+              <strong>
+                2FA verrouillée pour{' '}
+                {isAdmin
+                  ? 'les administrateurs'
+                  : isModerator
+                    ? 'les modérateurs et modératrices'
+                    : 'les mentors actifs'}
+                .
+              </strong>{' '}
+              Pour désactiver ou réinitialiser, demande à un⋅e administrateur⋅trice ou contacte
               dpo@calebasse.com.
             </section>
           )}

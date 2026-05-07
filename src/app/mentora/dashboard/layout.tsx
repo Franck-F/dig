@@ -8,6 +8,7 @@ import AppShell, { type AppShellNavItem } from '@/components/app-shell/AppShell'
 import { auth, signOut } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 
 /**
  * Notification types that belong to the Mentora section. The bell shows
@@ -42,6 +43,26 @@ export default async function MentoraDashboardLayout({ children }: { children: R
   if (!session?.user?.id) redirect('/login?next=/mentora/dashboard');
 
   const userId = session.user.id;
+
+  // P4 task #47 — 2FA mandatory for ACTIVE mentors. Their dashboard
+  // exposes mentee personal data (goals, location, messages) so the
+  // step-up cookie has to be fresh. Mentors still in DRAFT or
+  // PENDING_REVIEW are pre-production; we don't gate them yet.
+  // Re-uses the same `dz-admin-2fa` cookie as the admin gate so a
+  // mentor who's also an admin only challenges once per session.
+  const userPretotp = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { totpEnabledAt: true, mentorProfile: { select: { status: true } } },
+  });
+  if (userPretotp?.mentorProfile?.status === 'ACTIVE') {
+    if (!userPretotp.totpEnabledAt) {
+      redirect('/account/2fa/setup?required=1&next=/mentora/dashboard');
+    }
+    if (!(await hasFreshAdmin2faCookie(userId))) {
+      redirect('/account/2fa/challenge?next=/mentora/dashboard');
+    }
+  }
+
   const [roleProfile, unreadCount, latestNotifs, t, tShell, tNotifTypes, tBellCopy] = await Promise.all([
     getCurrentRoleProfile(userId),
     // Section-scoped unread count — matches the bell popover's filter so the

@@ -238,9 +238,18 @@ export async function disableTotp(formData: FormData): Promise<TotpDisableState>
       totpEnabledAt: true,
       role: true,
       communityMember: { select: { isModerator: true } },
+      mentorProfile: { select: { status: true } },
     },
   });
-  if (user?.role === 'ADMIN' || user?.communityMember?.isModerator) {
+  // ADMIN, community moderators, and ACTIVE mentors can't self-disable
+  // 2FA — all three roles handle sensitive data (audit trail, mentee
+  // profiles, etc.). They go through the admin reset flow if they
+  // really need to disable it.
+  if (
+    user?.role === 'ADMIN' ||
+    user?.communityMember?.isModerator ||
+    user?.mentorProfile?.status === 'ACTIVE'
+  ) {
     return { status: 'error', error: 'is_admin' };
   }
   if (!user?.totpEnabledAt || !user.totpSecret) {
