@@ -24,24 +24,25 @@ export default async function CommunityAdminLayout({ children }: { children: Rea
     redirect('/community');
   }
 
-  // Phase 1: enforce 2FA for ADMIN role users entering /community/admin/*.
-  // Moderators without ADMIN role are not yet subject to the gate (Phase 2).
-  // We refetch role + totpEnabledAt from the DB rather than trusting the
-  // session token, which may be stale.
+  // 2FA gate. The Community admin shell is shared by ADMINs and
+  // moderators (`isModerator = true` on the CommunityMember row). Both
+  // hold powers a phished session would abuse — bans, posts removed,
+  // badges granted, audit-trail visible — so the second factor is
+  // mandatory for either role. We refetch role from the DB rather than
+  // trusting the session token, which may be stale if the user was
+  // recently demoted.
   const session = await auth();
   const userId = session?.user?.id;
   if (userId) {
     const me = await prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true, totpEnabledAt: true },
+      select: { totpEnabledAt: true },
     });
-    if (me?.role === 'ADMIN') {
-      if (!me.totpEnabledAt) {
-        redirect('/account/2fa/setup?required=1&next=/community/admin');
-      }
-      if (!(await hasFreshAdmin2faCookie(userId))) {
-        redirect('/account/2fa/challenge?next=/community/admin');
-      }
+    if (!me?.totpEnabledAt) {
+      redirect('/account/2fa/setup?required=1&next=/community/admin');
+    }
+    if (!(await hasFreshAdmin2faCookie(userId))) {
+      redirect('/account/2fa/challenge?next=/community/admin');
     }
   }
 

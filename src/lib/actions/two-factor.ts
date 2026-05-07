@@ -206,9 +206,11 @@ export type TotpDisableState =
 
 /**
  * Disable 2FA. Requires a fresh TOTP code as proof of possession to
- * stop a stolen-session attacker from disabling it. ADMIN role users
- * cannot disable 2FA themselves — Phase 1 policy is "admins always
- * have 2FA"; if an admin needs reset, another admin must do it.
+ * stop a stolen-session attacker from disabling it. ADMINs *and*
+ * community moderators cannot self-disable — both roles have abusive-
+ * power surface in the admin shell, so the gate must hold. If a
+ * locked-out admin/mod loses their device, another admin clears the
+ * columns directly (Phase 3 will add a peer-recovery flow).
  */
 export async function disableTotp(formData: FormData): Promise<TotpDisableState> {
   let me;
@@ -218,15 +220,19 @@ export async function disableTotp(formData: FormData): Promise<TotpDisableState>
     return { status: 'error', error: 'unauthenticated' };
   }
 
-  if (me.role === 'ADMIN') {
-    return { status: 'error', error: 'is_admin' };
-  }
-
   const code = String(formData.get('code') ?? '').trim();
   const user = await prisma.user.findUnique({
     where: { id: me.userId },
-    select: { totpSecret: true, totpEnabledAt: true },
+    select: {
+      totpSecret: true,
+      totpEnabledAt: true,
+      role: true,
+      communityMember: { select: { isModerator: true } },
+    },
   });
+  if (user?.role === 'ADMIN' || user?.communityMember?.isModerator) {
+    return { status: 'error', error: 'is_admin' };
+  }
   if (!user?.totpEnabledAt || !user.totpSecret) {
     return { status: 'error', error: 'not_enabled' };
   }
