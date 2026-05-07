@@ -41,12 +41,27 @@ const signInSchema = z.object({
   password: z.string().min(1, 'passwordRequired'),
 });
 
+const CURRENT_YEAR = new Date().getFullYear();
+const MIN_AGE_YEARS = 15; // RGPD Art. 8 — French digital consent floor.
+const MAX_BIRTH_YEAR = CURRENT_YEAR - MIN_AGE_YEARS;
+const MIN_BIRTH_YEAR = CURRENT_YEAR - 120;
+
 const signUpSchema = z.object({
   firstName: z.string().min(1, 'firstNameRequired').max(80),
   lastName: z.string().min(1, 'lastNameRequired').max(80),
   email: z.string().email('emailInvalid').max(200),
   password: z.string().min(8, 'passwordTooShort').max(200),
   role: z.nativeEnum(UserRole),
+  // Year of birth is parsed separately so we can return distinct error
+  // codes for "missing", "below 15", and "implausible" (the form needs to
+  // tell the user what to fix, and we don't want a single generic
+  // `invalidBirthYear` to mask the parental-consent message).
+  birthYear: z
+    .coerce
+    .number()
+    .int()
+    .min(MIN_BIRTH_YEAR, 'invalidBirthYear')
+    .max(MAX_BIRTH_YEAR, 'belowMinAge'),
 });
 
 const codeSchema = z
@@ -238,12 +253,13 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
     email: formData.get('email'),
     password: formData.get('password'),
     role: formData.get('role'),
+    birthYear: formData.get('birthYear'),
   });
   if (!parsed.success) {
     return { status: 'error', error: parsed.error.issues[0]?.message ?? 'invalid' };
   }
 
-  const { firstName, lastName, email, password, role } = parsed.data;
+  const { firstName, lastName, email, password, role, birthYear } = parsed.data;
 
   const rl = await checkAuthRateLimit('signUp', email);
   if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
@@ -265,6 +281,7 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
         name: `${firstName} ${lastName}`,
         passwordHash,
         role,
+        birthYear,
       },
     });
   } else {
@@ -277,6 +294,7 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
         passwordHash,
         role,
         emailVerified: null,
+        birthYear,
       },
     });
   }

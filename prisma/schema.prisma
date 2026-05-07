@@ -51,6 +51,12 @@ model User {
   /// rows where `deletedAt` is older than 30 days. Restoration before
   /// purge is supported by setting deletedAt back to null.
   deletedAt     DateTime?
+  /// Year of birth declared at signup. Defence-in-depth on RGPD Art. 8 —
+  /// supplements the "I am 15+" attestation checkbox by letting us refuse
+  /// sign-ups whose declared year would put them under the French digital
+  /// consent floor of 15. Year-only (not full DOB) so we minimise the data
+  /// stored. Nullable: existing users who pre-date this column have null.
+  birthYear     Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

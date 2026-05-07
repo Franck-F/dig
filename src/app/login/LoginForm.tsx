@@ -702,6 +702,8 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
       'oauthDisabled',
       'rateLimited',
       'ageRequired',
+      'belowMinAge',
+      'invalidBirthYear',
       'generic',
     ] as const;
     type ErrKey = (typeof knownKeys)[number];
@@ -856,11 +858,38 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                 autoComplete="off"
               />
             </div>
-            {/* Age declaration. Article 8 RGPD: data subjects under 15 in
-                France need parental consent — we don't have that flow yet
-                so we hard-gate on declared age. The flag is enforced
-                server-side; this checkbox is informational + UX. */}
-            <div>
+            {/* Age gate. Two-layer defence on RGPD Art. 8 (French digital
+                consent age = 15):
+                  1. Numeric `birthYear` — server validates the declared
+                     year is 1906..currentYear-15 and rejects with
+                     `belowMinAge` if too recent.
+                  2. Self-declaration checkbox — same idea, dual signal in
+                     case the user mistypes the year. Both flags are
+                     enforced server-side; the input + checkbox are pure
+                     UX. */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
+              <div>
+                <label htmlFor="signup-birthyear" className="dz-label">
+                  {t('signupForm.birthYearLabel')}
+                </label>
+                <input
+                  id="signup-birthyear"
+                  name="birthYear"
+                  type="number"
+                  inputMode="numeric"
+                  className="dz-input"
+                  required
+                  min={1906}
+                  max={new Date().getFullYear() - 15}
+                  step={1}
+                  placeholder={t('signupForm.birthYearPlaceholder')}
+                  autoComplete="bday-year"
+                  style={{ width: '100%' }}
+                />
+                <span className="dz-small" style={{ display: 'block', marginTop: 4, fontSize: 12, color: '#6b6b8a' }}>
+                  {t('signupForm.birthYearHelper')}
+                </span>
+              </div>
               <label
                 style={{
                   display: 'flex',

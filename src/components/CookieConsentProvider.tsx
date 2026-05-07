@@ -24,6 +24,14 @@ type CookieConsentContextValue = {
 
 const STORAGE_KEY = 'digizelle-cookie-consent';
 
+/**
+ * CNIL recommendation 2020-091 §2.3.1 — proof of consent must be kept
+ * fresh. The recommended ceiling is 13 months from the user's last action
+ * on the banner; after that we treat the saved choice as expired and
+ * re-prompt. We round to milliseconds so the comparison is unambiguous.
+ */
+const CONSENT_TTL_MS = 13 * 30 * 24 * 60 * 60 * 1000;
+
 const CookieConsentContext = createContext<CookieConsentContextValue | null>(null);
 
 function persist(consent: CookieConsent): StoredConsent {
@@ -65,12 +73,24 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate from localStorage after mount
+  // Hydrate from localStorage after mount. Honours the 13-month TTL
+  // recommended by the CNIL — an expired record is treated as if the user
+  // never decided, so the banner re-shows on next page load.
   useEffect(() => {
     const stored = readStored();
     if (stored) {
-      setConsent({ essential: true, preferences: stored.preferences, analytics: stored.analytics });
-      setHasDecided(true);
+      const decidedAt = Date.parse(stored.decidedAt);
+      const isExpired = Number.isFinite(decidedAt) && Date.now() - decidedAt > CONSENT_TTL_MS;
+      if (isExpired) {
+        try {
+          window.localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          /* noop */
+        }
+      } else {
+        setConsent({ essential: true, preferences: stored.preferences, analytics: stored.analytics });
+        setHasDecided(true);
+      }
     }
     setIsHydrated(true);
   }, []);
