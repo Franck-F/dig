@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/CookieConsentProvider';
 import CookieConsent from '@/components/CookieConsent';
 import ScrollRevealAuto from '@/components/ScrollRevealAuto';
+import WebVitalsReporter from '@/components/WebVitalsReporter';
 import {
   SessionContextProvider,
   type SessionInfo,
@@ -151,6 +152,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               <ThemeProvider>{children}</ThemeProvider>
               <CookieConsent />
               <ScrollRevealAuto />
+              <WebVitalsReporter />
             </CookieConsentProvider>
           </SessionContextProvider>
         </NextIntlClientProvider>
