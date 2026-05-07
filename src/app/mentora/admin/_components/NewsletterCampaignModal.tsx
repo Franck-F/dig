@@ -6,7 +6,9 @@ import { createPortal } from 'react-dom';
 import {
   type Audience,
   countAudience,
+  getNewsletterCampaignStatus,
   sendNewsletterCampaign,
+  triggerNewsletterDrain,
 } from '@/lib/actions/newsletter';
 
 type Props = {
@@ -47,11 +49,18 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
   const [countLoading, setCountLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
+    campaignTag: string;
+    recipientCount: number;
+    mocked: boolean;
+  } | null>(null);
+  const [progress, setProgress] = useState<{
+    pending: number;
+    sending: number;
     sent: number;
     failed: number;
     total: number;
-    mocked: boolean;
   } | null>(null);
+  const [draining, setDraining] = useState(false);
   const [pending, startTransition] = useTransition();
 
   // Live audience count whenever the picker changes.
@@ -122,11 +131,23 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
         const res = await sendNewsletterCampaign({ subject, body, audience });
         if (res.status === 'success') {
           setResult({
-            sent: res.sent,
-            failed: res.failed,
-            total: res.total,
+            campaignTag: res.campaignTag,
+            recipientCount: res.recipientCount,
             mocked: res.mocked,
           });
+          // Pull the first status snapshot so the result screen has
+          // numbers to display immediately (the in-request drain
+          // already moved some items to SENT).
+          const status = await getNewsletterCampaignStatus(res.campaignTag);
+          if (status.status === 'success') {
+            setProgress({
+              pending: status.pending,
+              sending: status.sending,
+              sent: status.sent,
+              failed: status.failed,
+              total: status.total,
+            });
+          }
           setView('done');
         } else {
           setError(humanizeError(res.error));
@@ -136,6 +157,46 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
     } else if (view === 'done' || view === 'error') {
       closeModal();
     }
+  };
+
+  // Live progress polling — refreshes every 3s while the result panel is
+  // visible AND there are still pending/sending items. Stops cleanly
+  // when everything is settled or the user closes the modal.
+  useEffect(() => {
+    if (view !== 'done' || !result?.campaignTag) return;
+    if (progress && progress.pending === 0 && progress.sending === 0) return;
+    const id = setInterval(async () => {
+      const s = await getNewsletterCampaignStatus(result.campaignTag);
+      if (s.status === 'success') {
+        setProgress({
+          pending: s.pending,
+          sending: s.sending,
+          sent: s.sent,
+          failed: s.failed,
+          total: s.total,
+        });
+      }
+    }, 3000);
+    return () => clearInterval(id);
+  }, [view, result?.campaignTag, progress]);
+
+  const onAccelerateDrain = () => {
+    if (draining || !result) return;
+    setDraining(true);
+    triggerNewsletterDrain()
+      .then(async () => {
+        const s = await getNewsletterCampaignStatus(result.campaignTag);
+        if (s.status === 'success') {
+          setProgress({
+            pending: s.pending,
+            sending: s.sending,
+            sent: s.sent,
+            failed: s.failed,
+            total: s.total,
+          });
+        }
+      })
+      .finally(() => setDraining(false));
   };
 
   const primaryLabel =
@@ -283,6 +344,9 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
                     view={view}
                     error={error}
                     result={result}
+                    progress={progress}
+                    draining={draining}
+                    onAccelerateDrain={onAccelerateDrain}
                   />
                 )}
 
@@ -471,14 +535,28 @@ function ConfirmView({
   );
 }
 
+type ProgressShape = {
+  pending: number;
+  sending: number;
+  sent: number;
+  failed: number;
+  total: number;
+};
+
 function ResultView({
   view,
   error,
   result,
+  progress,
+  draining,
+  onAccelerateDrain,
 }: {
   view: View;
   error: string | null;
-  result: { sent: number; failed: number; total: number; mocked: boolean } | null;
+  result: { campaignTag: string; recipientCount: number; mocked: boolean } | null;
+  progress: ProgressShape | null;
+  draining: boolean;
+  onAccelerateDrain: () => void;
 }) {
   if (view === 'sending') {
     return (
@@ -495,7 +573,7 @@ function ResultView({
           }}
         />
         <p style={{ margin: 0, color: '#3a2960', fontWeight: 600 }}>
-          Envoi en cours…
+          Mise en file d'attente…
         </p>
         <style>{`@keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }`}</style>
       </div>
@@ -511,17 +589,74 @@ function ResultView({
     );
   }
   if (view === 'done' && result) {
+    const total = progress?.total ?? result.recipientCount;
+    const sent = progress?.sent ?? 0;
+    const pending = (progress?.pending ?? 0) + (progress?.sending ?? 0);
+    const failed = progress?.failed ?? 0;
+    const pct = total === 0 ? 100 : Math.round((sent / total) * 100);
+    const allDone = pending === 0;
     return (
       <div style={{ textAlign: 'center', padding: '4px 0 0' }}>
-        <div style={{ fontSize: 36, marginBottom: 10, color: '#23c55e' }}>✓</div>
-        <h3 style={{ margin: '0 0 8px', fontSize: 20 }}>
-          {result.mocked ? 'Envoi simulé' : 'Newsletter envoyée'}
+        <div style={{ fontSize: 36, marginBottom: 10, color: allDone ? '#23c55e' : '#7301FF' }}>
+          {allDone ? '✓' : '⟳'}
+        </div>
+        <h3 style={{ margin: '0 0 6px', fontSize: 20 }}>
+          {result.mocked
+            ? 'Envoi simulé'
+            : allDone
+              ? 'Campagne terminée'
+              : 'Envoi en cours…'}
         </h3>
         <p style={{ margin: 0, color: '#3a2960', fontSize: 14 }}>
-          {result.sent} envoyé{result.sent > 1 ? 's' : ''}
-          {result.failed > 0 ? ` · ${result.failed} échec${result.failed > 1 ? 's' : ''}` : ''}
-          {' '}sur {result.total} destinataire{result.total > 1 ? 's' : ''}.
+          {sent} envoyé{sent > 1 ? 's' : ''}
+          {failed > 0 ? ` · ${failed} échec${failed > 1 ? 's' : ''}` : ''}
+          {' '}sur {total} destinataire{total > 1 ? 's' : ''}
+          {!allDone && ` · ${pending} en attente`}.
         </p>
+
+        {/* Progress bar — animates as the queue drains. */}
+        <div
+          style={{
+            margin: '14px auto 0',
+            width: '100%',
+            maxWidth: 380,
+            height: 8,
+            background: 'rgba(115,1,255,0.10)',
+            borderRadius: 4,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              width: `${pct}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #7301FF, #A34BF5)',
+              transition: 'width 0.4s ease',
+            }}
+          />
+        </div>
+
+        {!allDone && !result.mocked && (
+          <button
+            type="button"
+            onClick={onAccelerateDrain}
+            disabled={draining}
+            style={{
+              marginTop: 16,
+              padding: '8px 16px',
+              borderRadius: 10,
+              border: '1px solid rgba(115,1,255,0.20)',
+              background: 'white',
+              color: '#7301FF',
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: draining ? 'wait' : 'pointer',
+            }}
+          >
+            {draining ? 'Accélération…' : 'Accélérer l\'envoi'}
+          </button>
+        )}
+
         {result.mocked && (
           <p
             style={{

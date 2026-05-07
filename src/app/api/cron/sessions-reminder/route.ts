@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
 import { expirePendingRequests } from '@/lib/actions/mentora/requests';
+import { drainEmailQueueFully } from '@/lib/email/queue';
 
 // Force Node runtime — Prisma + Resend fetch require it.
 export const runtime = 'nodejs';
@@ -92,11 +93,24 @@ export async function GET(request: Request): Promise<Response> {
     console.error('[cron] expirePendingRequests failed', err);
   }
 
+  // Drain the email queue (newsletter campaigns + future transactional
+  // backlog). Vercel Hobby caps us to 2 daily crons; piggy-backing here
+  // avoids burning the second slot on a queue drain. Bounded to 5
+  // iterations × 30 items so we stay well under the 10s budget even
+  // with sessions reminders running first.
+  let queueDrain = { totalSent: 0, totalRetried: 0, totalFailed: 0, iterations: 0 };
+  try {
+    queueDrain = await drainEmailQueueFully(5, 30);
+  } catch (err) {
+    console.error('[cron] email queue drain failed', err);
+  }
+
   return NextResponse.json({
     ok: true,
     candidates: due.length,
     remindersSent,
     stampFailures,
     expiredRequests,
+    queueDrain,
   });
 }

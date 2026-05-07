@@ -1027,6 +1027,54 @@ model MemberBadge {
   @@index([memberId])
 }
 
+/// Outbox queue for transactional + bulk emails. Replaces synchronous
+/// sends from server actions which timed out at scale (Vercel Hobby
+/// caps function execution at 10s; a 200-recipient newsletter blew
+/// through that mid-loop and corrupted state).
+///
+/// Lifecycle:
+///   PENDING   — fresh row, claimed by the drainer in next pass
+///   SENDING   — drainer locked it; resets to PENDING after the lock
+///               expires so a crashed drainer doesn't strand items
+///   SENT      — Resend accepted the message
+///   FAILED    — exhausted maxAttempts; admin can re-enqueue manually
+enum EmailQueueStatus {
+  PENDING
+  SENDING
+  SENT
+  FAILED
+}
+
+model EmailQueueItem {
+  id            String           @id @default(cuid())
+  to            String
+  subject       String
+  html          String           @db.Text
+  text          String?          @db.Text
+  /// Identifier for the batch this item belongs to (e.g.
+  /// `newsletter:2026-05-07T12:34:56Z`). Two items with the same
+  /// (audienceTag, to) tuple are deduplicated by the @@unique below —
+  /// re-running an enqueue is a no-op.
+  audienceTag   String
+  status        EmailQueueStatus @default(PENDING)
+  attempts      Int              @default(0)
+  maxAttempts   Int              @default(3)
+  lastError     String?
+  scheduledFor  DateTime         @default(now())
+  /// Set by the drainer when it claims the item; cleared on completion.
+  /// A row stuck in SENDING with a lockedAt older than 5 min is
+  /// considered abandoned and reclaimed.
+  lockedAt      DateTime?
+  sentAt        DateTime?
+  failedAt      DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@unique([audienceTag, to])
+  @@index([status, scheduledFor])
+  @@index([audienceTag])
+}
+
 /// Append-only audit trail of every admin action across the platform.
 /// Distinct from `ModerationAction` (which is community-scoped + ties to
 /// posts/comments/members in the modération workflow) — `AuditLog` covers

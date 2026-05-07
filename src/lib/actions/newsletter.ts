@@ -3,8 +3,12 @@
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireUser } from './_shared';
-import { sendEmail } from '@/lib/email/resend';
 import { logAdmin } from '@/lib/audit/log';
+import {
+  drainEmailQueue,
+  enqueueEmails,
+  getCampaignStatus,
+} from '@/lib/email/queue';
 
 export type NewsletterState =
   | { status: 'idle' }
@@ -48,16 +52,6 @@ export async function subscribeNewsletter(_prev: NewsletterState, formData: Form
 // UI surfaces the result inline (sent / failed / total).
 
 export type Audience = 'subscribers' | 'mentors' | 'mentees' | 'community' | 'all';
-
-export type CampaignResult =
-  | {
-      status: 'success';
-      sent: number;
-      failed: number;
-      total: number;
-      mocked: boolean;
-    }
-  | { status: 'error'; error: string };
 
 const campaignSchema = z.object({
   subject: z.string().trim().min(5, 'Sujet trop court').max(200, 'Sujet trop long'),
@@ -117,11 +111,27 @@ export async function countAudience(
   }
 }
 
+/**
+ * Newsletter send is now a 2-phase operation:
+ *   1. Enqueue every recipient as an EmailQueueItem (instant; tagged with
+ *      a campaign id so the admin UI can poll progress).
+ *   2. Best-effort synchronous drain inside the same request — sends as
+ *      many as fit in the function's 10s budget. Whatever's left
+ *      finishes on the next cron pass (sessions-reminder also drains
+ *      the queue, P0 task #9 wires this).
+ *
+ * The admin UI receives the campaign tag and polls `getNewsletterCampaignStatus`
+ * to render live progress (queued / sent / failed) without holding the
+ * request open.
+ */
 export async function sendNewsletterCampaign(input: {
   subject: string;
   body: string;
   audience: Audience;
-}): Promise<CampaignResult> {
+}): Promise<
+  | { status: 'success'; campaignTag: string; recipientCount: number; mocked: boolean }
+  | { status: 'error'; error: string }
+> {
   try {
     const me = await requireUser();
     if (me.role !== 'ADMIN') return { status: 'error', error: 'unauthorized' };
@@ -143,25 +153,26 @@ export async function sendNewsletterCampaign(input: {
 
     const html = renderNewsletterHtml({ subject, body });
     const text = body;
+    // Campaign tag = audience + ISO timestamp. Stable across an enqueue
+    // call; if the admin re-clicks Send within the same second the
+    // (audienceTag, to) unique constraint dedups, so no duplicate emails.
+    const campaignTag = `newsletter:${audience}:${new Date().toISOString()}`;
 
-    let sent = 0;
-    let failed = 0;
+    const enqueued = await enqueueEmails(
+      campaignTag,
+      emails.map((to) => ({ to, subject, html, text })),
+    );
+
+    // Best-effort first drain pass to start delivering immediately. We
+    // cap at 30 items so we stay well under the 10s function budget;
+    // remaining items wait for the next drain (cron or admin re-trigger).
     let mocked = false;
-    const BATCH_SIZE = 10;
-
-    for (let i = 0; i < emails.length; i += BATCH_SIZE) {
-      const batch = emails.slice(i, i + BATCH_SIZE);
-      const results = await Promise.allSettled(
-        batch.map((to) => sendEmail({ to, subject, html, text })),
-      );
-      for (const r of results) {
-        if (r.status === 'fulfilled' && r.value.ok) {
-          sent++;
-          if ('mocked' in r.value && r.value.mocked) mocked = true;
-        } else {
-          failed++;
-        }
-      }
+    try {
+      const r = await drainEmailQueue(30);
+      mocked = r.mocked;
+    } catch (err) {
+      // Drain failure shouldn't fail the enqueue — the cron will retry.
+      console.error('[newsletter] in-request drain failed', err);
     }
 
     await logAdmin(me.userId, {
@@ -171,15 +182,76 @@ export async function sendNewsletterCampaign(input: {
         audience,
         subject: subject.slice(0, 200),
         recipientCount: emails.length,
-        sent,
-        failed,
-        mocked,
+        enqueued,
+        campaignTag,
       },
     });
 
-    return { status: 'success', sent, failed, total: emails.length, mocked };
+    return {
+      status: 'success',
+      campaignTag,
+      recipientCount: emails.length,
+      mocked,
+    };
   } catch {
     return { status: 'error', error: 'send_failed' };
+  }
+}
+
+/**
+ * Polled by the admin UI to render live campaign progress. The drainer
+ * may have moved items SENDING / SENT / FAILED since enqueue; this
+ * returns the snapshot so the UI can update its counters.
+ */
+export async function getNewsletterCampaignStatus(
+  campaignTag: string,
+): Promise<
+  | {
+      status: 'success';
+      pending: number;
+      sending: number;
+      sent: number;
+      failed: number;
+      total: number;
+    }
+  | { status: 'error'; error: string }
+> {
+  try {
+    const me = await requireUser();
+    if (me.role !== 'ADMIN') return { status: 'error', error: 'unauthorized' };
+    const counts = await getCampaignStatus(campaignTag);
+    return { status: 'success', ...counts };
+  } catch {
+    return { status: 'error', error: 'unauthorized' };
+  }
+}
+
+/**
+ * Manual drain trigger — admin can hit this from the campaign progress
+ * panel if the cron is too slow for their needs (e.g. 500-recipient
+ * campaign, they want the rest delivered now). Bounded by drainBatch +
+ * loop iterations to stay within the function timeout.
+ */
+export async function triggerNewsletterDrain(): Promise<
+  | { status: 'success'; sent: number; retried: number; failed: number; iterations: number }
+  | { status: 'error'; error: string }
+> {
+  try {
+    const me = await requireUser();
+    if (me.role !== 'ADMIN') return { status: 'error', error: 'unauthorized' };
+    // Up to 5 iterations × 30 items = 150 max processed per call (well
+    // under the 10s budget given Resend's 150ms median latency).
+    const { drainEmailQueueFully } = await import('@/lib/email/queue');
+    const r = await drainEmailQueueFully(5, 30);
+    return {
+      status: 'success',
+      sent: r.totalSent,
+      retried: r.totalRetried,
+      failed: r.totalFailed,
+      iterations: r.iterations,
+    };
+  } catch {
+    return { status: 'error', error: 'drain_failed' };
   }
 }
 
