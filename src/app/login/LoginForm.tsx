@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   signIn,
@@ -175,7 +175,15 @@ const PROVIDERS: ReadonlyArray<{
   { key: 'github',  label: 'GitHub',  Icon: GitHubIcon,  tint: 'rgba(36, 41, 47, 0.18)',    ring: 'rgba(36, 41, 47, 0.40)' },
 ] as const;
 
-function SocialButtons({ enabled, disabledLabel }: { enabled: OAuthEnabled; disabledLabel: string }) {
+function SocialButtons({
+  enabled,
+  disabledLabel,
+  next,
+}: {
+  enabled: OAuthEnabled;
+  disabledLabel: string;
+  next?: string;
+}) {
   const [pending, startTransition] = useTransition();
   const [pendingKey, setPendingKey] = useState<ProviderKey | null>(null);
   const [hoverKey, setHoverKey] = useState<ProviderKey | null>(null);
@@ -201,7 +209,7 @@ function SocialButtons({ enabled, disabledLabel }: { enabled: OAuthEnabled; disa
               if (!isEnabled) return;
               setPendingKey(key);
               startTransition(() => {
-                void signInWithProvider(key);
+                void signInWithProvider(key, next);
               });
             }}
             style={{
@@ -635,6 +643,14 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
   const t = useTranslations('login');
   const tErr = useTranslations('login.errors');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // `?next=` carries the original gated-route URL when the user was
+  // bounced here from a SaaS page. Sanitised both client-side here
+  // (cosmetic — never used in a redirect) and server-side via the
+  // safeNextPath() helper in src/lib/actions/auth.ts.
+  const rawNext = searchParams?.get('next') ?? '';
+  const nextPath =
+    rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '';
   const [tab, setTab] = useState<'login' | 'signup'>('login');
   const [role, setRole] = useState<RoleValue>('STUDENT');
 
@@ -710,6 +726,11 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
 
       {tab === 'login' ? (
         <form action={loginAction}>
+          {/* Carry the original gated-route URL through so the server
+              action can return us to it after auth. The hidden input
+              is sanitised server-side via safeNextPath() — anything
+              off-origin is dropped. */}
+          {nextPath && <input type="hidden" name="next" value={nextPath} />}
           <h2 className="dz-h2" style={{ fontSize: 32 }}>
             {t('loginForm.title')} <span className="dz-grad-text">{t('loginForm.titleHighlight')}</span>
           </h2>
@@ -765,7 +786,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
             </button>
           </div>
           <div className="dz-divider"><span className="dz-small">{t('loginForm.or')}</span></div>
-          <SocialButtons enabled={oauthEnabled} disabledLabel={t('oauth.disabled')} />
+          <SocialButtons enabled={oauthEnabled} disabledLabel={t("oauth.disabled")} next={nextPath} />
         </form>
       ) : (
         <form action={signupAction}>
@@ -868,7 +889,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
             </div>
           </div>
           <div className="dz-divider"><span className="dz-small">{t('loginForm.or')}</span></div>
-          <SocialButtons enabled={oauthEnabled} disabledLabel={t('oauth.disabled')} />
+          <SocialButtons enabled={oauthEnabled} disabledLabel={t("oauth.disabled")} next={nextPath} />
         </form>
       )}
 

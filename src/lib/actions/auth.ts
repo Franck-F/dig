@@ -81,6 +81,28 @@ function generateCode(): string {
   return String(randomInt(0, 1_000_000)).padStart(6, '0');
 }
 
+/**
+ * Validate a `next=` redirect target. Only accepts same-origin paths
+ * (must start with a single `/`, not `//` which could be a
+ * protocol-relative URL like `//evil.com/path` and bypass our origin).
+ *
+ * Length-capped at 200 chars to avoid DoS via huge query strings being
+ * stored in audit logs.
+ *
+ * Returns the validated path or null when input is unsafe / missing.
+ */
+function safeNextPath(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null;
+  const trimmed = raw.trim();
+  if (trimmed.length === 0 || trimmed.length > 200) return null;
+  if (!trimmed.startsWith('/')) return null;
+  if (trimmed.startsWith('//')) return null;
+  // Reject anything that decodes to a different origin via tricks like
+  // `\/evil.com`. Browsers normalise some of these; we belt-and-suspenders.
+  if (/[\\\r\n]/.test(trimmed)) return null;
+  return trimmed;
+}
+
 async function issueCode(email: string, purpose: VerificationPurpose): Promise<string> {
   const code = generateCode();
   const codeHash = await hash(code, 10);
@@ -140,14 +162,21 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   try {
     await nextAuthSignIn('credentials', { email, password, redirect: false });
     // Resolve the post-login destination based on the role we just verified.
-    // ADMINs land directly on the pilotage dashboard; everyone else on the hub.
-    // We re-read the user (already in DB) — cheap and avoids trusting the
-    // client to route correctly.
+    // ADMINs land directly on the pilotage dashboard; everyone else on the
+    // hub. The `next=` query string takes precedence when it's a safe
+    // same-origin path — that's how anon users redirected to /login from
+    // a SaaS page get back to where they intended.
     const fresh = await prisma.user.findUnique({
       where: { email },
       select: { role: true },
     });
-    const redirectTo = fresh?.role === 'ADMIN' ? '/mentora/admin' : '/app';
+    const requestedNext = safeNextPath(formData.get('next'));
+    const roleDefault = fresh?.role === 'ADMIN' ? '/mentora/admin' : '/app';
+    // Admins always land on /mentora/admin even if `next` is set —
+    // they're typically signing in to do admin work, not to return to a
+    // public page. Non-admins respect their `next`.
+    const redirectTo =
+      fresh?.role === 'ADMIN' ? roleDefault : (requestedNext ?? roleDefault);
     return { status: 'success', message: 'signedIn', redirectTo };
   } catch (err) {
     // Auth.js v5 surfaces credential failures as `CredentialsSignin`. The
@@ -476,9 +505,16 @@ export async function confirmPasswordReset(
    under normal execution.
    ────────────────────────────────────────────────────────────────────── */
 
-export async function signInWithProvider(provider: 'google' | 'discord' | 'github') {
+export async function signInWithProvider(
+  provider: 'google' | 'discord' | 'github',
+  next?: string,
+) {
   try {
-    await nextAuthSignIn(provider, { redirectTo: '/app' });
+    // `next` may be passed from the LoginForm when the user came via a
+    // gated route. Validate the same way signIn does — never accept an
+    // off-origin URL into NextAuth's redirectTo callback.
+    const safeNext = safeNextPath(next);
+    await nextAuthSignIn(provider, { redirectTo: safeNext ?? '/app' });
   } catch (err) {
     // Next.js redirect throws a `NEXT_REDIRECT` error to perform the
     // navigation — that's expected, not a failure. Re-throw so Next can
