@@ -93,6 +93,9 @@ async function resolveAudienceEmails(audience: Audience): Promise<AudienceRecipi
     ...extra,
     deletedAt: null,
     marketingEmailsEnabled: true,
+    // Bounced / complaint addresses must not be mailed again — protects
+    // our IP reputation. Cleared by an admin or by an email change.
+    emailBouncedAt: null,
     email: { not: '' },
   });
 

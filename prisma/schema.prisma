@@ -39,6 +39,13 @@ model User {
   /// reminders) flowing regardless — only newsletter / digest blasts
   /// honour this flag.
   marketingEmailsEnabled Boolean @default(true)
+  /// Set by the Resend webhook on `email.bounced` (hard bounce) or
+  /// `email.complained` (marked as spam). All future sends — marketing
+  /// AND transactional — skip these addresses to protect IP reputation.
+  /// An admin can clear it manually after the user updates their email
+  /// (the column is also cleared on email change).
+  emailBouncedAt         DateTime?
+  emailBouncedReason     String?
   /// Soft-delete marker. When non-null, the row is hidden from the live
   /// app (auth refuses sign-in, lookups skip these). A J+30 cron purges
   /// rows where `deletedAt` is older than 30 days. Restoration before
