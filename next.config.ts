@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -29,6 +30,29 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
  */
 const isDev = process.env.NODE_ENV !== 'production';
 
+/**
+ * Build a CSP `report-uri` pointing at Sentry's security endpoint when a
+ * DSN is configured. Sentry expects:
+ *   https://o<ORG>.ingest.<region>.sentry.io/api/<PROJECT>/security/?sentry_key=<KEY>
+ * which we derive from the public DSN. Returns null when no DSN is set so
+ * we don't emit a broken directive.
+ */
+function sentryCspReportUri(): string | null {
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  if (!dsn) return null;
+  try {
+    const u = new URL(dsn);
+    const projectId = u.pathname.replace(/^\//, '');
+    const key = u.username;
+    if (!projectId || !key) return null;
+    return `${u.protocol}//${u.host}/api/${projectId}/security/?sentry_key=${key}`;
+  } catch {
+    return null;
+  }
+}
+
+const cspReport = sentryCspReportUri();
+
 const cspDirectives = [
   "default-src 'self'",
   // Scripts: Next.js + RSC inline scripts. `unsafe-eval` only kept in dev
@@ -40,8 +64,8 @@ const cspDirectives = [
   "img-src 'self' data: blob: https://*.supabase.co https://*.public.blob.vercel-storage.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://cdn.discordapp.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   // XHR / fetch: same origin + Supabase (REST + Realtime WS) + Resend +
-  // Sentry + Vercel.
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://*.ingest.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  // Sentry (both EU and US ingestion regions) + Vercel.
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://*.ingest.us.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com",
   // Frames: deny all (used to be X-Frame-Options: DENY). OAuth providers
   // never embed our pages in frames; if a future feature needs an iframe,
   // explicitly allowlist that origin here.
@@ -52,6 +76,11 @@ const cspDirectives = [
   "base-uri 'self'",
   "object-src 'none'",
   "upgrade-insecure-requests",
+  // Pipe CSP violations straight to Sentry. We use the legacy `report-uri`
+  // directive (still respected by all browsers); browsers that support the
+  // newer `report-to` Reporting API require an additional `Report-To`
+  // header — defer that to Phase 2 once we wire Sentry's Reporting API.
+  ...(cspReport ? [`report-uri ${cspReport}`] : []),
 ];
 
 const securityHeaders = [
@@ -109,4 +138,43 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+// Wrap order: next-intl is the innermost plugin (transforms imports), then
+// Sentry wraps the result to inject source-map upload + tunneling.
+//
+// Sentry options reference:
+//   https://github.com/getsentry/sentry-webpack-plugin#options
+const withIntl = withNextIntl(nextConfig);
+
+export default withSentryConfig(withIntl, {
+  // Sentry org + project — read from `npx @sentry/wizard`'s output.
+  org: 'dig-ln',
+  project: 'javascript-nextjs',
+
+  // Suppress build logs from the Sentry plugin (`true` keeps the build
+  // output readable).
+  silent: !process.env.CI,
+
+  // Upload source maps in CI builds only (needs SENTRY_AUTH_TOKEN). On
+  // dev / Vercel preview without the token this is a no-op.
+  widenClientFileUpload: true,
+
+  // Tunnel events through `/monitoring` to bypass ad-blockers that block
+  // Sentry's domain. The Sentry SDK will POST events here; the route is
+  // auto-registered by withSentryConfig.
+  tunnelRoute: '/monitoring',
+
+  // Source-map handling. `disable: true` would skip upload entirely; we
+  // keep upload enabled (when SENTRY_AUTH_TOKEN is present) so traces stay
+  // symbolicated.
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  // Disable the Sentry build plugin's auto-disabling of console.log.
+  // We keep our own logging.
+  disableLogger: true,
+
+  // Build-time release tagging — picked up from VERCEL_GIT_COMMIT_SHA on
+  // Vercel; falls back to `npm version` script otherwise.
+  automaticVercelMonitors: true,
+});

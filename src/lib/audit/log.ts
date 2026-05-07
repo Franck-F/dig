@@ -1,6 +1,7 @@
 import 'server-only';
 import { headers } from 'next/headers';
 import { Prisma } from '@prisma/client';
+import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@/lib/prisma';
 
 /**
@@ -101,8 +102,18 @@ export async function logAdmin(
     });
   } catch (err) {
     // Never throw out of the audit logger — it must never block the action.
-    // When Sentry is wired up (Phase 0 task #4), capture there too.
+    // We dual-route the failure: console for local dev visibility, Sentry
+    // for prod alerting. A repeated audit-write failure means the trail is
+    // gappy, which is itself a security incident worth waking someone up.
     console.error('[audit] failed to record log', { actorUserId, action: input.action, err });
+    Sentry.captureException(err, {
+      tags: { area: 'audit', action: input.action },
+      extra: {
+        actorUserId,
+        targetType: input.targetType ?? null,
+        targetId: input.targetId ?? null,
+      },
+    });
   }
 }
 
