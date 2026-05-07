@@ -424,7 +424,20 @@ export default function OnboardingWizard({ channels, suggestedHandle, defaultDis
         )}
       </div>
 
-      <div style={{ marginTop: 20, fontSize: 12 }} className="dz-small">
+      <div style={{ marginTop: 14, fontSize: 12 }} className="dz-small">
+        En finalisant ton inscription, tu acceptes la{' '}
+        <Link
+          href="/community/charte"
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: '#7301FF', fontWeight: 600 }}
+        >
+          charte de la communauté
+        </Link>
+        .
+      </div>
+
+      <div style={{ marginTop: 14, fontSize: 12 }} className="dz-small">
         <Link href="/community">{t('alreadyMember')} {t('goToFeed')}</Link>
       </div>
     </div>
