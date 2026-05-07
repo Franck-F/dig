@@ -740,6 +740,11 @@ model CommunityMember {
   reactionsGivenCount      Int             @default(0)
   digestEnabled            Boolean         @default(true)
   lastDigestSentAt         DateTime?
+  /// Tracking for the *weekly* content recap (separate flow from the
+  /// daily notification digest above). The weekly cron updates this
+  /// timestamp; the daily one keeps using `lastDigestSentAt`. Two
+  /// distinct emails, two distinct gates — see Phase 4 task #50.
+  lastWeeklyDigestSentAt   DateTime?
   lastSeenAt               DateTime?       // updated on any community page view
   onboardedAt              DateTime?       // null = needs /community/onboarding
   deletedAt                DateTime?       // soft-delete; cascades from User soft-delete
@@ -822,6 +827,12 @@ model Post {
   channel         Channel         @relation(fields: [channelId], references: [id], onDelete: Cascade)
   title           String?         // <= 140
   body            String          @db.Text                     // raw markdown <= 10000
+  /// Postgres tsvector column kept in sync with title (weight A) and body
+  /// (weight B) via a stored generated expression — see migration
+  /// 20260507220000_post_fulltext_search. Indexed with GIN. We declare
+  /// it as `Unsupported` so Prisma knows it exists (no `migrate diff`
+  /// drift) but we only read it via $queryRaw.
+  searchTsv       Unsupported("tsvector")?
   bodyTextLength  Int             @default(0)                  // computed for sort/search
   attachmentUrls  String[]        @default([])                 // forward-compat (no upload UI v1)
   status          PostStatus      @default(PUBLISHED)
