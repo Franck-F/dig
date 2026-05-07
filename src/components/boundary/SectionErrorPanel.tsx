@@ -82,7 +82,7 @@ export function SectionErrorPanel({
           opacity: 0.75,
         }}
       >
-        L'équipe Digizelle a été automatiquement alertée. Vous pouvez réessayer
+        L&apos;équipe Digizelle a été automatiquement alertée. Vous pouvez réessayer
         ci-dessous ou revenir à la section principale.
       </p>
       {error.digest && (

@@ -58,8 +58,8 @@ export default function GlobalError({
           Une erreur inattendue
         </h1>
         <p style={{ margin: 0, opacity: 0.8, textAlign: 'center', maxWidth: 460 }}>
-          Quelque chose s'est mal passé. L'équipe Digizelle a été automatiquement
-          alertée. Vous pouvez réessayer ci-dessous ou revenir à l'accueil.
+          Quelque chose s&apos;est mal passé. L&apos;équipe Digizelle a été automatiquement
+          alertée. Vous pouvez réessayer ci-dessous ou revenir à l&apos;accueil.
         </p>
         {error.digest && (
           <code
@@ -91,6 +91,11 @@ export default function GlobalError({
           >
             Réessayer
           </button>
+          {/* global-error renders OUTSIDE the React tree (it's the
+              last-resort boundary that fires when a layout itself
+              threw). Next/Link relies on the router context which is
+              not available here, so we keep a plain anchor. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/"
             style={{

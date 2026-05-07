@@ -19,7 +19,11 @@ export type MentoraActionError =
   | 'skillRequired'
   | 'invalidInput'
   | 'mentorNotAccepting'
-  | 'invalidStatus';
+  | 'invalidStatus'
+  | 'imageMalformed'
+  | 'imageMimeNotAllowed'
+  | 'imageTooLarge'
+  | 'imageMagicMismatch';
 
 export type ActionResult<T = undefined> =
   | { status: 'success'; data?: T }

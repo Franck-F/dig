@@ -91,7 +91,7 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [open]);
 
   const closeModal = () => {

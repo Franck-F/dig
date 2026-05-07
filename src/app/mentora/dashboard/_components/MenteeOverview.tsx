@@ -1056,7 +1056,7 @@ function Avatar({
 }) {
   const radius = shape === 'circle' ? 999 : 12;
   if (photo) {
-    // eslint-disable-next-line @next/next/no-img-element
+     
     return (
       <img
         src={photo}

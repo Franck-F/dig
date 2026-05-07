@@ -202,14 +202,14 @@ function Layout({
         >
           Une question ?{' '}
           <a
-            href="mailto:dpo@digizelle.fr"
+            href="mailto:dpo@calebasse.com"
             style={{ color: '#7301FF', fontWeight: 600 }}
           >
-            dpo@digizelle.fr
+            dpo@calebasse.com
           </a>{' '}
           —{' '}
           <Link href="/" style={{ color: '#7301FF', fontWeight: 600 }}>
-            ← retour à l'accueil
+            ← retour à l&apos;accueil
           </Link>
         </div>
       </div>

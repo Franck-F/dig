@@ -156,6 +156,12 @@ export default async function RgpdPage({
             fontSize: 14,
             lineHeight: 1.65,
           }}
+          // The HTML comes from `marked.parse()` over a markdown file
+          // we ship inside the deploy bundle (`docs/rgpd/*.md`). Source
+          // is fully controlled by the team, audience is ADMIN-only,
+          // and marked has its options pinned (gfm:true, breaks:false)
+          // — no user-supplied input enters this string.
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (

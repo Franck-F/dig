@@ -137,6 +137,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             class untouched so React renders the default light theme.
             Placed at the start of <body> so document.body is defined. */}
         <script
+          // Inline boot script — needs to run before React paints to
+          // avoid a flash-of-light-theme. Source is a hard-coded string
+          // we control, no user input.
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var c=localStorage.getItem('digizelle-cookie-consent');if(!c)return;var p=JSON.parse(c);if(!p||p.preferences!==true)return;var t=localStorage.getItem('digizelle-theme');if(t==='dark')document.body.classList.add('dz-theme-dark');}catch(e){}})();`,
           }}

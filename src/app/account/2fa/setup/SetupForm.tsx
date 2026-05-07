@@ -154,6 +154,12 @@ export default function SetupForm({
           flexWrap: 'wrap',
         }}
       >
+        {/* External QR endpoint — Next/Image would require us to
+            allowlist the host in next.config.images and pre-render at
+            build time, neither of which makes sense for a per-secret
+            QR generated at session time. Plain <img> with explicit
+            width/height to avoid CLS. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={qrSrc}
           alt="QR code TOTP"

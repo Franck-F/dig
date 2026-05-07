@@ -180,6 +180,9 @@ export function CinematicFooter() {
 
   return (
     <>
+      {/* Scoped CSS for the footer — string literal we control, no
+          user input. eslint-disable-next-line react/no-danger */}
+      {/* eslint-disable-next-line react/no-danger */}
       <style dangerouslySetInnerHTML={{ __html: FOOTER_STYLES }} />
       <div
         ref={wrapperRef}
