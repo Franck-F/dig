@@ -3,10 +3,12 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
+import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
 import { getCommunityViewer } from '../../../_components/viewer';
 import UserModerationPanel from './_components/UserModerationPanel';
+import TwoFactorResetPanel from './_components/TwoFactorResetPanel';
 
 type Params = { handle: string };
 
@@ -41,6 +43,7 @@ export default async function AdminUserPage({
     where: { handle: handle.toLowerCase() },
     select: {
       id: true,
+      userId: true,
       handle: true,
       displayName: true,
       bio: true,
@@ -54,9 +57,26 @@ export default async function AdminUserPage({
       postCount: true,
       commentCount: true,
       _count: { select: { reportsAgainst: true } },
+      user: { select: { totpEnabledAt: true, role: true } },
     },
   });
   if (!member) notFound();
+
+  // The 2FA reset panel is ADMIN-only; mods reaching this page see the
+  // moderation panel but not the security-reset card. We refetch the
+  // viewer's user role rather than trusting `viewer.isModerator` (which
+  // is true for both ADMINs and CommunityMember.isModerator-only).
+  const session = await auth();
+  let viewerIsAdmin = false;
+  let viewerUserId: string | null = null;
+  if (session?.user?.id) {
+    viewerUserId = session.user.id;
+    const viewerUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    });
+    viewerIsAdmin = viewerUser?.role === 'ADMIN';
+  }
 
   const history = await prisma.moderationAction.findMany({
     where: { targetMemberId: member.id },
@@ -100,6 +120,15 @@ export default async function AdminUserPage({
         memberHandle={member.handle}
         currentStatus={member.status}
       />
+
+      {viewerIsAdmin && (
+        <TwoFactorResetPanel
+          targetUserId={member.userId}
+          targetHandle={member.handle}
+          totpEnabledAt={member.user?.totpEnabledAt ?? null}
+          isSelf={viewerUserId === member.userId}
+        />
+      )}
 
       <div>
         <h3 className="dz-h3" style={{ fontSize: 18, marginBottom: 10 }}>{t('modHistoryTitle')}</h3>

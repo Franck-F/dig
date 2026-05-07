@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import DisableTotpForm from './DisableTotpForm';
+import RegenerateBackupCodesForm from './RegenerateBackupCodesForm';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Double authentification · Digizelle' };
@@ -127,9 +128,10 @@ export default async function TwoFactorPage() {
             </p>
             <p style={{ margin: 0, fontSize: 13, color: '#3a2960' }}>
               <strong>{me.totpBackupCodeHashes.length}</strong> code{me.totpBackupCodeHashes.length > 1 ? 's' : ''} de
-              secours restant{me.totpBackupCodeHashes.length > 1 ? 's' : ''}. (Régénération à venir
-              dans la prochaine itération.)
+              secours restant{me.totpBackupCodeHashes.length > 1 ? 's' : ''}.
             </p>
+
+            <RegenerateBackupCodesForm remaining={me.totpBackupCodeHashes.length} />
           </section>
 
           {!isPrivileged ? (
