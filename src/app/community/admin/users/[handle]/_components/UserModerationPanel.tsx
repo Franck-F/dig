@@ -8,18 +8,23 @@ import {
   muteUser,
   suspendUser,
   banUser,
+  proposeBan,
   unbanUser,
   warnAuthor,
 } from '@/lib/actions/community/admin/moderation';
 
 type Status = 'ACTIVE' | 'MUTED' | 'SUSPENDED' | 'BANNED' | string;
 
-type Action = 'WARN' | 'MUTE' | 'SUSPEND' | 'BAN' | 'UNBAN';
+type Action = 'WARN' | 'MUTE' | 'SUSPEND' | 'PROPOSE_BAN' | 'BAN' | 'UNBAN';
 
 const VARIANTS: Record<Action, { className: string; allowedFrom: Status[] }> = {
   WARN: { className: 'dz-btn dz-btn-sm dz-btn-ghost', allowedFrom: ['ACTIVE', 'MUTED'] },
   MUTE: { className: 'dz-btn dz-btn-sm dz-btn-ghost', allowedFrom: ['ACTIVE'] },
   SUSPEND: { className: 'dz-btn dz-btn-sm dz-btn-ghost', allowedFrom: ['ACTIVE', 'MUTED'] },
+  PROPOSE_BAN: {
+    className: 'dz-btn dz-btn-sm dz-btn-ghost',
+    allowedFrom: ['ACTIVE', 'MUTED', 'SUSPENDED'],
+  },
   BAN: { className: 'dz-btn dz-btn-sm dz-btn-primary', allowedFrom: ['ACTIVE', 'MUTED', 'SUSPENDED'] },
   UNBAN: { className: 'dz-btn dz-btn-sm dz-btn-primary', allowedFrom: ['MUTED', 'SUSPENDED', 'BANNED'] },
 };
@@ -72,6 +77,9 @@ export default function UserModerationPanel({
           case 'SUSPEND':
             res = await suspendUser({ memberId, reason: trimmed });
             break;
+          case 'PROPOSE_BAN':
+            res = await proposeBan({ memberId, reason: trimmed });
+            break;
           case 'BAN':
             res = await banUser({ memberId, reason: trimmed });
             break;
@@ -80,7 +88,19 @@ export default function UserModerationPanel({
             break;
         }
         if (res && res.status === 'error') {
-          setError(res.error ?? t('genericError'));
+          // Server actions surface error codes namespaced as
+          // `community.errors.<code>`. We only humanise the ones added
+          // by Phase 3 task #42 (two-mod ban) here; everything else
+          // falls back to the generic message. Not a full i18n routing
+          // pipeline — the panel pre-dates a proper error catalog.
+          const code = res.error ?? '';
+          if (code.endsWith('.banProposalRequired')) {
+            setError(t('errors.banProposalRequired'));
+          } else if (code.endsWith('.banProposalSelfApprove')) {
+            setError(t('errors.banProposalSelfApprove'));
+          } else {
+            setError(t('genericError'));
+          }
           return;
         }
         close();
@@ -101,7 +121,7 @@ export default function UserModerationPanel({
       </p>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        {(['WARN', 'MUTE', 'SUSPEND', 'BAN', 'UNBAN'] as const).map((a) => {
+        {(['WARN', 'MUTE', 'SUSPEND', 'PROPOSE_BAN', 'BAN', 'UNBAN'] as const).map((a) => {
           const variant = VARIANTS[a];
           const enabled = variant.allowedFrom.includes(currentStatus);
           return (

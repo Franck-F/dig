@@ -3068,7 +3068,52 @@
           "banCta": "Bannir",
           "unbanCta": "Réactiver",
           "warnCta": "Avertir",
-          "viewProfileCta": "Voir le profil public →"
+          "viewProfileCta": "Voir le profil public →",
+          "warn": "Avertir",
+          "mute": "Sourdine",
+          "suspend": "Suspendre",
+          "propose_ban": "Proposer un bannissement",
+          "ban": "Bannir",
+          "unban": "Réactiver",
+          "panelTitle": "Actions de modération",
+          "panelSubtitle": "Sanctions sur @{handle}. Le bannissement requiert deux modérateurs distincts.",
+          "reasonLabel": "Motif",
+          "reasonPlaceholder": "Motif interne — communiqué au membre.",
+          "reasonRequired": "Le motif est requis.",
+          "cancel": "Annuler",
+          "submitting": "Envoi…",
+          "genericError": "Action impossible. Réessaie.",
+          "errors": {
+            "banProposalRequired": "Un autre modérateur doit d'abord proposer le bannissement (max 24h avant). Utilise « Proposer un bannissement » et demande à un⋅e collègue de confirmer.",
+            "banProposalSelfApprove": "Tu ne peux pas confirmer ta propre proposition de bannissement. Demande à un⋅e autre modérateur⋅trice."
+          },
+          "confirm": {
+            "submit": "Confirmer",
+            "warn": {
+              "title": "Avertir ce membre ?",
+              "body": "Un email d'avertissement sera envoyé à @{handle}. Aucun changement de statut."
+            },
+            "mute": {
+              "title": "Mettre en sourdine ?",
+              "body": "@{handle} ne pourra plus poster temporairement."
+            },
+            "suspend": {
+              "title": "Suspendre ce membre ?",
+              "body": "@{handle} ne pourra plus interagir mais conservera la lecture."
+            },
+            "propose_ban": {
+              "title": "Proposer le bannissement ?",
+              "body": "Crée une proposition de bannissement pour @{handle}. Un⋅e autre modérateur⋅trice devra confirmer dans les 24 heures."
+            },
+            "ban": {
+              "title": "Confirmer le bannissement ?",
+              "body": "Bannit @{handle} définitivement. Requiert une proposition d'un⋅e autre modérateur⋅trice de moins de 24h."
+            },
+            "unban": {
+              "title": "Réactiver ce membre ?",
+              "body": "Lève la sanction de @{handle} et restaure ses droits."
+            }
+          }
         },
         "statusUntilLabel": "Jusqu'au (optionnel)",
         "reasonLabel": "Raison",

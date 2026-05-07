@@ -46,7 +46,9 @@ export type CommunityActionError =
   | 'imageMalformed'
   | 'imageMimeNotAllowed'
   | 'imageTooLarge'
-  | 'imageMagicMismatch';
+  | 'imageMagicMismatch'
+  | 'banProposalRequired'
+  | 'banProposalSelfApprove';
 
 export class CommunityError extends Error {
   code: CommunityActionError;

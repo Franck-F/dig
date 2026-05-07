@@ -669,6 +669,10 @@ enum ModerationActionType {
   WARN_AUTHOR
   MUTE_USER
   SUSPEND_USER
+  /// First half of the two-mod BAN flow. A moderator proposes a ban with
+  /// a reason; a *different* moderator must call BAN_USER within 24 h to
+  /// finalise. Avoids unilateral bans by a single privileged account.
+  BAN_PROPOSAL
   BAN_USER
   UNBAN_USER
   PIN_POST

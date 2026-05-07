@@ -327,6 +327,62 @@ export async function suspendUser(
   }
 }
 
+/**
+ * BAN flow — Phase 3 task #42 enforces dual-moderator approval.
+ *
+ *   proposeBan()   first moderator submits a proposal with a reason
+ *   banUser()      a SECOND, distinct moderator finalises within 24 h
+ *
+ * Why this matters: a phished mod account, or a single bad-faith mod,
+ * could otherwise unilaterally ban a member. Requiring two distinct
+ * moderator IDs makes that significantly harder.
+ *
+ * Implementation notes:
+ *  - The proposal is just a `ModerationAction` row of type BAN_PROPOSAL.
+ *    No new table; we read recent rows and apply policy in code.
+ *  - Window: 24 h from the proposal's `createdAt`. Past that the
+ *    proposer must re-propose.
+ *  - The actor of `BAN_USER` MUST differ from the actor of the most
+ *    recent BAN_PROPOSAL on this target.
+ */
+const BAN_PROPOSAL_TTL_MS = 24 * 60 * 60 * 1000;
+
+export async function proposeBan(
+  input: z.input<typeof memberActionSchema>,
+): Promise<ActionResult> {
+  try {
+    const ctx = await requireCommunityAdmin();
+    const parsed = memberActionSchema.safeParse(input);
+    if (!parsed.success) return err('invalidInput');
+
+    const target = await prisma.communityMember.findUnique({
+      where: { id: parsed.data.memberId },
+      select: { id: true },
+    });
+    if (!target) return err('notFound');
+
+    await prisma.moderationAction.create({
+      data: {
+        type: 'BAN_PROPOSAL',
+        actorId: ctx.member.id,
+        targetMemberId: target.id,
+        reason: parsed.data.reason,
+      },
+    });
+    await logAdmin(ctx.userId, {
+      action: 'member.ban_proposal',
+      targetType: 'CommunityMember',
+      targetId: target.id,
+      payload: { reason: parsed.data.reason.slice(0, 500) },
+    });
+    revalidatePath('/community/admin/moderation');
+    revalidatePath(`/community/admin/users/${target.id}`);
+    return ok();
+  } catch (e) {
+    return handleError(e);
+  }
+}
+
 export async function banUser(
   input: z.input<typeof memberActionSchema>,
 ): Promise<ActionResult> {
@@ -334,6 +390,24 @@ export async function banUser(
     const ctx = await requireCommunityAdmin();
     const parsed = memberActionSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
+
+    // A different moderator must have proposed the ban within the
+    // 24 h window. No proposal → reject; same actor as proposer →
+    // reject (would defeat the purpose).
+    const since = new Date(Date.now() - BAN_PROPOSAL_TTL_MS);
+    const recentProposal = await prisma.moderationAction.findFirst({
+      where: {
+        type: 'BAN_PROPOSAL',
+        targetMemberId: parsed.data.memberId,
+        createdAt: { gte: since },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!recentProposal) return err('banProposalRequired');
+    if (recentProposal.actorId === ctx.member.id) {
+      return err('banProposalSelfApprove');
+    }
+
     await applyStatus(
       ctx.member.id,
       parsed.data.memberId,
@@ -348,7 +422,11 @@ export async function banUser(
       action: 'member.ban',
       targetType: 'CommunityMember',
       targetId: parsed.data.memberId,
-      payload: { reason: parsed.data.reason.slice(0, 500) },
+      payload: {
+        reason: parsed.data.reason.slice(0, 500),
+        proposedBy: recentProposal.actorId,
+        proposedAt: recentProposal.createdAt.toISOString(),
+      },
     });
     revalidatePath('/community/admin/moderation');
     return ok();
