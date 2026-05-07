@@ -179,6 +179,24 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
    ────────────────────────────────────────────────────────────────────── */
 
 export async function signUp(_prev: AuthState, formData: FormData): Promise<AuthState> {
+  // Honey-pot: a hidden field bots love to fill. If `website` arrives with
+  // any value, drop the request silently with a generic-looking error so
+  // the bot can't tell whether its retry pattern is working. We don't
+  // even hit the DB.
+  const honey = formData.get('website');
+  if (typeof honey === 'string' && honey.trim().length > 0) {
+    return { status: 'error', error: 'generic' };
+  }
+
+  // RGPD age gate: data subjects under 15 in France need parental consent
+  // (article 8). We don't have that flow yet, so we require an explicit
+  // self-declaration here. Server-side because client-side validation is
+  // bypassable.
+  const ageOver15 = formData.get('ageOver15');
+  if (!ageOver15) {
+    return { status: 'error', error: 'ageRequired' };
+  }
+
   const parsed = signUpSchema.safeParse({
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),

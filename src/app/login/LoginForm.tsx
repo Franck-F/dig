@@ -685,6 +685,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
       'emailSendFailed',
       'oauthDisabled',
       'rateLimited',
+      'ageRequired',
       'generic',
     ] as const;
     type ErrKey = (typeof knownKeys)[number];
@@ -810,6 +811,54 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                   </button>
                 ))}
               </div>
+            </div>
+            {/* Honey-pot — invisible to humans, magnetic to naive bots that
+                fill every input by name. Server rejects on any non-empty
+                value. Real users never see this; aria-hidden + tabIndex=-1
+                keep assistive tech away. */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                left: '-9999px',
+                width: 1,
+                height: 1,
+                overflow: 'hidden',
+              }}
+            >
+              <label htmlFor="signup-website">Site web</label>
+              <input
+                id="signup-website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+            {/* Age declaration. Article 8 RGPD: data subjects under 15 in
+                France need parental consent — we don't have that flow yet
+                so we hard-gate on declared age. The flag is enforced
+                server-side; this checkbox is informational + UX. */}
+            <div>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 10,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  color: '#3a2960',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  name="ageOver15"
+                  value="1"
+                  required
+                  style={{ marginTop: 3 }}
+                />
+                <span>{t('signupForm.ageDeclaration')}</span>
+              </label>
             </div>
             <button type="submit" disabled={signupPending} className="dz-btn dz-btn-primary dz-btn-lg" style={{ width: '100%', marginTop: 8, opacity: signupPending ? 0.7 : 1 }}>
               {signupPending ? t('signupForm.submitting') : t('signupForm.submit')}

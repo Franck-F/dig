@@ -2158,7 +2158,8 @@
       },
       "submit": "Créer mon compte →",
       "submitting": "Création…",
-      "terms": "En continuant, vous acceptez nos CGU et notre politique de confidentialité."
+      "terms": "En continuant, vous acceptez nos CGU et notre politique de confidentialité.",
+      "ageDeclaration": "Je certifie avoir au moins 15 ans (en dessous, le consentement parental est requis — contacte-nous via /contact)."
     },
     "feedback": {
       "successPrefix": "✓ ",
@@ -2176,6 +2177,7 @@
       "emailSendFailed": "Impossible d'envoyer l'email. Réessaie dans un instant.",
       "oauthDisabled": "Connexion sociale indisponible.",
       "rateLimited": "Trop de tentatives. Réessaie dans quelques minutes.",
+      "ageRequired": "Tu dois certifier avoir au moins 15 ans pour créer un compte.",
       "generic": "Une erreur est survenue. Réessaie."
     },
     "oauth": {
