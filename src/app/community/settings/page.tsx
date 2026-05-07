@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { getCommunityViewer } from '../_components/viewer';
 import SettingsForm from './_components/SettingsForm';
+import DataPortabilityPanel from './_components/DataPortabilityPanel';
 import DangerZone from './_components/DangerZone';
 
 export const dynamic = 'force-dynamic';
@@ -56,6 +57,8 @@ export default async function CommunitySettingsPage() {
           bannerColor: m.bannerColor,
         }}
       />
+
+      <DataPortabilityPanel />
 
       <DangerZone />
     </div>

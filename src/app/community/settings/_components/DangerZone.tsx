@@ -64,17 +64,86 @@ export default function DangerZone() {
           marginBottom: 6,
         }}
       >
-        Zone à risque
+        Zone à risque · RGPD Art. 17
       </div>
       <h3 style={{ margin: '0 0 6px', fontSize: 17, fontWeight: 800, color: '#1a1f3a' }}>
         Supprimer mon compte
       </h3>
       <p style={{ margin: 0, fontSize: 13, color: '#3a2960', lineHeight: 1.6 }}>
-        Vos données personnelles (email, prénom, nom, photo) sont anonymisées
-        immédiatement. Vous avez <strong>30 jours</strong> pour annuler en
-        contactant <a href="mailto:dpo@digizelle.fr" style={{ color: '#7301FF' }}>dpo@digizelle.fr</a> ;
-        au-delà la suppression est définitive et irréversible.
+        Avant de continuer, pensez à <strong>télécharger vos données</strong> dans la section
+        au-dessus si vous voulez en garder une copie.
       </p>
+
+      <div
+        style={{
+          marginTop: 16,
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 12,
+        }}
+        className="dz-danger-grid"
+      >
+        <div
+          style={{
+            padding: 14,
+            borderRadius: 12,
+            background: 'rgba(217,78,146,0.08)',
+            border: '1px solid rgba(217,78,146,0.20)',
+          }}
+        >
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#a8235e', marginBottom: 6, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            Anonymisé immédiatement
+          </div>
+          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#3a2960', lineHeight: 1.7 }}>
+            <li>Email, prénom, nom, photo de profil</li>
+            <li>Profil mentor / mentee, bio, parcours</li>
+            <li>Connexions OAuth (Google, GitHub, Discord)</li>
+            <li>Codes de vérification email</li>
+          </ul>
+        </div>
+        <div
+          style={{
+            padding: 14,
+            borderRadius: 12,
+            background: 'rgba(115,1,255,0.06)',
+            border: '1px solid rgba(115,1,255,0.20)',
+          }}
+        >
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#7301FF', marginBottom: 6, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            Conservé sous forme anonyme
+          </div>
+          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#3a2960', lineHeight: 1.7 }}>
+            <li>Posts, commentaires (auteur remplacé par « Compte supprimé »)</li>
+            <li>Sessions de mentorat (preuve civile, 3 ans)</li>
+            <li>Avis publiés sur des mentors</li>
+            <li>Décisions de modération vous concernant (5 ans, audit)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        style={{
+          marginTop: 14,
+          padding: 12,
+          borderRadius: 10,
+          background: 'rgba(115,1,255,0.04)',
+          border: '1px solid rgba(115,1,255,0.15)',
+          fontSize: 12,
+          color: '#3a2960',
+          lineHeight: 1.6,
+        }}
+      >
+        <strong>Délai de grâce de 30 jours.</strong> Pendant ce délai, vous pouvez restaurer votre
+        compte en contactant <a href="mailto:dpo@calebasse.com" style={{ color: '#7301FF' }}>dpo@calebasse.com</a>{' '}
+        avec une preuve d&apos;identité. Au-delà, la purge est définitive et irréversible (RGPD
+        Art. 17).
+      </div>
+
+      <style>{`
+        @media (max-width: 720px) {
+          .dz-danger-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
 
       {!open ? (
         <button
