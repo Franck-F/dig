@@ -1,0 +1,50 @@
+version: 2
+updates:
+  # npm dependencies — both runtime and dev. Weekly cadence keeps PR
+  # noise low while still catching CVEs within ~7 days. Group all
+  # non-major bumps into a single PR per ecosystem to reduce review
+  # overhead; majors stay separate so we read each change carefully.
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '07:00'
+      timezone: 'Europe/Paris'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'npm'
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+      include: 'scope'
+    groups:
+      patch-and-minor:
+        applies-to: version-updates
+        update-types:
+          - 'patch'
+          - 'minor'
+        # Keep majors out of the group — they need explicit review.
+      security:
+        applies-to: security-updates
+        update-types:
+          - 'patch'
+          - 'minor'
+          - 'major'
+
+  # GitHub Actions — keep `actions/checkout`, `actions/setup-node`,
+  # etc. up to date so we benefit from Node.js cache and security
+  # fixes. Less noisy than npm so we can afford monthly.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+      day: 'monday'
+      time: '07:00'
+      timezone: 'Europe/Paris'
+    labels:
+      - 'dependencies'
+      - 'ci'
+    commit-message:
+      prefix: 'chore(ci-deps)'
