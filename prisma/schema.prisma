@@ -90,6 +90,11 @@ model User {
 
   // ── Audit log (admin actions) ─────────────────────────────────────────
   auditLogs         AuditLog[]
+
+  // The purge cron filters soft-deleted users by `deletedAt < threshold`.
+  // Without an index Postgres falls back to a sequential scan; small
+  // table today, but the cron is monthly and we want it cheap forever.
+  @@index([deletedAt])
 }
 
 enum UserRole {
@@ -119,6 +124,10 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  // FK index — Postgres does not auto-index foreign-key columns, so the
+  // ON DELETE CASCADE triggered by purging a User would otherwise scan
+  // the Account table sequentially.
+  @@index([userId])
 }
 
 // Auth.js verification token table (used by email-link providers).

@@ -42,7 +42,11 @@ export type CommunityActionError =
   | 'duplicateVote'
   | 'cannotVoteOwn'
   | 'badgeNotManual'
-  | 'sanitizationFailed';
+  | 'sanitizationFailed'
+  | 'imageMalformed'
+  | 'imageMimeNotAllowed'
+  | 'imageTooLarge'
+  | 'imageMagicMismatch';
 
 export class CommunityError extends Error {
   code: CommunityActionError;

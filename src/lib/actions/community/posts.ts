@@ -20,6 +20,7 @@ import { renderSanitizedMarkdown } from '@/lib/community/sanitizer';
 import { consume } from '@/lib/community/rateLimit';
 import { evaluateBadges } from '@/lib/community/badges';
 import { createCommunityNotification } from '@/lib/community/notifications';
+import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
 /**
  * Post actions. Spec §5.2 posts.
@@ -96,6 +97,16 @@ export async function createPost(
       sanitizedHtml = renderSanitizedMarkdown(parsed.data.body);
     } catch {
       return err('sanitizationFailed');
+    }
+
+    // Validate any data:image attachments — caps the decoded payload at
+    // 1 MB each and confirms the magic number matches the declared MIME.
+    const dataAttachments = (parsed.data.attachmentUrls ?? []).filter((u) =>
+      u.startsWith('data:'),
+    );
+    for (const u of dataAttachments) {
+      const r = validateImageDataUri(u, IMAGE_CAPS.postAttachment);
+      if (!r.ok) return err(imageReasonToErrorCode(r.reason));
     }
 
     const handles = extractMentions(parsed.data.body).handles;

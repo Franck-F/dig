@@ -14,6 +14,7 @@ import {
 import { createCommunityNotification } from '@/lib/community/notifications';
 import { evaluateBadges } from '@/lib/community/badges';
 import { logAdmin } from '@/lib/audit/log';
+import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
 /**
  * Admin challenge lifecycle. Spec §5.2 challenges admin.
@@ -65,6 +66,11 @@ export async function createChallenge(
 
     const dup = await prisma.challenge.findUnique({ where: { slug: parsed.data.slug } });
     if (dup) return err('invalidInput');
+
+    if (parsed.data.coverImageUrl?.startsWith('data:')) {
+      const r = validateImageDataUri(parsed.data.coverImageUrl, IMAGE_CAPS.challengeCover);
+      if (!r.ok) return err(imageReasonToErrorCode(r.reason));
+    }
 
     const created = await prisma.challenge.create({
       data: {

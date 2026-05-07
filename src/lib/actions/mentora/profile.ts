@@ -15,6 +15,7 @@ import {
 } from './_helpers';
 import { notify } from '@/lib/mentora/notifications';
 import { logAdmin } from '@/lib/audit/log';
+import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
 // ─────────────── Mentor profile ───────────────────────────────────────────
 
@@ -62,6 +63,11 @@ export async function createMentorProfile(
     const existing = await prisma.mentorProfile.findUnique({ where: { userId: ctx.userId } });
     if (existing) return errorResult('duplicateRequest');
 
+    if (parsed.data.photoUrl?.startsWith('data:')) {
+      const r = validateImageDataUri(parsed.data.photoUrl, IMAGE_CAPS.mentorPhoto);
+      if (!r.ok) return errorResult(imageReasonToErrorCode(r.reason));
+    }
+
     const created = await prisma.mentorProfile.create({
       data: {
         userId: ctx.userId,
@@ -98,6 +104,11 @@ export async function updateMentorProfile(
     const { mentorProfile } = await requireMentorOwner();
     const parsed = updateMentorProfileSchema.safeParse(input);
     if (!parsed.success) return errorResult('invalidInput');
+
+    if (parsed.data.photoUrl?.startsWith('data:')) {
+      const r = validateImageDataUri(parsed.data.photoUrl, IMAGE_CAPS.mentorPhoto);
+      if (!r.ok) return errorResult(imageReasonToErrorCode(r.reason));
+    }
 
     const updated = await prisma.mentorProfile.update({
       where: { id: mentorProfile.id },

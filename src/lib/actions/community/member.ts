@@ -13,6 +13,7 @@ import {
 } from './_helpers';
 import { requireUser } from '@/lib/actions/_shared';
 import { evaluateBadges } from '@/lib/community/badges';
+import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
 /**
  * Member / onboarding actions. Spec §5.2 (member).
@@ -145,6 +146,15 @@ export async function updateMemberProfile(
     const ctx = await requireCommunityMember();
     const parsed = updateMemberProfileSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
+
+    // Hardened image validation for `data:image/...` URIs — checks the
+    // MIME, size cap, and magic-number to stop a renamed-binary payload
+    // from being persisted as an avatar.
+    const url = parsed.data.avatarUrl;
+    if (url && url.startsWith('data:')) {
+      const r = validateImageDataUri(url, IMAGE_CAPS.avatar);
+      if (!r.ok) return err(imageReasonToErrorCode(r.reason));
+    }
 
     const updated = await prisma.communityMember.update({
       where: { id: ctx.member.id },
