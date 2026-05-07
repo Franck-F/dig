@@ -10,6 +10,7 @@ DB, etc.
 | --------------------------------------- | -------- | ------------------ |
 | [`auth-secret-rotation.md`](./auth-secret-rotation.md) | P1       | Annuel + sur fuite |
 | [`rgpd-incident.md`](./rgpd-incident.md)               | P0       | À chaque violation |
+| [`2fa-admin-reset.md`](./2fa-admin-reset.md)           | P2       | Admin/mod sans device |
 
 ## À ajouter au fil de l'eau
 

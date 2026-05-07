@@ -83,10 +83,21 @@ const cspDirectives = [
   ...(cspReport ? [`report-uri ${cspReport}`] : []),
 ];
 
+// CSP enforcement gate. Default: Report-Only — collect violations
+// without breaking the site for the first observation window. Flip
+// to enforced by setting `CSP_ENFORCE=1` once the report stream is
+// quiet for a week. We deliberately read this at build time (not
+// runtime) so a misconfigured env var doesn't suddenly drop traffic
+// in a hot reload — every deploy has a single, observable header
+// state.
+const cspEnforce = process.env.CSP_ENFORCE === '1';
+const cspHeaderName = cspEnforce
+  ? 'Content-Security-Policy'
+  : 'Content-Security-Policy-Report-Only';
+
 const securityHeaders = [
-  // CSP in Report-Only first; flip to enforced after observation window.
   {
-    key: 'Content-Security-Policy-Report-Only',
+    key: cspHeaderName,
     value: cspDirectives.join('; '),
   },
   // HSTS: 2 years, include subdomains, preload-eligible. Vercel terminates
