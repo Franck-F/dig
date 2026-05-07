@@ -24,6 +24,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Initial read: only consult localStorage if preferences consent is granted.
   // Otherwise fall back to system preference, kept in memory only.
+  // SSR has no DOM/localStorage; the post-mount effect is the only
+  // place we can read them, hence setState-in-effect is intrinsic.
   useEffect(() => {
     if (didInit || !isHydrated) return;
     if (typeof window === 'undefined') return;

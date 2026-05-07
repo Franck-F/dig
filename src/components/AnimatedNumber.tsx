@@ -20,9 +20,20 @@ export default function AnimatedNumber({
   const ref = useRef<HTMLSpanElement>(null);
   const [n, setN] = useState(0);
 
+  // Intrinsic side effect: rAF-driven counter animation on visibility.
+  // setN inside the effect is the whole point of an animation.
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+    // WCAG 2.3.3 — reduced-motion users get the final value with no
+    // counter animation.
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setN(value);
+      return;
+    }
     if (typeof IntersectionObserver === 'undefined') {
       setN(value);
       return;

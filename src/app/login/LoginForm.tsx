@@ -13,6 +13,7 @@ import {
   signInWithProvider,
   type AuthState,
 } from '@/lib/actions/auth';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 // Each tuple: [translation key for label, UserRole enum value sent to server]
 const ROLES = [
@@ -290,6 +291,10 @@ function Modal({
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
+  // Focus trap — Tab cycles inside the dialog while open, restores
+  // focus to the original trigger on close (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
+
   if (!open) return null;
   return (
     <div
@@ -312,6 +317,7 @@ function Modal({
       }}
     >
       <div
+        ref={dialogRef}
         className="dz-glass-strong"
         style={{
           width: '100%',
@@ -392,8 +398,11 @@ function VerificationModal({
     return () => clearInterval(id);
   }, [cooldown]);
 
-  // Reset cooldown on successful resend.
+  // Reset cooldown on successful resend. `useActionState` only exposes
+  // the result via re-render, so we have to react in an effect — see
+  // the multi-step modal further down for the same compromise.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (resendState.status === 'success') setCooldown(60);
   }, [resendState]);
 
@@ -517,6 +526,11 @@ function ResetModal({
   );
 
   // Reset state when reopened.
+  // The setState-in-effect rule fires here, but the legitimate trigger
+  // is "modal opened from outside" — we have to react to a prop change
+  // and there's no event handler we control. Same compromise as the
+  // post-action-state useEffects below: keep the effect, document why,
+  // disable the rule for this specific line.
   useEffect(() => {
     if (open) {
       setStep(1);
@@ -524,12 +538,17 @@ function ResetModal({
     }
   }, [open, initialEmail]);
 
-  // Step 1 success → advance to step 2.
+  // Step 1 success → advance to step 2. React 19 doesn't yet ship a
+  // stable `useEffectEvent`, and `useActionState` only surfaces the
+  // result via re-render, so reacting to `state.status === 'success'`
+  // in an effect is the canonical pattern for action-driven step
+  // transitions.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (reqState.status === 'success') setStep(2);
   }, [reqState]);
 
-  // Step 2 success → tell parent + close.
+  // Step 2 success → tell parent + close. Same justification as above.
   useEffect(() => {
     if (confirmState.status === 'success') {
       onCompleted(email);
@@ -679,7 +698,8 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
     }
   }, [loginState, router]);
 
-  // Signup pending verification → open the verify modal.
+  // Signup pending verification → open the verify modal. Same
+  // useActionState reactor pattern as elsewhere in this file.
   useEffect(() => {
     if (signupState.status === 'pending_verification') {
       setVerifyEmail(signupState.email);

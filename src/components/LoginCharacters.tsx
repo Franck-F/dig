@@ -1,5 +1,9 @@
 'use client';
 
+// Same rationale as animated-characters-login-page.tsx: cursor-tracking
+// pupil refs read during render, drive inline transforms only.
+/* eslint-disable react-hooks/refs */
+
 /**
  * Login characters — purple / navy / pink / soft trio that reacts to the user
  * filling in the right-side login form. Inspired by aghasisahakyan1's

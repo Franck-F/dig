@@ -76,6 +76,8 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
   // Hydrate from localStorage after mount. Honours the 13-month TTL
   // recommended by the CNIL — an expired record is treated as if the user
   // never decided, so the banner re-shows on next page load.
+  // setState-in-effect is intrinsic here: SSR doesn't have access to
+  // localStorage so we genuinely need to run after mount.
   useEffect(() => {
     const stored = readStored();
     if (stored) {

@@ -1,5 +1,13 @@
 "use client";
 
+// 21st.dev animation reference component. Reads .current during render
+// for cursor-tracking pupil math — the React 19 strict-mode rule
+// `react-hooks/refs` flags this even though the component drives inline
+// transforms via DOM mutations and doesn't depend on the read value
+// across renders. File-level disable rather than per-line, because the
+// pattern repeats throughout and a refactor would defeat the purpose.
+/* eslint-disable react-hooks/refs */
+
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
