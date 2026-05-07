@@ -9,6 +9,10 @@ import { prisma } from '@/lib/prisma';
 import { sendEmail } from '@/lib/email/resend';
 import { verificationCodeEmail } from '@/lib/email/templates/verification-code';
 import { passwordResetEmail } from '@/lib/email/templates/password-reset';
+import {
+  AUTH_RATE_LIMIT_ERROR,
+  checkAuthRateLimit,
+} from '@/lib/rate-limit/auth-limiter';
 
 /**
  * Discriminated state for `useActionState` consumers. The shape is shared by
@@ -115,6 +119,11 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
 
   const { email, password } = parsed.data;
 
+  // Rate-limit before any DB / bcrypt work — a brute-force attempt
+  // shouldn't be cheap to run.
+  const rl = await checkAuthRateLimit('signIn', email);
+  if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
+
   const user = await prisma.user.findUnique({ where: { email } });
   if (user && user.passwordHash && !user.emailVerified) {
     // Don't even attempt the credentials sign-in — return a status the
@@ -182,6 +191,10 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
   }
 
   const { firstName, lastName, email, password, role } = parsed.data;
+
+  const rl = await checkAuthRateLimit('signUp', email);
+  if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
+
   const passwordHash = await hash(password, 12);
 
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -241,6 +254,9 @@ export async function verifyEmailCode(_prev: AuthState, formData: FormData): Pro
   }
   const { email, code } = parsed.data;
 
+  const rl = await checkAuthRateLimit('verifyEmailCode', email);
+  if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
+
   const record = await prisma.verificationCode.findFirst({
     where: {
       email,
@@ -298,6 +314,10 @@ export async function resendVerificationCode(
   if (!parsed.success) return { status: 'error', error: 'invalid' };
   const { email } = parsed.data;
 
+  // Belt: per-IP + per-email bucket. Suspenders: 60 s DB cooldown below.
+  const rl = await checkAuthRateLimit('resendVerificationCode', email);
+  if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
+
   // Rate limit: refuse if a code was issued in the last 60s.
   const recent = await prisma.verificationCode.findFirst({
     where: { email, purpose: VerificationPurpose.EMAIL_VERIFICATION },
@@ -338,6 +358,13 @@ export async function requestPasswordReset(
   }
   const { email } = parsed.data;
 
+  // Rate-limit BEFORE the DB lookup. We still return success on rate-limit
+  // to keep the enumeration story consistent — leaking "rate-limited"
+  // would tell an attacker which emails exist (the limiter only ticks for
+  // valid emails in their flood). Instead silently swallow.
+  const rl = await checkAuthRateLimit('requestPasswordReset', email);
+  if (!rl.ok) return { status: 'success', message: 'resetSent' };
+
   const user = await prisma.user.findUnique({ where: { email } });
   if (user && user.passwordHash) {
     const code = await issueCode(email, VerificationPurpose.PASSWORD_RESET);
@@ -365,6 +392,9 @@ export async function confirmPasswordReset(
     return { status: 'error', error: parsed.error.issues[0]?.message ?? 'invalid' };
   }
   const { email, code, newPassword } = parsed.data;
+
+  const rl = await checkAuthRateLimit('confirmPasswordReset', email);
+  if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
 
   const record = await prisma.verificationCode.findFirst({
     where: {

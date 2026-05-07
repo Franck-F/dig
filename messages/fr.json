@@ -2175,7 +2175,7 @@
       "lastNameRequired": "Nom requis.",
       "emailSendFailed": "Impossible d'envoyer l'email. Réessaie dans un instant.",
       "oauthDisabled": "Connexion sociale indisponible.",
-      "rateLimited": "Patiente une minute avant de redemander un code.",
+      "rateLimited": "Trop de tentatives. Réessaie dans quelques minutes.",
       "generic": "Une erreur est survenue. Réessaie."
     },
     "oauth": {
