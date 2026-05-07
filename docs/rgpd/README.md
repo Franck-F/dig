@@ -14,12 +14,17 @@ documents ci-dessous.
 - `dpa/` — Dossier des DPA signés (à créer au premier signature). **Non
   versionné** : conservé hors-Git pour respecter la confidentialité (cf.
   `.gitignore`).
-- `runbook-incident.md` — *(à venir)* procédure de notification d'incident
-  Art. 33-34 sous 72h.
-- `aipd-mentora.md` — *(à venir)* analyse d'impact (PIA) traitement T-02
-  (profils mentors/mentees, mineurs).
-- `aipd-community.md` — *(à venir)* analyse d'impact traitement T-04
-  (communauté UGC, mineurs).
+- [`registre-violations.md`](./registre-violations.md) — registre interne
+  des violations de données (Art. 33 §5).
+- [`aipd-mentora.md`](./aipd-mentora.md) — analyse d'impact (PIA) du
+  traitement T-02 (profils mentors/mentees + mineurs).
+- [`aipd-community.md`](./aipd-community.md) — analyse d'impact du
+  traitement T-04 (communauté UGC + mineurs + modération).
+- [`comite-revue-moderation.md`](./comite-revue-moderation.md) — process
+  de comité de revue trimestrielle des décisions de modération
+  (composition, périmètre, KPI, requête SQL d'export).
+- Le runbook d'incident Art. 33-34 vit dans
+  [`../runbooks/rgpd-incident.md`](../runbooks/rgpd-incident.md).
 
 ## Cadence de revue
 
