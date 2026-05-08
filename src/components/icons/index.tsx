@@ -90,6 +90,25 @@ export function ArrowRightIcon(props: IconProps) {
   );
 }
 
+/** ChevronRight — breadcrumb separator, horizontal scroll affordances. */
+export function ChevronRightIcon(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="m9 6 6 6-6 6" />
+    </Base>
+  );
+}
+
+/** Home — breadcrumb root. */
+export function HomeIcon(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="M3 11.5 12 4l9 7.5" />
+      <path d="M5 10v9.5A1.5 1.5 0 0 0 6.5 21H9v-6h6v6h2.5A1.5 1.5 0 0 0 19 19.5V10" />
+    </Base>
+  );
+}
+
 /** Camera — gallery / album. */
 export function CameraIcon(props: IconProps) {
   return (
