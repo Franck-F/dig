@@ -3,8 +3,12 @@ import { authConfig } from '@/auth.config';
 
 const { auth } = NextAuth(authConfig);
 
-// Re-export under the name Next.js expects so the static analyzer
-// recognises this file as middleware in Next 16.
+// Renamed from `src/middleware.ts` to `src/proxy.ts` per the Next.js
+// 16 deprecation: https://nextjs.org/docs/messages/middleware-to-proxy.
+// Behaviour is identical — Next.js recognises the default export under
+// either filename today, but `middleware.ts` emits a deprecation
+// warning on every build. Renaming silences it and aligns with the
+// future-stable convention.
 export default auth;
 
 export const config = {
