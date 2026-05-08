@@ -201,11 +201,13 @@ export default withSentryConfig(withIntlAndAnalyzer, {
     deleteSourcemapsAfterUpload: true,
   },
 
-  // Disable the Sentry build plugin's auto-disabling of console.log.
-  // We keep our own logging.
-  disableLogger: true,
-
-  // Build-time release tagging — picked up from VERCEL_GIT_COMMIT_SHA on
-  // Vercel; falls back to `npm version` script otherwise.
-  automaticVercelMonitors: true,
+  // The previous `disableLogger: true` and `automaticVercelMonitors: true`
+  // options are not supported under Turbopack (Next.js 16's default) — the
+  // SDK prints DEPRECATION warnings on every build and the options are no-
+  // ops anyway. Removed. If/when we regain webpack-based builds, the
+  // equivalents live under the `webpack` key:
+  //   webpack: {
+  //     treeshake: { removeDebugLogging: true },
+  //     automaticVercelMonitors: true,
+  //   },
 });
