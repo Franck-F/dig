@@ -10,6 +10,7 @@ import {
   sendNewsletterCampaign,
   triggerNewsletterDrain,
 } from '@/lib/actions/newsletter';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 type Props = {
   /** Total recipients pre-counted at render time (mentors + mentees). Used as
@@ -41,6 +42,8 @@ type View = 'compose' | 'confirm' | 'sending' | 'done' | 'error';
  */
 export default function NewsletterCampaignModal({ initialReachHint }: Props) {
   const [open, setOpen] = useState(false);
+  // Focus trap on the campaign composer (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
   const [view, setView] = useState<View>('compose');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
@@ -253,6 +256,7 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
             }}
           >
             <div
+              ref={dialogRef}
               style={{
                 background: '#ffffff',
                 color: '#1a1f3a',

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export type ProgramKey = 'atelier' | 'masterclass' | 'hackathon' | 'mentora';
 
@@ -25,6 +26,8 @@ type Props = {
 export default function ProgramDetailsModal({ programKey, color, onClose }: Props) {
   const t = useTranslations('programs');
   const tModal = useTranslations('programs.detailsModal');
+  // Focus trap on the details popup (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(programKey !== null);
 
   useEffect(() => {
     if (!programKey) return;
@@ -67,6 +70,7 @@ export default function ProgramDetailsModal({ programKey, color, onClose }: Prop
       }}
     >
       <div
+        ref={dialogRef}
         style={{
           background: '#ffffff',
           color: '#1a1f3a',

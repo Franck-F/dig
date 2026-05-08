@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
 import { createChallenge } from '@/lib/actions/community/admin/challenges';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 /**
  * Opens a 4-step composer (slug + dates + content + cover) and calls the
@@ -21,6 +22,8 @@ export default function ChallengeCreatorModal() {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  // Focus trap on the multi-step composer (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -195,6 +198,7 @@ export default function ChallengeCreatorModal() {
             }}
           >
             <div
+              ref={dialogRef}
               style={{
                 background: '#ffffff',
                 color: '#1a1f3a',

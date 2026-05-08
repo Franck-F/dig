@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 // Owned by 3B-2.
 import { reportContent } from '@/lib/actions/community/reports';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 type Reason =
   | 'SPAM'
@@ -63,6 +64,8 @@ export default function ReportMenu({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
+  // Focus trap on the report dialog (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(reportOpen);
 
   // Lock body scroll + ESC to close while the report dialog is open.
   useEffect(() => {
@@ -228,6 +231,7 @@ export default function ReportMenu({
           onClick={() => !pending && setReportOpen(false)}
         >
           <div
+            ref={dialogRef}
             onClick={(e) => e.stopPropagation()}
             style={{
               maxWidth: 480,

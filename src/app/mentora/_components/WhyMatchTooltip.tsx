@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export type MatchBreakdown = {
   skills: number;
@@ -30,6 +31,8 @@ const COMPONENT_KEYS = [
 export default function WhyMatchTooltip({ breakdown }: { breakdown: MatchBreakdown }) {
   const t = useTranslations('mentora.discover.whyMatch');
   const [open, setOpen] = useState(false);
+  // Focus trap on the inline popover (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
 
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -58,6 +61,7 @@ export default function WhyMatchTooltip({ breakdown }: { breakdown: MatchBreakdo
       </button>
       {open && (
         <div
+          ref={dialogRef}
           role="dialog"
           className="dz-glass-strong"
           style={{

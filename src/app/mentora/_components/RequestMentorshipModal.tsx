@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { sendMentorshipRequest } from '@/lib/actions/mentora/requests';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 type Props = {
   /** Mentor's MentorProfile.id (NOT userId) — required by the action. */
@@ -88,6 +89,9 @@ export default function RequestMentorshipModal({
     );
   }
 
+  // Focus trap on the modal — keyboard focus stays inside while open.
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
+
   const toggleTopic = (id: string) => {
     setTopics((prev) =>
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id].slice(0, 5),
@@ -162,6 +166,7 @@ export default function RequestMentorshipModal({
           }}
         >
           <div
+            ref={dialogRef}
             style={{
               // Solid surface, not the dz-glass-strong class — earlier feedback:
               // « le fond n'est pas off » — the frosted glass let the page behind

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export type NotificationPreview = {
   id: string;
@@ -56,6 +57,8 @@ export default function NotificationsBell({
 }: Props) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  // Focus trap on the bell popover (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
 
   useEffect(() => {
     if (!open) return;
@@ -132,6 +135,7 @@ export default function NotificationsBell({
 
       {open && (
         <div
+          ref={dialogRef}
           role="dialog"
           aria-label={copy.title}
           style={{

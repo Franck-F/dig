@@ -12,6 +12,7 @@ import {
   unbanUser,
   warnAuthor,
 } from '@/lib/actions/community/admin/moderation';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 type Status = 'ACTIVE' | 'MUTED' | 'SUSPENDED' | 'BANNED' | string;
 
@@ -44,6 +45,9 @@ export default function UserModerationPanel({
   const [active, setActive] = useState<Action | null>(null);
   const [reason, setReason] = useState('');
   const [error, setError] = useState<string | null>(null);
+  // Focus trap on the confirmation dialog while a moderation action is
+  // being prepared (WCAG 2.4.3).
+  const dialogRef = useFocusTrap<HTMLDivElement>(active !== null);
 
   const open = (action: Action) => {
     setActive(action);
@@ -158,6 +162,7 @@ export default function UserModerationPanel({
           onClick={close}
         >
           <div
+            ref={dialogRef}
             className="dz-glass-strong"
             style={{ width: '100%', maxWidth: 460, padding: 24, borderRadius: 20 }}
             onClick={(e) => e.stopPropagation()}
