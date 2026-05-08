@@ -17,7 +17,7 @@ export default async function LoginPage() {
   const t = await getTranslations('login');
 
   return (
-    <Frame active="login">
+    <Frame active="login" hideFooter>
       {/* Visually hidden h1 for accessibility — there was no top-level
           heading for the route until now. */}
       <h1 className="dz-sr-only">{t('title')}</h1>
