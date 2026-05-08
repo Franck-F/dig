@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { createPost, updatePost } from '@/lib/actions/community/posts';
+import MentionAutocomplete from './MentionAutocomplete';
 
 const MAX_ATTACHMENTS = 4;
 const ATTACHMENT_MAX_WIDTH = 720;
@@ -384,10 +385,15 @@ export default function PostComposer({ mode, channels, initial, requireEditReaso
               {previewOpen ? 'Aperçu actif' : 'Aperçu'}
             </button>
           </div>
-          <textarea
+          {/* Mention autocomplete wrapper — opens a floating list of
+              matching @handles when the user types `@xxx`, arrow-keys
+              and Enter to pick. The wrapper is just a forwarded
+              <textarea> so all the existing styling, ref usage and
+              toolbar interactions still work. */}
+          <MentionAutocomplete
             ref={textareaRef}
             value={body}
-            onChange={(e) => setBody(e.target.value)}
+            onChange={setBody}
             placeholder={t('bodyPlaceholder')}
             rows={12}
             required
@@ -709,6 +715,20 @@ function renderMarkdownLite(src: string): string {
     '<blockquote style="border-left:3px solid #7301FF;padding-left:12px;color:#545b7a;font-style:italic;margin:8px 0;">$1</blockquote>');
   s = s.replace(/^(?:- |\* )(.+)$/gm, '<li>$1</li>');
   s = s.replace(/(?:<li>.*?<\/li>\n?)+/g, (m) => `<ul style="padding-left:20px;margin:8px 0;">${m}</ul>`);
+
+  // Mentions and hashtags — match the regexes used by the server-side
+  // sanitizer (see src/lib/community/sanitizer.ts) so the preview shows
+  // exactly how the post will render once published. Negative
+  // lookbehind keeps `email@example.com` and `#xyz` inside identifiers
+  // out of the picture.
+  s = s.replace(
+    /(^|[^a-zA-Z0-9_])@([a-z0-9_]{3,30})(?![a-z0-9_])/gi,
+    '$1<a href="/community/members/$2" style="color:#7301FF;font-weight:600;text-decoration:none;">@$2</a>',
+  );
+  s = s.replace(
+    /(^|[^a-zA-Z0-9_])#([a-z0-9_]{1,32})/gi,
+    (_, lead, tag) => `${lead}<a href="/community/tag/${tag.toLowerCase()}" style="background:rgba(115,1,255,0.10);color:#7301FF;padding:1px 8px;border-radius:999px;font-size:0.85em;font-weight:600;text-decoration:none;">#${tag}</a>`,
+  );
 
   s = s
     .split(/\n{2,}/)
