@@ -615,10 +615,15 @@ summary:focus-visible {
   .dz-header-nav { display: none; }
   .dz-burger { display: inline-flex; }
   /* Right-side cluster lives inside .dz-header-inner > div:last-child.
-     Hide every dz-btn (and the "Mon espace" pill when authed) so only the
-     theme toggle and burger remain visible — they fit any viewport. */
+     Hide every dz-btn (Mon espace / Connexion / Nous rejoindre) AND
+     the locale + theme segmented controls — they're chunky on small
+     viewports. They get re-rendered inside the burger panel where
+     touch targets can breathe. */
   .dz-header-inner > div:last-child > .dz-btn,
   .dz-header-inner > div:last-child > a.dz-btn {
+    display: none !important;
+  }
+  .dz-header-switchers > div[role="group"] {
     display: none !important;
   }
 
@@ -839,6 +844,17 @@ summary:focus-visible {
 .dz-stack-card {
   position: sticky;
   top: 80px;
+}
+/* Mobile: drop the sticky pin — when the manifesto grid stacks to a
+   single column the sticky title overlaps the cards below it (which
+   are translucent glassmorphism), causing visible text-on-text bleed.
+   Static positioning fixes the readability without losing the
+   desktop scroll-driven layering. */
+@media (max-width: 900px) {
+  .dz-stack-card {
+    position: static;
+    top: auto;
+  }
 }
 
 /* Shimmer text — used on liquid pills and hero highlights */

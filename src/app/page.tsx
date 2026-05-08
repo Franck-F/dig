@@ -141,8 +141,8 @@ export default async function HomePage() {
 
       {/* MANIFESTO — sticky scroll-driven layered section */}
       <Reveal>
-        <section className="dz-section" style={{ paddingTop: 64, paddingBottom: 80 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'start' }}>
+        <section className="dz-section dz-manifesto" style={{ paddingTop: 64, paddingBottom: 80 }}>
+          <div className="dz-manifesto__grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'start' }}>
             <div className="dz-stack-card" style={{ paddingTop: 12 }}>
               <div className="dz-eyebrow">
                 <span className="dot" />
@@ -175,6 +175,17 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
+          <style>{`
+            @media (max-width: 900px) {
+              .dz-manifesto__grid {
+                grid-template-columns: 1fr !important;
+                gap: 28px !important;
+              }
+            }
+            @media (max-width: 900px) {
+              .dz-manifesto { padding-top: 48px !important; padding-bottom: 56px !important; }
+            }
+          `}</style>
         </section>
       </Reveal>
 
