@@ -1,8 +1,20 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import { withSentryConfig } from '@sentry/nextjs';
+import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+
+/**
+ * Bundle analyzer wrapper. Run `ANALYZE=1 npm run build` to generate
+ * an interactive treemap of the client + server bundles in
+ * `.next/analyze/`. Disabled by default so production builds stay
+ * fast; enabling it doesn't change the emitted bundle, only writes
+ * the report files.
+ */
+const withAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === '1',
+});
 
 /**
  * Security headers — applied to every route.
@@ -155,14 +167,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Wrap order: next-intl is the innermost plugin (transforms imports), then
-// Sentry wraps the result to inject source-map upload + tunneling.
+// Wrap order: next-intl is the innermost plugin (transforms imports),
+// then bundle-analyzer (no-op when ANALYZE != '1'), then Sentry wraps
+// the result to inject source-map upload + tunneling.
 //
 // Sentry options reference:
 //   https://github.com/getsentry/sentry-webpack-plugin#options
 const withIntl = withNextIntl(nextConfig);
+const withIntlAndAnalyzer = withAnalyzer(withIntl);
 
-export default withSentryConfig(withIntl, {
+export default withSentryConfig(withIntlAndAnalyzer, {
   // Sentry org + project — read from `npx @sentry/wizard`'s output.
   org: 'dig-ln',
   project: 'javascript-nextjs',
