@@ -699,8 +699,13 @@ export default async function ConnectedFeed({
             <p style={{ margin: 0, fontSize: 12, opacity: 0.85 }}>
               Discussions thématiques, retours et événements en direct.
             </p>
+            {/* dz-btn class added so the global dark-theme override
+                that flips inline `background: white` to dark navy
+                skips this pill — it sits on a coloured gradient
+                banner that stays bright in both themes. */}
             <Link
               href="/community/channels"
+              className="dz-btn"
               style={{
                 marginTop: 14,
                 display: 'block',

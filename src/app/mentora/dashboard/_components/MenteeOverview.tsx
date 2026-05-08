@@ -641,6 +641,7 @@ export default async function MenteeOverview({ profile }: { profile: CurrentMent
             </p>
             <Link
               href="/mentora/discover"
+              className="dz-btn"
               style={{
                 display: 'inline-block',
                 marginTop: 14,

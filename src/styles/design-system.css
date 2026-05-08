@@ -1190,15 +1190,27 @@ body.dz-theme-dark [style*="background-color: #ffffff"]:not(.dz-btn),
 body.dz-theme-dark [style*="background-color:#ffffff"]:not(.dz-btn),
 body.dz-theme-dark [style*="background-color: white"]:not(.dz-btn),
 body.dz-theme-dark [style*="background-color:white"]:not(.dz-btn) {
-  background: rgba(28, 18, 60, 0.65) !important;
+  /* 0.92 alpha (was 0.65) so nested whites don't stack into
+     near-transparency on forms with multiple white-on-white layers
+     (Card > field > input). The slight alpha keeps the page bg
+     from feeling pitch-black while still reading as a real surface. */
+  background: rgba(22, 14, 48, 0.92) !important;
   color: var(--ink);
 }
 
-/* Faint off-white panels (preview boxes, soft cards) */
+/* Faint off-white panels (preview boxes, soft cards). The hex list
+   covers every off-white tint we use across the site so no card is
+   left behind in dark mode. */
 body.dz-theme-dark [style*="background: #f7f4ff"],
 body.dz-theme-dark [style*="background:#f7f4ff"],
 body.dz-theme-dark [style*="background: #fafaff"],
-body.dz-theme-dark [style*="background:#fafaff"] {
+body.dz-theme-dark [style*="background:#fafaff"],
+body.dz-theme-dark [style*="background: #faf7ff"],
+body.dz-theme-dark [style*="background:#faf7ff"],
+body.dz-theme-dark [style*="background: #f5efff"],
+body.dz-theme-dark [style*="background:#f5efff"],
+body.dz-theme-dark [style*="background: #fcfaff"],
+body.dz-theme-dark [style*="background:#fcfaff"] {
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
@@ -1226,6 +1238,33 @@ body.dz-theme-dark [style*="color:#3a2960"] { color: var(--ink) !important; }
 
 body.dz-theme-dark [style*="color: #545b7a"],
 body.dz-theme-dark [style*="color:#545b7a"] { color: var(--ink-soft) !important; }
+
+/* Brand violet text reads barely-visible on the dark navy page bg
+   (#7301FF on near-black). Lift to brand-violet-light (#A34BF5) /
+   #c8a8ff so accent labels, "X posts" counters, "Voir mes posts
+   sauvegardés" pills etc. keep readable contrast. Targets only
+   inline color usages — gradient backgrounds use `linear-gradient(
+   #7301FF, …)` which doesn't match `color:`. */
+body.dz-theme-dark [style*="color: #7301FF"],
+body.dz-theme-dark [style*="color:#7301FF"] {
+  color: #c8a8ff !important;
+}
+
+/* Pink-red danger / success accents on dark backgrounds. The light-
+   mode tones are too saturated to read on near-black; lift them to
+   their dark-mode-appropriate counterparts. */
+body.dz-theme-dark [style*="color: #a8235e"],
+body.dz-theme-dark [style*="color:#a8235e"] {
+  color: #ff8ac1 !important;
+}
+body.dz-theme-dark [style*="color: #108a48"],
+body.dz-theme-dark [style*="color:#108a48"] {
+  color: #4ade80 !important;
+}
+body.dz-theme-dark [style*="color: #0e8a4a"],
+body.dz-theme-dark [style*="color:#0e8a4a"] {
+  color: #4ade80 !important;
+}
 
 body.dz-theme-dark [style*="color: #8b91ad"],
 body.dz-theme-dark [style*="color:#8b91ad"],
