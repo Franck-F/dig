@@ -516,15 +516,21 @@
 }
 .dz-frame.--dark .dz-mobile-nav-panel { background: #1a1240; color: #fff; }
 @keyframes dz-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
-.dz-mobile-nav a {
+/* Nav-link styling — excludes .dz-btn so the action buttons at the
+   bottom of the panel ("Nous rejoindre", "Connexion") keep their
+   own visual weight (white text on the violet gradient). The
+   previous selector was matching every anchor and overriding the
+   primary button to muted gray — invisible on the gradient. */
+.dz-mobile-nav a:not(.dz-btn) {
   padding: 14px 12px; border-radius: var(--r-md);
   color: var(--ink-soft); font-size: 16px; font-weight: 500;
   text-decoration: none; transition: background .15s;
 }
-.dz-mobile-nav a:hover, .dz-mobile-nav a.--active {
+.dz-mobile-nav a:not(.dz-btn):hover,
+.dz-mobile-nav a:not(.dz-btn).--active {
   background: rgba(115,1,255,0.10); color: var(--brand-violet);
 }
-.dz-frame.--dark .dz-mobile-nav a { color: rgba(255,255,255,0.85); }
+.dz-frame.--dark .dz-mobile-nav a:not(.dz-btn) { color: rgba(255,255,255,0.85); }
 
 /* =========================================================
    Login page layout
