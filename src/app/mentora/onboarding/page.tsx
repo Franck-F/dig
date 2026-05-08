@@ -46,11 +46,13 @@ export default async function OnboardingPage({
   // Mentors landed on the wrong wizard — this onboarding asks for goals /
   // skills the user wants to develop, which only makes sense for mentees.
   // Bounce mentor-role users to the mentor application form. The session
-  // payload only carries `id`, so we hit the DB once for the role.
+  // payload only carries `id`, so we hit the DB once for the role +
+  // roleConfirmed gate (brand-new OAuth users still need to pick).
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { role: true },
+    select: { role: true, roleConfirmed: true },
   });
+  if (me && !me.roleConfirmed) redirect('/welcome/role');
   if (me?.role === 'MENTOR') redirect('/mentora/become-a-mentor');
   if (me?.role === 'ADMIN') redirect('/mentora/admin');
 

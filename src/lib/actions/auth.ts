@@ -316,6 +316,10 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
         name: `${firstName} ${lastName}`,
         passwordHash,
         role,
+        // Credentials signup picked a role inline — bypass the OAuth
+        // /welcome/role gate. (Default in schema is true anyway, but be
+        // explicit so the contract is unambiguous.)
+        roleConfirmed: true,
         birthYear,
       },
     });
@@ -328,6 +332,7 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
         name: `${firstName} ${lastName}`,
         passwordHash,
         role,
+        roleConfirmed: true,
         emailVerified: null,
         birthYear,
       },

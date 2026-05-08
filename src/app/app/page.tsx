@@ -52,12 +52,20 @@ export default async function AppHubPage() {
   // on every visit to the hub. Same effect as the credentials sign-in
   // server action's role-aware redirectTo, but also covers OAuth sign-ins
   // that land here via NextAuth's `redirectTo: '/app'` default.
+  //
+  // We also use this single round-trip to gate brand-new OAuth signups:
+  // when `roleConfirmed === false`, the user landed here without ever
+  // picking Apprenant·e or Mentor (the schema default `STUDENT` is just
+  // a placeholder). Bounce them through the `/welcome/role` chooser.
   const adminCheck = await prisma.user.findUnique({
     where: { id: userId },
-    select: { role: true },
+    select: { role: true, roleConfirmed: true },
   });
   if (adminCheck?.role === 'ADMIN') {
     redirect('/mentora/admin');
+  }
+  if (adminCheck && !adminCheck.roleConfirmed) {
+    redirect('/welcome/role');
   }
 
   // Pull just enough to make the cards live without slowing the hub.
