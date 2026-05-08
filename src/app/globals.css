@@ -55,13 +55,33 @@
   html, body {
     overflow-x: clip;
   }
+  /*
+    Ambient backdrop for the liquid-glass system.
+    The page is still visually white, but a triplet of very low-opacity
+    radial gradients (top-left violet, top-right pink, bottom-centre
+    violet) adds chromatic content for the glass cards to refract via
+    backdrop-filter. Without this, .dz-lg surfaces sit on a flat canvas
+    and read as a thin border with nothing inside — kills the lens
+    illusion. The gradients are fixed to the viewport so they don't
+    scroll past the cards.
+  */
   body {
-    background: #ffffff;
+    background:
+      radial-gradient(60% 50% at 12% 8%, rgba(115,1,255,0.10), transparent 65%),
+      radial-gradient(55% 45% at 92% 18%, rgba(244,111,177,0.10), transparent 60%),
+      radial-gradient(70% 60% at 50% 110%, rgba(163,75,245,0.08), transparent 65%),
+      #ffffff;
+    background-attachment: fixed;
     min-height: 100vh;
   }
 
   body.dz-theme-dark {
-    background: #0a0820;
+    background:
+      radial-gradient(60% 50% at 12% 8%, rgba(115,1,255,0.40), transparent 65%),
+      radial-gradient(55% 45% at 92% 18%, rgba(244,111,177,0.28), transparent 60%),
+      radial-gradient(70% 60% at 50% 110%, rgba(163,75,245,0.30), transparent 65%),
+      #0a0820;
+    background-attachment: fixed;
     color: #f5f3ff;
     color-scheme: dark;
   }

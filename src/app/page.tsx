@@ -160,7 +160,7 @@ export default async function HomePage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {(['inclusion', 'mentorship', 'community'] as const).map((k, i) => (
                 <Reveal key={k} delay={i * 110}>
-                  <div className="dz-lg --strong dz-manifest-card" style={{ padding: '28px 32px' }}>
+                  <div className="dz-lg --strong --interactive dz-manifest-card" style={{ padding: '28px 32px' }}>
                     <div className="dz-manifest-card__tag">
                       {t(`manifesto.cards.${k}.tag`)}
                     </div>
@@ -259,21 +259,25 @@ export default async function HomePage() {
               {programItems.map((p, i) => (
                 <Reveal key={p.key} delay={i * 110}>
                   <div style={{ position: 'relative', display: 'flex' }}>
+                    {/* Floating colour orb above the card — gives the
+                        glass tile something tinted to refract through
+                        its iridescent edge. */}
                     <div
                       style={{
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         borderRadius: '50%',
-                        background: p.color,
+                        background: `radial-gradient(circle at 32% 28%, rgba(255,255,255,0.55), transparent 55%), ${p.color}`,
                         position: 'absolute',
-                        top: -20,
+                        top: -22,
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: 4,
-                        boxShadow: '0 10px 24px rgba(0,0,0,0.32)',
+                        boxShadow: `0 12px 28px ${p.color}66, 0 0 0 1.5px rgba(255,255,255,0.45) inset`,
                       }}
                     />
                     <div
+                      className="dz-lg --on-color --interactive"
                       style={{
                         padding: '40px 24px 24px',
                         display: 'flex',
@@ -282,26 +286,36 @@ export default async function HomePage() {
                         gap: 14,
                         flex: 1,
                         minHeight: 340,
-                        background: '#ffffff',
-                        borderRadius: 24,
-                        boxShadow:
-                          '0 24px 60px -20px rgba(15,18,40,0.45), 0 8px 18px -8px rgba(115,1,255,0.25)',
                       }}
                     >
-                      <span style={{ fontSize: 13, color: p.color, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase' }}>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          color: '#ffffff',
+                          fontWeight: 700,
+                          letterSpacing: '0.10em',
+                          textTransform: 'uppercase',
+                          padding: '4px 10px',
+                          borderRadius: 999,
+                          background: `${p.color}80`,
+                          border: '1px solid rgba(255,255,255,0.30)',
+                          backdropFilter: 'blur(8px)',
+                          WebkitBackdropFilter: 'blur(8px)',
+                        }}
+                      >
                         {t(`programs.items.${p.key}.tag`)}
                       </span>
-                      <h3 style={{ color: '#1a1f3a', fontSize: 24, fontWeight: 700, margin: 0, textAlign: 'center' }}>
+                      <h3 style={{ color: '#ffffff', fontSize: 24, fontWeight: 700, margin: 0, textAlign: 'center' }}>
                         {t(`programs.items.${p.key}.title`)}
                       </h3>
-                      <p style={{ color: '#545b7a', fontSize: 16, lineHeight: 1.65, margin: 0, textAlign: 'center', flex: 1 }}>
+                      <p style={{ color: 'rgba(255,255,255,0.86)', fontSize: 15, lineHeight: 1.65, margin: 0, textAlign: 'center', flex: 1 }}>
                         {t(`programs.items.${p.key}.desc`)}
                       </p>
                       <Link
                         href="/programs"
                         style={{
-                          background: p.color,
-                          color: 'white',
+                          background: 'rgba(255,255,255,0.95)',
+                          color: p.color,
                           border: 'none',
                           padding: '14px 22px',
                           borderRadius: 999,
@@ -313,7 +327,7 @@ export default async function HomePage() {
                           width: '100%',
                           textAlign: 'center',
                           textDecoration: 'none',
-                          boxShadow: '0 8px 18px rgba(0,0,0,0.20)',
+                          boxShadow: '0 8px 18px rgba(0,0,0,0.20), 0 0 0 1px rgba(255,255,255,0.4) inset',
                           transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)',
                         }}
                       >
@@ -395,7 +409,7 @@ export default async function HomePage() {
               return (
                 <Reveal key={k} delay={i * 120}>
                   <article
-                    className="dz-lg"
+                    className="dz-lg --interactive"
                     style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 20, height: '100%' }}
                   >
                     <span aria-hidden style={{ fontSize: 56, lineHeight: 0.7, color, opacity: 0.6, fontFamily: 'Georgia, serif' }}>“</span>
