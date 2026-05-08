@@ -103,7 +103,7 @@ auteur: DPO Digizelle (avec contribution Tech Lead)
   Art. 20.
 - **Droit à l'oubli** : à la suppression du compte, contenus
   anonymisés (auteur = « Compte supprimé »), purge à J+30.
-- **Recours contre une sanction** : email à dpo@calebasse.com — la
+- **Recours contre une sanction** : email à contact@digizelle.fr — la
   procédure de recours est documentée dans la charte (à finaliser).
 
 ## 3. Analyse de risques

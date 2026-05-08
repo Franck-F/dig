@@ -1,8 +1,8 @@
 ---
 titre: Registre des activités de traitement
-responsable: Digizelle (Laboratoire Calebasse, association loi 1901)
+responsable: Digizelle (association loi 1901)
 adresse: EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre
-contact_dpo: dpo@calebasse.com
+contact_dpo: contact@digizelle.fr
 version: 1.0
 derniere_mise_a_jour: 2026-05-07
 prochaine_revue: 2027-05-07
@@ -12,11 +12,11 @@ fondement: RGPD Art. 30 (Règlement UE 2016/679)
 # Registre des activités de traitement
 
 Ce registre formalise les traitements de données à caractère personnel mis en œuvre
-par **Digizelle** (Laboratoire Calebasse, association loi 1901). Il est tenu en
+par **Digizelle** (association loi 1901). Il est tenu en
 application de **l'article 30 du RGPD** et révisé au minimum **annuellement**.
 
 > **Mise à disposition** — sur demande de la CNIL ou des personnes concernées,
-> ce document est communiqué au DPO (dpo@calebasse.com) qui répond sous 30 jours.
+> ce document est communiqué au DPO (contact@digizelle.fr) qui répond sous 30 jours.
 
 ---
 
@@ -24,12 +24,12 @@ application de **l'article 30 du RGPD** et révisé au minimum **annuellement**.
 
 | Élément              | Valeur                                                                         |
 | -------------------- | ------------------------------------------------------------------------------ |
-| Dénomination         | Laboratoire Calebasse (Digizelle)                                              |
+| Dénomination         | Digizelle                                                                       |
 | Forme juridique      | Association loi 1901, à but non lucratif                                       |
 | Siège                | EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre |
 | RNA                  | À compléter une fois publié au JO                                              |
-| Contact général      | communication@calebasse.com                                                    |
-| Contact DPO          | dpo@calebasse.com                                                              |
+| Contact général      | contact@digizelle.fr                                                            |
+| Contact DPO          | contact@digizelle.fr                                                            |
 | Représentant légal   | Franck — Team Leader / Tech                                                    |
 
 ## 2. Délégué à la protection des données (DPO)
@@ -37,7 +37,7 @@ application de **l'article 30 du RGPD** et révisé au minimum **annuellement**.
 Désignation : **interne**, mutualisé avec la fonction Tech Lead jusqu'à
 recrutement d'un DPO externalisé.
 
-- **Contact** : dpo@calebasse.com
+- **Contact** : contact@digizelle.fr
 - **Mission** : conseil sur la conformité, point de contact CNIL, réponse aux
   demandes des personnes concernées (Art. 12 à 22), suivi des incidents et
   notifications (Art. 33-34), tenue du présent registre.
@@ -202,7 +202,7 @@ recrutement d'un DPO externalisé.
 ## 5. Droits des personnes concernées (Art. 15-22)
 
 Les utilisateurs disposent des droits suivants, exerçables auprès du DPO
-(dpo@calebasse.com) ou directement depuis leurs paramètres de compte :
+(contact@digizelle.fr) ou directement depuis leurs paramètres de compte :
 
 - **Accès** (Art. 15) : récapitulatif des données détenues, fourni dans
   l'export JSON depuis `/community/settings`.

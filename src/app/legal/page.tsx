@@ -115,7 +115,10 @@ export default async function LegalPage() {
             .dz-legal-page__grid {
               grid-template-columns: 260px 1fr;
               gap: 48px;
-              align-items: start;
+              /* Default 'align-items: stretch' is required so the
+                 left-column grid cell extends to the full row height —
+                 otherwise position:sticky on the TOC has no track to
+                 stick within and scrolls with the page. */
             }
             .dz-legal-page__toc-mobile { display: none; }
             .dz-legal-page__toc-desktop {

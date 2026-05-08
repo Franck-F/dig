@@ -17,7 +17,7 @@ const CONFIRM_PHRASE = 'SUPPRIMER';
  * Why client-side? We need the typed-confirmation gate which requires
  * controlled input + button enable/disable.
  */
-export default function DangerZone() {
+export default function DangerZone({ dpoEmail }: { dpoEmail: string }) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState('');
   const [reason, setReason] = useState('');
@@ -134,7 +134,7 @@ export default function DangerZone() {
         }}
       >
         <strong>Délai de grâce de 30 jours.</strong> Pendant ce délai, vous pouvez restaurer votre
-        compte en contactant <a href="mailto:dpo@calebasse.com" style={{ color: '#7301FF' }}>dpo@calebasse.com</a>{' '}
+        compte en contactant <a href={`mailto:${dpoEmail}`} style={{ color: '#7301FF' }}>{dpoEmail}</a>{' '}
         avec une preuve d&apos;identité. Au-delà, la purge est définitive et irréversible (RGPD
         Art. 17).
       </div>

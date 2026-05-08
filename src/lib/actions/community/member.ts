@@ -13,7 +13,11 @@ import {
 } from './_helpers';
 import { requireUser } from '@/lib/actions/_shared';
 import { evaluateBadges } from '@/lib/community/badges';
-import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
+import {
+  uploadDataUriAsset,
+  deleteStoredAsset,
+  parseStoredAssetUrl,
+} from '@/lib/storage/upload-data-uri';
 
 /**
  * Member / onboarding actions. Spec §5.2 (member).
@@ -147,20 +151,48 @@ export async function updateMemberProfile(
     const parsed = updateMemberProfileSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
 
-    // Hardened image validation for `data:image/...` URIs — checks the
-    // MIME, size cap, and magic-number to stop a renamed-binary payload
-    // from being persisted as an avatar.
+    // Hardened image validation + Supabase Storage upload for `data:image/...`
+    // URIs. The validator checks MIME / size / magic-number; the uploader
+    // streams the bytes to the `avatars` bucket and returns a public URL.
+    // When SUPABASE_URL/KEY isn't configured (local dev), the helper
+    // transparently falls back to passing the data URI through, so the
+    // existing in-DB persistence path keeps working.
     const url = parsed.data.avatarUrl;
+    let resolvedAvatarUrl = url;
     if (url && url.startsWith('data:')) {
-      const r = validateImageDataUri(url, IMAGE_CAPS.avatar);
-      if (!r.ok) return err(imageReasonToErrorCode(r.reason));
+      // Folder is keyed by User.id (not member.id) so the RGPD J+30 purge
+      // can wipe `avatars/{userId}/*` in one call without joining.
+      const upload = await uploadDataUriAsset({
+        uri: url,
+        surface: 'avatar',
+        userId: ctx.user.id,
+      });
+      if (upload.kind === 'invalid') return err(upload.code);
+      resolvedAvatarUrl = upload.url;
     }
+
+    // Capture the previous Storage-backed avatar so we can clean it up
+    // best-effort once the row update succeeds.
+    const previous =
+      url !== undefined
+        ? await prisma.communityMember.findUnique({
+            where: { id: ctx.member.id },
+            select: { avatarUrl: true },
+          })
+        : null;
 
     const updated = await prisma.communityMember.update({
       where: { id: ctx.member.id },
-      data: parsed.data,
+      data: { ...parsed.data, avatarUrl: resolvedAvatarUrl ?? parsed.data.avatarUrl },
       select: { id: true, handle: true },
     });
+
+    // Best-effort: drop the old Storage object if it pointed to one.
+    // Failure is logged-and-ignored — orphan beats broken UX.
+    if (previous?.avatarUrl) {
+      const old = parseStoredAssetUrl(previous.avatarUrl);
+      if (old) await deleteStoredAsset(old);
+    }
     revalidatePath(`/community/members/${updated.handle}`);
     revalidatePath('/community/settings');
     return ok({ id: updated.id });

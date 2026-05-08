@@ -1,8 +1,8 @@
 # Digizelle webapp
 
-Plateforme open-source de l'association loi 1901 **Digizelle / Laboratoire
-Calebasse** — inclusion numérique des jeunes (en particulier les jeunes
-femmes) en Île-de-France et au-delà.
+Plateforme open-source de l'association loi 1901 **Digizelle** —
+inclusion numérique des jeunes (en particulier les jeunes femmes) en
+Île-de-France et au-delà.
 
 Une seule application Next.js qui combine **vitrine publique**, **mentorat
 1:1 (Mentora)**, **communauté UGC**, et **back-office admin**.
@@ -112,12 +112,12 @@ docs/
 ## Licence
 
 Code source : voir `LICENSE` (à finaliser avant ouverture publique).
-Contenu (texte, images, logos) : © Laboratoire Calebasse — tous droits
+Contenu (texte, images, logos) : © Digizelle — tous droits
 réservés sauf mention contraire.
 
 ## Contact
 
 - Tech / contributions : Franck — Tech Lead
-- Communication / partenariats : communication@calebasse.com
-- RGPD / DPO : dpo@calebasse.com
+- Communication / partenariats : contact@digizelle.fr
+- RGPD / DPO : contact@digizelle.fr
 - Issues / bugs : https://github.com/Franck-F/dig/issues

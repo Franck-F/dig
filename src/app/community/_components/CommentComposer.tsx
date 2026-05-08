@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
 // Owned by 3B-2.
 import { createComment } from '@/lib/actions/community/comments';
+import { handleMarkdownKeyDown } from './markdownShortcuts';
 
 type Props = {
   postId: string;
@@ -30,6 +31,7 @@ export default function CommentComposer({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -76,8 +78,12 @@ export default function CommentComposer({
   return (
     <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <textarea
+        ref={textareaRef}
         value={body}
         onChange={(e) => setBody(e.target.value)}
+        onKeyDown={(e) =>
+          handleMarkdownKeyDown(e, { textarea: textareaRef.current, value: body, setValue: setBody })
+        }
         placeholder={t('placeholder')}
         rows={parentCommentId ? 3 : 4}
         autoFocus={autoFocus}

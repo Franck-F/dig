@@ -340,6 +340,12 @@ model MentorProfile {
   updatedAt            DateTime     @updatedAt
   publishedAt          DateTime?    // set when status moves to ACTIVE first time
 
+  /// FTS — generated `tsvector` column maintained by Postgres
+  /// (setweight(headline, A) || setweight(bio, B)). Indexed by GIN.
+  /// Prisma can't manage this directly so we read it via $queryRaw in
+  /// `discoverMentors` and let the SQL migration own the DDL.
+  searchTsv            Unsupported("tsvector")?
+
   skills           MentorSkill[]
   rules            AvailabilityRule[]
   exceptions       AvailabilityException[]

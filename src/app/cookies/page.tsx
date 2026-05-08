@@ -14,7 +14,8 @@ export default async function CookiesPage() {
   const t = await getTranslations('cookies');
 
   const types = ['essential', 'analytics', 'preferences'] as const;
-  const listItems = ['0', '1', '2', '3', '4'] as const;
+  const cookieItems = ['0', '1', '2'] as const;
+  const storageItems = ['0', '1'] as const;
 
   // The TOC mirrors the visual section IDs used below.
   const tocItems: LegalTOCItem[] = [
@@ -86,29 +87,69 @@ export default async function CookiesPage() {
               <h2 className="dz-h3" style={{ marginBottom: 12 }}>
                 {t('list.title')}
               </h2>
-              <p className="dz-body" style={{ marginBottom: 16 }}>
+              <p className="dz-body" style={{ marginBottom: 24 }}>
                 {t('list.intro')}
               </p>
-              <div className="dz-cookie-table" role="table" aria-label={t('list.tableLabel')}>
+
+              {/* Cookies HTTP — sub-table 1 */}
+              <h3 className="dz-h4" style={{ marginBottom: 6, fontSize: 18, fontWeight: 700 }}>
+                {t('list.cookiesTitle')}
+              </h3>
+              <p className="dz-small" style={{ marginBottom: 14, color: '#8b91ad' }}>
+                {t('list.cookiesSubtitle')}
+              </p>
+              <div className="dz-cookie-table" role="table" aria-label={t('list.cookiesTitle')} style={{ marginBottom: 28 }}>
                 <div className="dz-cookie-table__head" role="row">
                   <span role="columnheader">{t('list.headers.name')}</span>
                   <span role="columnheader">{t('list.headers.purpose')}</span>
                   <span role="columnheader">{t('list.headers.duration')}</span>
                   <span role="columnheader">{t('list.headers.type')}</span>
                 </div>
-                {listItems.map((i) => (
-                  <div key={i} className="dz-cookie-table__row" role="row">
+                {cookieItems.map((i) => (
+                  <div key={`c-${i}`} className="dz-cookie-table__row" role="row">
                     <span role="cell" data-label={t('list.headers.name')}>
-                      <code>{t(`list.items.${i}.name`)}</code>
+                      <code>{t(`list.cookies.${i}.name`)}</code>
                     </span>
                     <span role="cell" data-label={t('list.headers.purpose')}>
-                      {t(`list.items.${i}.purpose`)}
+                      {t(`list.cookies.${i}.purpose`)}
                     </span>
                     <span role="cell" data-label={t('list.headers.duration')}>
-                      {t(`list.items.${i}.duration`)}
+                      {t(`list.cookies.${i}.duration`)}
                     </span>
                     <span role="cell" data-label={t('list.headers.type')}>
-                      {t(`list.items.${i}.type`)}
+                      {t(`list.cookies.${i}.type`)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Local storage — sub-table 2 */}
+              <h3 className="dz-h4" style={{ marginBottom: 6, fontSize: 18, fontWeight: 700 }}>
+                {t('list.storageTitle')}
+              </h3>
+              <p className="dz-small" style={{ marginBottom: 14, color: '#8b91ad' }}>
+                {t('list.storageSubtitle')}
+              </p>
+              <div className="dz-cookie-table" role="table" aria-label={t('list.storageTitle')}>
+                <div className="dz-cookie-table__head" role="row">
+                  <span role="columnheader">{t('list.headers.name')}</span>
+                  <span role="columnheader">{t('list.headers.purpose')}</span>
+                  <span role="columnheader">{t('list.headers.duration')}</span>
+                  <span role="columnheader">{t('list.headers.type')}</span>
+                </div>
+                {storageItems.map((i) => (
+                  <div key={`s-${i}`} className="dz-cookie-table__row" role="row">
+                    <span role="cell" data-label={t('list.headers.name')}>
+                      <code>{t(`list.storage.${i}.name`)}</code>
+                    </span>
+                    <span role="cell" data-label={t('list.headers.purpose')}>
+                      {t(`list.storage.${i}.purpose`)}
+                    </span>
+                    <span role="cell" data-label={t('list.headers.duration')}>
+                      {t(`list.storage.${i}.duration`)}
+                    </span>
+                    <span role="cell" data-label={t('list.headers.type')}>
+                      {t(`list.storage.${i}.type`)}
                     </span>
                   </div>
                 ))}
@@ -181,7 +222,7 @@ export default async function CookiesPage() {
             .dz-legal-page__grid {
               grid-template-columns: 260px 1fr;
               gap: 48px;
-              align-items: start;
+              /* Default stretch — see comment on legal/page.tsx */
             }
             .dz-legal-page__toc-mobile { display: none; }
             .dz-legal-page__toc-desktop {

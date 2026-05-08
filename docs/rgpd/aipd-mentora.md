@@ -50,7 +50,7 @@ Ne coche pas (et c'est important pour cadrer les mesures) :
 
 | Acteur                  | Rôle RGPD                | Coordonnées                                     |
 | ----------------------- | ------------------------ | ----------------------------------------------- |
-| Laboratoire Calebasse   | Responsable de traitement | EPITECH Kremlin-Bicêtre · dpo@calebasse.com   |
+| Digizelle   | Responsable de traitement | EPITECH Kremlin-Bicêtre · contact@digizelle.fr   |
 | Mentor / mentee         | Personnes concernées     | s.o.                                            |
 | Modérateur·trice        | Sous-traitant interne    | rôle CommunityMember.isModerator                |
 | Vercel, Supabase, Resend, Sentry | Sous-traitants techniques | voir registre, art. 28                  |

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Prisma } from '@prisma/client';
@@ -7,6 +6,7 @@ import type { Prisma } from '@prisma/client';
 import { auth } from '@/auth';
 import { breadcrumbJsonLd, jsonLdScriptProps } from '@/lib/seo/jsonld';
 import { prisma } from '@/lib/prisma';
+import Pagination from '@/components/admin/Pagination';
 
 import MemberCard, { type MemberCardData } from '../_components/MemberCard';
 import MemberFilters from '../_components/MemberFilters';
@@ -138,68 +138,47 @@ export default async function MembersDirectoryPage({
       </section>
 
       <section className="dz-section" style={{ paddingTop: 0 }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(220px, 260px) 1fr',
-            gap: 32,
-            alignItems: 'flex-start',
-          }}
-        >
+        {/* Filters live on top in a compact bar so the member grid uses
+            the full page width — important on tablet/desktop where the
+            old left rail used to crowd the cards. The MemberFilters
+            component carries its own internal layout (search input +
+            select), see component for inline-flex wrapping. */}
+        <div style={{ marginBottom: 24 }}>
           <MemberFilters channels={channels} />
+        </div>
 
-          <div>
-            <div className="dz-small" style={{ marginBottom: 14 }}>
-              {t('memberCount', { count: total })}
+        <div className="dz-small" style={{ marginBottom: 14 }}>
+          {t('memberCount', { count: total })}
+        </div>
+
+        {cards.length === 0 ? (
+          <div className="dz-card" style={{ padding: 40, textAlign: 'center' }}>
+            <p className="dz-body">{t('empty')}</p>
+          </div>
+        ) : (
+          <>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                gap: 16,
+              }}
+            >
+              {cards.map((m) => (
+                <MemberCard key={m.id} member={m} />
+              ))}
             </div>
 
-            {cards.length === 0 ? (
-              <div className="dz-card" style={{ padding: 40, textAlign: 'center' }}>
-                <p className="dz-body">{t('empty')}</p>
-              </div>
-            ) : (
-              <>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                    gap: 16,
-                  }}
-                >
-                  {cards.map((m) => (
-                    <MemberCard key={m.id} member={m} />
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 12,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: 32,
-                    }}
-                  >
-                    {page > 1 ? (
-                      <Link href={pageHref(page - 1)} className="dz-btn dz-btn-ghost dz-btn-sm">
-                        ← Précédent
-                      </Link>
-                    ) : null}
-                    <span className="dz-small">
-                      {page} / {totalPages}
-                    </span>
-                    {page < totalPages ? (
-                      <Link href={pageHref(page + 1)} className="dz-btn dz-btn-ghost dz-btn-sm">
-                        Suivant →
-                      </Link>
-                    ) : null}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
+            <div style={{ marginTop: 32 }}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                buildHref={pageHref}
+              />
+            </div>
+          </>
+        )}
       </section>
     </>
   );

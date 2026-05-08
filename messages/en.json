@@ -1,0 +1,131 @@
+{
+  "_meta": {
+    "_": "Partial English locale. Keys not present here automatically fall through to fr.json via the deep-merge in src/i18n/request.ts. Translate the long tail progressively — the app stays functional in EN even with sparse coverage.",
+    "_version": 1,
+    "_lastReview": "2026-05-08"
+  },
+  "common": {
+    "joinLong": "Join us →",
+    "discover": "Discover →",
+    "register": "Sign up →",
+    "details": "Details",
+    "viewDemo": "Watch demo",
+    "reserve": "Reserve",
+    "discoverAction": "DISCOVER",
+    "mascotAlt": "Digizelle mascot",
+    "backToTop": "Back to top",
+    "breadcrumbHome": "Home"
+  },
+  "header": {
+    "logoAlt": "Digizelle",
+    "ariaHome": "Digizelle — home",
+    "ariaNav": "Main navigation",
+    "themeLight": "Switch to light theme",
+    "themeDark": "Switch to dark theme",
+    "login": "Sign in",
+    "joinCta": "Join us →",
+    "close": "Close",
+    "links": {
+      "about": "About",
+      "programs": "Programs",
+      "mentora": "Mentora",
+      "community": "Community",
+      "team": "Team",
+      "projects": "Projects",
+      "events": "Events",
+      "blog": "Blog"
+    }
+  },
+  "footer": {
+    "tagline": "An inclusive digital community where diversity, innovation and learning meet.",
+    "rights": "All rights reserved",
+    "association_loi": "© {year} Digizelle — French non-profit (loi 1901)",
+    "logoAlt": "Digizelle",
+    "backToTop": "Back to top",
+    "cookiesLink": "Cookies",
+    "marquee": [
+      "Digital inclusion",
+      "Human mentorship",
+      "Caring community",
+      "Open to all",
+      "Île-de-France & beyond",
+      "Quarterly hackathons"
+    ],
+    "sections": {
+      "association": {
+        "title": "Association",
+        "about": "About",
+        "team": "The team",
+        "projects": "Projects",
+        "manifesto": "Manifesto"
+      },
+      "programs": {
+        "title": "Programs",
+        "atelier": "Immersive Workshop",
+        "masterclass": "Masterclass",
+        "hackathon": "Hackathon",
+        "mentora": "Mentora"
+      },
+      "resources": {
+        "title": "Resources",
+        "blog": "Blog",
+        "events": "Events",
+        "community": "Community",
+        "newsletter": "Newsletter",
+        "faq": "FAQ"
+      },
+      "contact": {
+        "title": "Contact",
+        "email": "contact@digizelle.fr",
+        "address": "Paris, France",
+        "legal": "Legal notice",
+        "privacy": "Privacy"
+      }
+    },
+    "wordmark": "DIGIZELLE",
+    "heading": "Ready to join?",
+    "ctaJoin": "Join us",
+    "ctaMentora": "Discover Mentora",
+    "ctaCommunity": "See the community",
+    "navAriaLabel": "Footer navigation",
+    "copyright": "© {year} Digizelle — French non-profit (loi 1901)",
+    "craftedWith": "Crafted with",
+    "inLocation": "in Île-de-France"
+  },
+  "home": {
+    "metaTitle": "Inclusion & digital flourishing",
+    "metaDescription": "Digizelle is a French non-profit (loi 1901) founded in 2023, dedicated to including and empowering young people in the digital field.",
+    "eyebrow": "Inclusive non-profit · since 2023",
+    "heroTitleLine1": "A digital world,",
+    "heroTitleHighlight": "for everyone",
+    "heroTitleSuffix": " and by everyone.",
+    "heroBody": "Our mission: to inspire, educate and support young people on their digital journey. More than a non-profit — a community where diversity, innovation and digital learning meet.",
+    "ctaJoin": "Join the community →",
+    "ctaPrograms": "▶ Discover our programs",
+    "stats": {
+      "youthsLabel": "Young people supported",
+      "eventsLabel": "Events",
+      "partnersLabel": "Partners"
+    },
+    "trust": {
+      "label": "Our partners & allies"
+    },
+    "mascot": {
+      "phrases": [
+        "Hi there!",
+        "Curious?",
+        "Ready to code?",
+        "We're here for you.",
+        "Digital for everyone.",
+        "You'll love it!",
+        "Hello!"
+      ]
+    }
+  },
+  "localeSwitcher": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English",
+    "switchTo": "Switch to {language}"
+  }
+}

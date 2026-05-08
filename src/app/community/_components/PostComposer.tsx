@@ -1,11 +1,16 @@
 'use client';
 
-import { useMemo, useRef, useState, useTransition } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { createPost, updatePost } from '@/lib/actions/community/posts';
 import MentionAutocomplete from './MentionAutocomplete';
+import {
+  applyMarkdownAction,
+  handleMarkdownKeyDown,
+  type MarkdownAction,
+} from './markdownShortcuts';
 
 const MAX_ATTACHMENTS = 4;
 const ATTACHMENT_MAX_WIDTH = 720;
@@ -17,6 +22,20 @@ export type PostComposerChannel = {
   emoji: string | null;
 };
 
+/**
+ * Authoring-helper kinds surfaced from the home-feed quick chips
+ * (+ Photo / + Sondage / + Événement / + Ressource). Each one
+ * pre-configures the composer differently:
+ *  - photo    → opens the file picker on mount, no body template
+ *  - poll     → pre-fills body with a poll skeleton; user tweaks
+ *  - event    → pre-fills with date / location lines
+ *  - resource → pre-fills with link + why-it-matters
+ *
+ * The data model is unchanged — these are plain Posts; the helpers
+ * just save the user from typing the scaffolding from scratch.
+ */
+export type PostAttachKind = 'photo' | 'poll' | 'event' | 'resource';
+
 type Props = {
   mode: 'create' | 'edit';
   channels: PostComposerChannel[];
@@ -27,6 +46,7 @@ type Props = {
     body: string;
   };
   requireEditReason?: boolean;
+  attachKind?: PostAttachKind;
 };
 
 const MAX_BODY = 10_000;
@@ -50,13 +70,70 @@ const MAX_BODY = 10_000;
  * the feature today; once a CDN/upload pipeline lands, this same toolbar
  * button can swap to a file input.
  */
-export default function PostComposer({ mode, channels, initial, requireEditReason }: Props) {
+// Body / title scaffolding for each helper kind. Plain text — the user
+// edits inside the composer like any other post. We don't lock these
+// fields; if the user clears the template, we trust them.
+const ATTACH_TEMPLATES: Record<
+  Exclude<PostAttachKind, 'photo'>,
+  { titlePrefix: string; body: string }
+> = {
+  poll: {
+    titlePrefix: '[Sondage] ',
+    body:
+      'Question :\n\n' +
+      'Options :\n' +
+      '1. \n' +
+      '2. \n' +
+      '3. \n\n' +
+      'Vote en commentaire avec le numéro de ton choix.',
+  },
+  event: {
+    titlePrefix: '[Événement] ',
+    body:
+      'Quoi : \n' +
+      'Quand : \n' +
+      'Où : \n' +
+      'Pour qui : \n' +
+      "Lien d'inscription : ",
+  },
+  resource: {
+    titlePrefix: '[Ressource] ',
+    body:
+      'Lien : \n' +
+      "Pourquoi c'est utile : \n" +
+      'Niveau / public visé : ',
+  },
+};
+
+const ATTACH_LABELS: Record<PostAttachKind, { title: string; body: string }> = {
+  photo: { title: 'Photo', body: 'On ouvre la sélection de fichiers — choisis une à 4 images.' },
+  poll: { title: 'Sondage', body: 'Squelette de sondage pré-rempli — adapte la question et les options.' },
+  event: { title: 'Événement', body: 'Annonce un événement avec date, lieu et lien d’inscription.' },
+  resource: { title: 'Ressource', body: 'Partage un lien utile avec son contexte.' },
+};
+
+export default function PostComposer({ mode, channels, initial, requireEditReason, attachKind }: Props) {
   const t = useTranslations('community.post.composer');
   const router = useRouter();
 
-  const [channelSlug, setChannelSlug] = useState(initial?.channelSlug ?? channels[0]?.slug ?? '');
-  const [title, setTitle] = useState(initial?.title ?? '');
-  const [body, setBody] = useState(initial?.body ?? '');
+  // For poll/event/resource, seed body+title from the template only
+  // when the user opens a fresh composer (no prior content). Editing
+  // an existing post never overwrites — we never destroy authored
+  // content even if the URL has ?attach=…
+  const seededInitial = useMemo(() => {
+    if (mode !== 'create' || !attachKind || attachKind === 'photo') return initial;
+    const tpl = ATTACH_TEMPLATES[attachKind];
+    if (!tpl) return initial;
+    return {
+      channelSlug: initial?.channelSlug ?? '',
+      title: (initial?.title ?? '') || tpl.titlePrefix,
+      body: (initial?.body ?? '') || tpl.body,
+    };
+  }, [mode, attachKind, initial]);
+
+  const [channelSlug, setChannelSlug] = useState(seededInitial?.channelSlug ?? channels[0]?.slug ?? '');
+  const [title, setTitle] = useState(seededInitial?.title ?? '');
+  const [body, setBody] = useState(seededInitial?.body ?? '');
   const [editReason, setEditReason] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -68,34 +145,35 @@ export default function PostComposer({ mode, channels, initial, requireEditReaso
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Photo helper: open the native file picker once on mount. Guarded
+  // by a ref-flag so a re-render doesn't re-trigger the dialog (which
+  // would interrupt the user mid-selection).
+  const photoTriggered = useRef(false);
+  useEffect(() => {
+    if (
+      mode === 'create' &&
+      attachKind === 'photo' &&
+      !photoTriggered.current &&
+      fileInputRef.current
+    ) {
+      photoTriggered.current = true;
+      // Defer one frame so the native picker doesn't fire before the
+      // page has finished its initial paint (avoids the dialog
+      // appearing on a half-rendered background on slower devices).
+      const id = requestAnimationFrame(() => {
+        fileInputRef.current?.click();
+      });
+      return () => cancelAnimationFrame(id);
+    }
+  }, [mode, attachKind]);
+
   /* ----- Markdown helpers ------------------------------------------------ */
 
-  const wrapSelection = (before: string, after: string = before, placeholder = '') => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const selected = body.slice(start, end) || placeholder;
-    const next = body.slice(0, start) + before + selected + after + body.slice(end);
-    setBody(next);
-    requestAnimationFrame(() => {
-      ta.focus();
-      ta.setSelectionRange(start + before.length, start + before.length + selected.length);
-    });
-  };
-
-  const insertAtCursor = (snippet: string) => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const next = body.slice(0, start) + snippet + body.slice(end);
-    setBody(next);
-    requestAnimationFrame(() => {
-      ta.focus();
-      ta.setSelectionRange(start + snippet.length, start + snippet.length);
-    });
-  };
+  // Toolbar action dispatcher — same engine that powers the keyboard
+  // shortcuts. Centralising in `markdownShortcuts.ts` keeps both surfaces
+  // in lockstep (a new action only needs to be added in one place).
+  const md = (action: MarkdownAction) =>
+    applyMarkdownAction({ action, textarea: textareaRef.current, value: body, setValue: setBody });
 
   const onImage = () => {
     if (attachments.length >= MAX_ATTACHMENTS) {
@@ -141,7 +219,33 @@ export default function PostComposer({ mode, channels, initial, requireEditReaso
   const onLink = () => {
     const url = window.prompt('URL du lien (https://…) :', 'https://');
     if (!url) return;
-    wrapSelection('[', `](${url})`, 'texte du lien');
+    // Link insertion is the one wrap that doesn't fit the simple
+    // pre/post pair (the "after" side carries the URL), so we do it
+    // inline rather than baking it into the shared dispatcher.
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const selected = body.slice(start, end) || 'texte du lien';
+    const next = body.slice(0, start) + '[' + selected + `](${url})` + body.slice(end);
+    setBody(next);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(start + 1, start + 1 + selected.length);
+    });
+  };
+
+  // Keyboard interceptor — Ctrl/Cmd+B/I/`, Ctrl/Cmd+Shift+8/7/.
+  // Forwarded to MentionAutocomplete via its `onKeyDown` prop. The
+  // mention dropdown intercepts arrow keys / Enter / Escape itself
+  // and only delegates to us when it's closed, so the two surfaces
+  // never fight for the same key.
+  const onTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    handleMarkdownKeyDown(e, {
+      textarea: textareaRef.current,
+      value: body,
+      setValue: setBody,
+    });
   };
 
   /* ----- Submit ---------------------------------------------------------- */
@@ -244,6 +348,47 @@ export default function PostComposer({ mode, channels, initial, requireEditReaso
           boxShadow: '0 14px 38px -22px rgba(36,18,80,0.18)',
         }}
       >
+        {/* Authoring-helper banner — visible only when the user
+            arrived from a quick-action chip on the home feed. Confirms
+            the active mode + explains in one line what was pre-filled. */}
+        {mode === 'create' && attachKind && (
+          <div
+            role="status"
+            style={{
+              padding: '12px 14px',
+              borderRadius: 12,
+              background: 'rgba(115,1,255,0.06)',
+              border: '1px solid rgba(115,1,255,0.18)',
+              display: 'flex',
+              gap: 10,
+              alignItems: 'flex-start',
+              fontSize: 13,
+              lineHeight: 1.5,
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                flexShrink: 0,
+                marginTop: 2,
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                background: '#7301FF',
+              }}
+            />
+            <div style={{ minWidth: 0 }}>
+              <strong style={{ color: '#1a1f3a' }}>
+                Mode {ATTACH_LABELS[attachKind].title}
+              </strong>
+              <span style={{ color: '#545b7a' }}>
+                {' '}
+                · {ATTACH_LABELS[attachKind].body}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Channel chip strip */}
         {mode === 'create' && (
           <div>
@@ -319,22 +464,22 @@ export default function PostComposer({ mode, channels, initial, requireEditReaso
               alignItems: 'center',
             }}
           >
-            <ToolbarButton title="Gras" onClick={() => wrapSelection('**', '**', 'gras')}>
+            <ToolbarButton title="Gras (Ctrl+B)" onClick={() => md('bold')}>
               <strong>B</strong>
             </ToolbarButton>
-            <ToolbarButton title="Italique" onClick={() => wrapSelection('*', '*', 'italique')}>
+            <ToolbarButton title="Italique (Ctrl+I)" onClick={() => md('italic')}>
               <em>I</em>
             </ToolbarButton>
-            <ToolbarButton title="Titre" onClick={() => insertAtCursor('\n## ')}>
+            <ToolbarButton title="Titre" onClick={() => md('heading')}>
               H
             </ToolbarButton>
-            <ToolbarButton title="Liste" onClick={() => insertAtCursor('\n- ')}>
+            <ToolbarButton title="Liste (Ctrl+Shift+8)" onClick={() => md('list')}>
               ☰
             </ToolbarButton>
-            <ToolbarButton title="Citation" onClick={() => insertAtCursor('\n> ')}>
+            <ToolbarButton title="Citation (Ctrl+Shift+.)" onClick={() => md('quote')}>
               “
             </ToolbarButton>
-            <ToolbarButton title="Code" onClick={() => wrapSelection('`', '`', 'code')}>
+            <ToolbarButton title="Code (Ctrl+`)" onClick={() => md('code')}>
               {'<>'}
             </ToolbarButton>
             <Separator />
@@ -394,6 +539,7 @@ export default function PostComposer({ mode, channels, initial, requireEditReaso
             ref={textareaRef}
             value={body}
             onChange={setBody}
+            onKeyDown={onTextareaKeyDown}
             placeholder={t('bodyPlaceholder')}
             rows={12}
             required

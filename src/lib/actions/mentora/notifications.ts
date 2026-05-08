@@ -34,7 +34,11 @@ export async function markNotificationRead(
         data: { readAt: new Date() },
       });
     }
+    // Both notification surfaces share the same Notification rows.
+    // Revalidate both so the bell counter and either inbox stay
+    // consistent after the read-mark.
     revalidatePath('/mentora/dashboard/notifications');
+    revalidatePath('/community/notifications');
     return successResult();
   } catch (err) {
     return handleError(err);
@@ -49,6 +53,7 @@ export async function markAllNotificationsRead(): Promise<ActionResult<{ updated
       data: { readAt: new Date() },
     });
     revalidatePath('/mentora/dashboard/notifications');
+    revalidatePath('/community/notifications');
     return successResult({ updated: res.count });
   } catch (err) {
     return handleError(err);

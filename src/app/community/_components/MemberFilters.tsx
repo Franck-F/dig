@@ -51,15 +51,17 @@ export default function MemberFilters({ channels }: Props) {
       onSubmit={apply}
       className="dz-card"
       style={{
-        padding: 18,
+        padding: 14,
         display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-        position: 'sticky',
-        top: 88,
+        gap: 10,
+        alignItems: 'flex-end',
+        flexWrap: 'wrap',
       }}
     >
-      <label className="dz-small" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <label
+        className="dz-small"
+        style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: '2 1 240px', minWidth: 200 }}
+      >
         {t('search')}
         <input
           type="search"
@@ -67,29 +69,34 @@ export default function MemberFilters({ channels }: Props) {
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('searchPlaceholder')}
           style={{
-            padding: 10,
+            padding: '10px 12px',
             borderRadius: 10,
             border: '1px solid rgba(36,50,95,0.18)',
             background: 'transparent',
             color: 'inherit',
             fontSize: 14,
+            fontFamily: 'inherit',
           }}
         />
       </label>
 
       {channels.length > 0 && (
-        <label className="dz-small" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <label
+          className="dz-small"
+          style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: '1 1 180px', minWidth: 160 }}
+        >
           {t('channels')}
           <select
             value={channel}
             onChange={(e) => setChannel(e.target.value)}
             style={{
-              padding: 10,
+              padding: '10px 12px',
               borderRadius: 10,
               border: '1px solid rgba(36,50,95,0.18)',
               background: 'transparent',
               color: 'inherit',
               fontSize: 14,
+              fontFamily: 'inherit',
             }}
           >
             <option value="">{t('anyChannel')}</option>
@@ -102,8 +109,8 @@ export default function MemberFilters({ channels }: Props) {
         </label>
       )}
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-        <button type="submit" className="dz-btn dz-btn-primary dz-btn-sm" style={{ flex: 1 }}>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexShrink: 0 }}>
+        <button type="submit" className="dz-btn dz-btn-primary dz-btn-sm">
           {t('applyCta')}
         </button>
         <button type="button" onClick={reset} className="dz-btn dz-btn-ghost dz-btn-sm">

@@ -7,10 +7,10 @@ import { prisma } from '@/lib/prisma';
 import { enqueueEmails } from '@/lib/email/queue';
 import { accountDeletedEmail } from '@/lib/email/templates/account-deleted';
 import { softDeleteUser } from '@/lib/soft-delete/user';
+import { getDpoEmail } from '@/lib/contact';
 import { requireUser } from './_shared';
 
 const SOFT_DELETE_GRACE_DAYS = 30;
-const DPO_EMAIL = 'dpo@calebasse.com';
 
 /**
  * User-initiated account deletion. RGPD article 17 — right to erasure.
@@ -72,7 +72,7 @@ export async function requestSelfDelete(reason?: string): Promise<DeleteAccountR
       const tpl = accountDeletedEmail({
         firstName: snapshot.firstName,
         graceDays: SOFT_DELETE_GRACE_DAYS,
-        dpoEmail: DPO_EMAIL,
+        dpoEmail: getDpoEmail(),
       });
       await enqueueEmails(`account.deleted.${userId}`, [
         {

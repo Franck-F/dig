@@ -34,7 +34,7 @@ Canaux acceptés :
 - Vidéo (Discord/Meet) avec partage d'écran d'une pièce d'identité.
 - Rencontre physique au bureau de l'association.
 - Confirmation par 2 autres admin/modos qui connaissent la personne
-  (les 2 doivent envoyer un message daté à dpo@calebasse.com).
+  (les 2 doivent envoyer un message daté à contact@digizelle.fr).
 
 Documenter le canal utilisé : il sera repris dans le motif de
 l'audit log.

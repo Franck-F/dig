@@ -1,0 +1,72 @@
+name: Lighthouse CI
+
+# Runs on every PR and on main. Fast feedback (~3 min) on the four
+# anonymous marketing surfaces — ensures a regression in JS bundle
+# size, accessibility or SEO hygiene shows up before merge.
+#
+# We deliberately stop at static / login pages: dynamic /community
+# and /mentora pages need a real Postgres + Auth.js session, which
+# would require a full preview-deploy harness. Vercel preview URLs +
+# real auth come in a Phase 2 follow-up; for now this catches the
+# cheap regressions (LCP/CLS/render-blocking JS, missing alt text,
+# bad meta tags).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: lighthouse-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build
+        env:
+          AUTH_SECRET: ci-placeholder-do-not-use-in-prod
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          DIRECT_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          SENTRY_DSN: ''
+          NEXT_PUBLIC_SENTRY_DSN: ''
+          SENTRY_AUTH_TOKEN: ''
+
+      - name: Run Lighthouse CI
+        # `@lhci/cli` reads `.lighthouserc.json` at the repo root for
+        # URLs + budgets + collect/assert config. `autorun` chains
+        # collect → assert → upload (we use temporary-public-storage
+        # so the report URL appears in the workflow log without
+        # needing a Lighthouse CI server).
+        run: npx --yes @lhci/cli@0.14.0 autorun
+        env:
+          # Same placeholders as the build step — `npm start` reads
+          # them when the marketing routes hit anything env-dependent.
+          AUTH_SECRET: ci-placeholder-do-not-use-in-prod
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          DIRECT_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000

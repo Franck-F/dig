@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { getDpoEmail } from '@/lib/contact';
 import DisableTotpForm from './DisableTotpForm';
 import RegenerateBackupCodesForm from './RegenerateBackupCodesForm';
 
@@ -162,7 +163,7 @@ export default async function TwoFactorPage() {
                 .
               </strong>{' '}
               Pour désactiver ou réinitialiser, demande à un⋅e administrateur⋅trice ou contacte
-              dpo@calebasse.com.
+              {' '}{getDpoEmail()}.
             </section>
           )}
         </>

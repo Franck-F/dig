@@ -10,6 +10,7 @@ import {
   getCampaignStatus,
 } from '@/lib/email/queue';
 import { buildUnsubscribeUrl } from '@/lib/email/unsubscribe-token';
+import { getDpoEmail } from '@/lib/contact';
 
 export type NewsletterState =
   | { status: 'idle' }
@@ -329,6 +330,8 @@ function renderNewsletterHtml({
     )
     .join('');
 
+  const dpoEmail = getDpoEmail();
+
   return `<!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -360,8 +363,8 @@ function renderNewsletterHtml({
                   ${
                     unsubUrl
                       ? `<a href="${unsubUrl}" style="color:#7a6a9a;text-decoration:underline">Se désabonner en 1 clic</a> · `
-                      : 'Pour vous désabonner, écrivez à dpo@digizelle.fr · '
-                  }<a href="mailto:dpo@digizelle.fr" style="color:#7a6a9a;text-decoration:underline">DPO</a> · Digizelle, EPITECH Le Kremlin-Bicêtre, France
+                      : `Pour vous désabonner, écrivez à ${escapeHtml(dpoEmail)} · `
+                  }<a href="mailto:${escapeHtml(dpoEmail)}" style="color:#7a6a9a;text-decoration:underline">DPO</a> · Digizelle, EPITECH Le Kremlin-Bicêtre, France
                 </p>
               </td>
             </tr>

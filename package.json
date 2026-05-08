@@ -10,6 +10,8 @@
     "postinstall": "prisma generate",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "_comment_lighthouse": "requires a fresh `npm run build` first; uses `.lighthouserc.json` budgets",
+    "lighthouse": "npx --yes @lhci/cli@0.14.0 autorun",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -17,9 +19,9 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "_comment_test": "requires Node 22+ for stable type-stripping; Node 25 needs no flag",
-    "test": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts",
-    "test:coverage": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts",
-    "test:coverage:lcov": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test-reporter=spec --test-reporter-destination=stdout --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts"
+    "test": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts",
+    "test:coverage": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts",
+    "test:coverage:lcov": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test-reporter=spec --test-reporter-destination=stdout --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

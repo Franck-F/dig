@@ -13,7 +13,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('metaTitle') };
 }
 
-type SearchParams = { channel?: string };
+type SearchParams = { channel?: string; attach?: string };
+
+const VALID_ATTACH = ['photo', 'poll', 'event', 'resource'] as const;
+type AttachKind = (typeof VALID_ATTACH)[number];
 
 export default async function NewPostPage({
   searchParams,
@@ -59,6 +62,18 @@ export default async function NewPostPage({
     sp.channel && channels.some((c) => c.slug === sp.channel)
       ? sp.channel
       : (channels[0]?.slug ?? '');
+
+  // `attach` query param tells the composer which authoring helper to
+  // pre-configure: photo opens the file picker on mount, poll/event/
+  // resource pre-fill body+title with a starter template the user can
+  // edit. Validated against an explicit allow-list so a query like
+  // `?attach=<script>` is silently dropped.
+  const attachKind: AttachKind | null = (() => {
+    const raw = sp.attach;
+    return raw && (VALID_ATTACH as readonly string[]).includes(raw)
+      ? (raw as AttachKind)
+      : null;
+  })();
 
   const composerChannels: PostComposerChannel[] = channels.map((c) => ({
     slug: c.slug,
@@ -126,6 +141,7 @@ export default async function NewPostPage({
               ? { channelSlug: initialChannelSlug, title: '', body: '' }
               : undefined
           }
+          attachKind={attachKind ?? undefined}
         />
       </section>
     </>

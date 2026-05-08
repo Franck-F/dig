@@ -8,6 +8,7 @@ import HeroParallax from '@/components/HeroParallax';
 import Mascot3D from '@/components/Mascot3D';
 import Reveal from '@/components/Reveal';
 import { BrandScroller, BrandScrollerReverse } from '@/components/ui/brand-scoller';
+import { getPartnerLogos } from '@/lib/partners/logos';
 import {
   breadcrumbJsonLd,
   faqPageJsonLd,
@@ -33,28 +34,11 @@ export default async function HomePage() {
     { key: '4' },
   ] as const;
 
-  // Real partners pulled from LinkedIn + public posts (Digizelle Impact 2026
-  // speakers and program) — Microsoft, EY, Allianz, AWS, Epitech, HEC Paris,
-  // Station F, BECOMTECH. Each gets a distinct typographic identity so the
-  // wordmark marquee feels like a logo cloud instead of a list of names.
-  const trustLogos = ['microsoft', 'ey', 'allianz', 'aws', 'epitech', 'hec', 'stationf', 'becomtech'] as const;
-  const trustLogoStyles: Record<
-    (typeof trustLogos)[number],
-    { weight?: number; italic?: boolean; letterSpacing?: string; fontFamily?: string }
-  > = {
-    microsoft: { weight: 600, letterSpacing: '-0.01em' },
-    ey: { weight: 900, letterSpacing: '0.16em' },
-    allianz: { weight: 800, letterSpacing: '-0.01em' },
-    aws: { weight: 800, letterSpacing: '-0.04em' },
-    epitech: { weight: 900, letterSpacing: '0.04em' },
-    hec: { weight: 700, fontFamily: 'Georgia, serif', italic: true, letterSpacing: '0.02em' },
-    stationf: { weight: 800, letterSpacing: '-0.03em' },
-    becomtech: { weight: 700, italic: true, letterSpacing: '-0.01em' },
-  };
-  const partnerLogos = trustLogos.map((k) => ({
-    name: t(`trust.logos.${k}`),
-    ...trustLogoStyles[k],
-  }));
+  // Auto-discovered from /public/images/partners/. Drop a new
+  // `<slug>.svg|.png|.webp|.jpg` in that folder and it appears at the
+  // next render — no code edit needed. Per-slug visual overrides
+  // (heightPx, weight, italic) live in `src/lib/partners/logos.ts`.
+  const partnerLogos = await getPartnerLogos();
 
   const testimonialKeys = ['0', '1', '2'] as const;
 
@@ -523,6 +507,15 @@ export default async function HomePage() {
                 </details>
               </Reveal>
             ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 28 }}>
+            <Link
+              href="/faq"
+              className="dz-btn dz-btn-ghost"
+              style={{ fontSize: 14 }}
+            >
+              {t('faq.seeAll')}
+            </Link>
           </div>
         </section>
       </Reveal>

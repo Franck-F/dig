@@ -2,6 +2,7 @@ import 'server-only';
 import { randomBytes } from 'node:crypto';
 import { prisma } from '@/lib/prisma';
 import { logAdmin } from '@/lib/audit/log';
+import { deleteFolder, isStorageConfigured, type StorageBucket } from '@/lib/storage/supabase';
 
 /**
  * RGPD-compliant soft delete + anonymisation pipeline for a user account.
@@ -189,8 +190,36 @@ export async function purgeExpiredSoftDeletes(graceDays = 30): Promise<number> {
     select: { id: true },
   });
   if (expired.length === 0) return 0;
-  await prisma.user.deleteMany({
-    where: { id: { in: expired.map((u) => u.id) } },
-  });
+  const ids = expired.map((u) => u.id);
+
+  await prisma.user.deleteMany({ where: { id: { in: ids } } });
+
+  // RGPD Art. 17 (right to erasure) extends to media stored outside
+  // Postgres. Wipe each user's folder in every Storage bucket. The
+  // helper is best-effort — a missing folder is fine, a transient
+  // failure logs and continues so we don't leave the DB delete
+  // half-applied if Supabase is briefly down.
+  if (isStorageConfigured()) {
+    const buckets: StorageBucket[] = [
+      'avatars',
+      'mentor-photos',
+      'challenge-covers',
+      'post-attachments',
+    ];
+    for (const userId of ids) {
+      for (const bucket of buckets) {
+        try {
+          await deleteFolder({ bucket, prefix: userId });
+        } catch (err) {
+          console.error('[purgeExpiredSoftDeletes] storage cleanup failed', {
+            userId,
+            bucket,
+            err,
+          });
+        }
+      }
+    }
+  }
+
   return expired.length;
 }

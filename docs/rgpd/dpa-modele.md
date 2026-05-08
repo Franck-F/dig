@@ -21,11 +21,11 @@ fondement: Règlement UE 2016/679 (RGPD), Art. 28 §3
 
 **Le Responsable de traitement**
 
-- **Dénomination** : Laboratoire Calebasse — Digizelle
+- **Dénomination** : Digizelle
 - **Forme** : association loi 1901
 - **Siège** : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre
 - **Représenté par** : ____________________ en qualité de ____________________
-- **Contact RGPD** : dpo@calebasse.com
+- **Contact RGPD** : contact@digizelle.fr
 
 **Le Sous-traitant**
 
@@ -81,7 +81,7 @@ Le Sous-traitant s'engage à :
    réponse à un incident.
 7. **Notifier toute violation de données personnelles** au Responsable
    **sous 24 heures** après en avoir pris connaissance, par email à
-   dpo@calebasse.com avec copie à l'équipe technique.
+   contact@digizelle.fr avec copie à l'équipe technique.
 8. **Restituer ou supprimer les données** à la fin du contrat, au choix du
    Responsable, avec preuve d'effacement (certificat de destruction).
 9. **Tenir un registre** des activités de traitement effectuées pour le

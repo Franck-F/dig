@@ -44,7 +44,7 @@ Le comité passe en revue :
 2. **Échantillon de SUSPEND_USER et MUTE_USER** : 10 % des décisions,
    ou minimum 5 dossiers.
 3. **Toutes les décisions visant un⋅e mineur⋅e** (peu importe le type).
-4. **Décisions contestées** : recours reçus à dpo@calebasse.com depuis
+4. **Décisions contestées** : recours reçus à contact@digizelle.fr depuis
    la dernière séance.
 
 ## Données fournies au comité

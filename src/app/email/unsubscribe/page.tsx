@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { prisma } from '@/lib/prisma';
 import { verifyUnsubscribeToken } from '@/lib/email/unsubscribe-token';
+import { getDpoEmail } from '@/lib/contact';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
@@ -46,10 +47,11 @@ export default async function UnsubscribePage({
 
   const verified = verifyUnsubscribeToken(token);
   if (!verified.ok) {
+    const dpo = getDpoEmail();
     const msg =
       verified.reason === 'expired'
-        ? 'Ce lien a expiré. Pour vous désabonner, contactez dpo@digizelle.fr.'
-        : 'Le lien est invalide ou a déjà été utilisé. Contactez dpo@digizelle.fr si vous pensez qu\'il s\'agit d\'une erreur.';
+        ? `Ce lien a expiré. Pour vous désabonner, contactez ${dpo}.`
+        : `Le lien est invalide ou a déjà été utilisé. Contactez ${dpo} si vous pensez qu'il s'agit d'une erreur.`;
     return <Layout heading="Lien invalide" body={msg} />;
   }
 
@@ -202,10 +204,10 @@ function Layout({
         >
           Une question ?{' '}
           <a
-            href="mailto:dpo@calebasse.com"
+            href={`mailto:${getDpoEmail()}`}
             style={{ color: '#7301FF', fontWeight: 600 }}
           >
-            dpo@calebasse.com
+            {getDpoEmail()}
           </a>{' '}
           —{' '}
           <Link href="/" style={{ color: '#7301FF', fontWeight: 600 }}>

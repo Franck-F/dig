@@ -37,5 +37,5 @@ documents ci-dessous.
 
 ## Contact
 
-- DPO : dpo@calebasse.com
-- Communication : communication@calebasse.com
+- DPO : contact@digizelle.fr
+- Communication : contact@digizelle.fr

@@ -90,16 +90,14 @@ export default async function BlogPage() {
 
       <section className="dz-section" style={{ paddingTop: 40 }}>
         <div className="dz-eyebrow"><span className="dot"></span>{t('eyebrow')}</div>
-        <h1 className="dz-h1" style={{ marginTop: 18 }}>
+        <h1 className="dz-h1" style={{ marginTop: 18, marginBottom: 28 }}>
           {t('title')} <span className="dz-grad-text">{t('titleHighlight')}</span>
         </h1>
-        {/* Search + filter + grid live in a client island so the page can
-            stay server-rendered for the hero and JSON-LD. */}
-        <BlogList />
-      </section>
 
-      <section className="dz-section" style={{ paddingTop: 0 }}>
-        <div className="dz-card" style={{ padding: 0, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 360 }}>
+        {/* Featured "À la une" hero — promoted to the top so the editorial
+            spotlight is the first thing readers see, before the searchable
+            grid of every other post. */}
+        <div className="dz-card" style={{ padding: 0, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 360, marginBottom: 40 }}>
           <div style={{ background: 'linear-gradient(135deg, #7301FF, #A34BF5 60%, #F46FB1)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Mascot3D src="/images/robot-mascotte-1.png" width={260} intensity={12} />
           </div>
@@ -123,6 +121,10 @@ export default async function BlogPage() {
             </div>
           </div>
         </div>
+
+        {/* Search + filter + grid — client island so the rest of the page
+            remains server-rendered for the hero, JSON-LD and newsletter. */}
+        <BlogList />
       </section>
 
       {/* NEWSLETTER */}

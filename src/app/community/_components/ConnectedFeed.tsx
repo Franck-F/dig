@@ -557,14 +557,21 @@ export default async function ConnectedFeed({
                   flexWrap: 'wrap',
                 }}
               >
+                {/* Quick-action chips → /community/posts/new?attach=<kind>.
+                    The hover effect is CSS-only (no JS handlers) so this
+                    block can stay inside an RSC. Each chip carries a
+                    `--hover` CSS var with its tinted background, applied
+                    on :hover by the scoped style below. */}
                 {[
-                  { t: 'Photo', c: '#F46FB1' },
-                  { t: 'Sondage', c: '#7301FF' },
-                  { t: 'Événement', c: '#A34BF5' },
-                  { t: 'Ressource', c: '#3B7BFF' },
+                  { t: 'Photo', c: '#F46FB1', attach: 'photo' },
+                  { t: 'Sondage', c: '#7301FF', attach: 'poll' },
+                  { t: 'Événement', c: '#A34BF5', attach: 'event' },
+                  { t: 'Ressource', c: '#3B7BFF', attach: 'resource' },
                 ].map((p) => (
-                  <span
+                  <Link
                     key={p.t}
+                    href={`/community/posts/new?attach=${p.attach}`}
+                    className="dz-quick-chip"
                     style={{
                       padding: '6px 12px',
                       borderRadius: 9,
@@ -572,11 +579,17 @@ export default async function ConnectedFeed({
                       color: p.c,
                       fontSize: 11,
                       fontWeight: 700,
+                      textDecoration: 'none',
+                      transition: 'background 160ms ease',
+                      ['--chip-hover' as string]: `${p.c}26`,
                     }}
                   >
                     + {p.t}
-                  </span>
+                  </Link>
                 ))}
+                <style>{`
+                  .dz-quick-chip:hover { background: var(--chip-hover) !important; }
+                `}</style>
                 <div style={{ flex: 1 }} />
                 <Link
                   href="/community/posts/new"

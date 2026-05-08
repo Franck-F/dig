@@ -1,15 +1,15 @@
 'use server';
 
 import { z } from 'zod';
-import { PreferredFormat } from '@prisma/client';
+import { PreferredFormat, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import type { Prisma } from '@prisma/client';
 import {
   type MatchResult,
   type MentorCandidate,
   type MenteeContext,
   rankMentors,
 } from '@/lib/mentora/matching';
+import { normaliseQuery } from '@/lib/search/tsquery';
 import { type ActionResult, errorResult, handleError, requireUser, successResult } from './_helpers';
 
 // ─────────────── Types ────────────────────────────────────────────────────
@@ -62,31 +62,131 @@ export async function discoverMentors(
     if (parsed.data.skillSlugs && parsed.data.skillSlugs.length > 0) {
       where.skills = { some: { skill: { slug: { in: parsed.data.skillSlugs } } } };
     }
-    if (parsed.data.q) {
-      where.OR = [
-        { headline: { contains: parsed.data.q, mode: 'insensitive' } },
-        { bio: { contains: parsed.data.q, mode: 'insensitive' } },
-      ];
+
+    // ── Full-text search branch ─────────────────────────────────────────
+    // When `q` is provided, swap the legacy `ILIKE %q%` pair for a real
+    // Postgres FTS pass against the GIN-indexed `searchTsv` column. The
+    // raw query produces a ranked list of profile IDs; the existing
+    // Prisma `findMany` then loads the rich payload in the same shape.
+    //
+    // Why two roundtrips instead of one big raw SQL? Replicating every
+    // include path (skills→Skill, _count.mentorships, …) in raw SQL
+    // would bloat this action and rot every time the schema changes.
+    // The first hop is index-only against searchTsv + a small WHERE
+    // filter; the second is a primary-key IN(...) lookup. Both are
+    // sub-millisecond on production-scale data.
+    let rankedIds: string[] | null = null;
+    let totalForQuery: number | null = null;
+    const tsq = parsed.data.q ? normaliseQuery(parsed.data.q) : null;
+
+    if (parsed.data.q && !tsq) {
+      // Query was non-empty but normalised away (single-letter, only
+      // punctuation, …). Return empty rather than fall through to the
+      // unfiltered list.
+      return successResult({ items: [], total: 0, page, pageSize });
     }
 
-    const [total, profiles] = await Promise.all([
-      prisma.mentorProfile.count({ where }),
-      prisma.mentorProfile.findMany({
-        where,
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        orderBy: [{ publishedAt: 'desc' }],
-        include: {
-          user: { select: { id: true, name: true, firstName: true, lastName: true } },
-          skills: {
-            include: { skill: true },
-            orderBy: [{ isFeatured: 'desc' }],
-            take: 5,
-          },
-          _count: { select: { mentorships: { where: { status: 'ACTIVE' } } } },
-        },
-      }),
-    ]);
+    if (tsq) {
+      // Replicate the WHERE filters in SQL — kept narrow so the GIN
+      // scan does most of the work. The `languages` filter uses
+      // Postgres array overlap (`&&`); `skillSlugs` joins through the
+      // many-to-many table when present.
+      const langOverlap = parsed.data.languages && parsed.data.languages.length > 0
+        ? Prisma.sql`AND mp."languages" && ${parsed.data.languages}::text[]`
+        : Prisma.empty;
+      const skillJoin = parsed.data.skillSlugs && parsed.data.skillSlugs.length > 0
+        ? Prisma.sql`
+            AND EXISTS (
+              SELECT 1
+              FROM "MentorSkill" ms
+              JOIN "Skill" s ON s.id = ms."skillId"
+              WHERE ms."mentorProfileId" = mp.id
+                AND s.slug = ANY(${parsed.data.skillSlugs}::text[])
+            )
+          `
+        : Prisma.empty;
+
+      const offset = (page - 1) * pageSize;
+
+      const [countRow, idRows] = await Promise.all([
+        prisma.$queryRaw<Array<{ total: bigint }>>`
+          SELECT COUNT(*)::bigint AS total
+          FROM "MentorProfile" mp
+          WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
+            AND mp.status = 'ACTIVE'
+            AND mp."isAcceptingMentees" = true
+            AND mp."deletedAt" IS NULL
+            ${langOverlap}
+            ${skillJoin}
+        `,
+        prisma.$queryRaw<Array<{ id: string; rank: number }>>`
+          SELECT
+            mp.id,
+            ts_rank(mp."searchTsv", to_tsquery('french', ${tsq})) AS rank
+          FROM "MentorProfile" mp
+          WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
+            AND mp.status = 'ACTIVE'
+            AND mp."isAcceptingMentees" = true
+            AND mp."deletedAt" IS NULL
+            ${langOverlap}
+            ${skillJoin}
+          ORDER BY rank DESC, mp."publishedAt" DESC NULLS LAST
+          LIMIT ${pageSize}
+          OFFSET ${offset}
+        `,
+      ]);
+
+      totalForQuery = Number(countRow[0]?.total ?? 0);
+      rankedIds = idRows.map((r) => r.id);
+    }
+
+    // Single shared `include` so the inferred row type is identical
+    // across both branches. Without this the FTS path's typed result
+    // diverges from the legacy path's typed result and TS picks the
+    // narrowest common ancestor (= the bare Mentor model with no
+    // relations), which then breaks the mapping below.
+    const profileInclude = {
+      user: { select: { id: true, name: true, firstName: true, lastName: true } },
+      skills: {
+        include: { skill: true },
+        orderBy: [{ isFeatured: 'desc' as const }],
+        take: 5,
+      },
+      _count: { select: { mentorships: { where: { status: 'ACTIVE' as const } } } },
+    } satisfies Prisma.MentorProfileInclude;
+
+    let total: number;
+    let profiles: Prisma.MentorProfileGetPayload<{ include: typeof profileInclude }>[];
+
+    if (rankedIds === null) {
+      const [t, p] = await Promise.all([
+        prisma.mentorProfile.count({ where }),
+        prisma.mentorProfile.findMany({
+          where,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          orderBy: [{ publishedAt: 'desc' }],
+          include: profileInclude,
+        }),
+      ]);
+      total = t;
+      profiles = p;
+    } else {
+      total = totalForQuery ?? 0;
+      if (rankedIds.length === 0) {
+        profiles = [];
+      } else {
+        const fetched = await prisma.mentorProfile.findMany({
+          where: { id: { in: rankedIds } },
+          include: profileInclude,
+        });
+        // Re-impose the FTS rank order; `findMany`'s `where: { id: in }`
+        // doesn't preserve input ordering.
+        const order = new Map(rankedIds.map((id, i) => [id, i]));
+        fetched.sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+        profiles = fetched;
+      }
+    }
 
     // Compute averageRating per mentor in one round-trip
     const profileIds = profiles.map((p) => p.id);

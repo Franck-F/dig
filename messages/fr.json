@@ -146,7 +146,7 @@
           },
           {
             "label": "FAQ",
-            "href": "/#faq"
+            "href": "/faq"
           }
         ]
       },
@@ -210,6 +210,7 @@
       "eyebrow": "Questions fréquentes",
       "title": "Tout ce qu'on nous",
       "titleHighlight": "demande souvent.",
+      "seeAll": "Voir toutes les questions →",
       "items": {
         "0": {
           "q": "C'est pour qui ?",
@@ -1687,7 +1688,7 @@
       "3": {
         "name": "Franck Fambou",
         "role": "Team Leader — Dev & Tech",
-        "bio": "AI Engineer chez Laboratoire Calebasse, MSc Data Sciences & Business Intelligence. Pilote la plateforme Digizelle et les projets IA.",
+        "bio": "AI Engineer, MSc Data Sciences & Business Intelligence. Pilote la plateforme Digizelle et les projets IA.",
         "linkedin": "",
         "github": ""
       },
@@ -2181,7 +2182,7 @@
       "oauthDisabled": "Connexion sociale indisponible.",
       "rateLimited": "Trop de tentatives. Réessaie dans quelques minutes.",
       "ageRequired": "Tu dois certifier avoir au moins 15 ans pour créer un compte.",
-      "belowMinAge": "L'inscription est réservée aux 15 ans et plus (RGPD Art. 8). Si tu as moins de 15 ans, tes parents peuvent contacter dpo@calebasse.com pour discuter d'un accès encadré.",
+      "belowMinAge": "L'inscription est réservée aux 15 ans et plus (RGPD Art. 8). Si tu as moins de 15 ans, tes parents peuvent contacter contact@digizelle.fr pour discuter d'un accès encadré.",
       "invalidBirthYear": "Année de naissance invalide. Saisis l'année à 4 chiffres (ex. 2007).",
       "generic": "Une erreur est survenue. Réessaie."
     },
@@ -2237,19 +2238,202 @@
       }
     }
   },
+  "faqPage": {
+    "metaTitle": "FAQ — Questions fréquentes",
+    "metaDescription": "Toutes les réponses sur Digizelle, l'inscription, les programmes, le mentorat Mentora, la communauté et la protection de vos données.",
+    "eyebrow": "Centre d'aide",
+    "title": "Questions",
+    "titleHighlight": "fréquentes.",
+    "intro": "Une question avant de te lancer ? Voici les réponses qu'on donne le plus souvent. Si la tienne n'y est pas, écris-nous à contact@digizelle.fr — on répond sous 48h ouvrées.",
+    "search": {
+      "label": "Rechercher dans la FAQ",
+      "placeholder": "Tape un mot-clé : mentor, inscription, gratuité…",
+      "noResults": "Aucune question ne correspond à « {query} ». Essaie un autre mot-clé, ou écris-nous à contact@digizelle.fr.",
+      "matchCount": "{count, plural, =0 {Aucun résultat} one {1 question trouvée} other {# questions trouvées}}",
+      "clear": "Effacer la recherche"
+    },
+    "tocLabel": "Catégories",
+    "ctaTitle": "Tu n'as pas trouvé ta réponse ?",
+    "ctaBody": "Écris-nous, on lit chaque message. Réponse personnelle sous 48h ouvrées.",
+    "ctaButton": "Nous contacter →",
+    "categories": {
+      "general": {
+        "label": "Général",
+        "items": {
+          "what": {
+            "q": "C'est quoi Digizelle ?",
+            "a": "Digizelle est une association loi 1901, fondée en 2023, basée à EPITECH Le Kremlin-Bicêtre. Notre mission : inclure et faire grandir les jeunes dans le numérique — par le mentorat, des ateliers, des hackathons et une communauté bienveillante. On est 100 % à but non lucratif."
+          },
+          "who": {
+            "q": "C'est pour qui ?",
+            "a": "Pour toutes les personnes curieuses du numérique, à partir de 15 ans. On accueille particulièrement les jeunes qui n'ont pas eu la chance d'être exposés à la tech (origine sociale, géographique, parcours atypique, sous-représentation). Aucune barrière de niveau, de diplôme ou de statut."
+          },
+          "free": {
+            "q": "C'est gratuit ?",
+            "a": "Oui pour les bénéficiaires : tous nos programmes (ateliers, masterclasses, hackathons, Mentora) sont gratuits ou à prix juste. On est financé par le mécénat d'entreprises (Microsoft, EY, AWS, Allianz, Epitech, HEC Paris, Station F, BECOMTECH…) et par des subventions publiques."
+          },
+          "associationStatus": {
+            "q": "Vous êtes une vraie association ?",
+            "a": "Oui — association loi 1901, déclarée en préfecture en 2023. Siège à EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre. Toutes les mentions légales sont sur la page /legal."
+          },
+          "team": {
+            "q": "Qui anime Digizelle ?",
+            "a": "Une équipe de bénévoles : un bureau (présidence, trésorerie, secrétariat), des Team Leaders sur Communication, Mentorat, Tech et Événementiel, et une communauté grandissante de mentors et bénévoles. Tous donnent du temps en plus de leurs études ou leur job."
+          }
+        }
+      },
+      "signup": {
+        "label": "Inscription & compte",
+        "items": {
+          "how": {
+            "q": "Comment je m'inscris ?",
+            "a": "Clique sur « Connexion » en haut à droite, puis « Créer un compte ». Une fois ton email confirmé, tu accèdes à ton espace membre où tu peux rejoindre la communauté ou demander un mentor."
+          },
+          "data": {
+            "q": "Quelles informations sont demandées ?",
+            "a": "Le minimum : prénom, email, mot de passe. Optionnel : nom, photo, bio, compétences. Pour les mineurs (15-17 ans), nous demandons aussi l'année de naissance pour appliquer la protection renforcée prévue par le RGPD."
+          },
+          "age": {
+            "q": "À quel âge je peux m'inscrire ?",
+            "a": "À partir de 15 ans, conformément à l'article 8 du RGPD (âge du consentement numérique en France). Pour les 15-17 ans, aucun profilage publicitaire n'est appliqué et la modération est renforcée. Si tu as moins de 15 ans, tes parents peuvent contacter contact@digizelle.fr pour un accès encadré."
+          },
+          "delete": {
+            "q": "Je peux supprimer mon compte ?",
+            "a": "Oui, à tout moment, depuis Communauté → Paramètres → Zone dangereuse. Tu as ensuite 30 jours pour changer d'avis avant la purge irréversible. Cette suppression couvre toutes tes données : compte, profil, posts, messages, médias hébergés."
+          },
+          "forgotPassword": {
+            "q": "J'ai oublié mon mot de passe.",
+            "a": "Sur la page de connexion, clique « Mot de passe oublié ? » — tu recevras un lien de réinitialisation par email (valide 1 heure). Si l'email n'arrive pas, vérifie tes spams ou écris à contact@digizelle.fr."
+          },
+          "twoFactor": {
+            "q": "Faut-il activer la 2FA ?",
+            "a": "Recommandé pour tout le monde, obligatoire pour les administrateurs, modérateurs et mentors actifs. Active-la dans /account/2fa avec n'importe quelle app authenticator (Google Authenticator, 1Password, Authy…). Pense à sauvegarder tes 10 codes de secours."
+          }
+        }
+      },
+      "programs": {
+        "label": "Programmes",
+        "items": {
+          "list": {
+            "q": "Quels sont vos programmes ?",
+            "a": "Quatre formats complémentaires :\n• Atelier Immersif — sessions pratiques de 3 jours pour découvrir une compétence\n• Masterclass — cours intensif avec un·e expert·e pour approfondir\n• Hackathon — 48 h en équipe pour créer sur un défi avec mentors\n• Mentora — programme de mentorat 1-to-1 sur la durée"
+          },
+          "level": {
+            "q": "Quel niveau faut-il avoir ?",
+            "a": "Aucun pré-requis. Nos formats vont du débutant complet (premier atelier découverte) à l'avancé (masterclass tech). On s'adapte à ton parcours, pas l'inverse. La motivation et la curiosité comptent plus que la maîtrise technique."
+          },
+          "prepare": {
+            "q": "Comment me préparer pour un atelier ou hackathon ?",
+            "a": "Rien à préparer en avance — tout le matériel pédagogique est fourni. Apporte un ordinateur si tu en as un (sinon on peut t'en prêter un sur place). Une attitude curieuse et l'envie d'apprendre suffisent."
+          },
+          "certificate": {
+            "q": "Délivrez-vous des certificats ?",
+            "a": "Pour les masterclasses et hackathons, oui — un certificat de participation Digizelle est remis aux participants présents l'intégralité de la session. Ce n'est pas un diplôme reconnu par l'État, mais c'est une preuve officielle utile pour ton CV."
+          },
+          "where": {
+            "q": "Où se déroulent les événements ?",
+            "a": "Principalement à Paris et en Île-de-France (EPITECH, HEC Paris, Station F, locaux de partenaires). Certains formats sont aussi 100 % en ligne. Les détails de chaque événement sont publiés sur /events au moins 3 semaines à l'avance."
+          }
+        }
+      },
+      "mentora": {
+        "label": "Mentora (mentorat)",
+        "items": {
+          "what": {
+            "q": "C'est quoi Mentora ?",
+            "a": "Mentora est notre programme de mentorat 1-to-1 : on te met en relation avec un·e mentor·e expérimenté·e dans le domaine numérique qui t'intéresse (dev, design, data, produit, IA…). Vous échangez en visio à un rythme que vous choisissez ensemble — généralement une heure tous les 15 jours sur 3 à 6 mois."
+          },
+          "findMentor": {
+            "q": "Comment trouver un mentor ?",
+            "a": "Une fois inscrit·e à Mentora, tu remplis ton profil mentoré (objectifs, compétences à développer, langues, fuseau horaire) et notre algorithme te propose des mentors compatibles. Tu peux aussi explorer le catalogue libre sur /mentora/discover et envoyer une demande à qui t'intéresse."
+          },
+          "becomeMentor": {
+            "q": "Comment devenir mentor ?",
+            "a": "Crée ton profil mentor sur /mentora/become-mentor. Tu présentes ton parcours, tes compétences, tes disponibilités. L'équipe valide ton profil sous 5 jours ouvrés. C'est ouvert à tout·e professionnel·le ayant 2+ années d'expérience qui souhaite donner du temps."
+          },
+          "paid": {
+            "q": "C'est rémunéré ?",
+            "a": "Non, le mentorat est entièrement bénévole. Les mentors donnent leur temps gratuitement. Pour les mentorés, c'est gratuit également. C'est notre engagement éthique : aider les jeunes ne doit pas dépendre de leurs moyens."
+          },
+          "duration": {
+            "q": "Combien de temps dure un mentorat ?",
+            "a": "Tu choisis avec ton mentor — typiquement 3 à 6 mois, à raison d'une à deux heures par mois. Tu peux mettre fin à la relation à tout moment ou demander un changement de mentor si le matching ne fonctionne pas."
+          },
+          "matching": {
+            "q": "Comment fonctionne le matching ?",
+            "a": "L'algorithme prend en compte : compétences recherchées vs offertes, langues, fuseau horaire, note moyenne du mentor, temps de réponse, charge actuelle, et un facteur de diversité pour éviter les biais. Tu vois la décomposition du score sur chaque mentor proposé via le bouton « Pourquoi ce match ? »."
+          }
+        }
+      },
+      "community": {
+        "label": "Communauté",
+        "items": {
+          "what": {
+            "q": "Qu'est-ce que la communauté Digizelle ?",
+            "a": "C'est notre espace en ligne où membres, mentors et alumni discutent, partagent des ressources, posent des questions, organisent des défis. Tu y accèdes après inscription, depuis le menu /community. C'est aussi le lieu où on annonce les événements et où la modération veille."
+          },
+          "rules": {
+            "q": "Quelles sont les règles ?",
+            "a": "Le respect mutuel avant tout. Pas de discriminations, pas de harcèlement, pas de spoilers de défis en cours. Confidentialité des sessions de mentorat. La charte complète est sur /community/charte — sa lecture est obligatoire à l'onboarding."
+          },
+          "moderation": {
+            "q": "Comment fonctionne la modération ?",
+            "a": "Une équipe de modérateurs et modératrices, identifiables par un badge, examine les signalements. Sanctions graduées : avertissement → sourdine → suspension → bannissement. Les bannissements requièrent deux modérateurs distincts (proposition + confirmation) pour éviter l'arbitraire."
+          },
+          "report": {
+            "q": "Comment signaler un contenu ?",
+            "a": "Sur chaque post ou commentaire, le bouton « Signaler » ouvre un menu. Choisis la catégorie (spam, harcèlement, contenu illicite…) et ajoute un contexte si tu veux. Le signalement est anonyme — ni l'auteur ni les autres membres ne savent qui a signalé."
+          },
+          "appeal": {
+            "q": "J'ai été sanctionné·e à tort, comment faire ?",
+            "a": "Tu peux contester par email à contact@digizelle.fr. Réponse sous 14 jours. Le motif de sanction et l'auteur de la décision sont dans ton historique de modération côté admin (visible par toi via l'export de données RGPD)."
+          }
+        }
+      },
+      "privacy": {
+        "label": "Confidentialité & RGPD",
+        "items": {
+          "protection": {
+            "q": "Comment mes données sont protégées ?",
+            "a": "TLS 1.3 sur tout le site, mots de passe hachés (bcrypt coût ≥ 12), Row-Level Security sur la base PostgreSQL, hébergement en Union européenne (Vercel CDG, Supabase eu-west-3 Paris), 2FA obligatoire pour les comptes à privilèges. Nous ne revendons aucune donnée et ne faisons aucun profilage publicitaire."
+          },
+          "export": {
+            "q": "Puis-je télécharger mes données ?",
+            "a": "Oui, conformément à l'article 20 du RGPD (droit à la portabilité). Depuis Communauté → Paramètres → Mes données, tu peux exporter tes données au format JSON, lisible par machine. L'export contient ton profil, tes posts, tes messages, ton historique de modération."
+          },
+          "newsletter": {
+            "q": "Comment me désinscrire de la newsletter ?",
+            "a": "Lien « Se désabonner » présent en bas de chaque email — un seul clic suffit. Tu peux aussi le faire depuis Communauté → Paramètres → Préférences email."
+          },
+          "rights": {
+            "q": "Comment exercer mes droits RGPD ?",
+            "a": "La plupart des droits sont accessibles directement depuis ton espace membre : accès (export JSON), rectification (édition de profil), effacement (suppression de compte). Pour tout droit non couvert par les outils intégrés (limitation, opposition, post-mortem), écris à contact@digizelle.fr — réponse sous 30 jours."
+          },
+          "minor": {
+            "q": "Je suis mineur·e, mes parents peuvent agir ?",
+            "a": "Oui — tes parents ou tuteurs peuvent à tout moment demander l'accès, la rectification ou la suppression de tes données via contact@digizelle.fr en justifiant de leur qualité (livret de famille, jugement). Pour les moins de 15 ans, l'inscription elle-même nécessite leur autorisation."
+          },
+          "violation": {
+            "q": "Et en cas de violation de données ?",
+            "a": "Nous notifions la CNIL dans les 72 heures (article 33 RGPD) et informons individuellement les personnes concernées si la violation présente un risque élevé pour leurs droits. Plus de détails dans le runbook RGPD interne."
+          }
+        }
+      }
+    }
+  },
   "legal": {
     "metaTitle": "Mentions légales",
     "metaDescription": "Mentions légales de l'association Digizelle — éditeur, hébergement, propriété intellectuelle, responsabilité.",
     "eyebrow": "Mentions légales",
     "title": "Informations",
     "titleHighlight": "légales.",
-    "intro": "Ce site est édité par le Laboratoire Calebasse (Digizelle), association loi 1901, dont le siège est situé à EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre. Les présentes mentions légales régissent l'utilisation de digizelle.fr et de ses sous-domaines, conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).",
+    "intro": "Ce site est édité par Digizelle, association loi 1901, dont le siège est situé à EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre. Les présentes mentions légales régissent l'utilisation de digizelle.fr et de ses sous-domaines, conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).",
     "lastUpdated": "Dernière mise à jour : mai 2026",
     "toc": "Sommaire",
     "sections": {
       "publisher": {
         "title": "Éditeur du site",
-        "body": "Laboratoire Calebasse (Digizelle) — association loi 1901, déclarée en préfecture en 2023.\nSiège social : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\nEmail public : contact@digizelle.fr\nEmail RGPD / DPO : dpo@calebasse.com\nEmail communication : communication@calebasse.com\n\nL'association a pour objet l'inclusion et l'épanouissement des jeunes dans le numérique : ateliers, masterclasses, hackathons, programme de mentorat Mentora et événements publics. La direction de la publication est assurée par le bureau de l'association."
+        "body": "Digizelle — association loi 1901, déclarée en préfecture en 2023.\nSiège social : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\nEmail unique de contact : contact@digizelle.fr\n\nL'association a pour objet l'inclusion et l'épanouissement des jeunes dans le numérique : ateliers, masterclasses, hackathons, programme de mentorat Mentora et événements publics. La direction de la publication est assurée par le bureau de l'association."
       },
       "registration": {
         "title": "Immatriculation & RNA",
@@ -2277,11 +2461,11 @@
       },
       "credits": {
         "title": "Crédits & technologies",
-        "body": "Conception et réalisation : équipe Design & Dev de Digizelle, avec le soutien de bénévoles de la communauté.\n\nStack technique :\n• Next.js 16 (framework React, App Router)\n• TypeScript pour la fiabilité du code\n• Supabase pour la base de données PostgreSQL et l'authentification\n• Auth.js (NextAuth) pour la gestion des sessions\n• Vercel pour l'hébergement et le CDN\n• Resend pour les emails transactionnels\n\nIcônes et illustrations originales réalisées par l'équipe Design Digizelle. Polices : Inter (Rasmus Andersson, OFL) et Manrope (Mikhail Sharanda, OFL)."
+        "body": "Conception et réalisation : équipe Design & Dev de Digizelle, avec le soutien de bénévoles de la communauté.\n\nStack technique :\n• Next.js 16 (framework React, App Router)\n• TypeScript pour la fiabilité du code\n• Supabase pour la base de données PostgreSQL et l'authentification\n• Auth.js (NextAuth) pour la gestion des sessions\n• Vercel pour l'hébergement et le CDN\n• Resend pour les emails transactionnels\n\nIcônes et illustrations originales réalisées par l'équipe Design Digizelle. Police : Signika (Anna Giedryś, SIL Open Font License)."
       },
       "contact": {
         "title": "Contact",
-        "body": "Pour toute question relative aux présentes mentions légales, à l'usage du site ou pour exercer un droit de réponse : contact@digizelle.fr.\nPour toute question RGPD : dpo@calebasse.com.\n\nCourrier postal : Digizelle — Laboratoire Calebasse, EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France."
+        "body": "Pour toute question relative aux présentes mentions légales, à l'usage du site, à une demande RGPD ou pour exercer un droit de réponse : contact@digizelle.fr (adresse unique de contact de l'association).\n\nCourrier postal : Digizelle, EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France."
       },
       "updates": {
         "title": "Mise à jour des mentions",
@@ -2301,7 +2485,7 @@
     "sections": {
       "controller": {
         "title": "Responsable de traitement",
-        "body": "Digizelle, opéré par le Laboratoire Calebasse (association loi 1901, à but non lucratif), agit en tant que responsable de traitement au sens de l'article 4.7 du RGPD pour l'ensemble des données personnelles collectées via ce site et la plateforme Mentora & Communauté.\n\nCoordonnées :\n• Siège : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\n• Contact général : communication@calebasse.com\n• Contact RGPD / DPO : dpo@calebasse.com\n• Site public : contact@digizelle.fr (formulaire en ligne)\n\nUn point de contact RGPD dédié (dpo@calebasse.com) a été désigné pour répondre à toutes les demandes d'exercice de droits, signaler une violation, ou échanger sur la conformité des traitements. Le titulaire de ce rôle est le Tech Lead de l'association jusqu'à recrutement d'un délégué externalisé. Les coordonnées de la CNIL (autorité de contrôle française) figurent en fin de document."
+        "body": "Digizelle (association loi 1901, à but non lucratif) agit en tant que responsable de traitement au sens de l'article 4.7 du RGPD pour l'ensemble des données personnelles collectées via ce site et la plateforme Mentora & Communauté.\n\nCoordonnées :\n• Siège : EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\n• Contact unique de l'association : contact@digizelle.fr (toutes demandes : générales, RGPD, communication, presse)\n\nLe titulaire du rôle de point de contact RGPD est le Tech Lead de l'association jusqu'à recrutement d'un délégué externalisé. Pour toute demande d'exercice de droits, signalement de violation, ou échange sur la conformité des traitements, écrivez à contact@digizelle.fr. Les coordonnées de la CNIL (autorité de contrôle française) figurent en fin de document."
       },
       "data": {
         "title": "Données collectées",
@@ -2317,7 +2501,7 @@
       },
       "rights": {
         "title": "Vos droits RGPD",
-        "body": "Vous disposez à tout moment des droits suivants, exerçables directement depuis votre compte ou par email :\n\n• Droit d'accès (article 15) : récapitulatif des données détenues, accessible depuis Communauté → Paramètres.\n• Droit de rectification (article 16) : modification directe depuis votre profil.\n• Droit à l'effacement / « droit à l'oubli » (article 17) : bouton « Supprimer mon compte » dans Paramètres → délai de grâce de 30 jours puis purge irréversible.\n• Droit à la limitation du traitement (article 18) : sur demande au DPO.\n• Droit à la portabilité (article 20) : export JSON téléchargeable depuis Paramètres, format machine-readable.\n• Droit d'opposition (article 21) : opt-out marketing 1-clic dans chaque email ou via Paramètres.\n• Droit de retirer votre consentement à tout moment.\n• Droit de définir des directives post-mortem sur vos données (loi Informatique & Libertés).\n\nPour exercer un droit qui ne serait pas couvert par les outils intégrés, écrivez à dpo@calebasse.com en précisant la nature de votre demande. Réponse sous 30 jours (90 jours en cas de complexité, sur notification). En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
+        "body": "Vous disposez à tout moment des droits suivants, exerçables directement depuis votre compte ou par email :\n\n• Droit d'accès (article 15) : récapitulatif des données détenues, accessible depuis Communauté → Paramètres.\n• Droit de rectification (article 16) : modification directe depuis votre profil.\n• Droit à l'effacement / « droit à l'oubli » (article 17) : bouton « Supprimer mon compte » dans Paramètres → délai de grâce de 30 jours puis purge irréversible.\n• Droit à la limitation du traitement (article 18) : sur demande au DPO.\n• Droit à la portabilité (article 20) : export JSON téléchargeable depuis Paramètres, format machine-readable.\n• Droit d'opposition (article 21) : opt-out marketing 1-clic dans chaque email ou via Paramètres.\n• Droit de retirer votre consentement à tout moment.\n• Droit de définir des directives post-mortem sur vos données (loi Informatique & Libertés).\n\nPour exercer un droit qui ne serait pas couvert par les outils intégrés, écrivez à contact@digizelle.fr en précisant la nature de votre demande. Réponse sous 30 jours (90 jours en cas de complexité, sur notification). En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
       },
       "subprocessors": {
         "title": "Sous-traitants & partenaires techniques",
@@ -2329,7 +2513,7 @@
       },
       "minors": {
         "title": "Mineurs & protection des jeunes",
-        "body": "Digizelle s'adresse en priorité à un public jeune. La législation française fixe à 15 ans l'âge du consentement numérique (article 8 du RGPD, transposé à l'article 45 de la loi Informatique & Libertés modifiée).\n\n• Le formulaire d'inscription comporte une déclaration obligatoire sur l'honneur d'avoir au moins 15 ans (case à cocher non pré-cochée). Sans cette déclaration, l'inscription est refusée.\n• Pour toute personne entre 15 et 17 ans, l'inscription est autorisée mais aucun profilage publicitaire n'est appliqué et la modération renforce sa vigilance.\n• Pour toute personne de moins de 15 ans, l'inscription est interdite. En cas de découverte ultérieure (signalement, contradiction au profil), le compte est suspendu sous 24 heures puis supprimé après vérification.\n• Les parents ou tuteurs peuvent à tout moment demander l'accès, la rectification ou la suppression des données de leur enfant à dpo@calebasse.com en justifiant de leur qualité.\n• Une analyse d'impact relative à la protection des données (AIPD) est en cours d'élaboration pour les volets qui touchent les mineurs (profils publics, communauté UGC)."
+        "body": "Digizelle s'adresse en priorité à un public jeune. La législation française fixe à 15 ans l'âge du consentement numérique (article 8 du RGPD, transposé à l'article 45 de la loi Informatique & Libertés modifiée).\n\n• Le formulaire d'inscription comporte une déclaration obligatoire sur l'honneur d'avoir au moins 15 ans (case à cocher non pré-cochée). Sans cette déclaration, l'inscription est refusée.\n• Pour toute personne entre 15 et 17 ans, l'inscription est autorisée mais aucun profilage publicitaire n'est appliqué et la modération renforce sa vigilance.\n• Pour toute personne de moins de 15 ans, l'inscription est interdite. En cas de découverte ultérieure (signalement, contradiction au profil), le compte est suspendu sous 24 heures puis supprimé après vérification.\n• Les parents ou tuteurs peuvent à tout moment demander l'accès, la rectification ou la suppression des données de leur enfant à contact@digizelle.fr en justifiant de leur qualité.\n• Une analyse d'impact relative à la protection des données (AIPD) est en cours d'élaboration pour les volets qui touchent les mineurs (profils publics, communauté UGC)."
       },
       "security": {
         "title": "Mesures de sécurité",
@@ -2341,7 +2525,7 @@
       },
       "contact": {
         "title": "Délégué à la protection des données (DPO)",
-        "body": "Digizelle a désigné un point de contact RGPD (DPO interne) dédié, indépendant des fonctions opérationnelles concernées par les traitements :\n\n• Email DPO : dpo@calebasse.com\n• Courrier : Digizelle — Délégué à la protection des données — EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre\n\nMissions du DPO (article 39 RGPD) : informer et conseiller le responsable de traitement, contrôler la conformité, point de contact unique pour les personnes concernées et la CNIL, suivi des incidents et notifications éventuelles (articles 33-34).\n\nDélai de réponse aux demandes : 30 jours (extensible à 90 jours en cas de complexité, sur notification motivée). En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
+        "body": "Digizelle a désigné un point de contact RGPD (DPO interne) dédié, indépendant des fonctions opérationnelles concernées par les traitements :\n\n• Email RGPD / DPO : contact@digizelle.fr (adresse unique de contact de l'association)\n• Courrier : Digizelle — Délégué à la protection des données — EPITECH Campus du Kremlin-Bicêtre, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre\n\nMissions du DPO (article 39 RGPD) : informer et conseiller le responsable de traitement, contrôler la conformité, point de contact unique pour les personnes concernées et la CNIL, suivi des incidents et notifications éventuelles (articles 33-34).\n\nDélai de réponse aux demandes : 30 jours (extensible à 90 jours en cas de complexité, sur notification motivée). En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
       }
     }
   },
@@ -2367,22 +2551,26 @@
         "duration": "Durée : 13 mois maximum (recommandation CNIL)"
       },
       "preferences": {
-        "title": "Cookies de préférence",
-        "body": "Mémorisent vos choix d'interface : langue (digizelle-locale), thème sombre/clair (digizelle-theme), dernier onglet de connexion ouvert (digizelle-auth-tab). Ils améliorent le confort de navigation et ne sont activés qu'avec votre consentement.",
-        "duration": "Durée : 6 mois"
+        "title": "Préférences (cookie + stockage local)",
+        "body": "Mémorisent vos choix d'interface : langue (cookie NEXT_LOCALE) et thème sombre/clair (localStorage digizelle-theme). Ils améliorent le confort de navigation. Le cookie NEXT_LOCALE est essentiel à l'affichage de la langue choisie ; le thème est purement optionnel.",
+        "duration": "Durée : 12 mois pour la langue, permanent pour le thème (effaçable à tout moment)"
       }
     },
     "list": {
-      "title": "Inventaire détaillé des cookies",
-      "intro": "Liste complète des cookies déposés ou potentiellement déposés sur votre terminal. Cette liste est mise à jour à chaque évolution technique du site.",
-      "tableLabel": "Inventaire des cookies",
+      "title": "Inventaire détaillé",
+      "intro": "Liste complète des éléments stockés sur votre terminal — cookies HTTP et stockage local navigateur — déposés ou potentiellement déposés. Les noms ci-dessous sont les identifiants techniques exacts visibles dans les outils de développement de votre navigateur (DevTools → Application). Cette liste est mise à jour à chaque évolution technique du site.",
+      "tableLabel": "Inventaire des cookies et stockages locaux",
+      "cookiesTitle": "Cookies HTTP",
+      "cookiesSubtitle": "Envoyés à chaque requête vers le serveur. Visibles dans DevTools → Application → Cookies.",
+      "storageTitle": "Stockage local (localStorage)",
+      "storageSubtitle": "Conservés uniquement dans votre navigateur, jamais envoyés au serveur. Visibles dans DevTools → Application → Local Storage.",
       "headers": {
         "name": "Nom",
         "purpose": "Finalité",
         "duration": "Durée",
         "type": "Type"
       },
-      "items": {
+      "cookies": {
         "0": {
           "name": "next-auth.session-token",
           "purpose": "Maintien de la session connectée à l'espace membre Mentora",
@@ -2396,21 +2584,23 @@
           "type": "Essentiel"
         },
         "2": {
+          "name": "NEXT_LOCALE",
+          "purpose": "Mémorisation de la langue choisie (fr / en)",
+          "duration": "12 mois",
+          "type": "Préférence"
+        }
+      },
+      "storage": {
+        "0": {
           "name": "digizelle-theme",
           "purpose": "Mémorisation de la préférence d'affichage clair / sombre",
-          "duration": "12 mois",
+          "duration": "Permanent (jusqu'à effacement par l'utilisateur)",
           "type": "Préférence"
         },
-        "3": {
-          "name": "digizelle-locale",
-          "purpose": "Mémorisation de la langue choisie",
-          "duration": "12 mois",
-          "type": "Préférence"
-        },
-        "4": {
+        "1": {
           "name": "digizelle-cookie-consent",
           "purpose": "Mémorisation de votre choix sur la bannière cookies (accepté / refusé / catégories)",
-          "duration": "6 mois",
+          "duration": "13 mois (recommandation CNIL), re-prompt automatique au-delà",
           "type": "Essentiel"
         }
       }
@@ -3288,5 +3478,11 @@
         "daysAgo": "il y a {n} j"
       }
     }
+  },
+  "localeSwitcher": {
+    "label": "Langue",
+    "fr": "Français",
+    "en": "English",
+    "switchTo": "Passer en {language}"
   }
 }

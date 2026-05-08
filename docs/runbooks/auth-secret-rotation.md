@@ -128,8 +128,8 @@ VALUES (gen_random_uuid(), '<your-user-id>', 'security.auth_secret_rotation',
 
 ## Contacts
 
-- Tech Lead : Franck — communication@calebasse.com
-- DPO : dpo@calebasse.com
+- Tech Lead : Franck — contact@digizelle.fr
+- DPO : contact@digizelle.fr
 - Astreinte Vercel : escalation interne via Tech Lead
 - Sécurité Resend : security@resend.com (en cas de fuite supposée côté email)
 

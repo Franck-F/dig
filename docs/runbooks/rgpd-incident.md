@@ -32,7 +32,7 @@ Sentry, monitoring).
 
 **Quoi faire dans les 15 premières minutes** :
 
-1. Déclarer l'incident dans Slack #incident ou par email à dpo@calebasse.com.
+1. Déclarer l'incident dans Slack #incident ou par email à contact@digizelle.fr.
 2. Donner les éléments connus : qui, quoi, quand, comment découvert, scope.
 3. Désigner un **incident commander** (par défaut : DPO ; sinon Tech Lead).
 4. Ne **rien** détruire (logs, audit trails, sauvegardes) — preuves.
@@ -70,7 +70,7 @@ Décision « risque élevé pour les droits et libertés » → oui/non.
 **Téléservice CNIL** : https://notifications.cnil.fr.
 
 Champs requis (qu'il faut donc préparer) :
-- Identité du responsable de traitement (Laboratoire Calebasse)
+- Identité du responsable de traitement (Digizelle)
 - Description de la violation
 - Catégories et nombre de personnes concernées
 - Conséquences probables
@@ -97,7 +97,7 @@ Ce que tu peux faire : changer ton mot de passe, activer la 2FA, vérifier
 que ton email n'apparaît pas dans Have I Been Pwned, rester vigilant·e
 face à tout email se réclamant de Digizelle.
 
-Pour toute question : dpo@calebasse.com.
+Pour toute question : contact@digizelle.fr.
 
 Toutes nos excuses.
 

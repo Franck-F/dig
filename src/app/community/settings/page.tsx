@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 import { getCommunityViewer } from '../_components/viewer';
+import { getDpoEmail } from '@/lib/contact';
 import SettingsForm from './_components/SettingsForm';
 import DataPortabilityPanel from './_components/DataPortabilityPanel';
 import DangerZone from './_components/DangerZone';
@@ -88,7 +89,7 @@ export default async function CommunitySettingsPage() {
 
       <DataPortabilityPanel />
 
-      <DangerZone />
+      <DangerZone dpoEmail={getDpoEmail()} />
     </div>
   );
 }

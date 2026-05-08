@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { getDpoEmail } from '@/lib/contact';
+
 export const metadata: Metadata = {
   title: 'Charte de la communauté · Digizelle',
   description:
@@ -16,6 +18,7 @@ export const metadata: Metadata = {
  * for visual consistency.
  */
 export default function CharterPage() {
+  const dpo = getDpoEmail();
   return (
     <main style={{ maxWidth: 760, margin: '0 auto', padding: '64px 24px' }}>
       <Link
@@ -111,7 +114,7 @@ export default function CharterPage() {
           <li><strong>Sanctions graduées.</strong> Avertissement → sourdine → suspension → bannissement, selon la gravité et l&apos;historique.</li>
           <li><strong>Bannissement à 4 yeux.</strong> Une décision de bannissement requiert <strong>deux modérateurs distincts</strong> (proposition + confirmation) pour éviter qu&apos;un compte modérateur compromis ou de mauvaise foi puisse exclure unilatéralement.</li>
           <li><strong>Audit log immuable.</strong> Toute action de modération est tracée avec horodatage, motif et acteur — consultable par l&apos;administration.</li>
-          <li><strong>Recours.</strong> Tu peux contester une sanction par email à <a href="mailto:dpo@calebasse.com" style={A}>dpo@calebasse.com</a>. Réponse sous 14 jours.</li>
+          <li><strong>Recours.</strong> Tu peux contester une sanction par email à <a href={`mailto:${dpo}`} style={A}>{dpo}</a>. Réponse sous 14 jours.</li>
         </ul>
 
         <h2 style={H2}>5. Mineurs (15–17 ans)</h2>
@@ -122,7 +125,7 @@ export default function CharterPage() {
         <ul style={UL}>
           <li>Aucun profilage publicitaire n&apos;est appliqué.</li>
           <li>La modération exerce une vigilance renforcée sur les channels où ils participent.</li>
-          <li>Tes parents ou tuteurs peuvent demander à tout moment la suppression de tes données via dpo@calebasse.com.</li>
+          <li>Tes parents ou tuteurs peuvent demander à tout moment la suppression de tes données via {dpo}.</li>
           <li>Si tu te sens en danger : contacte le <a href="https://www.e-enfance.org/numero-3018-2/" target="_blank" rel="noreferrer" style={A}>3018</a> (numéro national contre les violences numériques, anonyme et gratuit).</li>
         </ul>
 
@@ -140,7 +143,7 @@ export default function CharterPage() {
         <h2 style={H2}>7. Données personnelles</h2>
         <p>
           La gestion de tes données est encadrée par la <Link href="/privacy" style={A}>politique de confidentialité</Link>.
-          Le DPO de Digizelle (<a href="mailto:dpo@calebasse.com" style={A}>dpo@calebasse.com</a>)
+          Le DPO de Digizelle (<a href={`mailto:${dpo}`} style={A}>{dpo}</a>)
           répond sous 30 jours à toute demande d&apos;exercice de tes droits
           (accès, rectification, effacement, portabilité, opposition).
         </p>
@@ -157,11 +160,10 @@ export default function CharterPage() {
 
         <h2 style={H2}>9. Contact</h2>
         <p>
-          Modération : signalement intégré à l&apos;UI ou{' '}
-          <a href="mailto:moderation@calebasse.com" style={A}>moderation@calebasse.com</a>
-          .<br />
-          Conformité RGPD / DPO : <a href="mailto:dpo@calebasse.com" style={A}>dpo@calebasse.com</a>.<br />
-          Communication : <a href="mailto:communication@calebasse.com" style={A}>communication@calebasse.com</a>.
+          Pour toute question — modération, RGPD, communication ou général :{' '}
+          <a href={`mailto:${dpo}`} style={A}>{dpo}</a>{' '}
+          (adresse unique de contact de Digizelle). Le signalement intégré à
+          l&apos;UI reste la voie la plus rapide pour les contenus à modérer.
         </p>
       </article>
 

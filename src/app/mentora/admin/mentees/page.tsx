@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import type { MenteeLevel, Prisma } from '@prisma/client';
+import Pagination from '@/components/admin/Pagination';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Mentorées · Admin Mentora' };
@@ -247,45 +248,12 @@ export default async function AdminMenteesPage({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 12, alignItems: 'center' }}>
-          {page > 1 && (
-            <Link
-              href={buildHref({ page: String(page - 1) })}
-              style={{
-                padding: '8px 14px',
-                borderRadius: 9,
-                border: '1px solid rgba(115,1,255,0.20)',
-                color: '#7301FF',
-                fontSize: 12,
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              ← Précédent
-            </Link>
-          )}
-          <span style={{ fontSize: 12, color: '#545b7a', fontWeight: 600 }}>
-            Page {page} / {totalPages}
-          </span>
-          {page < totalPages && (
-            <Link
-              href={buildHref({ page: String(page + 1) })}
-              style={{
-                padding: '8px 14px',
-                borderRadius: 9,
-                border: '1px solid rgba(115,1,255,0.20)',
-                color: '#7301FF',
-                fontSize: 12,
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              Suivant →
-            </Link>
-          )}
-        </div>
-      )}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        buildHref={(p) => buildHref({ page: String(p) })}
+      />
     </div>
   );
 }

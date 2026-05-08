@@ -114,7 +114,7 @@ export default async function PrivacyPage() {
             .dz-legal-page__grid {
               grid-template-columns: 260px 1fr;
               gap: 48px;
-              align-items: start;
+              /* Default stretch — see comment on legal/page.tsx */
             }
             .dz-legal-page__toc-mobile { display: none; }
             .dz-legal-page__toc-desktop {

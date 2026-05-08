@@ -165,6 +165,25 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/community/admin/rgpd': ['./docs/rgpd/**'],
   },
+  // next/image remote-pattern allowlist. We only opt in to hosts the app
+  // actually fetches images from. The `*.supabase.co` wildcard covers
+  // every project under our Supabase org so we don't need to redeploy
+  // when a new bucket is added or a project is moved.
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      // OAuth-provider avatars (Google / GitHub / Discord) bypass Storage
+      // so they need direct allow-listing. CSP already permits these
+      // hosts; mirroring here unlocks <Image> optimization on them.
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      { protocol: 'https', hostname: 'cdn.discordapp.com' },
+    ],
+  },
 };
 
 // Wrap order: next-intl is the innermost plugin (transforms imports),

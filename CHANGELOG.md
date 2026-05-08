@@ -162,7 +162,7 @@ moment-là.
   `docs/rgpd/registre-traitements.md` couvrant T-01 à T-10.
   Rendu côté admin sur `/community/admin/rgpd`.
 - Modèle DPA Art. 28 (`docs/rgpd/dpa-modele.md`).
-- DPO formalisé (`dpo@calebasse.com`), intégré dans politique de
+- DPO formalisé (`contact@digizelle.fr`), intégré dans politique de
   confidentialité, footer, zone "Supprimer mon compte".
 - Politique de confidentialité actualisée — adresse Kremlin-Bicêtre,
   Sentry sub-processor, 2FA + export documentés.
