@@ -59,10 +59,40 @@ export default async function MemberCard({ member }: { member: MemberCardData })
         <div style={{ minWidth: 0, flex: 1 }}>
           <Link
             href={`/community/members/${member.handle}`}
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+              display: 'block',
+              minWidth: 0,
+            }}
           >
-            <div style={{ fontWeight: 700, fontSize: 16 }}>{name}</div>
-            <div className="dz-small">@{member.handle}</div>
+            {/* Truncate hard: a free-text displayName can be long
+                (or a hostile single-word string) and would otherwise
+                overflow under the avatar / into the card edge. */}
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: 16,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '100%',
+              }}
+              title={name}
+            >
+              {name}
+            </div>
+            <div
+              className="dz-small"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '100%',
+              }}
+            >
+              @{member.handle}
+            </div>
           </Link>
         </div>
       </div>

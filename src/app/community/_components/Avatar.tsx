@@ -73,6 +73,13 @@ export default function Avatar({
         fontWeight: 700,
         fontSize: Math.max(11, Math.round(size * 0.36)),
         flexShrink: 0,
+        // Defensive: clip any inner content that exceeds the circle.
+        // Without this, an unusually long `name` (e.g. user typed
+        // their displayName as a sentence) escaped the avatar and
+        // visually bled into the next column.
+        overflow: 'hidden',
+        lineHeight: 1,
+        letterSpacing: '0.02em',
       }}
     >
       {initials(displayName)}
