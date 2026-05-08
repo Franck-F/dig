@@ -47,6 +47,7 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
   const [view, setView] = useState<View>('compose');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
+  const [format, setFormat] = useState<'text' | 'html'>('text');
   const [audience, setAudience] = useState<Audience>('all');
   const [count, setCount] = useState<number>(initialReachHint);
   const [countLoading, setCountLoading] = useState(false);
@@ -131,7 +132,7 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
       setError(null);
       setView('sending');
       startTransition(async () => {
-        const res = await sendNewsletterCampaign({ subject, body, audience });
+        const res = await sendNewsletterCampaign({ subject, body, audience, format });
         if (res.status === 'success') {
           setResult({
             campaignTag: res.campaignTag,
@@ -327,6 +328,8 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
                     setSubject={setSubject}
                     body={body}
                     setBody={setBody}
+                    format={format}
+                    setFormat={setFormat}
                     audience={audience}
                     setAudience={setAudience}
                     count={count}
@@ -337,6 +340,7 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
                   <ConfirmView
                     subject={subject}
                     body={body}
+                    format={format}
                     audienceLabel={
                       AUDIENCES.find((a) => a.key === audience)?.label ?? audience
                     }
@@ -421,6 +425,8 @@ function ComposeView({
   setSubject,
   body,
   setBody,
+  format,
+  setFormat,
   audience,
   setAudience,
   count,
@@ -430,6 +436,8 @@ function ComposeView({
   setSubject: (v: string) => void;
   body: string;
   setBody: (v: string) => void;
+  format: 'text' | 'html';
+  setFormat: (v: 'text' | 'html') => void;
   audience: Audience;
   setAudience: (v: Audience) => void;
   count: number;
@@ -482,17 +490,73 @@ function ComposeView({
           : `${count} destinataire${count > 1 ? 's' : ''} unique${count > 1 ? 's' : ''} après dédoublonnage`}
       </div>
 
-      <Label style={{ marginTop: 18 }}>Contenu</Label>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18, marginBottom: 6, gap: 12, flexWrap: 'wrap' }}>
+        <Label style={{ marginTop: 0, marginBottom: 0 }}>Contenu</Label>
+        {/* Format toggle: plain text (default, auto-linked) vs raw
+            HTML/CSS (sanitised server-side via DOMPurify before send).
+            HTML mode lets the admin paste a hand-crafted email
+            template — useful for branded campaigns with images,
+            tables and inline styles. */}
+        <div
+          role="group"
+          aria-label="Format du contenu"
+          style={{
+            display: 'inline-flex',
+            padding: 3,
+            borderRadius: 999,
+            background: 'rgba(115,1,255,0.06)',
+            border: '1px solid rgba(115,1,255,0.18)',
+          }}
+        >
+          {(['text', 'html'] as const).map((f) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFormat(f)}
+              aria-pressed={format === f}
+              style={{
+                padding: '5px 12px',
+                borderRadius: 999,
+                border: 'none',
+                cursor: format === f ? 'default' : 'pointer',
+                background: format === f ? 'linear-gradient(135deg, #7301FF, #A34BF5)' : 'transparent',
+                color: format === f ? '#fff' : '#7301FF',
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                fontFamily: 'inherit',
+              }}
+            >
+              {f === 'text' ? 'Texte' : 'HTML'}
+            </button>
+          ))}
+        </div>
+      </div>
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder={'Bonjour à toutes et à tous,\n\nUn petit mot pour vous partager…\n\nÀ très vite,\nL\'équipe Digizelle'}
-        rows={10}
+        placeholder={
+          format === 'html'
+            ? '<table width="100%" cellpadding="0" cellspacing="0" style="font-family:Inter,Helvetica,sans-serif">\n  <tr><td>\n    <h1 style="color:#7301FF">Sujet de la newsletter</h1>\n    <p>Le contenu HTML sera nettoyé côté serveur (DOMPurify).</p>\n  </td></tr>\n</table>'
+            : 'Bonjour à toutes et à tous,\n\nUn petit mot pour vous partager…\n\nÀ très vite,\nL\'équipe Digizelle'
+        }
+        rows={format === 'html' ? 14 : 10}
         maxLength={10000}
-        style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical', lineHeight: 1.6 }}
+        spellCheck={format === 'text'}
+        style={{
+          ...inputStyle,
+          fontFamily: format === 'html' ? 'ui-monospace, SFMono-Regular, Menlo, monospace' : 'inherit',
+          fontSize: format === 'html' ? 12.5 : 14,
+          resize: 'vertical',
+          lineHeight: 1.6,
+        }}
       />
       <div style={hintStyle}>
-        {body.trim().length} / 10 000 · les liens https:// sont auto-cliquables
+        {body.trim().length} / 10 000 ·{' '}
+        {format === 'html'
+          ? 'Tags autorisés : a, p, h1-h6, ul/ol/li, table, img, span/div + inline styles. Scripts et iframes bloqués.'
+          : 'Les liens https:// sont auto-cliquables.'}
       </div>
     </>
   );
@@ -501,11 +565,13 @@ function ComposeView({
 function ConfirmView({
   subject,
   body,
+  format,
   audienceLabel,
   count,
 }: {
   subject: string;
   body: string;
+  format: 'text' | 'html';
   audienceLabel: string;
   count: number;
 }) {
@@ -514,24 +580,44 @@ function ConfirmView({
       <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
         <Row label="Audience" value={`${audienceLabel} · ${count} destinataire${count > 1 ? 's' : ''}`} />
         <Row label="Sujet" value={subject} />
+        <Row label="Format" value={format === 'html' ? 'HTML enrichi (sanitisé)' : 'Texte brut'} />
       </div>
       <Label>Aperçu du contenu</Label>
-      <div
-        style={{
-          padding: 16,
-          borderRadius: 12,
-          background: '#f7f4ff',
-          border: '1px solid rgba(115,1,255,0.10)',
-          fontSize: 14,
-          lineHeight: 1.65,
-          color: '#2c1c4f',
-          whiteSpace: 'pre-wrap',
-          maxHeight: 220,
-          overflowY: 'auto',
-        }}
-      >
-        {body}
-      </div>
+      {format === 'html' ? (
+        // Render the HTML preview directly. Same DOMPurify-allow-list
+        // sanitisation runs server-side before send — the preview is
+        // an indicative render to catch obvious typos / broken tags.
+        // Wrapped in an iframe to isolate styles from the modal.
+        <iframe
+          title="Aperçu HTML newsletter"
+          srcDoc={`<!doctype html><html><body style="margin:0;padding:16px;background:#f7f4ff;color:#2c1c4f;font-family:Inter,Helvetica,sans-serif;font-size:14px;line-height:1.65">${body}</body></html>`}
+          sandbox=""
+          style={{
+            width: '100%',
+            height: 240,
+            borderRadius: 12,
+            border: '1px solid rgba(115,1,255,0.10)',
+            background: '#f7f4ff',
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            padding: 16,
+            borderRadius: 12,
+            background: '#f7f4ff',
+            border: '1px solid rgba(115,1,255,0.10)',
+            fontSize: 14,
+            lineHeight: 1.65,
+            color: '#2c1c4f',
+            whiteSpace: 'pre-wrap',
+            maxHeight: 220,
+            overflowY: 'auto',
+          }}
+        >
+          {body}
+        </div>
+      )}
       <div style={{ ...hintStyle, marginTop: 12 }}>
         L&apos;envoi est définitif. Vérifiez bien le contenu avant de confirmer.
       </div>

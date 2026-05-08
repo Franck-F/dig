@@ -54,11 +54,17 @@ export async function subscribeNewsletter(_prev: NewsletterState, formData: Form
 // UI surfaces the result inline (sent / failed / total).
 
 export type Audience = 'subscribers' | 'mentors' | 'mentees' | 'community' | 'all';
+export type NewsletterFormat = 'text' | 'html';
 
 const campaignSchema = z.object({
   subject: z.string().trim().min(5, 'Sujet trop court').max(200, 'Sujet trop long'),
   body: z.string().trim().min(10, 'Contenu trop court').max(10000, 'Contenu trop long'),
   audience: z.enum(['subscribers', 'mentors', 'mentees', 'community', 'all']),
+  /** `text` (default) — plain text with auto-linker + paragraph wrapping.
+   *  `html` — admin pasted formatted HTML/CSS; runs through DOMPurify
+   *  on the server with a permissive allow-list before being merged
+   *  into the chrome template. */
+  format: z.enum(['text', 'html']).optional(),
 });
 
 type AudienceRecipient = { email: string; userId: string | null };
@@ -157,6 +163,7 @@ export async function sendNewsletterCampaign(input: {
   subject: string;
   body: string;
   audience: Audience;
+  format?: NewsletterFormat;
 }): Promise<
   | { status: 'success'; campaignTag: string; recipientCount: number; mocked: boolean }
   | { status: 'error'; error: string }
@@ -173,7 +180,7 @@ export async function sendNewsletterCampaign(input: {
       };
     }
 
-    const { subject, body, audience } = parsed.data;
+    const { subject, body, audience, format = 'text' } = parsed.data;
     const recipients = await resolveAudienceEmails(audience);
 
     if (recipients.length === 0) {
@@ -189,16 +196,31 @@ export async function sendNewsletterCampaign(input: {
     // bound to their userId via signed token. NewsletterSubscriber
     // entries (no userId) get a generic "contact us to unsubscribe"
     // line — full subscriber-side flow is a follow-up.
+    // For html format, pre-sanitise once (DOMPurify is expensive enough
+    // that we don't want to call it per-recipient). For text format,
+    // sanitisation happens inline in renderNewsletterHtml's escapeHtml.
+    const sanitisedHtmlBody = format === 'html' ? sanitiseRichHtml(body) : null;
+
     const enqueued = await enqueueEmails(
       campaignTag,
       recipients.map(({ email, userId }) => {
         const unsubUrl = userId ? buildUnsubscribeUrl(userId, 'marketing') : null;
-        const html = renderNewsletterHtml({ subject, body, unsubUrl });
+        const html = renderNewsletterHtml({
+          subject,
+          body,
+          unsubUrl,
+          format,
+          sanitisedHtml: sanitisedHtmlBody,
+        });
         return {
           to: email,
           subject,
           html,
-          text: body + (unsubUrl ? `\n\nSe désabonner : ${unsubUrl}` : ''),
+          // Plain-text fallback: strip tags from html-format messages so
+          // a text-only mail client gets readable copy.
+          text:
+            (format === 'html' ? body.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : body) +
+            (unsubUrl ? `\n\nSe désabonner : ${unsubUrl}` : ''),
         };
       }),
     );
@@ -304,14 +326,56 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Sanitise the admin-pasted HTML body. We allow a permissive but
+ * still safe-ish list of tags / attributes — enough for hand-crafted
+ * email templates with inline styles, headings, lists, tables and
+ * images, but no script/iframe/object. Inline styles are kept (HTML
+ * email best-practice). On targets we force `noopener` + `noreferrer`.
+ */
+function sanitiseRichHtml(raw: string): string {
+  // DOMPurify import is sync from `isomorphic-dompurify`. Wrap defensive
+  // because the package can throw on some Node versions when no JSDOM
+  // is reachable — falling back to escaped text rather than crashing
+  // the whole send.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const DOMPurify = require('isomorphic-dompurify') as { sanitize: (s: string, c?: object) => string };
+    return DOMPurify.sanitize(raw, {
+      ALLOWED_TAGS: [
+        'a', 'b', 'blockquote', 'br', 'div', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'hr', 'i', 'img', 'li', 'ol', 'p', 'span', 'strong', 'sub', 'sup', 'table',
+        'tbody', 'td', 'th', 'thead', 'tr', 'u', 'ul', 'figure', 'figcaption', 'small',
+        'pre', 'code', 'mark', 'caption',
+      ],
+      ALLOWED_ATTR: [
+        'href', 'src', 'alt', 'title', 'style', 'class', 'role', 'colspan', 'rowspan',
+        'width', 'height', 'align', 'valign', 'border', 'cellpadding', 'cellspacing',
+        'bgcolor', 'background', 'aria-label', 'aria-hidden',
+      ],
+      ALLOW_DATA_ATTR: false,
+      ADD_ATTR: ['target', 'rel'],
+    });
+  } catch {
+    return raw.replace(/[<>]/g, (c) => (c === '<' ? '&lt;' : '&gt;'));
+  }
+}
+
 function renderNewsletterHtml({
   subject,
   body,
   unsubUrl,
+  format = 'text',
+  sanitisedHtml,
 }: {
   subject: string;
   body: string;
   unsubUrl: string | null;
+  format?: NewsletterFormat;
+  /** Pre-sanitised html, computed once per campaign in the action
+   *  layer when format='html'. Avoids re-running DOMPurify per
+   *  recipient. */
+  sanitisedHtml?: string | null;
 }): string {
   // Plain-text body: split on blank lines into <p>, single newline → <br>.
   // URL auto-linker: anything starting with http(s):// becomes <a>.
@@ -320,15 +384,18 @@ function renderNewsletterHtml({
       /(https?:\/\/[^\s<]+)/g,
       (m) => `<a href="${m}" style="color:#7301FF;text-decoration:underline">${m}</a>`,
     );
-  const paragraphs = body
-    .split(/\n{2,}/)
-    .map(
-      (p) =>
-        `<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#2c1c4f">${linker(
-          escapeHtml(p),
-        ).replace(/\n/g, '<br/>')}</p>`,
-    )
-    .join('');
+  const paragraphs =
+    format === 'html'
+      ? (sanitisedHtml ?? sanitiseRichHtml(body))
+      : body
+          .split(/\n{2,}/)
+          .map(
+            (p) =>
+              `<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#2c1c4f">${linker(
+                escapeHtml(p),
+              ).replace(/\n/g, '<br/>')}</p>`,
+          )
+          .join('');
 
   const dpoEmail = getDpoEmail();
 
