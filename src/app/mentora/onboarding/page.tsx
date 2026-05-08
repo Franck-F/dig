@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
+import { prisma } from '@/lib/prisma';
 
 import { getMenteeProfileForCurrentUser } from '@/lib/actions/mentora/mentee-profile';
 
@@ -41,6 +42,17 @@ export default async function OnboardingPage({
     const target = encodeURIComponent(`/mentora/onboarding${sp.next ? `?next=${sp.next}` : ''}`);
     redirect(`/login?next=${target}`);
   }
+
+  // Mentors landed on the wrong wizard — this onboarding asks for goals /
+  // skills the user wants to develop, which only makes sense for mentees.
+  // Bounce mentor-role users to the mentor application form. The session
+  // payload only carries `id`, so we hit the DB once for the role.
+  const me = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+  if (me?.role === 'MENTOR') redirect('/mentora/become-a-mentor');
+  if (me?.role === 'ADMIN') redirect('/mentora/admin');
 
   let prefill: OnboardingPrefill = null;
   try {

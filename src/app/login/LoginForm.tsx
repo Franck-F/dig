@@ -16,11 +16,12 @@ import {
 } from '@/lib/actions/auth';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 
-// Each tuple: [translation key for label, UserRole enum value sent to server]
+// Each tuple: [translation key for label, UserRole enum value sent to server].
+// Partenaire was removed from public signup — partner accounts are
+// provisioned by an admin (different KYC + agreement flow).
 const ROLES = [
   ['learner', 'STUDENT'],
   ['mentor', 'MENTOR'],
-  ['partner', 'PARTNER'],
 ] as const;
 type RoleValue = (typeof ROLES)[number][1];
 
@@ -859,7 +860,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
             <div>
               <span className="dz-label">{t('signupForm.iAm')}</span>
               <input type="hidden" name="role" value={role} />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {ROLES.map(([labelKey, value]) => (
                   <button key={value} type="button" onClick={() => setRole(value)} className={`dz-btn dz-btn-sm ${value === role ? 'dz-btn-primary' : 'dz-btn-ghost'}`}>
                     {t(`signupForm.roles.${labelKey}`)}

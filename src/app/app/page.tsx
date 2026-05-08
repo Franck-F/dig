@@ -118,8 +118,15 @@ export default async function AppHubPage() {
   const hasMentor = Boolean(user?.mentorProfile);
   const hasMentee = Boolean(user?.menteeProfile);
 
-  // Decide where the Mentora card should land the user.
-  const mentoraHref = hasMentor || hasMentee ? '/mentora/dashboard' : '/mentora/onboarding';
+  // Decide where the Mentora card should land the user. A user who picked
+  // MENTOR at signup but hasn't completed the mentor application yet must
+  // go to the mentor wizard, not the mentee onboarding (the latter asks
+  // for "objectifs / compétences à développer" which is the wrong frame).
+  const mentoraHref = hasMentor || hasMentee
+    ? '/mentora/dashboard'
+    : role === 'MENTOR'
+      ? '/mentora/become-a-mentor'
+      : '/mentora/onboarding';
   const adminHref = role === 'ADMIN' ? '/mentora/admin' : null;
 
   // Localized session label.
