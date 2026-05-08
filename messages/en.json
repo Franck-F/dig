@@ -3075,7 +3075,6 @@
         "body": "Update your profile from your dashboard.",
         "cta": "Go to my profile"
       },
-      "photoComingSoon": "Image upload is coming soon. For now, paste a public URL.",
       "step1": {
         "title": "Mentor profile",
         "subtitle": "Introduce yourself in a few words — what mentees will see.",
@@ -3086,9 +3085,12 @@
         "bioPlaceholder": "Share your background, your favorite topics, your approach to mentorship…",
         "bioHint": "Between 120 and 4000 characters.",
         "yearsLabel": "Years of experience",
-        "photoLabel": "Photo (URL)",
-        "photoPlaceholder": "https://…",
-        "linkedinLabel": "LinkedIn (optional)"
+        "photoLabel": "Profile photo",
+        "linkedinLabel": "LinkedIn (optional)",
+        "photoHint": "PNG, JPG, WebP or GIF. Cropped and compressed to 320×320.",
+        "photoUploadCta": "Upload a photo",
+        "photoBusy": "Compressing…",
+        "photoRemove": "Remove"
       },
       "step2": {
         "title": "Expertise",
@@ -3153,7 +3155,10 @@
         "bioTooShort": "The bio must be at least 120 characters.",
         "languagesRequired": "Please indicate at least one language.",
         "skillsRequired": "Please indicate at least one skill.",
-        "consentRequired": "You must accept the mentor charter."
+        "consentRequired": "You must accept the mentor charter.",
+        "imageInvalidType": "The file must be an image.",
+        "imageTooLarge": "Image too large after compression. Try a simpler file.",
+        "imageReadFailed": "Could not read this file."
       }
     },
     "skillCategories": {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, type CSSProperties, type ReactNode } from 'react';
+import { useRef, useState, useTransition, type CSSProperties, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -43,7 +43,41 @@ export default function MentorApplicationWizard() {
   const [headline, setHeadline] = useState('');
   const [bio, setBio] = useState('');
   const [years, setYears] = useState(3);
+  // Photo: stored as a JPEG data URI after canvas resize. The server
+  // action (`createMentorProfile`) accepts `data:image/...;base64,…` and
+  // stores it as-is or hands it to Supabase Storage.
   const [photoUrl, setPhotoUrl] = useState('');
+  const photoFileRef = useRef<HTMLInputElement>(null);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoErr, setPhotoErr] = useState<string | null>(null);
+
+  const onPhotoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (e.target) e.target.value = '';
+    if (!file) return;
+    setPhotoErr(null);
+    if (!file.type.startsWith('image/')) {
+      setPhotoErr(t('errors.imageInvalidType'));
+      return;
+    }
+    setPhotoBusy(true);
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 320);
+      const approxBytes = Math.floor(dataUrl.length * 0.75);
+      // 250 KB after compression — same cap as the dashboard editor so
+      // the action's IMAGE_CAPS.mentorPhoto check doesn't reject.
+      if (approxBytes > 250 * 1024) {
+        setPhotoErr(t('errors.imageTooLarge'));
+        return;
+      }
+      setPhotoUrl(dataUrl);
+    } catch {
+      setPhotoErr(t('errors.imageReadFailed'));
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
+
   const [linkedinUrl, setLinkedinUrl] = useState('');
 
   const [skillsRaw, setSkillsRaw] = useState('');
@@ -304,17 +338,112 @@ export default function MentorApplicationWizard() {
           </div>
         </div>
         <div>
-          <FieldLabel htmlFor="photo" hint={t('photoComingSoon')}>
+          <FieldLabel htmlFor="photo" hint={tStep1('photoHint')}>
             {tStep1('photoLabel')}
           </FieldLabel>
-          <input
-            id="photo"
-            type="url"
-            value={photoUrl}
-            onChange={(e) => setPhotoUrl(e.target.value)}
-            placeholder={tStep1('photoPlaceholder')}
-            style={inputStyle}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 4 }}>
+            {/* Avatar preview — `background` cover-fits the data URI. The
+                fallback ✦ glyph is centered so the slot stays visible
+                even before a file is picked. */}
+            <div
+              aria-hidden
+              style={{
+                width: 76,
+                height: 76,
+                borderRadius: '50%',
+                flexShrink: 0,
+                border: `1px solid ${cardBd}`,
+                background: photoUrl
+                  ? `${isDark ? '#1c123c' : '#fff'} url("${photoUrl}") center/cover no-repeat`
+                  : `linear-gradient(135deg, rgba(115,1,255,0.18), rgba(244,111,177,0.18))`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: photoUrl ? 'transparent' : '#7301FF',
+                fontSize: 26,
+                fontWeight: 700,
+                boxShadow: photoUrl ? '0 8px 18px rgba(36,18,80,0.18)' : 'none',
+              }}
+            >
+              {!photoUrl && '✦'}
+            </div>
+
+            <input
+              ref={photoFileRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              onChange={onPhotoFile}
+              style={{ display: 'none' }}
+              aria-hidden
+              tabIndex={-1}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => photoFileRef.current?.click()}
+                  disabled={photoBusy}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: 10,
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
+                    color: 'white',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: photoBusy ? 'wait' : 'pointer',
+                    opacity: photoBusy ? 0.6 : 1,
+                    fontFamily: 'inherit',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <span aria-hidden>🖼</span>
+                  {photoBusy ? tStep1('photoBusy') : tStep1('photoUploadCta')}
+                </button>
+                {photoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPhotoUrl('');
+                      setPhotoErr(null);
+                    }}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: 10,
+                      border: `1px solid ${cardBd}`,
+                      background: 'transparent',
+                      color: sub,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    {tStep1('photoRemove')}
+                  </button>
+                )}
+              </div>
+              {photoErr && (
+                <p
+                  role="alert"
+                  style={{
+                    margin: 0,
+                    padding: '6px 10px',
+                    borderRadius: 8,
+                    background: 'rgba(217,78,146,0.10)',
+                    border: '1px solid rgba(217,78,146,0.20)',
+                    color: '#a8235e',
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                >
+                  {photoErr}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </>
@@ -706,4 +835,48 @@ function ReviewRow({
       <div style={{ fontSize: 14, whiteSpace: 'pre-wrap', color: ink }}>{value || '—'}</div>
     </div>
   );
+}
+
+/**
+ * Read an image File and return a `size × size` JPEG data URL, cover-fit.
+ * Mirrors the helper in `MentorProfileForm.tsx` so the upload UX is
+ * identical between the application wizard and the profile editor —
+ * keeping the cap, format, and quality consistent means the server-side
+ * `validateImageDataUri(IMAGE_CAPS.mentorPhoto)` accepts the same outputs
+ * from both surfaces.
+ */
+function resizeImageToDataUrl(file: File, size: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('image load'));
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('no canvas context'));
+            return;
+          }
+          const ratio = Math.max(size / img.width, size / img.height);
+          const w = img.width * ratio;
+          const h = img.height * ratio;
+          const dx = (size - w) / 2;
+          const dy = (size - h) / 2;
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, size, size);
+          ctx.drawImage(img, dx, dy, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
 }

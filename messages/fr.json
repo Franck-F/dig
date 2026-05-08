@@ -1583,7 +1583,6 @@
         "body": "Mettez à jour votre profil depuis votre tableau de bord.",
         "cta": "Aller à mon profil"
       },
-      "photoComingSoon": "L'upload d'image arrive bientôt. Pour l'instant, collez une URL publique.",
       "step1": {
         "title": "Profil mentor",
         "subtitle": "Présentez-vous en quelques mots — ce que verront les mentorés.",
@@ -1594,9 +1593,12 @@
         "bioPlaceholder": "Présentez votre parcours, vos sujets de prédilection, votre approche du mentorat…",
         "bioHint": "Entre 120 et 4000 caractères.",
         "yearsLabel": "Années d'expérience",
-        "photoLabel": "Photo (URL)",
-        "photoPlaceholder": "https://…",
-        "linkedinLabel": "LinkedIn (facultatif)"
+        "photoLabel": "Photo de profil",
+        "linkedinLabel": "LinkedIn (facultatif)",
+        "photoHint": "PNG, JPG, WebP ou GIF. Recadrée et compressée en 320×320.",
+        "photoUploadCta": "Téléverser une photo",
+        "photoBusy": "Compression…",
+        "photoRemove": "Retirer"
       },
       "step2": {
         "title": "Expertise",
@@ -1661,7 +1663,10 @@
         "bioTooShort": "La bio doit faire au moins 120 caractères.",
         "languagesRequired": "Indiquez au moins une langue.",
         "skillsRequired": "Indiquez au moins une compétence.",
-        "consentRequired": "Vous devez accepter la charte mentor."
+        "consentRequired": "Vous devez accepter la charte mentor.",
+        "imageInvalidType": "Le fichier doit être une image.",
+        "imageTooLarge": "Image trop lourde après compression. Choisissez un fichier plus simple.",
+        "imageReadFailed": "Impossible de lire ce fichier."
       }
     },
     "skillCategories": {
@@ -1942,9 +1947,18 @@
       "venue": "Epitech · Paris",
       "intro": "Pour sa première édition, Digizelle Impact a réuni plus de 60 jeunes à Epitech Paris autour de tables rondes sur la féminisation de la tech, le leadership et l'entrepreneuriat. Avec des intervenant·es de Microsoft, AWS, Allianz, EY et HEC Paris, l'événement a été un moment fort de la communauté Digizelle — entre keynote, ateliers et networking stratégique.",
       "stats": {
-        "youth": { "n": "60+", "label": "Jeunes présent·es" },
-        "speakers": { "n": "6", "label": "Intervenant·es" },
-        "partners": { "n": "1", "label": "Partenaire" }
+        "youth": {
+          "n": "60+",
+          "label": "Jeunes présent·es"
+        },
+        "speakers": {
+          "n": "6",
+          "label": "Intervenant·es"
+        },
+        "partners": {
+          "n": "1",
+          "label": "Partenaire"
+        }
       },
       "credit": "Photos · équipe Digizelle"
     },
