@@ -355,18 +355,45 @@ export default async function CommunityNotificationsPage({
                       >
                         {selected.readAt ? 'Lu' : 'Non lu'}
                       </span>
-                      <h2
-                        style={{
-                          margin: 0,
-                          fontSize: 22,
-                          fontWeight: 800,
-                          color: '#1a1f3a',
-                          lineHeight: 1.3,
-                          letterSpacing: '-0.01em',
-                        }}
-                      >
-                        {message}
-                      </h2>
+                      {/* Title doubles as the deep-link when one exists.
+                          Underlined-on-hover makes it discoverable
+                          without adding a redundant "Open" button. */}
+                      {href ? (
+                        <Link
+                          href={href}
+                          className="dz-notif-title-link"
+                          style={{
+                            color: '#1a1f3a',
+                            textDecoration: 'none',
+                            display: 'inline-block',
+                          }}
+                        >
+                          <h2
+                            style={{
+                              margin: 0,
+                              fontSize: 22,
+                              fontWeight: 800,
+                              lineHeight: 1.3,
+                              letterSpacing: '-0.01em',
+                            }}
+                          >
+                            {message}
+                          </h2>
+                        </Link>
+                      ) : (
+                        <h2
+                          style={{
+                            margin: 0,
+                            fontSize: 22,
+                            fontWeight: 800,
+                            color: '#1a1f3a',
+                            lineHeight: 1.3,
+                            letterSpacing: '-0.01em',
+                          }}
+                        >
+                          {message}
+                        </h2>
+                      )}
                       <p style={{ marginTop: 8, fontSize: 13, color: '#8b91ad' }}>
                         {dateFmtFull.format(selected.createdAt)}
                       </p>
@@ -386,18 +413,6 @@ export default async function CommunityNotificationsPage({
                         }}
                       >
                         {payload.context}
-                      </div>
-                    )}
-
-                    {href && (
-                      <div>
-                        <Link
-                          href={href}
-                          className="dz-btn dz-btn-primary"
-                          style={{ display: 'inline-flex' }}
-                        >
-                          Ouvrir
-                        </Link>
                       </div>
                     )}
                   </article>
@@ -430,6 +445,12 @@ export default async function CommunityNotificationsPage({
             .dz-notif-grid[data-has-selection='true'] .dz-notif-list { display: none; }
             .dz-notif-grid[data-has-selection='false'] .dz-notif-detail { display: none; }
             .dz-notif-grid[data-has-selection='true'] .dz-notif-back { display: inline-block !important; }
+          }
+          .dz-notif-title-link:hover h2 {
+            text-decoration: underline;
+            text-decoration-color: #7301FF;
+            text-underline-offset: 4px;
+            text-decoration-thickness: 2px;
           }
         `}</style>
       </section>
