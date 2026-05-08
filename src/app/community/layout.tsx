@@ -96,6 +96,12 @@ export default async function CommunityLayout({ children }: { children: ReactNod
       matchPrefix: true,
       badge: unreadCount,
     },
+    {
+      href: '/community/settings',
+      label: tShell('nav.community.settings'),
+      icon: '⚙',
+      matchPrefix: true,
+    },
     // Admin-only entry point — surfaces the moderation suite from the
     // community sidebar so admins don't have to memorize /community/admin.
     ...(isAdmin

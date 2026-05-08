@@ -135,7 +135,6 @@ export default function CookieConsent() {
   if (!isHydrated) return null;
 
   const showBanner = !hasDecided && !isPreferencesOpen;
-  const showFab = hasDecided && !isPreferencesOpen;
 
   return (
     <>
@@ -232,37 +231,12 @@ export default function CookieConsent() {
         </div>
       )}
 
-      {/* ------------------------------------------------------------------
-          Floating "manage cookies" button
-          ------------------------------------------------------------------ */}
-      {showFab && (
-        <button
-          type="button"
-          className="dz-glass-strong"
-          onClick={openPreferences}
-          aria-label={t('preferences.reopen')}
-          title={t('preferences.reopen')}
-          style={{
-            position: 'fixed',
-            left: 16,
-            bottom: 16,
-            zIndex: 999,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 14px',
-            borderRadius: 999,
-            color: 'var(--brand-violet)',
-            fontWeight: 600,
-            fontSize: 13,
-            cursor: 'pointer',
-            border: '1px solid rgba(115,1,255,0.18)',
-          }}
-        >
-          <CookieIcon size={16} />
-          <span>{t('banner.title')}</span>
-        </button>
-      )}
+      {/* The floating "Manage cookies" pill used to live here pinned
+          bottom-left, but it overlapped the community sidebar user
+          card and felt visually cluttered. Cookie preferences remain
+          fully reachable from the /cookies page via
+          <ManagePreferencesButton /> in the footer-linked policy
+          page — which is the canonical CNIL-compliant access point. */}
 
       {/* ------------------------------------------------------------------
           Preferences modal

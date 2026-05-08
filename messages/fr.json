@@ -3446,7 +3446,8 @@
           "members": "Membres",
           "challenges": "Défis",
           "bookmarks": "Favoris",
-          "notifications": "Notifications"
+          "notifications": "Notifications",
+          "settings": "Paramètres"
         }
       },
       "switch": {
