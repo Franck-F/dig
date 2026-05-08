@@ -3,9 +3,11 @@ import Link from 'next/link';
 
 import { getCommunityViewer } from '../_components/viewer';
 import { getDpoEmail } from '@/lib/contact';
+import { prisma } from '@/lib/prisma';
 import SettingsForm from './_components/SettingsForm';
 import DataPortabilityPanel from './_components/DataPortabilityPanel';
 import DangerZone from './_components/DangerZone';
+import TwoFactorCard from './_components/TwoFactorCard';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Modifier mon profil · Digizelle' };
@@ -22,6 +24,32 @@ export default async function CommunitySettingsPage() {
 
   const m = viewer.member;
   const dateFmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Fetch the 2FA state alongside other security signals so the
+  // TwoFactorCard renders the right view without a client-side
+  // round-trip on mount. Privileged roles (admin / moderator /
+  // active mentor) cannot self-disable — the card surfaces the
+  // appropriate notice with the DPO email.
+  const security = await prisma.user.findUnique({
+    where: { id: viewer.user.id },
+    select: {
+      role: true,
+      totpEnabledAt: true,
+      totpBackupCodeHashes: true,
+      mentorProfile: { select: { status: true } },
+    },
+  });
+  const isAdmin = security?.role === 'ADMIN';
+  const isModerator = m.isModerator;
+  const isActiveMentor = security?.mentorProfile?.status === 'ACTIVE';
+  const isPrivileged = Boolean(isAdmin || isModerator || isActiveMentor);
+  const privilegedReason: 'admin' | 'moderator' | 'mentor' | null = isAdmin
+    ? 'admin'
+    : isModerator
+      ? 'moderator'
+      : isActiveMentor
+        ? 'mentor'
+        : null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 1240, margin: '0 auto' }}>
@@ -59,33 +87,14 @@ export default async function CommunitySettingsPage() {
         }}
       />
 
-      <Link
-        href="/account/2fa"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          padding: 18,
-          borderRadius: 18,
-          background: 'rgba(115,1,255,0.04)',
-          border: '1px solid rgba(115,1,255,0.20)',
-          textDecoration: 'none',
-          color: 'inherit',
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: '#7301FF' }}>
-            Sécurité
-          </div>
-          <h3 style={{ margin: '4px 0 2px', fontSize: 16, fontWeight: 800, color: '#1a1f3a' }}>
-            Double authentification (2FA)
-          </h3>
-          <p style={{ margin: 0, fontSize: 13, color: '#3a2960' }}>
-            Active une 2FA TOTP pour protéger ton compte au-delà du mot de passe.
-          </p>
-        </div>
-        <div style={{ fontSize: 18, color: '#7301FF' }}>→</div>
-      </Link>
+      <TwoFactorCard
+        enabled={Boolean(security?.totpEnabledAt)}
+        totpEnabledAtIso={security?.totpEnabledAt ? security.totpEnabledAt.toISOString() : null}
+        backupCodesRemaining={security?.totpBackupCodeHashes.length ?? 0}
+        isPrivileged={isPrivileged}
+        privilegedReason={privilegedReason}
+        dpoEmail={getDpoEmail()}
+      />
 
       <DataPortabilityPanel />
 
