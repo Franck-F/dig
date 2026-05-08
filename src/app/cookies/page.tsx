@@ -270,6 +270,24 @@ export default async function CookiesPage() {
             border-radius: 4px;
             word-break: break-all;
           }
+          /* Dark theme overrides — head, code chips and row borders
+             need explicit recolouring against the dark surface. */
+          body.dz-theme-dark .dz-cookie-table {
+            border-color: rgba(255,255,255,0.10);
+            background: rgba(28, 18, 60, 0.65);
+          }
+          body.dz-theme-dark .dz-cookie-table__head {
+            background: rgba(163, 75, 245, 0.16);
+            color: #e5d4ff;
+          }
+          body.dz-theme-dark .dz-cookie-table__row + .dz-cookie-table__row,
+          body.dz-theme-dark .dz-cookie-table__head + .dz-cookie-table__row {
+            border-top-color: rgba(255,255,255,0.08);
+          }
+          body.dz-theme-dark .dz-cookie-table__row code {
+            background: rgba(255,255,255,0.08);
+            color: #e5d4ff;
+          }
           @media (max-width: 720px) {
             .dz-cookie-table__head { display: none; }
             .dz-cookie-table__row {

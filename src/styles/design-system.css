@@ -1153,22 +1153,43 @@ body.dz-theme-dark .dz-btn-ghost {
 }
 body.dz-theme-dark .dz-btn-ghost:hover { background: rgba(255, 255, 255, 0.10); }
 
+/* OAuth provider buttons — base styles use rgba(255,255,255,0.55)
+   which reads as a bright white wash on the dark page. Tone it down
+   to a glass-on-dark surface; the inner icon container also gets a
+   transparent fill so the brand glyphs stay readable. */
+body.dz-theme-dark .dz-oauth-btn {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.30), 0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+  color: var(--ink);
+}
+body.dz-theme-dark .dz-oauth-btn:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+body.dz-theme-dark .dz-oauth-btn > span:first-of-type {
+  background: rgba(255, 255, 255, 0.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+}
+
 /* Targeted overrides for inline-styled containers. We match on exact colour
    tokens (the brand palette) rather than arbitrary `white` so we don't blow
    away legitimate white pills, white close × buttons inside coloured
    gradient headers, etc. */
 
-/* Solid white surfaces (cards rendered with inline `background`). */
-body.dz-theme-dark [style*="background: #ffffff"],
-body.dz-theme-dark [style*="background:#ffffff"],
-body.dz-theme-dark [style*="background: #fff;"],
-body.dz-theme-dark [style*="background:#fff;"],
-body.dz-theme-dark [style*="background: white;"],
-body.dz-theme-dark [style*="background:white;"],
-body.dz-theme-dark [style*="background-color: #ffffff"],
-body.dz-theme-dark [style*="background-color:#ffffff"],
-body.dz-theme-dark [style*="background-color: white"],
-body.dz-theme-dark [style*="background-color:white"] {
+/* Solid white surfaces (cards rendered with inline `background`).
+   Excludes .dz-btn — those are intentional white pills sitting on
+   coloured-gradient banners (CTA "Rejoignez-nous") that should stay
+   white in dark theme since their parent banner stays bright. */
+body.dz-theme-dark [style*="background: #ffffff"]:not(.dz-btn),
+body.dz-theme-dark [style*="background:#ffffff"]:not(.dz-btn),
+body.dz-theme-dark [style*="background: #fff;"]:not(.dz-btn),
+body.dz-theme-dark [style*="background:#fff;"]:not(.dz-btn),
+body.dz-theme-dark [style*="background: white;"]:not(.dz-btn),
+body.dz-theme-dark [style*="background:white;"]:not(.dz-btn),
+body.dz-theme-dark [style*="background-color: #ffffff"]:not(.dz-btn),
+body.dz-theme-dark [style*="background-color:#ffffff"]:not(.dz-btn),
+body.dz-theme-dark [style*="background-color: white"]:not(.dz-btn),
+body.dz-theme-dark [style*="background-color:white"]:not(.dz-btn) {
   background: rgba(28, 18, 60, 0.65) !important;
   color: var(--ink);
 }

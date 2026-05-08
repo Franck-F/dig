@@ -200,6 +200,7 @@ function SocialButtons({
           <button
             key={key}
             type="button"
+            className="dz-oauth-btn"
             disabled={!isEnabled || pending}
             aria-label={isEnabled ? label : `${label} (${disabledLabel})`}
             title={isEnabled ? label : disabledLabel}

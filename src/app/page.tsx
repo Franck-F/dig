@@ -160,8 +160,8 @@ export default async function HomePage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {(['inclusion', 'mentorship', 'community'] as const).map((k, i) => (
                 <Reveal key={k} delay={i * 110}>
-                  <div className="dz-lg --strong" style={{ padding: '28px 32px' }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--brand-violet)' }}>
+                  <div className="dz-lg --strong dz-manifest-card" style={{ padding: '28px 32px' }}>
+                    <div className="dz-manifest-card__tag">
                       {t(`manifesto.cards.${k}.tag`)}
                     </div>
                     <h3 className="dz-h3" style={{ marginTop: 8, fontSize: 22 }}>
@@ -176,6 +176,19 @@ export default async function HomePage() {
             </div>
           </div>
           <style>{`
+            /* Manifesto card eyebrow — bright violet by default, brighten
+               further on dark theme so it lifts above the dark glass card
+               instead of getting lost. */
+            .dz-manifest-card__tag {
+              font-size: 12px;
+              font-weight: 700;
+              letter-spacing: 0.10em;
+              text-transform: uppercase;
+              color: var(--brand-violet);
+            }
+            .dz-frame.--dark .dz-manifest-card__tag {
+              color: #c8a8ff;
+            }
             @media (max-width: 900px) {
               .dz-manifesto__grid {
                 grid-template-columns: 1fr !important;

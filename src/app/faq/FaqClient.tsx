@@ -85,13 +85,15 @@ export default function FaqClient() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t('placeholder')}
+          /* No inline `background` / `color` so the global form-control
+             rules in design-system.css can flip the input to a dark
+             surface in dark theme. Inline values would have higher
+             specificity and stay white. */
           style={{
             width: '100%',
             padding: '14px 44px 14px 18px',
             borderRadius: 12,
             border: '1px solid rgba(115,1,255,0.20)',
-            background: '#fff',
-            color: '#1a1f3a',
             fontSize: 15,
             fontFamily: 'inherit',
           }}

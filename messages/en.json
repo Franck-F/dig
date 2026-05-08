@@ -1,8 +1,306 @@
 {
   "_meta": {
-    "_": "Partial English locale. Keys not present here automatically fall through to fr.json via the deep-merge in src/i18n/request.ts. Translate the long tail progressively — the app stays functional in EN even with sparse coverage.",
-    "_version": 1,
+    "_": "Full English locale (parity with fr.json). Updates to FR keys still fall through automatically via the deep-merge in src/i18n/request.ts.",
+    "_version": 2,
     "_lastReview": "2026-05-08"
+  },
+  "about": {
+    "metaTitle": "About",
+    "metaDescription": "Digizelle, a French non-profit (loi 1901) for digital inclusion founded in 2023 in Paris. More than 20 members with diverse talents (design, web dev, communication, marketing).",
+    "eyebrow": "About · since 2023",
+    "title": "Digital inclusion,",
+    "titleHighlight": "in motion.",
+    "body": "Digizelle's mission is to inspire, educate and support young people — especially young women — on their journey into the digital world. Founded in 2023 in Paris, the association now brings together more than 20 members from diverse backgrounds: design, development, communication, marketing, events. Our goal: to create a stimulating and supportive environment where everyone can grow their potential through concrete, high-impact projects.",
+    "stats": {
+      "year": "2023",
+      "yearLabel": "Founded",
+      "beneficiaries": "20+",
+      "beneficiariesLabel": "Active members",
+      "satisfaction": "Paris",
+      "satisfactionLabel": "Headquarters"
+    },
+    "valuesTitle": "Our",
+    "valuesHighlight": "values.",
+    "values": {
+      "0": {
+        "title": "Inclusion",
+        "desc": "Digital for everyone, regardless of skill level, background or gender."
+      },
+      "1": {
+        "title": "Innovation",
+        "desc": "New formats, rooted in the technologies of today and tomorrow."
+      },
+      "2": {
+        "title": "Community",
+        "desc": "Learn together. Move forward together. Succeed together."
+      },
+      "3": {
+        "title": "Kindness",
+        "desc": "A safe space where every question is valid and every step forward is celebrated."
+      }
+    },
+    "historyTitle": "Our",
+    "historyHighlight": "story.",
+    "milestones": {
+      "0": {
+        "year": "2023",
+        "title": "Digizelle is founded",
+        "desc": "Priscillia Meza Samira and Bleuenn Cloteaux found the association in Paris around four pillars: events, communication, development, design."
+      },
+      "1": {
+        "year": "2024",
+        "title": "20+ active members",
+        "desc": "The team grows with students from Epitech, EPITA, IONIS and beyond. First masterclasses and workshops."
+      },
+      "2": {
+        "year": "2025",
+        "title": "Women in GenAI Hackathon",
+        "desc": "Digizelle team reaches the finals — co-organized by EY and Microsoft. A showcase for women's talent in tech."
+      },
+      "3": {
+        "year": "2025",
+        "title": "VivaTech 2025",
+        "desc": "Digizelle present at the Microsoft booth. \"AI, my future career\" workshop hosted by Priscillia Meza Samira for ages 15-21."
+      },
+      "4": {
+        "year": "2025",
+        "title": "BECOMTECH × Epitech",
+        "desc": "\"Women in Tech: breaking imposter syndrome\" workshop — Epitech Le Kremlin-Bicêtre, June 2025."
+      },
+      "5": {
+        "year": "2026",
+        "title": "Digizelle Impact Event 2026",
+        "desc": "March 13, 2026 at Epitech Paris. Theme: \"Leadership & Innovation — building the future together.\" Keynote, panels, strategic networking."
+      }
+    },
+    "mission": {
+      "chip": "Mission",
+      "title": "Build an inclusive space where everyone grows at their own pace.",
+      "body": "Whatever your level, background or means — every person deserves access to digital, to its tools, to its opportunities."
+    },
+    "vision": {
+      "chip": "Vision",
+      "title": "A digital generation rising through community.",
+      "body": "Young people don't just consume tech, they create it. With them, we build models of knowledge-sharing that set a new standard."
+    }
+  },
+  "app": {
+    "hub": {
+      "header": {
+        "connectedOn": "Signed in · {date}",
+        "adminCta": "✦ Mentora admin"
+      },
+      "hero": {
+        "greeting": "Hi {name},",
+        "subline": "where do you want to go?",
+        "body": "Your personal Digizelle space — two worlds, one click away."
+      },
+      "mentora": {
+        "title": "Mentora",
+        "body": "Find your mentors, prepare your next session, access your resources and track your progress. A real mentorship journey.",
+        "tag1": "Sessions",
+        "tag2": "My mentors",
+        "tag3": "Goals",
+        "tag4": "Resources",
+        "cta": "Enter Mentora",
+        "activeBadge": "{count, plural, =1 {1 active mentorship} other {# active mentorships}}"
+      },
+      "community": {
+        "label": "Community",
+        "title": "Community",
+        "body": "Connect with other members, join thematic channels, share your projects and take part in community moments.",
+        "tag1": "Feed",
+        "tag2": "Channels",
+        "tag3": "Events",
+        "tag4": "Members",
+        "cta": "Join the community"
+      },
+      "quick": {
+        "title": "Quick access",
+        "subtitle": "Pick up where you left off",
+        "sessionTitle": "Session with {who}",
+        "sessionSubFallback": "Coming soon",
+        "bookSessionTitle": "Book a session",
+        "bookSessionSub": "Find a time that works for you",
+        "unreadTitle": "{count, plural, =1 {1 unread message} other {# unread messages}}",
+        "allReadTitle": "All caught up",
+        "notificationsSub": "Notification center",
+        "channelTitle": "Channel {name}",
+        "channelSub": "Open the feed"
+      }
+    },
+    "shell": {
+      "nav": {
+        "mentee": {
+          "overview": "Dashboard",
+          "mentors": "My mentors",
+          "sessions": "Sessions",
+          "messages": "Messages",
+          "goals": "Goals",
+          "notifications": "Notifications"
+        },
+        "mentor": {
+          "overview": "Dashboard",
+          "mentees": "My mentees",
+          "sessions": "Agenda",
+          "messages": "Messages",
+          "availability": "Availability",
+          "notifications": "Notifications"
+        },
+        "admin": {
+          "overview": "Pilot",
+          "cycles": "Cycles",
+          "mentors": "Mentors",
+          "mentees": "Mentees",
+          "matching": "Matching",
+          "moderation": "Moderation",
+          "reports": "Reports"
+        },
+        "community": {
+          "feed": "Feed",
+          "channels": "Channels",
+          "members": "Members",
+          "challenges": "Challenges",
+          "bookmarks": "Bookmarks",
+          "notifications": "Notifications",
+          "settings": "Settings"
+        }
+      },
+      "switch": {
+        "mentora": "Mentora",
+        "community": "Community"
+      },
+      "topbar": {
+        "backToSite": "← Site",
+        "logout": "Sign out",
+        "searchMentee": "Search mentors, sessions…",
+        "searchMentor": "Search mentees, sessions…",
+        "searchAdmin": "Search mentors, mentees, cycles…",
+        "searchCommunity": "Search posts, members, channels…"
+      },
+      "profile": {
+        "mentee": "Mentee",
+        "mentor": "Mentor",
+        "admin": "Digizelle admin",
+        "community": "Member"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "empty": "No notifications yet",
+        "seeAll": "See all notifications",
+        "ariaLabel": "Open notifications",
+        "just": "just now",
+        "minutesAgo": "{n} min ago",
+        "hoursAgo": "{n} h ago",
+        "daysAgo": "{n} d ago"
+      }
+    }
+  },
+  "blog": {
+    "metaTitle": "Blog",
+    "metaDescription": "The Digizelle journal: opinion pieces, advice, lessons learned, tech & inclusion news.",
+    "eyebrow": "The Digizelle journal",
+    "title": "Reads, ideas,",
+    "titleHighlight": "advice.",
+    "search": "Search articles...",
+    "filters": {
+      "all": "All",
+      "tech": "Tech",
+      "society": "Society",
+      "advice": "Advice",
+      "mentora": "Mentora"
+    },
+    "featured": {
+      "label": "Featured · {category}",
+      "title": "Why mentorship changes everything for young developers",
+      "category": "Opinion",
+      "read": "8 min",
+      "author": "Priscillia Meza",
+      "body": "Three years after the first Mentora matches, we step back to look at what works, what doesn't, and what we'd love to see across the French tech scene.",
+      "date": "8 min read · May 3, 2026",
+      "iso": "2026-05-03",
+      "slug": "mentorat-jeunes-developpeurs",
+      "readMore": "Read →"
+    },
+    "posts": {
+      "0": {
+        "title": "How to choose your digital training in 2026",
+        "category": "Advice",
+        "read": "6 min",
+        "author": "Sofia K.",
+        "iso": "2026-04-22",
+        "date": "April 22, 2026",
+        "slug": "choisir-formation-digitale-2026",
+        "excerpt": "Bootcamp, university, MOOC or self-taught? Seven criteria to make the right choice without regret.",
+        "body": "The landscape of digital training has grown so dense that it's often hard to see clearly. This article gives you seven concrete criteria — career outcomes, support, funding, teaching approach, community, stance on AI and personal fit — to compare your options.\n\nOur belief at Digizelle: the best training is the one that matches you, not the one that sells the best. Take time to test, talk to alumni, and visit before signing up."
+      },
+      "1": {
+        "title": "Looking back at Hackathon #3 — what we learned",
+        "category": "Recap",
+        "read": "5 min",
+        "author": "Marwane O.",
+        "iso": "2026-04-12",
+        "date": "April 12, 2026",
+        "slug": "hackathon-3-retour",
+        "excerpt": "18 teams, 48 hours, a demanding jury — an honest debrief on what worked, and what we'd change.",
+        "body": "Our third hackathon just wrapped and we learned a lot. On the positive side: diversity of profiles paid off — mixed teams produced the most accomplished projects. On the to-improve side: the Sunday night timing was too tight.\n\nThe winning team \"TerreClaire\" delivered a carbon footprint analysis tool for local nonprofits. Reproducible, open-source, elegant. We've invited them to pitch in May with our partners."
+      },
+      "2": {
+        "title": "Generative AI: 5 tools to know for your projects",
+        "category": "Tech",
+        "read": "7 min",
+        "author": "Hugo P.",
+        "iso": "2026-03-30",
+        "date": "March 30, 2026",
+        "slug": "ia-generative-5-outils",
+        "excerpt": "A short, opinionated selection of generative AI tools that genuinely change our day-to-day as a product team.",
+        "body": "We spent six months integrating generative AI into our workflows. Here are the five tools we're keeping: Claude for long-form writing and code, Cursor for the augmented editor, Notion AI for synthesized note-taking, Midjourney for brand illustrations, and Whisper for automatic session transcription.\n\nThe real shift isn't the tool but the mindset: learning to articulate what you want, iterate fast, and correct without frustration. That's what we teach in our 2026 masterclasses."
+      },
+      "3": {
+        "title": "Diversity in tech: where do we stand in 2026?",
+        "category": "Society",
+        "read": "9 min",
+        "author": "Inès L.",
+        "iso": "2026-03-15",
+        "date": "March 15, 2026",
+        "slug": "diversite-tech-2026",
+        "excerpt": "Three years after the big announcements of 2023, where does diversity in French tech really stand? Data, testimonies, paths forward.",
+        "body": "The official numbers are mixed. While the share of women in tech schools has risen from 18 to 24%, the glass ceiling remains thick as you climb the hierarchy. And some minorities are still invisible in the statistics.\n\nAt Digizelle we're working on three fronts: making role models visible through Mentora, opening workshops to non-traditional audiences, and funding targeted scholarships. Diversity isn't decreed, it's built."
+      },
+      "4": {
+        "title": "Becoming a mentor: a practical guide",
+        "category": "Mentora",
+        "read": "4 min",
+        "author": "Marwane O.",
+        "iso": "2026-02-28",
+        "date": "February 28, 2026",
+        "slug": "devenir-mentor-guide",
+        "excerpt": "Fifteen minutes a month is enough. How to start out as a Digizelle mentor, and what we really expect from you.",
+        "body": "Becoming a mentor doesn't require being a senior expert. Three years of experience is enough, and most importantly: the desire to share what you know. Our matching offers you a mentee who fits your availability, skills and energy.\n\nA session lasts 30 minutes a month. We give you a starting framework, resources to go further, and a referent to chat with other mentors. The rest comes naturally."
+      },
+      "5": {
+        "title": "Our 2026 stack — how we work",
+        "category": "Behind the scenes",
+        "read": "6 min",
+        "author": "Hugo P.",
+        "iso": "2026-02-10",
+        "date": "February 10, 2026",
+        "slug": "stack-digizelle-2026",
+        "excerpt": "Next.js 16, Supabase, Resend, Vercel — a status update on the technical choices that hold the house together.",
+        "body": "Our stack evolved in 2026. We moved to Next.js 16 right at release to take advantage of stabilized Server Actions and the React 19 transition API. Supabase remains our single source for data and auth, hosted in Europe.\n\nOn the DX side, we adopted Cursor for the editor, Linear for the roadmap, and Resend for transactional email. The Vercel + Supabase + Resend integration easily saves us 20 hours a month on operations. More time for the product."
+      }
+    },
+    "newsletter": {
+      "title": "The Digizelle",
+      "titleHighlight": "newsletter.",
+      "intro": "Once a month. The best content, upcoming events, opportunities. Zero spam.",
+      "label": "Email address",
+      "placeholder": "your@email.com",
+      "submit": "Subscribe →",
+      "submitting": "…",
+      "success": "✓ Thanks, you're subscribed.",
+      "error": "✗ {error}"
+    }
   },
   "common": {
     "joinLong": "Join us →",
@@ -16,24 +314,1217 @@
     "backToTop": "Back to top",
     "breadcrumbHome": "Home"
   },
-  "header": {
-    "logoAlt": "Digizelle",
-    "ariaHome": "Digizelle — home",
-    "ariaNav": "Main navigation",
-    "themeLight": "Switch to light theme",
-    "themeDark": "Switch to dark theme",
-    "login": "Sign in",
-    "joinCta": "Join us →",
-    "close": "Close",
-    "links": {
-      "about": "About",
-      "programs": "Programs",
-      "mentora": "Mentora",
-      "community": "Community",
-      "team": "Team",
-      "projects": "Projects",
-      "events": "Events",
-      "blog": "Blog"
+  "community": {
+    "feed": {
+      "metaTitle": "Digizelle Community",
+      "metaDescription": "The Digizelle community activity feed: news, projects, peer support and events from the association.",
+      "title": "The community",
+      "titleHighlight": "feed",
+      "intro": "Everything happening at Digizelle, in one place. Discussions, projects, events and peer support between members.",
+      "empty": "No posts yet. Check back soon — or start the conversation by sharing the first message.",
+      "softPaywall": {
+        "title": "Sign in to interact",
+        "body": "React, comment, post. Join the Digizelle community to take part in the conversations.",
+        "login": "Sign in",
+        "signup": "Create an account",
+        "memberTitle": "Join the community to interact",
+        "memberBody": "Create your community profile to post, comment and react. Your account is already set up — all that's missing is your public handle and your favorite channels.",
+        "memberCta": "Join the community →"
+      },
+      "sortBy": {
+        "latest": "Most recent",
+        "top": "Most popular"
+      },
+      "composeCta": "Post",
+      "pinnedLabel": "Pinned",
+      "deletedAuthor": "Deleted member",
+      "seeAllChannels": "See all channels →",
+      "trendingTagsTitle": "Trending tags",
+      "channelsTitle": "Channels",
+      "filters": {
+        "all": "All",
+        "channelLabel": "Channel",
+        "anyChannel": "All channels"
+      },
+      "loadMore": "Load more",
+      "next": "Next →",
+      "prev": "← Previous",
+      "eyebrow": "Community · The heart of the collective",
+      "heroBody": "A space where Digizelle's youth, mentors and partners share their projects, ask questions and build together. No empty scrolling — only conversations that move things forward.",
+      "exploreFeed": "Explore the feed",
+      "joinCommunity": "Join the community",
+      "statsLabels": {
+        "members": "Active members",
+        "posts": "Posts shared",
+        "channels": "Topic channels"
+      },
+      "valuePropsTitle": "A community that",
+      "valuePropsTitleHighlight": "moves forward together",
+      "valueProps": [
+        {
+          "title": "Project sharing",
+          "desc": "Show what you're building, get supportive feedback and inspire other young people in the network.",
+          "accent": "#7301FF"
+        },
+        {
+          "title": "Hands-on peer support",
+          "desc": "Ask your technical questions, find a hackathon teammate, or get feedback from a mentor.",
+          "accent": "#A34BF5"
+        },
+        {
+          "title": "Events & opportunities",
+          "desc": "Stay in the loop on workshops, masterclasses and internships shared early by our partners.",
+          "accent": "#F46FB1"
+        }
+      ],
+      "channelsExploreTitle": "Choose your channel",
+      "channelsExploreSubtitle": "Each channel has its own topic. Join the ones that resonate with you and receive their posts in your feed.",
+      "feedSectionTitle": "The feed",
+      "feedSectionSubtitle": "Sorted by date · pinned posts at the top"
+    },
+    "channels": {
+      "metaTitle": "Channels — Digizelle Community",
+      "metaDescription": "All topic channels of the Digizelle community: tech, careers, events and more.",
+      "title": "Community",
+      "titleHighlight": "channels",
+      "intro": "Pick your topics. Each channel has its own vibe and pace.",
+      "empty": "No channels available right now.",
+      "typeLabels": {
+        "PUBLIC": "Public",
+        "RESTRICTED": "On request",
+        "PRIVATE": "Private",
+        "ANNOUNCEMENT": "Announcements"
+      },
+      "membersCount": "{count, plural, =0 {0 members} =1 {1 member} other {# members}}",
+      "postsCount": "{count, plural, =0 {0 posts} =1 {1 post} other {# posts}}",
+      "viewCta": "Open channel →",
+      "joinCta": "Join",
+      "leaveCta": "Leave",
+      "requestJoinCta": "Request to join",
+      "joinPendingLabel": "Pending",
+      "inviteOnlyLabel": "Invite only",
+      "memberLabel": "Member",
+      "joinCommunityCta": "Join →"
+    },
+    "channel": {
+      "metaTitle": "{channel} — Digizelle Community",
+      "aboutTitle": "About",
+      "membersTitle": "Members",
+      "pinnedTitle": "Pinned",
+      "composeInChannelCta": "Post in {channel}",
+      "archivedNotice": "This channel is archived. Read-only access.",
+      "feedEmpty": "No posts in this channel yet.",
+      "viewAllMembers": "View all members →"
+    },
+    "post": {
+      "composer": {
+        "metaTitle": "New post — Digizelle Community",
+        "title": "New",
+        "titleHighlight": "post",
+        "channelLabel": "Channel",
+        "channelHelp": "Choose the channel that best fits your topic.",
+        "titleLabel": "Title (optional)",
+        "titlePlaceholder": "A short, clear title",
+        "bodyLabel": "Message",
+        "bodyPlaceholder": "Share your news, a question, a project…",
+        "bodyHelp": "Markdown supported: **bold**, *italic*, `code`, lists, links.",
+        "tagsLabel": "Related skills (optional)",
+        "tagsHelp": "Up to 5 skills to help other members find your post.",
+        "hashtagsHelp": "Use #keyword directly in the text to add tags.",
+        "mentionsHelp": "Mention a member with @theirhandle.",
+        "saveDraft": "Save draft",
+        "publish": "Publish",
+        "cancel": "Cancel",
+        "editTitle": "Edit post",
+        "editReasonLabel": "Reason for the edit",
+        "editReasonPlaceholder": "E.g. typo fix, added a link…",
+        "editWindowExpiredHint": "After 15 minutes from publication, an edit reason is required.",
+        "successCreated": "Post created.",
+        "successUpdated": "Post updated.",
+        "previewLabel": "Preview"
+      },
+      "detail": {
+        "metaTitle": "{title} — Digizelle Community",
+        "metaTitleFallback": "Post — Digizelle Community",
+        "reactCta": "React",
+        "reactionsTitle": "Reactions",
+        "commentsTitle": "Comments",
+        "noComments": "No comments yet. Be the first to reply.",
+        "commentPlaceholder": "Your reply…",
+        "commentSubmit": "Send",
+        "replyCta": "Reply",
+        "viewRepliesCount": "{count, plural, =1 {View 1 reply} other {View # replies}}",
+        "hideReplies": "Hide replies",
+        "authorBadge": "Author",
+        "authorJoined": "Member since {date}",
+        "bookmarkCta": "Bookmark",
+        "unbookmarkCta": "Remove bookmark",
+        "shareCta": "Share",
+        "reportCta": "Report",
+        "editCta": "Edit",
+        "archiveCta": "Archive",
+        "removeCta": "Delete",
+        "lockedNotice": "This post is locked. New comments are disabled.",
+        "removedPlaceholder": "This post has been deleted.",
+        "editedNotice": "Edited",
+        "reportedBadge": "Reported",
+        "publishedAt": "Published on {date}",
+        "inChannel": "in"
+      },
+      "actions": {
+        "reactionEmojiLabels": {
+          "THUMBS_UP": "Like",
+          "HEART": "Love",
+          "PARTY": "Bravo",
+          "THINKING": "Thinking",
+          "ROCKET": "Inspiring",
+          "FIRE": "Top",
+          "CLAP": "Applause",
+          "EYES": "Curious"
+        },
+        "reactionEmojiGlyph": {
+          "THUMBS_UP": "👍",
+          "HEART": "❤️",
+          "PARTY": "🎉",
+          "THINKING": "🤔",
+          "ROCKET": "🚀",
+          "FIRE": "🔥",
+          "CLAP": "👏",
+          "EYES": "👀"
+        }
+      },
+      "softPaywallInline": "Sign in to react, comment or post.",
+      "loginCta": "Sign in",
+      "signupCta": "Create an account"
+    },
+    "comment": {
+      "placeholder": "Write a comment…",
+      "submit": "Comment",
+      "edit": "Edit",
+      "delete": "Delete",
+      "reply": "Reply",
+      "deletedPlaceholder": "Comment deleted.",
+      "editedNotice": "edited",
+      "loginToComment": "Sign in to comment",
+      "submittingLabel": "Sending…"
+    },
+    "bookmarks": {
+      "metaTitle": "My bookmarks — Digizelle Community",
+      "title": "My",
+      "titleHighlight": "bookmarks",
+      "intro": "All the posts you've saved for later.",
+      "empty": "You don't have any bookmarks yet. The ☆ button on each post lets you save them."
+    },
+    "tag": {
+      "metaTitle": "#{tag} — Digizelle Community",
+      "title": "Posts with",
+      "titleHighlight": "#{tag}",
+      "empty": "No posts with this tag yet.",
+      "postsCount": "{count, plural, =0 {0 posts} =1 {1 post} other {# posts}}",
+      "relatedTagsTitle": "Related tags"
+    },
+    "members": {
+      "metaTitle": "Members — Digizelle Community",
+      "metaDescription": "Directory of Digizelle community members: students, mentors and partners.",
+      "title": "Members",
+      "titleHighlight": "directory",
+      "intro": "Discover the people who bring the Digizelle community to life.",
+      "empty": "No members match these filters.",
+      "filters": {
+        "role": "Role",
+        "skills": "Skills",
+        "channels": "Channels",
+        "search": "Search",
+        "searchPlaceholder": "Name, handle, keyword…",
+        "reset": "Reset",
+        "anyRole": "All roles",
+        "anyChannel": "All channels",
+        "applyCta": "Filter"
+      },
+      "roleLabels": {
+        "STUDENT": "Student",
+        "MENTOR": "Mentor",
+        "PARTNER": "Partner",
+        "ADMIN": "Admin",
+        "FOUNDER": "Founder",
+        "CORE_TEAM": "Core team"
+      },
+      "foundersBadge": "Founder",
+      "coreTeamBadge": "Core team",
+      "moderatorBadge": "Moderator",
+      "profileCta": "View profile",
+      "memberCount": "{count, plural, =0 {0 members} =1 {1 member} other {# members}}"
+    },
+    "member": {
+      "metaTitle": "@{handle} — Digizelle Community",
+      "metaDescription": "Public profile of @{handle} on the Digizelle community.",
+      "joinedLabel": "Joined {date}",
+      "postsLabel": "{count, plural, =0 {0 posts} =1 {1 post} other {# posts}}",
+      "reactionsLabel": "{count, plural, =0 {0 reactions} =1 {1 reaction} other {# reactions}}",
+      "commentsLabel": "{count, plural, =0 {0 comments} =1 {1 comment} other {# comments}}",
+      "badgesTitle": "Badges",
+      "recentPostsTitle": "Recent posts",
+      "recentCommentsTitle": "Recent comments",
+      "skillsTitle": "Skills",
+      "noBadges": "No badges yet.",
+      "noPosts": "No public posts yet.",
+      "noComments": "No comments yet.",
+      "notFound": "Member not found",
+      "statusBanner": {
+        "MUTED": "This member is in read-only mode (muted).",
+        "SUSPENDED": "This account is suspended.",
+        "BANNED": "This account has been banned."
+      },
+      "reportCta": "Report this member"
+    },
+    "notifications": {
+      "metaTitle": "Notifications — Digizelle Community",
+      "title": "Notifications",
+      "subtitle": "Everything happening to you in the community.",
+      "empty": "No notifications yet.",
+      "markAllRead": "Mark all as read",
+      "markRead": "Mark as read",
+      "crossLinkMentora": "See your Mentora notifications too →",
+      "groups": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "earlier": "Earlier"
+      },
+      "types": {
+        "POST_REPLY": "{actor} replied to your post",
+        "COMMENT_REPLY": "{actor} replied to your comment",
+        "MENTION": "{actor} mentioned you",
+        "REACTION_RECEIVED": "Your post is getting reactions",
+        "CHANNEL_INVITE": "You've been invited to a channel",
+        "CHANNEL_JOIN_REQUESTED": "Channel access request",
+        "CHANNEL_JOIN_APPROVED": "Your channel access request was approved",
+        "MODERATION_ACTION": "Moderation action",
+        "BADGE_AWARDED": "You earned a new badge",
+        "CHALLENGE_NEW": "A new challenge is open",
+        "CHALLENGE_RESULT": "Challenge results",
+        "CHALLENGE_VOTE_RECEIVED": "Your submission is getting votes",
+        "REPORT_RECEIVED": "New report to review"
+      }
+    },
+    "onboarding": {
+      "metaTitle": "Welcome to the community — Digizelle",
+      "metaDescription": "Reserve your handle, complete your profile and pick your channels to join the Digizelle community.",
+      "title": "Join the",
+      "titleHighlight": "community",
+      "subtitle": "Three quick steps to create your public profile and choose where you want to take part.",
+      "alreadyMember": "You're already part of the community.",
+      "goToFeed": "Go to feed →",
+      "steps": {
+        "handle": "Handle",
+        "profile": "Profile",
+        "channels": "Channels",
+        "summary": "Summary"
+      },
+      "stepCounter": "Step {current} of {total}",
+      "handle": {
+        "stepTitle": "Choose your handle",
+        "stepSubtitle": "Your unique identifier on the community. Lowercase letters, digits and underscores, 3 to 30 characters.",
+        "label": "@handle",
+        "placeholder": "e.g. alice_diz",
+        "help": "Your URL: digizelle.fr/community/members/{handle}",
+        "checking": "Checking…",
+        "available": "Available",
+        "takenError": "This handle is already taken.",
+        "invalidError": "Invalid handle. Use 3 to 30 characters: lowercase letters, digits or underscores.",
+        "reservedError": "This handle is reserved. Please choose another one.",
+        "tooShort": "At least 3 characters.",
+        "suggestionLabel": "Suggestion:"
+      },
+      "profile": {
+        "stepTitle": "Introduce yourself",
+        "stepSubtitle": "This information will be visible on your public profile.",
+        "displayNameLabel": "Display name (optional)",
+        "displayNamePlaceholder": "E.g. Alice D.",
+        "displayNameHelp": "60 characters max. If left empty, we'll use your account name.",
+        "bioLabel": "Bio (optional)",
+        "bioPlaceholder": "In one sentence: who you are, what motivates you…",
+        "bioHelp": "600 characters max.",
+        "avatarUrlLabel": "Avatar URL (optional)",
+        "avatarUrlPlaceholder": "https://…",
+        "avatarUrlHelp": "Direct upload coming soon — paste an image link in the meantime.",
+        "bannerColorLabel": "Profile color"
+      },
+      "channels": {
+        "stepTitle": "Choose your channels",
+        "stepSubtitle": "You can always join or leave other channels later.",
+        "defaultsLabel": "Default channels",
+        "selectAll": "Select all",
+        "selectNone": "Deselect all",
+        "noneSelected": "You'll join the announcement channels at the very least."
+      },
+      "summary": {
+        "stepTitle": "Summary",
+        "stepSubtitle": "Review your choices before finalizing.",
+        "handleLabel": "Handle",
+        "displayNameLabel": "Name",
+        "bioLabel": "Bio",
+        "channelsLabel": "Channels",
+        "noBio": "(none)",
+        "noDisplayName": "(default)"
+      },
+      "actions": {
+        "back": "Back",
+        "next": "Continue",
+        "finish": "Finish"
+      },
+      "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "handleRequired": "Choose a handle to continue.",
+        "submissionFailed": "Sign-up failed. Please try again or contact us."
+      },
+      "successCta": "Welcome to the community!",
+      "successBody": "Your profile is created. You can now post, react and take part in the conversations."
+    },
+    "challenges": {
+      "metaTitle": "Challenges — Digizelle Community",
+      "metaDescription": "Take part in the creative and technical challenges of the Digizelle community. Submit your project, vote for your favorites and grow your portfolio.",
+      "title": "The",
+      "titleHighlight": "challenges",
+      "intro": "Create, submit, vote. Three words to bring the community to life through creative and technical challenges.",
+      "empty": "No challenges right now. Check back soon — we run them regularly.",
+      "tabs": {
+        "active": "In progress",
+        "upcoming": "Upcoming",
+        "past": "Past"
+      },
+      "statusLabels": {
+        "DRAFT": "Draft",
+        "OPEN": "Submissions open",
+        "VOTING": "Voting phase",
+        "CLOSED": "Closed"
+      },
+      "deadlineLabel": "Deadline",
+      "deadlineSubmissions": "Submissions until {date}",
+      "deadlineVoting": "Voting until {date}",
+      "deadlineEnded": "Ended on {date}",
+      "prizeLabel": "Prize",
+      "submissionsCount": "{count, plural, =0 {0 submissions} =1 {1 submission} other {# submissions}}",
+      "viewCta": "View challenge →",
+      "submitCta": "Submit your project",
+      "submitDisabledNotMember": "Sign in and join the community to submit.",
+      "submitDisabledClosed": "Submissions are closed.",
+      "voteCta": "Vote",
+      "voteRemoveCta": "Remove my vote",
+      "youSubmitted": "You submitted",
+      "youAlreadyVoted": "You've voted for this submission",
+      "votingNotOpen": "The voting phase is not open.",
+      "cannotVoteOwn": "You cannot vote for your own submission.",
+      "winnerBadge": "Winner",
+      "detail": {
+        "metaTitle": "{title} — Digizelle community challenge",
+        "backToList": "← All challenges",
+        "descriptionTitle": "Description",
+        "submissionsTitle": "Submissions",
+        "submissionsEmpty": "No submissions yet. Be the first!",
+        "yourSubmissionTitle": "Your submission",
+        "voteCount": "{count, plural, =0 {0 votes} =1 {1 vote} other {# votes}}",
+        "winnersTitle": "Winners",
+        "howToVoteTitle": "How does voting work?",
+        "howToVoteBody": "During the voting phase, each member can cast one vote for the submission of their choice (except their own). The three top-voted submissions win the challenge.",
+        "openCountdown": "Submissions open — closing in {duration}",
+        "votingCountdown": "Voting in progress — closing in {duration}",
+        "endedNotice": "This challenge has ended.",
+        "draftNotice": "This challenge is in draft. Only administrators can see it."
+      },
+      "submit": {
+        "metaTitle": "Submit — {title}",
+        "title": "Submit to the challenge",
+        "challengeLabel": "Challenge",
+        "titleLabel": "Title of your submission",
+        "titlePlaceholder": "A short title that sums up your project",
+        "bodyLabel": "Description",
+        "bodyPlaceholder": "Present your project: approach, technical choices, what you learned…",
+        "bodyHelp": "Markdown supported. 6000 characters max.",
+        "projectUrlLabel": "Project link (optional)",
+        "projectUrlPlaceholder": "https://…",
+        "projectUrlHelp": "Link to the repo, the live demo, the case study…",
+        "submit": "Send my submission",
+        "cancel": "Cancel",
+        "success": "Submission saved. Good luck!",
+        "alreadySubmitted": "You've already submitted to this challenge. You can edit it as long as the phase is open.",
+        "challengeNotOpen": "Submissions are not open for this challenge.",
+        "guidanceTitle": "Before you send",
+        "guidanceBullets": {
+          "0": "Check the rules in the challenge description.",
+          "1": "A public link (demo, repo) boosts your chances.",
+          "2": "You can edit your submission until the deadline."
+        }
+      }
+    },
+    "admin": {
+      "metaTitle": "Administration — Digizelle Community",
+      "title": "Administration",
+      "subtitle": "Moderation, channels, badges and members.",
+      "deniedTitle": "Access denied",
+      "deniedBody": "This section is reserved for community administrators and moderators.",
+      "backToCommunity": "← Back to community",
+      "nav": {
+        "moderation": "Moderation",
+        "channels": "Channels",
+        "badges": "Badges",
+        "users": "Members",
+        "challenges": "Challenges",
+        "flags": "Abuse signals",
+        "auditLog": "Admin log",
+        "rgpd": "GDPR register"
+      },
+      "moderation": {
+        "title": "Moderation queue",
+        "subtitle": "Pending reports and history.",
+        "queueEmpty": "The queue is empty. Good work!",
+        "tabs": {
+          "pending": "Pending",
+          "resolved": "Resolved"
+        },
+        "columns": {
+          "target": "Target",
+          "reason": "Reason",
+          "reporter": "Reported by",
+          "createdAt": "Date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "targetPost": "Post",
+        "targetComment": "Comment",
+        "targetMember": "Member",
+        "viewTargetCta": "View →",
+        "actions": {
+          "remove": "Delete",
+          "dismiss": "Dismiss",
+          "warn": "Warn",
+          "ban": "Ban",
+          "viewPost": "View post",
+          "viewComment": "View comment",
+          "viewReporter": "View reporter",
+          "viewAuthor": "View author"
+        },
+        "confirm": {
+          "removeTitle": "Delete the content?",
+          "removeBody": "The content will be removed and its author will be notified.",
+          "dismissTitle": "Dismiss the report?",
+          "dismissBody": "The report will be closed without action on the content.",
+          "warnTitle": "Warn the author?",
+          "warnBody": "A warning email will be sent.",
+          "banTitle": "Ban the member?",
+          "banBody": "The member will lose access to the community. This action can be undone.",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        },
+        "resolutionLabel": "Resolution note (optional)",
+        "notePlaceholder": "Internal note, reason…",
+        "successResolved": "Report processed.",
+        "reasonLabels": {
+          "SPAM": "Spam",
+          "HARASSMENT": "Harassment",
+          "HATE_SPEECH": "Hate speech",
+          "SEXUAL_CONTENT": "Sexual content",
+          "VIOLENCE": "Violence",
+          "OFF_TOPIC": "Off topic",
+          "IMPERSONATION": "Impersonation",
+          "OTHER": "Other"
+        }
+      },
+      "channels": {
+        "title": "Channel management",
+        "subtitle": "Create, edit and archive community channels.",
+        "createCta": "New channel",
+        "form": {
+          "createTitle": "Create a channel",
+          "editTitle": "Edit channel",
+          "slugLabel": "Slug",
+          "slugPlaceholder": "e.g. recruiting",
+          "slugHelp": "URL identifier: lowercase letters, digits, hyphens. 2 to 40 characters.",
+          "nameLabel": "Name",
+          "namePlaceholder": "Display name",
+          "descriptionLabel": "Description (optional)",
+          "descriptionPlaceholder": "What is this channel for?",
+          "emojiLabel": "Emoji (optional)",
+          "coverColorLabel": "Color",
+          "typeLabel": "Type",
+          "typeOptions": {
+            "PUBLIC": "Public — everyone can read, members can write.",
+            "RESTRICTED": "On request — public read, write on approval.",
+            "PRIVATE": "Private — invite only.",
+            "ANNOUNCEMENT": "Announcements — admins post, members react."
+          },
+          "isDefaultLabel": "Default channel (auto-joined on sign-up)",
+          "positionLabel": "Position",
+          "submit": "Save",
+          "cancel": "Cancel"
+        },
+        "list": {
+          "columnSlug": "Slug",
+          "columnName": "Name",
+          "columnType": "Type",
+          "columnMembers": "Members",
+          "columnActions": "Actions"
+        },
+        "editCta": "Edit",
+        "archiveCta": "Archive",
+        "archivedLabel": "Archived",
+        "confirmArchive": "Archive this channel? It will be removed from the directory.",
+        "successCreated": "Channel created.",
+        "successUpdated": "Channel updated.",
+        "successArchived": "Channel archived."
+      },
+      "badges": {
+        "title": "Badges",
+        "subtitle": "Catalog and manual awarding.",
+        "catalogTitle": "Catalog",
+        "manualOnlyLabel": "Manual",
+        "autoLabel": "Auto",
+        "grantTitle": "Award a badge",
+        "grantSubtitle": "Search for a member by handle and award them a manual badge.",
+        "handleLabel": "Member handle",
+        "handlePlaceholder": "e.g. alice",
+        "kindLabel": "Badge",
+        "noteLabel": "Note (optional)",
+        "notePlaceholder": "Context for the award",
+        "grantCta": "Award",
+        "revokeCta": "Revoke",
+        "successGranted": "Badge awarded.",
+        "successRevoked": "Badge revoked.",
+        "confirmRevoke": "Revoke this badge?"
+      },
+      "users": {
+        "title": "Members",
+        "subtitle": "Search a member by handle to manage their status.",
+        "searchLabel": "Member handle",
+        "searchPlaceholder": "e.g. alice",
+        "openCta": "Open",
+        "panelTitle": "Moderation profile",
+        "memberSince": "Member since {date}",
+        "statusLabels": {
+          "ACTIVE": "Active",
+          "MUTED": "Muted",
+          "SUSPENDED": "Suspended",
+          "BANNED": "Banned"
+        },
+        "recentActivityTitle": "Recent activity",
+        "modHistoryTitle": "Moderation history",
+        "modHistoryEmpty": "No moderation actions for this member.",
+        "noRecentActivity": "No recent activity.",
+        "actions": {
+          "muteCta": "Mute",
+          "suspendCta": "Suspend",
+          "banCta": "Ban",
+          "unbanCta": "Reinstate",
+          "warnCta": "Warn",
+          "viewProfileCta": "View public profile →",
+          "warn": "Warn",
+          "mute": "Mute",
+          "suspend": "Suspend",
+          "propose_ban": "Propose a ban",
+          "ban": "Ban",
+          "unban": "Reinstate",
+          "panelTitle": "Moderation actions",
+          "panelSubtitle": "Sanctions on @{handle}. A ban requires two distinct moderators.",
+          "reasonLabel": "Reason",
+          "reasonPlaceholder": "Internal reason — shared with the member.",
+          "reasonRequired": "A reason is required.",
+          "cancel": "Cancel",
+          "submitting": "Sending…",
+          "genericError": "Action not possible. Please try again.",
+          "errors": {
+            "banProposalRequired": "Another moderator must first propose the ban (within the last 24h). Use \"Propose a ban\" and ask a colleague to confirm.",
+            "banProposalSelfApprove": "You cannot confirm your own ban proposal. Please ask another moderator."
+          },
+          "confirm": {
+            "submit": "Confirm",
+            "warn": {
+              "title": "Warn this member?",
+              "body": "A warning email will be sent to @{handle}. No status change."
+            },
+            "mute": {
+              "title": "Mute this member?",
+              "body": "@{handle} will be temporarily unable to post."
+            },
+            "suspend": {
+              "title": "Suspend this member?",
+              "body": "@{handle} will no longer be able to interact but will keep read access."
+            },
+            "propose_ban": {
+              "title": "Propose a ban?",
+              "body": "Creates a ban proposal for @{handle}. Another moderator will need to confirm within 24 hours."
+            },
+            "ban": {
+              "title": "Confirm the ban?",
+              "body": "Permanently bans @{handle}. Requires a proposal from another moderator made less than 24h ago."
+            },
+            "unban": {
+              "title": "Reinstate this member?",
+              "body": "Lifts the sanction on @{handle} and restores their access."
+            }
+          }
+        },
+        "statusUntilLabel": "Until (optional)",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Internal reason — will be shared with the member.",
+        "confirmMute": "Mute this member?",
+        "confirmSuspend": "Suspend this member?",
+        "confirmBan": "Ban this member? The action can be undone.",
+        "confirmUnban": "Reinstate this member?",
+        "successMuted": "Member muted.",
+        "successSuspended": "Member suspended.",
+        "successBanned": "Member banned.",
+        "successUnbanned": "Member reinstated.",
+        "notFound": "No member with this handle."
+      },
+      "challenges": {
+        "title": "Challenges",
+        "subtitle": "Create, publish and close community challenges.",
+        "createCta": "New challenge",
+        "openCta": "Publish",
+        "closeCta": "Close",
+        "form": {
+          "createTitle": "Create a challenge",
+          "editTitle": "Edit challenge",
+          "slugLabel": "Slug",
+          "titleLabel": "Title",
+          "descriptionLabel": "Description",
+          "prizeLabel": "Prize (optional)",
+          "submissionWindowLabel": "Submission window",
+          "submissionOpensAtLabel": "Opens",
+          "submissionClosesAtLabel": "Closes",
+          "votingWindowLabel": "Voting window",
+          "votingClosesAtLabel": "Voting ends",
+          "coverImageUrlLabel": "Cover image (optional)",
+          "submit": "Save",
+          "cancel": "Cancel"
+        }
+      }
+    },
+    "nav": {
+      "home": "Feed",
+      "channels": "Channels",
+      "members": "Members",
+      "challenges": "Challenges",
+      "bookmarks": "Bookmarks",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "admin": "Administration",
+      "adminBack": "← Back to community"
+    },
+    "badges": {
+      "indexTitle": "Badges",
+      "indexSubtitle": "All the badges you can earn in the Digizelle community.",
+      "indexDescription": "Catalog of Digizelle badges: participation, support, challenges, hosting. Each one tells a moment of your journey.",
+      "backToIndex": "All badges",
+      "autoTag": "Automatic",
+      "manualTag": "Awarded by the team",
+      "holderCount": "{count, plural, =0 {No holders yet} =1 {# holder} other {# holders}}",
+      "viewerAwardedTitle": "You unlocked it!",
+      "viewerAwardedAt": "Earned on {date}",
+      "recentWinners": "Members who earned it",
+      "owned": "Earned"
+    }
+  },
+  "contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "A question, a partnership, a mentor application? Get in touch with Digizelle. Reply within 48 hours.",
+    "eyebrow": "Let's talk",
+    "title": "We get back",
+    "titleHighlight": "to you fast.",
+    "intro": "Question, partnership, press inquiry, mentor application — one form, and the right person will get back to you within 48 hours.",
+    "info": {
+      "email": "Email",
+      "emailValue": "contact@digizelle.fr",
+      "phone": "Phone",
+      "phoneValue": "+33 1 23 45 67 89",
+      "address": "Address",
+      "addressValue": "EPITECH — Le Kremlin-Bicêtre Campus",
+      "hours": "Hours",
+      "hoursValue": "Mon-Fri · 9 AM–7 PM"
+    },
+    "form": {
+      "title": "Send us a message",
+      "subtitle": "All fields are required · reply within 48 hours.",
+      "firstName": "First name",
+      "firstNamePlaceholder": "Lina",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Martin",
+      "email": "Email",
+      "emailPlaceholder": "lina@example.com",
+      "subject": "Subject",
+      "subjects": {
+        "join": "Join us",
+        "partnership": "Partnership",
+        "mentor": "Mentor",
+        "press": "Press",
+        "other": "Other",
+        "event": "Event"
+      },
+      "message": "Message",
+      "messagePlaceholder": "Tell us everything...",
+      "consent": "I agree that my data will be used only to reply to me.",
+      "submit": "Send message →",
+      "submitting": "Sending...",
+      "success": "✓ Message sent. We'll get back to you within 48 hours.",
+      "error": "✗ {error}"
+    },
+    "faq": {
+      "eyebrow": "Frequently asked questions",
+      "title": "Things you ask us",
+      "titleHighlight": "often.",
+      "items": {
+        "0": {
+          "q": "How long until I get a reply?",
+          "a": "We get back to you within 48 working hours. For press inquiries, expect a response within 24 hours."
+        },
+        "1": {
+          "q": "Can I become a mentor without being a senior expert?",
+          "a": "Yes — we welcome all experience levels from 3 years on the job. Teaching ability matters as much as your tech background."
+        },
+        "2": {
+          "q": "Are your programs paid?",
+          "a": "Most of our programs are free or fairly priced for participants. Sponsorships fund the bulk of it."
+        },
+        "3": {
+          "q": "How do I propose a partnership?",
+          "a": "Select \"Partnership\" in the form and describe your organization. We'll set up a video call within 5 days."
+        }
+      }
+    }
+  },
+  "cookies": {
+    "metaTitle": "Cookies",
+    "metaDescription": "Digizelle cookie policy — types of cookies used, purposes, duration, how to manage them.",
+    "eyebrow": "Cookie policy",
+    "title": "Cookies &",
+    "titleHighlight": "transparency.",
+    "intro": "The digizelle.fr site uses a minimal number of cookies. This page explains what they do, how long they live, and how to control them. No advertising or third-party profiling cookies are placed. This policy is written in accordance with article 82 of the French Data Protection Act and the 2020-2021 guidelines from the CNIL (French data protection authority).",
+    "lastUpdated": "Last updated: May 2026",
+    "toc": "Table of contents",
+    "typesTitle": "Cookies used",
+    "types": {
+      "essential": {
+        "title": "Essential cookies",
+        "body": "Required for the site to function: login session (next-auth.session-token), anti-CSRF token (next-auth.csrf-token), theme preference (digizelle-theme). They do not require prior consent under article 82 of the French Data Protection Act.",
+        "duration": "Duration: browsing session or up to 12 months for preferences"
+      },
+      "analytics": {
+        "title": "Audience measurement cookies",
+        "body": "Aggregated and anonymized statistics to understand site usage and improve the experience. Configured according to the CNIL exemption (truncated IP, limited lifetime, no cross-referencing with other processing). No identifiable personal data is collected.",
+        "duration": "Duration: 13 months maximum (CNIL recommendation)"
+      },
+      "preferences": {
+        "title": "Preferences (cookie + local storage)",
+        "body": "Remember your interface choices: language (NEXT_LOCALE cookie) and dark/light theme (digizelle-theme localStorage). They improve browsing comfort. The NEXT_LOCALE cookie is essential for displaying your chosen language; the theme is purely optional.",
+        "duration": "Duration: 12 months for language, permanent for theme (can be cleared at any time)"
+      }
+    },
+    "list": {
+      "title": "Detailed inventory",
+      "intro": "Complete list of items stored on your device — HTTP cookies and browser local storage — placed or potentially placed. The names below are the exact technical identifiers visible in your browser's developer tools (DevTools → Application). This list is updated whenever the site evolves technically.",
+      "tableLabel": "Inventory of cookies and local storage",
+      "cookiesTitle": "HTTP cookies",
+      "cookiesSubtitle": "Sent with every request to the server. Visible in DevTools → Application → Cookies.",
+      "storageTitle": "Local storage (localStorage)",
+      "storageSubtitle": "Kept only in your browser, never sent to the server. Visible in DevTools → Application → Local Storage.",
+      "headers": {
+        "name": "Name",
+        "purpose": "Purpose",
+        "duration": "Duration",
+        "type": "Type"
+      },
+      "cookies": {
+        "0": {
+          "name": "next-auth.session-token",
+          "purpose": "Maintains your signed-in session in the Mentora member area",
+          "duration": "30 days (rolling)",
+          "type": "Essential"
+        },
+        "1": {
+          "name": "next-auth.csrf-token",
+          "purpose": "Protection against cross-site request forgery attacks",
+          "duration": "Session",
+          "type": "Essential"
+        },
+        "2": {
+          "name": "NEXT_LOCALE",
+          "purpose": "Stores your chosen language (fr / en)",
+          "duration": "12 months",
+          "type": "Preference"
+        }
+      },
+      "storage": {
+        "0": {
+          "name": "digizelle-theme",
+          "purpose": "Stores your light / dark display preference",
+          "duration": "Permanent (until cleared by the user)",
+          "type": "Preference"
+        },
+        "1": {
+          "name": "digizelle-cookie-consent",
+          "purpose": "Stores your choice on the cookie banner (accepted / refused / categories)",
+          "duration": "13 months (CNIL recommendation), automatic re-prompt afterwards",
+          "type": "Essential"
+        }
+      }
+    },
+    "thirdParty": {
+      "title": "Third-party cookies",
+      "body": "As of the last update, the digizelle.fr site does not place any third-party cookies for advertising, profiling or sharing with external platforms (Meta, Google Ads, TikTok, etc.).\n\nThird-party videos or content (YouTube, Vimeo) that may be embedded in the future will be loaded via \"privacy-enhanced\" modes or a double-click mechanism, so external resources are only loaded with your explicit consent."
+    },
+    "consent": {
+      "title": "Consent & withdrawal",
+      "body": "On your first visit, a banner offers you the choice to accept, refuse or customize non-essential cookies. Refusing is just as easy as accepting — a single click is enough.\n\n• If you accept: the chosen categories are activated and your preference is stored for 6 months.\n• If you refuse: only essential cookies are placed.\n• If you customize: you activate categories one by one.\n\nAt any time, you can reopen the panel via the \"Manage my preferences\" link in the footer. Your choice is applied immediately and can be revoked. The banner is automatically re-shown every 6 months to collect fresh consent, in line with CNIL guidelines."
+    },
+    "manage": {
+      "title": "Manage cookies in your browser",
+      "body": "In addition to the banner, you can clear or block cookies at any time via your browser settings. Note: blocking essential cookies will prevent you from signing in to your member area.\n\nUseful links:\n• Chrome: Settings → Privacy and security → Cookies\n• Firefox: Settings → Privacy & Security → Cookies and Site Data\n• Safari: Settings → Privacy → Block cookies\n• Edge: Settings → Cookies and site permissions\n\nThe CNIL also provides an educational tool: www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser."
+    },
+    "contact": {
+      "title": "Have a question?",
+      "body": "For any question about our use of cookies, write to us at contact@digizelle.fr (subject: \"Cookies\"). You can also consult our privacy policy for details on the related data processing."
+    },
+    "banner": {
+      "title": "Cookies",
+      "body": "We only use cookies that are essential for the site to work, plus optional preference and audience measurement cookies. You choose what you accept.",
+      "acceptAll": "Accept all",
+      "rejectAll": "Reject all",
+      "customize": "Customize",
+      "learnMore": "Learn more →"
+    },
+    "preferences": {
+      "title": "Cookie preferences",
+      "subtitle": "Enable or disable categories based on your choices. You can come back at any time.",
+      "essentialTitle": "Essential",
+      "essentialDesc": "Required for the site to function (session, security). Always active.",
+      "preferencesTitle": "Preferences",
+      "preferencesDesc": "Remember your interface choices like light/dark theme or language.",
+      "analyticsTitle": "Audience measurement",
+      "analyticsDesc": "Anonymized statistics to understand site usage and improve it.",
+      "confirm": "Confirm my choices",
+      "reopen": "Manage my preferences",
+      "close": "Close"
+    }
+  },
+  "events": {
+    "metaTitle": "Events",
+    "metaDescription": "Workshops, masterclasses, hackathons, community evenings: the full Digizelle calendar.",
+    "eyebrow": "Events",
+    "title": "Where",
+    "titleHighlight": "it all happens.",
+    "intro": "Workshops, masterclasses, hackathons, community evenings. The full Digizelle calendar at a glance.",
+    "filters": {
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "all": "All"
+    },
+    "hero": {
+      "chip": "★ Edition #1 — successful",
+      "title": "Digizelle Impact #1 —",
+      "titleHighlight": "Epitech Paris.",
+      "body": "Our flagship event brought together more than 60 young people on March 13, 2026 at Epitech Paris: panels on women in tech and leadership, with speakers from Amazon Web Services, Microsoft and the entrepreneurial ecosystem. Co-organized with Epitech.",
+      "stat0": {
+        "num": "13",
+        "label": "March 2026"
+      },
+      "stat1": {
+        "num": "60+",
+        "label": "Young attendees"
+      },
+      "stat2": {
+        "num": "AWS+",
+        "label": "Speakers"
+      },
+      "register": "View photos →"
+    },
+    "calendarTitle": "Upcoming",
+    "calendarHighlight": "dates.",
+    "upcoming": {
+      "0": {
+        "day": "13",
+        "month": "MAR",
+        "title": "Digizelle Impact 2026",
+        "loc": "Epitech · Paris",
+        "tag": "Impact",
+        "spots": "Edition #1 — past",
+        "iso": "2026-03-13",
+        "online": false,
+        "city": "Paris",
+        "venue": "Epitech Paris",
+        "desc": "Leadership & Innovation — building the future together. Keynote, panels with leaders from Microsoft, AWS, Allianz, and strategic networking."
+      },
+      "1": {
+        "day": "—",
+        "month": "2025",
+        "title": "Women in GenAI Hackathon",
+        "loc": "EY × Microsoft",
+        "tag": "Hackathon",
+        "spots": "Edition 2025 — past",
+        "iso": "2025-04-15",
+        "online": false,
+        "city": "Paris",
+        "venue": "EY",
+        "desc": "Hackathon co-organized by EY and Microsoft. Digizelle team (Bleuenn Cloteaux, Inès Roumier, Rajeeva Ravichandiran, Marine Fruitier) reached the finals."
+      },
+      "2": {
+        "day": "14",
+        "month": "JUNE",
+        "title": "VivaTech 2025",
+        "loc": "Microsoft Booth · Paris",
+        "tag": "Trade Show",
+        "spots": "Edition 2025 — past",
+        "iso": "2025-06-14",
+        "online": false,
+        "city": "Paris",
+        "venue": "Porte de Versailles",
+        "desc": "Digizelle present. \"AI, my future career\" workshop by Priscillia Meza Samira — audience aged 15-21."
+      },
+      "3": {
+        "day": "24",
+        "month": "JUNE",
+        "title": "BECOMTECH × Epitech",
+        "loc": "Le Kremlin-Bicêtre",
+        "tag": "Workshop",
+        "spots": "Edition 2025 — past",
+        "iso": "2025-06-24",
+        "online": false,
+        "city": "Le Kremlin-Bicêtre",
+        "venue": "Epitech",
+        "desc": "\"Women in Tech: breaking imposter syndrome\" workshop. Audience: students from Epitech, EPITA, IONIS."
+      }
+    },
+    "pastTitle": "Past",
+    "pastHighlight": "editions.",
+    "past": {
+      "0": {
+        "title": "Women in GenAI Hackathon",
+        "date": "April 2025"
+      },
+      "1": {
+        "title": "VivaTech 2025 — Microsoft Booth",
+        "date": "June 2025"
+      },
+      "2": {
+        "title": "BECOMTECH × Epitech — Imposter Syndrome",
+        "date": "June 2025"
+      },
+      "3": {
+        "title": "Digizelle Impact #1 — Epitech Paris",
+        "date": "March 13, 2026"
+      }
+    },
+    "reserve": "Register",
+    "seeAlbum": "View album →",
+    "album": {
+      "metaTitle": "Album — Digizelle Impact #1",
+      "metaDescription": "Photos from the Digizelle Impact #1 event on March 13, 2026 at Epitech Paris: panels, networking and keynotes.",
+      "back": "← Back to events",
+      "eyebrow": "Photo album",
+      "title": "Digizelle Impact #1",
+      "subtitle": "Leadership & Innovation — building the future together.",
+      "date": "March 13, 2026",
+      "venue": "Epitech · Paris",
+      "intro": "For its first edition, Digizelle Impact brought together more than 60 young people at Epitech Paris around panels on women in tech, leadership and entrepreneurship. With speakers from Microsoft, AWS, Allianz, EY and HEC Paris, the event was a defining moment for the Digizelle community — between keynote, workshops and strategic networking.",
+      "stats": {
+        "youth": {
+          "n": "60+",
+          "label": "Young attendees"
+        },
+        "speakers": {
+          "n": "6",
+          "label": "Speakers"
+        },
+        "partners": {
+          "n": "1",
+          "label": "Partner"
+        }
+      },
+      "credit": "Photos · Digizelle team"
+    },
+    "emptyUpcomingTitle": "No upcoming events at the moment",
+    "emptyUpcomingBody": "Edition #1 of Digizelle Impact took place on March 13, 2026. Future dates are being finalized — leave us your contact info to be notified first.",
+    "emptyUpcomingCta": "Get notified →"
+  },
+  "faqPage": {
+    "metaTitle": "FAQ — Frequently asked questions",
+    "metaDescription": "All the answers about Digizelle, sign-up, programs, Mentora mentorship, the community and the protection of your data.",
+    "eyebrow": "Help center",
+    "title": "Frequently asked",
+    "titleHighlight": "questions.",
+    "intro": "A question before you get started? Here are the answers we give most often. If yours isn't here, write to us at contact@digizelle.fr — we reply within 48 working hours.",
+    "search": {
+      "label": "Search the FAQ",
+      "placeholder": "Type a keyword: mentor, sign-up, free…",
+      "noResults": "No question matches \"{query}\". Try another keyword, or write to us at contact@digizelle.fr.",
+      "matchCount": "{count, plural, =0 {No results} one {1 question found} other {# questions found}}",
+      "clear": "Clear search"
+    },
+    "tocLabel": "Categories",
+    "ctaTitle": "Didn't find your answer?",
+    "ctaBody": "Write to us, we read every message. Personal reply within 48 working hours.",
+    "ctaButton": "Contact us →",
+    "categories": {
+      "general": {
+        "label": "General",
+        "items": {
+          "what": {
+            "q": "What is Digizelle?",
+            "a": "Digizelle is a French non-profit (association loi 1901), founded in 2023, based at EPITECH Le Kremlin-Bicêtre. Our mission: include and grow young people in the digital field — through mentorship, workshops, hackathons and a supportive community. We are 100% non-profit."
+          },
+          "who": {
+            "q": "Who is it for?",
+            "a": "For anyone curious about digital, from age 15. We particularly welcome young people who haven't had the chance to be exposed to tech (social or geographic background, atypical paths, underrepresentation). No barriers of skill level, education or status."
+          },
+          "free": {
+            "q": "Is it free?",
+            "a": "Yes for participants: all our programs (workshops, masterclasses, hackathons, Mentora) are free or fairly priced. We are funded by corporate sponsorships (Microsoft, EY, AWS, Allianz, Epitech, HEC Paris, Station F, BECOMTECH…) and by public grants."
+          },
+          "associationStatus": {
+            "q": "Are you a real association?",
+            "a": "Yes — a French non-profit (association loi 1901), declared at the prefecture in 2023. Registered office at EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre. All legal information is on the /legal page."
+          },
+          "team": {
+            "q": "Who runs Digizelle?",
+            "a": "A team of volunteers: a board (presidency, treasury, secretariat), Team Leaders for Communication, Mentorship, Tech and Events, and a growing community of mentors and volunteers. Everyone contributes their time on top of their studies or job."
+          }
+        }
+      },
+      "signup": {
+        "label": "Sign-up & account",
+        "items": {
+          "how": {
+            "q": "How do I sign up?",
+            "a": "Click \"Sign in\" at the top right, then \"Create an account.\" Once your email is confirmed, you'll have access to your member area where you can join the community or request a mentor."
+          },
+          "data": {
+            "q": "What information is requested?",
+            "a": "The minimum: first name, email, password. Optional: last name, photo, bio, skills. For minors (15-17 years old), we also ask for the year of birth to apply the reinforced protection required by GDPR."
+          },
+          "age": {
+            "q": "What's the minimum age to sign up?",
+            "a": "From age 15, in accordance with article 8 of the GDPR (digital age of consent in France). For 15-17 year olds, no advertising profiling is applied and moderation is reinforced. If you're under 15, your parents can contact contact@digizelle.fr for supervised access."
+          },
+          "delete": {
+            "q": "Can I delete my account?",
+            "a": "Yes, at any time, from Community → Settings → Danger zone. You then have 30 days to change your mind before the irreversible purge. This deletion covers all your data: account, profile, posts, messages, hosted media."
+          },
+          "forgotPassword": {
+            "q": "I forgot my password.",
+            "a": "On the sign-in page, click \"Forgot your password?\" — you'll receive a reset link by email (valid for 1 hour). If the email doesn't arrive, check your spam folder or write to contact@digizelle.fr."
+          },
+          "twoFactor": {
+            "q": "Should I enable 2FA?",
+            "a": "Recommended for everyone, mandatory for administrators, moderators and active mentors. Enable it in /account/2fa with any authenticator app (Google Authenticator, 1Password, Authy…). Remember to save your 10 backup codes."
+          }
+        }
+      },
+      "programs": {
+        "label": "Programs",
+        "items": {
+          "list": {
+            "q": "What programs do you offer?",
+            "a": "Four complementary formats:\n• Immersive Workshop — 3-day hands-on sessions to discover a skill\n• Masterclass — intensive course with an expert to deepen your knowledge\n• Hackathon — 48 hours in a team to build on a challenge with mentors\n• Mentora — long-term 1-to-1 mentorship program"
+          },
+          "level": {
+            "q": "What level do I need?",
+            "a": "No prerequisites. Our formats range from complete beginner (first discovery workshop) to advanced (tech masterclass). We adapt to your background, not the other way around. Motivation and curiosity matter more than technical mastery."
+          },
+          "prepare": {
+            "q": "How do I prepare for a workshop or hackathon?",
+            "a": "Nothing to prepare in advance — all teaching materials are provided. Bring a laptop if you have one (otherwise we can lend you one on site). A curious attitude and the desire to learn are enough."
+          },
+          "certificate": {
+            "q": "Do you issue certificates?",
+            "a": "For masterclasses and hackathons, yes — a Digizelle certificate of participation is given to attendees present for the entire session. It's not a state-recognized diploma, but it's official proof useful for your CV."
+          },
+          "where": {
+            "q": "Where do the events take place?",
+            "a": "Mainly in Paris and Île-de-France (EPITECH, HEC Paris, Station F, partner venues). Some formats are also 100% online. Details for each event are published on /events at least 3 weeks in advance."
+          }
+        }
+      },
+      "mentora": {
+        "label": "Mentora (mentorship)",
+        "items": {
+          "what": {
+            "q": "What is Mentora?",
+            "a": "Mentora is our 1-to-1 mentorship program: we connect you with an experienced mentor in the digital field that interests you (dev, design, data, product, AI…). You meet over video at a pace you choose together — typically one hour every two weeks over 3 to 6 months."
+          },
+          "findMentor": {
+            "q": "How do I find a mentor?",
+            "a": "Once registered with Mentora, you fill out your mentee profile (goals, skills to develop, languages, time zone) and our algorithm suggests compatible mentors. You can also browse the open catalog at /mentora/discover and send a request to anyone you're interested in."
+          },
+          "becomeMentor": {
+            "q": "How do I become a mentor?",
+            "a": "Create your mentor profile at /mentora/become-mentor. You present your background, your skills, your availability. The team reviews your profile within 5 working days. It's open to any professional with 2+ years of experience who wants to give their time."
+          },
+          "paid": {
+            "q": "Is it paid?",
+            "a": "No, mentorship is entirely volunteer-based. Mentors give their time freely. For mentees, it's also free. That's our ethical commitment: helping young people shouldn't depend on their means."
+          },
+          "duration": {
+            "q": "How long does a mentorship last?",
+            "a": "You decide with your mentor — typically 3 to 6 months, with one to two hours per month. You can end the relationship at any time or request a mentor change if the matching isn't working."
+          },
+          "matching": {
+            "q": "How does matching work?",
+            "a": "The algorithm takes into account: skills sought vs offered, languages, time zone, mentor's average rating, response time, current load, and a diversity factor to avoid bias. You can see the score breakdown for each suggested mentor via the \"Why this match?\" button."
+          }
+        }
+      },
+      "community": {
+        "label": "Community",
+        "items": {
+          "what": {
+            "q": "What is the Digizelle community?",
+            "a": "It's our online space where members, mentors and alumni discuss, share resources, ask questions, organize challenges. You access it after sign-up, from the /community menu. It's also where we announce events and where moderation looks out for everyone."
+          },
+          "rules": {
+            "q": "What are the rules?",
+            "a": "Mutual respect first and foremost. No discrimination, no harassment, no spoilers of ongoing challenges. Confidentiality of mentorship sessions. The full charter is on /community/charte — reading it is mandatory at onboarding."
+          },
+          "moderation": {
+            "q": "How does moderation work?",
+            "a": "A team of moderators, identifiable by a badge, reviews reports. Graduated sanctions: warning → mute → suspension → ban. Bans require two distinct moderators (proposal + confirmation) to avoid arbitrary decisions."
+          },
+          "report": {
+            "q": "How do I report content?",
+            "a": "On every post or comment, the \"Report\" button opens a menu. Choose the category (spam, harassment, illegal content…) and add context if you'd like. Reporting is anonymous — neither the author nor other members know who reported."
+          },
+          "appeal": {
+            "q": "I was wrongly sanctioned, what can I do?",
+            "a": "You can appeal by email to contact@digizelle.fr. Reply within 14 days. The reason for the sanction and the author of the decision are in your moderation history on the admin side (visible to you via the GDPR data export)."
+          }
+        }
+      },
+      "privacy": {
+        "label": "Privacy & GDPR",
+        "items": {
+          "protection": {
+            "q": "How is my data protected?",
+            "a": "TLS 1.3 across the whole site, hashed passwords (bcrypt cost ≥ 12), Row-Level Security on the PostgreSQL database, hosting in the European Union (Vercel CDG, Supabase eu-west-3 Paris), 2FA mandatory for privileged accounts. We never sell any data and do no advertising profiling."
+          },
+          "export": {
+            "q": "Can I download my data?",
+            "a": "Yes, in accordance with article 20 of the GDPR (right to portability). From Community → Settings → My data, you can export your data in JSON format, machine-readable. The export contains your profile, your posts, your messages, your moderation history."
+          },
+          "newsletter": {
+            "q": "How do I unsubscribe from the newsletter?",
+            "a": "\"Unsubscribe\" link at the bottom of every email — a single click is enough. You can also do it from Community → Settings → Email preferences."
+          },
+          "rights": {
+            "q": "How do I exercise my GDPR rights?",
+            "a": "Most rights are accessible directly from your member area: access (JSON export), rectification (profile editing), erasure (account deletion). For any right not covered by the built-in tools (restriction, objection, post-mortem), write to contact@digizelle.fr — reply within 30 days."
+          },
+          "minor": {
+            "q": "I'm a minor, can my parents act on my behalf?",
+            "a": "Yes — your parents or guardians can at any time request access, rectification or deletion of your data via contact@digizelle.fr, providing proof of their status (family record book, court ruling). For those under 15, sign-up itself requires their authorization."
+          },
+          "violation": {
+            "q": "What about a data breach?",
+            "a": "We notify the CNIL within 72 hours (article 33 GDPR) and individually inform the people concerned if the breach presents a high risk to their rights. More details in our internal GDPR runbook."
+          }
+        }
+      }
     }
   },
   "footer": {
@@ -92,6 +1583,26 @@
     "craftedWith": "Crafted with",
     "inLocation": "in Île-de-France"
   },
+  "header": {
+    "logoAlt": "Digizelle",
+    "ariaHome": "Digizelle — home",
+    "ariaNav": "Main navigation",
+    "themeLight": "Switch to light theme",
+    "themeDark": "Switch to dark theme",
+    "login": "Sign in",
+    "joinCta": "Join us →",
+    "close": "Close",
+    "links": {
+      "about": "About",
+      "programs": "Programs",
+      "mentora": "Mentora",
+      "community": "Community",
+      "team": "Team",
+      "projects": "Projects",
+      "events": "Events",
+      "blog": "Blog"
+    }
+  },
   "home": {
     "metaTitle": "Inclusion & digital flourishing",
     "metaDescription": "Digizelle is a French non-profit (loi 1901) founded in 2023, dedicated to including and empowering young people in the digital field.",
@@ -122,10 +1633,1627 @@
       ]
     }
   },
+  "legal": {
+    "metaTitle": "Legal notice",
+    "metaDescription": "Legal notice for the Digizelle association — publisher, hosting, intellectual property, liability.",
+    "eyebrow": "Legal notice",
+    "title": "Legal",
+    "titleHighlight": "information.",
+    "intro": "This site is published by Digizelle, a French non-profit (association loi 1901), with its registered office at EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre. This legal notice governs the use of digizelle.fr and its subdomains, in accordance with articles 6-III and 19 of French law no. 2004-575 of June 21, 2004 on confidence in the digital economy (LCEN).",
+    "lastUpdated": "Last updated: May 2026",
+    "toc": "Table of contents",
+    "sections": {
+      "publisher": {
+        "title": "Site publisher",
+        "body": "Digizelle — French non-profit (association loi 1901), declared at the prefecture in 2023.\nRegistered office: EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\nSingle contact email: contact@digizelle.fr\n\nThe association's purpose is the inclusion and growth of young people in the digital field: workshops, masterclasses, hackathons, the Mentora mentorship program and public events. Editorial responsibility lies with the association's board."
+      },
+      "registration": {
+        "title": "Registration & RNA",
+        "body": "Digizelle is an association governed by the French law of July 1, 1901 and the decree of August 16, 1901, declared at the Paris prefecture.\n• RNA number: W751XXXXXX (to be replaced with the official number)\n• Declaration date: 2023\n• Purpose declared in the Official Journal of associations: to promote the inclusion and growth of young people in the digital field\n\nThe association is non-profit and is not registered with the trade and companies register (RCS). It does not have an intra-EU VAT number."
+      },
+      "host": {
+        "title": "Hosting",
+        "body": "The site is hosted on the Vercel Inc. platform, 340 S Lemon Ave #4133, Walnut, CA 91789, United States (execution region: Europe — CDG / Paris). Site: https://vercel.com — Contact: https://vercel.com/contact\n\nThe PostgreSQL database, authentication and file storage are operated by Supabase, Inc., 970 Toa Payoh North #07-04, Singapore 318992 (application region: eu-west-3 / Paris). Site: https://supabase.com\n\nTransactional emails and newsletter campaigns are sent via Resend, Inc., 2261 Market Street #5039, San Francisco, CA 94114, United States (European Union routing).\n\nObservability and error reporting are provided by Functional Software Inc. (Sentry), 132 Hawthorne Street, San Francisco, CA 94107, United States (EU region: sentry.de.io)."
+      },
+      "director": {
+        "title": "Editorial direction",
+        "body": "Editorial direction is handled by the Digizelle association's board. Content published on this site is reviewed and approved collegially before being put online. Any request for correction, right of reply or relating to content can be sent to contact@digizelle.fr; we commit to responding within 30 days."
+      },
+      "ip": {
+        "title": "Intellectual property",
+        "body": "The entire site (text, illustrations, logo, mascots, visual identity, photographs, source code) is the exclusive property of Digizelle or its partners, and is protected by the French intellectual property code (articles L.111-1 and following).\n\nAny reproduction, representation, modification, publication, adaptation or distribution, in whole or in part, by any means whatsoever, is prohibited without prior written authorization, except for strict press use, subject to compliance with the provisions of article L.122-5 of the intellectual property code.\n\nThe trademarks, logos and trade names of partners mentioned remain the property of their respective holders."
+      },
+      "liability": {
+        "title": "Limitation of liability",
+        "body": "Digizelle strives to maintain the accuracy of the information published on the site, without being able to guarantee its completeness, ongoing accuracy or absence of errors. The association declines any responsibility for the use that may be made of this information and the direct or indirect consequences that may result.\n\nHyperlinks pointing to third-party sites do not engage Digizelle's responsibility for the content of those sites. Digizelle cannot be held responsible for any damages related to the use of the site (service interruption, data loss, computer viruses) despite the technical measures put in place."
+      },
+      "cgu": {
+        "title": "General terms of use",
+        "body": "Access to and use of the digizelle.fr site implies full and complete acceptance of these terms:\n• Use of the site in compliance with applicable laws and public order\n• Prohibition of any intrusion attempt, mass scraping or intentional server overload\n• Account creation reserved for people over 15 years old (parental consent required below)\n• Respect for other members in community spaces (no discriminatory remarks, harassment or illegal content)\n\nDetailed general terms of use apply to the Mentora member area; they are communicated upon registration."
+      },
+      "credits": {
+        "title": "Credits & technologies",
+        "body": "Design and development: Digizelle's Design & Dev team, with the support of community volunteers.\n\nTechnical stack:\n• Next.js 16 (React framework, App Router)\n• TypeScript for code reliability\n• Supabase for the PostgreSQL database and authentication\n• Auth.js (NextAuth) for session management\n• Vercel for hosting and CDN\n• Resend for transactional emails\n\nOriginal icons and illustrations created by the Digizelle Design team. Font: Signika (Anna Giedryś, SIL Open Font License)."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "For any question relating to this legal notice, use of the site, a GDPR request or to exercise a right of reply: contact@digizelle.fr (the association's single contact address).\n\nPostal mail: Digizelle, EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France."
+      },
+      "updates": {
+        "title": "Updates to this notice",
+        "body": "This legal notice may be modified at any time, without prior notice, to reflect changes to the site, partnerships or regulations. The date of the last update is shown at the top of the page. We invite you to consult this page regularly.\n\nIn the event of a substantial change (e.g. change of host or editorial director), additional information may be temporarily displayed on the home page."
+      }
+    }
+  },
   "localeSwitcher": {
     "label": "Language",
     "fr": "Français",
     "en": "English",
     "switchTo": "Switch to {language}"
+  },
+  "login": {
+    "metaTitle": "Sign in",
+    "metaDescription": "Sign in to your Digizelle Mentora account or create one in under 2 minutes.",
+    "title": "Sign in to Digizelle",
+    "side": {
+      "chip": "Member area",
+      "titleLine1": "Welcome to",
+      "titleLine2": "the community.",
+      "body": "Access your Mentora workspace, track your sessions, and connect with your mentor and the wider community.",
+      "secure": "Secure",
+      "rgpd": "GDPR",
+      "noSpam": "No spam"
+    },
+    "tabs": {
+      "login": "Sign in",
+      "signup": "Sign up"
+    },
+    "loginForm": {
+      "title": "Great to see you",
+      "titleHighlight": "again.",
+      "subtitle": "Sign in to access your account.",
+      "email": "Email",
+      "emailPlaceholder": "lina@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "remember": "Remember me",
+      "forgot": "Forgot your password?",
+      "forgotComingSoon": "Password recovery is coming soon. In the meantime, write to us at contact@digizelle.fr.",
+      "submit": "Sign in →",
+      "submitting": "Signing in…",
+      "or": "or"
+    },
+    "signupForm": {
+      "title": "Join",
+      "titleHighlight": "Digizelle.",
+      "subtitle": "Create your account in under 2 minutes.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "emailPlaceholder": "lina@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "iAm": "I am...",
+      "roles": {
+        "learner": "Learner",
+        "mentor": "Mentor",
+        "partner": "Partner"
+      },
+      "submit": "Create my account →",
+      "submitting": "Creating…",
+      "terms": "By continuing, you agree to our Terms of Service and Privacy Policy.",
+      "ageDeclaration": "I confirm I am at least 15 years old (below that, parental consent is required — <contact>contact us</contact>).",
+      "birthYearLabel": "Year of birth",
+      "birthYearPlaceholder": "e.g. 2007",
+      "birthYearHelper": "Required to comply with the minimum sign-up age (15, GDPR Art. 8). Year only, never the full date."
+    },
+    "feedback": {
+      "successPrefix": "✓ ",
+      "errorPrefix": "✗ "
+    },
+    "errors": {
+      "emailNotVerified": "Email not confirmed. Check your inbox for the 6-digit code.",
+      "emailAlreadyExists": "An account already exists with this email. Try signing in.",
+      "invalidCredentials": "Incorrect email or password.",
+      "emailInvalid": "Invalid email.",
+      "passwordRequired": "Password required.",
+      "passwordTooShort": "At least 8 characters.",
+      "firstNameRequired": "First name required.",
+      "lastNameRequired": "Last name required.",
+      "emailSendFailed": "Couldn't send the email. Please try again in a moment.",
+      "oauthDisabled": "Social sign-in unavailable.",
+      "rateLimited": "Too many attempts. Try again in a few minutes.",
+      "ageRequired": "You must confirm you are at least 15 years old to create an account.",
+      "belowMinAge": "Sign-up is reserved for people 15 and over (GDPR Art. 8). If you're under 15, your parents can contact contact@digizelle.fr to discuss supervised access.",
+      "invalidBirthYear": "Invalid year of birth. Enter the 4-digit year (e.g. 2007).",
+      "generic": "Something went wrong. Please try again."
+    },
+    "oauth": {
+      "disabled": "Coming soon",
+      "signingIn": "Signing in…"
+    },
+    "verifyModal": {
+      "title": "Confirm your email",
+      "subtitle": "We sent a 6-digit code to {email}. Enter it below to activate your account.",
+      "codeLabel": "Verification code",
+      "codePlaceholder": "123456",
+      "submitButton": "Verify →",
+      "submittingButton": "Verifying…",
+      "resendLink": "Resend code",
+      "resendCountdown": "Resend in {seconds}s",
+      "resending": "Sending…",
+      "resendSuccess": "Code resent.",
+      "successMessage": "Email confirmed. You can now sign in.",
+      "close": "Close",
+      "errors": {
+        "invalid": "Invalid code.",
+        "expired": "Code expired. Please request a new one.",
+        "tooManyAttempts": "Too many attempts. Please request a new code.",
+        "generic": "Verification failed. Please try again."
+      }
+    },
+    "resetModal": {
+      "title": "Forgot your password",
+      "step1": {
+        "subtitle": "Enter your email — if an account exists, we'll send you a code.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "lina@example.com",
+        "submitButton": "Send code →",
+        "submittingButton": "Sending…"
+      },
+      "step2": {
+        "subtitle": "Enter the code you received and choose a new password.",
+        "codeLabel": "6-digit code",
+        "codePlaceholder": "123456",
+        "newPasswordLabel": "New password",
+        "newPasswordPlaceholder": "At least 8 characters",
+        "submitButton": "Reset →",
+        "submittingButton": "Updating…"
+      },
+      "successMessage": "Password updated. Sign in with the new one.",
+      "close": "Close",
+      "errors": {
+        "invalid": "Invalid code.",
+        "expired": "Code expired. Please request a new one.",
+        "tooManyAttempts": "Too many attempts. Start over from the beginning.",
+        "generic": "Reset failed. Please try again."
+      }
+    }
+  },
+  "mentora": {
+    "metaTitle": "Mentora — your digital mentor",
+    "metaDescription": "Digizelle's 1-to-1 mentorship platform connecting young people with digital professionals.",
+    "eyebrow": "Mentora · new program",
+    "title": "Find the mentor who",
+    "titleHighlight": "will help you grow.",
+    "body": "Mentora is our 1-to-1 mentorship platform that connects Digizelle young people with digital professionals. Smart matching, video calls, progress tracking and personalized resources.",
+    "ctaMatch": "Request my match →",
+    "ctaBecomeMentor": "Become a mentor",
+    "stats": {
+      "mentors": "240+",
+      "mentorsLabel": "Active mentors",
+      "duration": "6 months",
+      "durationLabel": "Typical program",
+      "rating": "4.9★",
+      "ratingLabel": "Average rating"
+    },
+    "appPreview": {
+      "greeting": "Hello Lina,",
+      "matchOfDay": "Here is your match of the day.",
+      "matchPercent": "97% match",
+      "videoTitle": "Video call Thursday 6 PM",
+      "videoSubtitle": "First meeting · 30 min",
+      "join": "Join",
+      "accept": "Accept",
+      "viewProfile": "View profile"
+    },
+    "how": {
+      "title": "How does it",
+      "titleHighlight": "work?",
+      "intro": "Three steps to start your journey with a mentor.",
+      "steps": {
+        "0": {
+          "n": "01",
+          "title": "Define your goals",
+          "desc": "A smart questionnaire identifies your ambitions, your availability and your current level."
+        },
+        "1": {
+          "n": "02",
+          "title": "Receive your matches",
+          "desc": "Our algorithm suggests 3 compatible mentors. You choose the one you click with."
+        },
+        "2": {
+          "n": "03",
+          "title": "Move forward together",
+          "desc": "Monthly video calls, tailored resources, progress tracking and access to the entire community."
+        }
+      }
+    },
+    "directory": {
+      "eyebrow": "Mentor directory",
+      "title": "Some of our",
+      "titleHighlight": "10+ mentors.",
+      "filters": {
+        "all": "All",
+        "design": "Design",
+        "tech": "Tech",
+        "data": "Data",
+        "product": "Product"
+      },
+      "mentors": {
+        "0": {
+          "name": "Aïcha B.",
+          "role": "Lead Designer · Doctolib"
+        },
+        "1": {
+          "name": "Karim S.",
+          "role": "Tech Lead · Algolia"
+        },
+        "2": {
+          "name": "Jade M.",
+          "role": "Data Scientist · OpenAI"
+        },
+        "3": {
+          "name": "Théo R.",
+          "role": "Product · BlaBlaCar"
+        },
+        "4": {
+          "name": "Salma F.",
+          "role": "UX Researcher · Spotify"
+        },
+        "5": {
+          "name": "Romain D.",
+          "role": "Engineering Manager · Qonto"
+        },
+        "6": {
+          "name": "Naïma E.",
+          "role": "ML Engineer · Mistral AI"
+        },
+        "7": {
+          "name": "Hugo V.",
+          "role": "Senior PM · Alan"
+        }
+      },
+      "available": "{count} available"
+    },
+    "dashboard": {
+      "eyebrow": "Dashboard preview",
+      "title": "Track your progress.",
+      "sessionsCompleted": "Completed sessions",
+      "progress": "You have completed {percent}% of the program",
+      "skills": "Unlocked skills",
+      "skillsList": [
+        "Wireframe",
+        "User research",
+        "Prototype",
+        "Design system",
+        "Accessibility",
+        "Design critique"
+      ],
+      "nextStep": "Next step",
+      "nextStepTitle": "Final presentation",
+      "nextStepDesc": "Present your project to the Digizelle jury.",
+      "prepare": "Prepare →",
+      "nav": {
+        "overview": "Overview",
+        "requests": "Requests",
+        "requestsReceived": "Received requests",
+        "requestsSent": "Sent requests",
+        "mentorships": "My mentorships",
+        "sessions": "My sessions",
+        "messages": "Messages",
+        "notifications": "Notifications",
+        "availability": "Availability",
+        "profileEdit": "Profile settings",
+        "logout": "Log out",
+        "groupMain": "Workspace",
+        "groupMentor": "Mentor side",
+        "groupMentee": "Mentee side"
+      },
+      "shared": {
+        "empty": "Nothing to display yet.",
+        "loading": "Loading…",
+        "retry": "Retry",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "back": "Back",
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "viewAll": "View all →",
+        "open": "Open",
+        "close": "Close",
+        "yes": "Yes",
+        "no": "No",
+        "unread": "Unread",
+        "header": {
+          "openMenu": "Open menu",
+          "closeMenu": "Close menu",
+          "notifications": "Notifications",
+          "logout": "Log out",
+          "rolePill": {
+            "mentor": "Mentor",
+            "mentee": "Mentee",
+            "guest": "Guest"
+          }
+        },
+        "roleBanner": {
+          "noProfileTitle": "Welcome to your Mentora workspace",
+          "noProfileBody": "To get the most out of the program, create your mentee profile or apply to become a mentor.",
+          "menteeOnboardingCta": "Create my mentee profile →",
+          "becomeMentorCta": "Become a mentor →"
+        },
+        "tabs": {
+          "all": "All",
+          "active": "Active",
+          "past": "Past",
+          "upcoming": "Upcoming"
+        },
+        "dateFormats": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "tomorrow": "Tomorrow"
+        }
+      },
+      "overviewMentee": {
+        "title": "Hello {name}",
+        "subtitle": "Here is an overview of your Mentora journey.",
+        "myMentorsTitle": "My active mentors",
+        "myMentorsEmpty": "You don't have a mentor yet. Discover our profiles.",
+        "myMentorsCta": "Discover a mentor →",
+        "upcomingSessionsTitle": "Next session",
+        "upcomingSessionsEmpty": "No session scheduled.",
+        "upcomingSessionsCta": "Schedule a session →",
+        "pendingRequestsTitle": "Pending requests",
+        "pendingRequestsEmpty": "No pending requests.",
+        "recommendationsTitle": "Recommendations for me",
+        "recommendationsEmpty": "Complete your profile to receive recommendations.",
+        "recommendationsHint": "Selection based on your goals and language.",
+        "ctaDiscover": "View all mentors →",
+        "profileCompletionTitle": "Mentee profile",
+        "profileCompletionLabel": "{percent}% complete",
+        "profileCompletionCta": "Complete my profile →"
+      },
+      "mentor": {
+        "eyebrow": "Mentor dashboard",
+        "greeting": "Hello {name}",
+        "subtitle": "Here is an overview of your mentor activity.",
+        "completionBarLabel": "Profile completion",
+        "completionPercent": "{percent}%",
+        "completionHint": "Complete your profile to increase your visibility to mentees.",
+        "pendingRequestsTitle": "Pending requests",
+        "pendingRequestsEmpty": "No pending requests",
+        "pendingRequestsCta": "View requests →",
+        "upcomingSessionsTitle": "Upcoming sessions",
+        "upcomingSessionsEmpty": "No sessions scheduled yet.",
+        "upcomingSessionsViewAll": "View all →",
+        "upcomingSessionOpen": "Open",
+        "unreadMessagesTitle": "Unread messages",
+        "unreadMessagesEmpty": "All messages are read",
+        "unreadMessagesCta": "View messages →",
+        "averageRatingTitle": "Average rating",
+        "averageRatingEmpty": "No reviews yet",
+        "averageRatingCount": "{count, plural, one {# review} other {# reviews}}",
+        "sessionDuration": "{minutes} min",
+        "unknownMentee": "Mentee",
+        "quickActions": {
+          "editProfile": "Edit my profile",
+          "editAvailability": "My availability"
+        }
+      }
+    },
+    "requests": {
+      "title": "Mentorship requests",
+      "subtitle": "Track the status of your sent and received requests.",
+      "tabs": {
+        "received": "Received",
+        "sent": "Sent"
+      },
+      "incomingTitle": "Received requests",
+      "outgoingTitle": "Sent requests",
+      "statusLabels": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "declined": "Declined",
+        "withdrawn": "Withdrawn",
+        "expired": "Expired"
+      },
+      "card": {
+        "from": "From {name}",
+        "to": "To {name}",
+        "frequency": "Frequency: {value}",
+        "topics": "Topics",
+        "sentAt": "Sent on {date}",
+        "expiresAt": "Expires on {date}",
+        "respondedAt": "Replied on {date}",
+        "messageLabel": "Message",
+        "viewProfile": "View profile →"
+      },
+      "frequency": {
+        "WEEKLY": "Weekly",
+        "BIWEEKLY": "Biweekly",
+        "MONTHLY": "Monthly",
+        "AD_HOC": "Ad hoc"
+      },
+      "actions": {
+        "accept": "Accept",
+        "decline": "Decline",
+        "withdraw": "Withdraw",
+        "viewProfile": "View profile"
+      },
+      "declineDialog": {
+        "title": "Decline this request",
+        "description": "A reason helps the mentee understand your decision.",
+        "reasonLabel": "Reason (5–500 characters)",
+        "reasonPlaceholder": "E.g.: I don't specialize in this area…",
+        "submit": "Send decline"
+      },
+      "withdrawConfirm": {
+        "title": "Withdraw the request?",
+        "description": "The mentor will be notified and the request will be marked as \"Withdrawn\".",
+        "submit": "Confirm withdrawal"
+      },
+      "empty": {
+        "received": "No requests received yet.",
+        "sent": "You haven't sent any requests yet.",
+        "discoverCta": "Discover mentors →"
+      },
+      "feedback": {
+        "acceptedSuccess": "Request accepted. A mentorship has been created.",
+        "declinedSuccess": "Request declined. The mentee has been notified.",
+        "withdrawnSuccess": "Request withdrawn.",
+        "actionError": "An error occurred, please try again."
+      }
+    },
+    "mentorships": {
+      "title": "My mentorships",
+      "subtitle": "The history of your mentorship relationships.",
+      "statusLabels": {
+        "active": "Active",
+        "paused": "Paused",
+        "completed": "Completed",
+        "terminated": "Closed"
+      },
+      "card": {
+        "withMentor": "With {name}",
+        "withMentee": "With {name}",
+        "startedAt": "Started on {date}",
+        "endedAt": "Closed on {date}",
+        "frequency": "Frequency: {value}",
+        "format": "Format: {value}",
+        "openCta": "Open →"
+      },
+      "format": {
+        "REMOTE": "Remote",
+        "IN_PERSON": "In person",
+        "HYBRID": "Hybrid"
+      },
+      "detail": {
+        "title": "Mentorship with {name}",
+        "tabs": {
+          "sessions": "Sessions",
+          "messages": "Messages",
+          "goals": "Goals",
+          "notes": "Notes"
+        },
+        "sessionsTitle": "Sessions",
+        "sessionsEmpty": "No sessions scheduled yet.",
+        "newSessionCta": "+ New session",
+        "messagesTitle": "Messages",
+        "messagesEmpty": "No messages. Start the conversation!",
+        "messagesPlaceholder": "Write your message…",
+        "messagesSend": "Send",
+        "messagesLocked": "This mentorship is closed: the conversation is read-only.",
+        "goalsTitle": "Goals",
+        "goalsEmpty": "No goals defined. Add one to frame the journey.",
+        "addGoalLabel": "Describe the goal (max 500)",
+        "addGoalCta": "Add goal",
+        "markAchieved": "Mark as achieved",
+        "markUnachieved": "Mark as not achieved",
+        "achievedAt": "Achieved on {date}",
+        "notesTitle": "Shared notes",
+        "notesSharedHelp": "Visible to both parties.",
+        "notesPrivateTitle": "Private notes (mentor)",
+        "notesPrivateHelp": "Visible only to the mentor.",
+        "notesPlaceholder": "Your notes…",
+        "notesSave": "Save notes",
+        "pauseCta": "Pause",
+        "resumeCta": "Resume",
+        "completeCta": "Mark as completed",
+        "closeDialog": {
+          "title": "Close this mentorship?",
+          "noteLabel": "Closing note (optional)",
+          "submit": "Close mentorship"
+        }
+      },
+      "empty": "No active mentorship. Find your first mentor!",
+      "feedback": {
+        "saved": "Changes saved.",
+        "paused": "Mentorship paused.",
+        "resumed": "Mentorship resumed.",
+        "completed": "Mentorship closed.",
+        "goalAdded": "Goal added.",
+        "goalUpdated": "Goal updated.",
+        "actionError": "An error occurred."
+      }
+    },
+    "sessions": {
+      "title": "My sessions",
+      "subtitle": "All your upcoming and past mentorship sessions.",
+      "tabs": {
+        "upcoming": "Upcoming",
+        "past": "Past"
+      },
+      "statusLabels": {
+        "scheduled": "Scheduled",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "noShow": "No-show"
+      },
+      "formatLabels": {
+        "remoteVideo": "Video call",
+        "inPerson": "In person",
+        "phone": "Phone"
+      },
+      "card": {
+        "with": "With {name}",
+        "duration": "{minutes} min",
+        "joinCta": "Join →",
+        "openCta": "Details →"
+      },
+      "empty": {
+        "upcoming": "No upcoming sessions.",
+        "past": "No past sessions yet.",
+        "newCta": "Schedule a session →"
+      },
+      "new": {
+        "title": "New session",
+        "subtitle": "Pick a slot from the mentor's availability.",
+        "mentorshipLabel": "Mentorship",
+        "mentorshipMissing": "Select a mentorship to see available slots.",
+        "durationLabel": "Duration",
+        "durationOptions": {
+          "30": "30 min",
+          "45": "45 min",
+          "60": "60 min",
+          "90": "90 min"
+        },
+        "formatLabel": "Format",
+        "agendaLabel": "Agenda (optional)",
+        "agendaPlaceholder": "E.g.: portfolio review, next steps…",
+        "locationLabel": "Location (in person)",
+        "meetingUrlLabel": "Video call link (optional)",
+        "slotsTitle": "Available slots",
+        "slotsEmpty": "No slots in the next 14 days. Ask the mentor to open availability.",
+        "slotPick": "Pick this slot",
+        "submit": "Confirm session",
+        "submitting": "Booking…",
+        "success": "Session booked."
+      },
+      "detail": {
+        "title": "Session details",
+        "whenLabel": "Date and time",
+        "durationLabel": "Duration",
+        "formatLabel": "Format",
+        "agendaLabel": "Agenda",
+        "meetingUrlLabel": "Session link",
+        "locationLabel": "Location",
+        "withLabel": "With",
+        "cancelCta": "Cancel session",
+        "rescheduleCta": "Reschedule",
+        "completeCta": "Mark as completed",
+        "joinCta": "Join →",
+        "notesTitle": "Notes",
+        "notesShared": "Shared notes",
+        "notesPrivate": "Private notes (mentor)",
+        "notesSave": "Save notes",
+        "reviewCta": "Leave a review",
+        "cancelDialog": {
+          "title": "Cancel this session?",
+          "reasonLabel": "Reason (5–500 characters)",
+          "submit": "Confirm cancellation"
+        },
+        "rescheduleDialog": {
+          "title": "Reschedule the session",
+          "newDateLabel": "New date / time",
+          "submit": "Reschedule"
+        },
+        "completedHint": "This session is completed.",
+        "cancelledHint": "This session has been cancelled."
+      },
+      "feedback": {
+        "scheduledSuccess": "Session scheduled.",
+        "cancelSuccess": "Session cancelled.",
+        "rescheduleSuccess": "Session rescheduled.",
+        "completedSuccess": "Session marked as completed.",
+        "notesSaved": "Notes saved.",
+        "actionError": "An error occurred."
+      }
+    },
+    "messages": {
+      "title": "Messages",
+      "subtitle": "All your conversations grouped by mentorship.",
+      "empty": "You don't have any conversations yet. Start a mentorship to chat.",
+      "threadEmpty": "No messages in this conversation.",
+      "placeholder": "Write a message…",
+      "send": "Send",
+      "sending": "Sending…",
+      "yesterday": "Yesterday",
+      "today": "Today",
+      "unread": "{count, plural, one {# unread} other {# unread}}",
+      "selectThread": "Select a conversation to see messages.",
+      "lastMessage": "Last message on {date}",
+      "lockedBanner": "Read-only conversation (mentorship closed).",
+      "openInDetailCta": "Open in mentorship →"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Everything that has happened on your Mentora account.",
+      "empty": "No notifications yet.",
+      "markAllRead": "Mark all as read",
+      "markRead": "Mark as read",
+      "openTarget": "Open →",
+      "groups": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "earlier": "Earlier"
+      },
+      "bell": {
+        "ariaLabel": "Notifications",
+        "unread": "{count} unread",
+        "viewAll": "View all notifications"
+      },
+      "types": {
+        "REQUEST_RECEIVED": "You received a new mentorship request.",
+        "REQUEST_ACCEPTED": "Your request has been accepted 🎉",
+        "REQUEST_DECLINED": "Your request was declined.",
+        "REQUEST_WITHDRAWN": "A request was withdrawn by the mentee.",
+        "REQUEST_EXPIRED": "A request has expired.",
+        "SESSION_SCHEDULED": "A session has been scheduled.",
+        "SESSION_REMINDER": "Reminder: your session takes place in 24 hours.",
+        "SESSION_CANCELLED": "A session has been cancelled.",
+        "SESSION_RESCHEDULED": "A session has been rescheduled.",
+        "NEW_MESSAGE": "New message in a mentorship.",
+        "REVIEW_RECEIVED": "You received a new review.",
+        "MENTOR_APPROVED": "Your mentor profile has been approved 🎉",
+        "MENTOR_REJECTED": "Your mentor profile was not approved.",
+        "POST_REPLY": "New reply to your post",
+        "COMMENT_REPLY": "New reply to your comment",
+        "MENTION": "You were mentioned",
+        "REACTION_RECEIVED": "Reaction received on your content",
+        "CHANNEL_INVITE": "Invitation to join a channel",
+        "CHANNEL_JOIN_REQUESTED": "Channel join request",
+        "CHANNEL_JOIN_APPROVED": "Channel membership approved",
+        "MODERATION_ACTION": "Moderation action",
+        "BADGE_AWARDED": "New badge unlocked",
+        "CHALLENGE_NEW": "New challenge available",
+        "CHALLENGE_RESULT": "Challenge results",
+        "CHALLENGE_VOTE_RECEIVED": "Vote received on your submission",
+        "REPORT_RECEIVED": "New report received"
+      },
+      "emails": {
+        "requestReceived": {
+          "subject": "[Mentora] New mentorship request",
+          "body": "Hello {recipientName},\n\nYou have received a new mentorship request from {senderName}.\n\nMessage:\n{message}\n\nReview the request on your dashboard:\n{url}\n\nThe Digizelle Mentora team"
+        },
+        "requestAccepted": {
+          "subject": "[Mentora] Your request has been accepted",
+          "body": "Hello {recipientName},\n\nGood news: {senderName} has accepted your mentorship request. You can now schedule your first session.\n\n{url}\n\nThe Digizelle Mentora team"
+        },
+        "requestDeclined": {
+          "subject": "[Mentora] Your request could not move forward",
+          "body": "Hello {recipientName},\n\nUnfortunately, {senderName} was unable to accept your mentorship request.\n\nReason: {reason}\n\nDiscover other mentors who might be a good fit:\n{url}\n\nThe Digizelle Mentora team"
+        },
+        "sessionScheduled": {
+          "subject": "[Mentora] Session scheduled on {date}",
+          "body": "Hello {recipientName},\n\nA new session has been scheduled on {date} ({duration} min) with {otherName}.\n\nSession details:\n{url}\n\nThe Digizelle Mentora team"
+        },
+        "sessionReminder": {
+          "subject": "[Mentora] Reminder: session in 24 hours",
+          "body": "Hello {recipientName},\n\nQuick reminder: your session with {otherName} is scheduled for {date}.\n\nSession link: {meetingUrl}\nDetails: {url}\n\nSee you soon!\nThe Digizelle Mentora team"
+        },
+        "sessionCancelled": {
+          "subject": "[Mentora] Session cancelled",
+          "body": "Hello {recipientName},\n\nThe session on {date} with {otherName} has been cancelled.\n\nReason: {reason}\n\nYou can reschedule a session here:\n{url}\n\nThe Digizelle Mentora team"
+        },
+        "mentorApproved": {
+          "subject": "[Mentora] Your mentor profile is approved 🎉",
+          "body": "Hello {recipientName},\n\nCongratulations, your mentor profile has been approved by our team. It is now publicly visible on Mentora.\n\nManage your availability and requests:\n{url}\n\nThe Digizelle Mentora team"
+        }
+      },
+      "bodies": {
+        "REQUEST_RECEIVED": "A new mentorship request has been sent to you. Accept or decline from the \"Requests\" tab.",
+        "REQUEST_ACCEPTED": "Your mentorship request has been accepted. You can now schedule your first session.",
+        "REQUEST_DECLINED": "Your request was declined. Don't worry — explore other profiles to find the right match.",
+        "REQUEST_WITHDRAWN": "A mentorship request has been withdrawn.",
+        "REQUEST_EXPIRED": "Your mentorship request expired without a response. You can resend it to another mentor.",
+        "SESSION_SCHEDULED": "A new session has been scheduled. Find it in your agenda.",
+        "SESSION_REMINDER": "Your session is approaching. Prepare your questions and join at the scheduled time.",
+        "SESSION_CANCELLED": "A session has been cancelled. You can schedule another from your agenda.",
+        "SESSION_RESCHEDULED": "A session has been rescheduled. Check the new time slot in your agenda.",
+        "NEW_MESSAGE": "You have received a new message.",
+        "REVIEW_RECEIVED": "You received a new review. View it from your profile.",
+        "MENTOR_APPROVED": "Welcome to the program: your mentor application has been accepted.",
+        "MENTOR_REJECTED": "Your mentor application was not selected this time. The Digizelle team can support you in trying again.",
+        "POST_REPLY": "Someone replied to your post. Open it to read the rest of the discussion.",
+        "COMMENT_REPLY": "Someone replied to your comment.",
+        "MENTION": "Someone mentioned you in a discussion. Open it to see the context.",
+        "REACTION_RECEIVED": "Your content received a new reaction.",
+        "CHANNEL_INVITE": "You are invited to join a community channel.",
+        "CHANNEL_JOIN_REQUESTED": "A join request is awaiting your approval.",
+        "CHANNEL_JOIN_APPROVED": "Your channel join request has been accepted.",
+        "MODERATION_ACTION": "A moderation action has been taken concerning you. View details in the notification center.",
+        "BADGE_AWARDED": "You just unlocked a new badge. Well done!",
+        "CHALLENGE_NEW": "A new challenge is open. Take your shot before the deadline!",
+        "CHALLENGE_RESULT": "Challenge results are available. Discover your ranking.",
+        "CHALLENGE_VOTE_RECEIVED": "Your submission received a new vote.",
+        "REPORT_RECEIVED": "A new report has been received for review."
+      },
+      "open": "Open"
+    },
+    "reviews": {
+      "rateTitle": "Leave your review",
+      "rateSubtitle": "Your feedback helps other mentees make a choice.",
+      "rateLabel": "Rating",
+      "commentLabel": "Comment (optional)",
+      "commentPlaceholder": "Describe your experience…",
+      "isPublicLabel": "Make the review public on the mentor's profile",
+      "submit": "Publish my review",
+      "submitting": "Publishing…",
+      "success": "Thank you! Your review has been published.",
+      "starsAria": "{count} out of 5 stars"
+    },
+    "availability": {
+      "metaTitle": "My availability",
+      "title": "My availability",
+      "subtitle": "Define your weekly time slots. Mentees can only book sessions during these slots.",
+      "weeklyTitle": "Weekly schedule",
+      "timezoneLabel": "Timezone: {tz}",
+      "helpText": "Hours are saved in your timezone ({tz}). Add multiple slots per day if needed.",
+      "weekdays": {
+        "sun": "Sunday",
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday"
+      },
+      "addRange": "+ Add a slot",
+      "removeRange": "Remove",
+      "rangeSeparator": "→",
+      "dayEmpty": "Unavailable this day",
+      "startTimeAria": "Start ({day})",
+      "endTimeAria": "End ({day})",
+      "saveCta": "Save my availability",
+      "saveSuccess": "Availability saved.",
+      "exceptionsTitle": "Upcoming exceptions",
+      "exceptionsHelp": "Block a specific day (vacation, one-time unavailability) or open an extra slot outside your weekly schedule.",
+      "exceptionDateLabel": "Date",
+      "exceptionStartLabel": "Start",
+      "exceptionEndLabel": "End",
+      "exceptionKindLabel": "Exception type",
+      "exceptionNoteLabel": "Note (optional)",
+      "exceptionNotePlaceholder": "E.g.: annual leave, conference…",
+      "addException": "+ Add an exception",
+      "addExceptionSuccess": "Exception added.",
+      "removeException": "Remove",
+      "removeExceptionSuccess": "Exception removed.",
+      "kindLabels": {
+        "blocked": "Blocked",
+        "extra": "Extra"
+      },
+      "empty": "No exceptions scheduled for the coming days.",
+      "errors": {
+        "invalidRange": "End time must be after start time.",
+        "outOfBounds": "Times must be within the day.",
+        "unexpected": "An unexpected error occurred. Please try again."
+      }
+    },
+    "profileEdit": {
+      "mentorTitle": "Edit my mentor profile",
+      "mentorSubtitle": "Polish your profile to attract the right mentees. All marked fields are published on your public page.",
+      "menteeTitle": "Edit my mentee profile",
+      "previewLabel": "Public preview",
+      "saveCta": "Save",
+      "saveSuccess": "Profile saved.",
+      "cancelCta": "Cancel",
+      "submitForReview": "Submit for review",
+      "submitForReviewSuccess": "Your profile is under review.",
+      "publishingPending": "Under review by the Digizelle team.",
+      "photoComingSoon": "Coming soon: direct upload from your computer.",
+      "completionLabel": "Profile completion",
+      "completionTooLow": "Complete the marked sections before submitting your profile.",
+      "basicsSectionTitle": "Public profile",
+      "preferencesSectionTitle": "Mentorship preferences",
+      "skillsSectionTitle": "My skills",
+      "skillsHelp": "Add the skills you offer. Highlight up to 3 skills on your public page.",
+      "skillsEmpty": "No skills added yet.",
+      "skillSearchPlaceholder": "Search for a skill (React, UX, Communication…)",
+      "skillSearchEmpty": "No skills found.",
+      "addSkill": "Add a skill",
+      "removeSkill": "Remove",
+      "setFeatured": "Highlight",
+      "unsetFeatured": "Remove highlight",
+      "statusBanner": {
+        "label": "Profile status",
+        "draft": "Draft — not published",
+        "pendingReview": "Under review",
+        "active": "Active and publicly visible",
+        "paused": "Paused — not visible",
+        "suspended": "Suspended — contact the team"
+      },
+      "fields": {
+        "headline": "Short title",
+        "headlinePlaceholder": "E.g.: Lead Designer · 8 years of experience",
+        "bio": "About",
+        "bioPlaceholder": "Introduce yourself: background, values, what you enjoy sharing. Min. 120 characters.",
+        "bioHint": "{count} characters",
+        "yearsExperience": "Years of experience",
+        "hourlyRate": "Hourly rate (EUR)",
+        "hourlyRatePlaceholder": "Leave empty = free",
+        "hourlyRateHint": "Optional. Many Digizelle mentors offer their time for free.",
+        "timezone": "Timezone",
+        "location": "Location",
+        "locationPlaceholder": "Paris, France",
+        "languages": "Languages",
+        "languagesHint": "ISO codes separated by commas. E.g.: fr, en",
+        "photoUrl": "Photo URL",
+        "linkedinUrl": "LinkedIn profile",
+        "isAcceptingMentees": "I am accepting new mentorship requests",
+        "maxConcurrentMentees": "Concurrent mentees (max)",
+        "responseTime": "Typical response time",
+        "skillLevel": "Level",
+        "yearsOfPractice": "Years of practice",
+        "featured": "Highlighted"
+      },
+      "responseTimes": {
+        "WITHIN_HOUR": "Within an hour",
+        "WITHIN_DAY": "Within 24 hours",
+        "WITHIN_WEEK": "Within a week",
+        "WITHIN_MONTH": "Within a month"
+      },
+      "skillLevels": {
+        "BEGINNER": "Beginner",
+        "INTERMEDIATE": "Intermediate",
+        "ADVANCED": "Advanced",
+        "EXPERT": "Expert"
+      },
+      "preview": {
+        "headlinePlaceholder": "Your title will appear here",
+        "skillsPlaceholder": "Your highlighted skills will appear here",
+        "bioPlaceholder": "Your introduction will appear here once you've written it.",
+        "experienceLabel": "Experience",
+        "experienceValue": "{years, plural, one {# year} other {# years}}",
+        "rateLabel": "Rate",
+        "rateValue": "€{euros}/hr",
+        "rateFree": "Free",
+        "languagesLabel": "Languages",
+        "ratingLabel": "Rating",
+        "ratingNone": "—",
+        "linkedinCta": "LinkedIn"
+      },
+      "errors": {
+        "unexpected": "An unexpected error occurred. Please try again."
+      }
+    },
+    "finalCta": {
+      "title": "Ready to",
+      "titleHighlight": "get started?",
+      "body": "Mentora is free for Digizelle beneficiaries. Sign up — it only takes 5 minutes.",
+      "createProfile": "Create my profile →"
+    },
+    "landing": {
+      "featured": {
+        "eyebrow": "A few mentors",
+        "title": "Discover our",
+        "titleHighlight": "active mentors.",
+        "intro": "A glimpse of the profiles available right now. Full matching happens after sign-up.",
+        "empty": "The first mentors are arriving very soon. Check back in a few days.",
+        "viewProfile": "View profile",
+        "yearsLabel": "{years} years of experience",
+        "ratingLabel": "{rating}★ ({count})",
+        "noRating": "New",
+        "seeAllCta": "View all mentors →"
+      },
+      "howItWorks": {
+        "eyebrow": "How it works",
+        "title": "Four steps",
+        "titleHighlight": "to get started.",
+        "intro": "From account creation to your first mentor video call, expect less than a week.",
+        "steps": {
+          "0": {
+            "n": "01",
+            "title": "Create your profile",
+            "desc": "Your goals, your level, your availability. Five minutes is enough."
+          },
+          "1": {
+            "n": "02",
+            "title": "Explore mentors",
+            "desc": "Our algorithm ranks mentors compatible with your target skills."
+          },
+          "2": {
+            "n": "03",
+            "title": "Send a request",
+            "desc": "Introduce yourself to the mentor of your choice. They will reply within a few days."
+          },
+          "3": {
+            "n": "04",
+            "title": "Move forward together",
+            "desc": "Monthly video calls, private messaging, progress tracking and tailored resources."
+          }
+        }
+      },
+      "ctas": {
+        "findMentor": "Find a mentor",
+        "findMentorAuthed": "View mentors",
+        "completeOnboarding": "Complete my profile",
+        "becomeMentor": "Become a mentor"
+      }
+    },
+    "discover": {
+      "metaTitle": "Find a mentor — Mentora",
+      "metaDescription": "Full directory of Mentora mentors: filter by skill, language, format and rating.",
+      "breadcrumb": "Find a mentor",
+      "title": "Find",
+      "titleHighlight": "your mentor.",
+      "subtitle": "Filter by skills, languages and format. Profiles are ranked by compatibility.",
+      "searchPlaceholder": "Search a mentor, a skill...",
+      "filters": {
+        "title": "Filters",
+        "skills": "Skills",
+        "skillsPlaceholder": "E.g.: react, ux, product",
+        "skillsHint": "Slugs separated by commas.",
+        "language": "Language",
+        "languageAny": "All",
+        "format": "Format",
+        "formatAny": "All formats",
+        "formatRemote": "Remote",
+        "formatInPerson": "In person",
+        "formatHybrid": "Hybrid",
+        "minRating": "Minimum rating",
+        "ratingAny": "All",
+        "rating4": "4★ and up",
+        "rating4_5": "4.5★ and up",
+        "apply": "Apply",
+        "reset": "Reset"
+      },
+      "sort": {
+        "label": "Sort by",
+        "match": "Compatibility",
+        "rating": "Rating",
+        "recency": "Recent"
+      },
+      "empty": {
+        "title": "No mentors match these filters",
+        "body": "Try broadening your criteria — fewer skills, another format or rating.",
+        "reset": "Reset filters"
+      },
+      "resultsCount": "{count, plural, =0 {No mentors} =1 {1 mentor} other {# mentors}} found",
+      "pagination": {
+        "prev": "Previous",
+        "next": "Next",
+        "page": "Page {page} / {total}"
+      },
+      "card": {
+        "yearsLabel": "{years} years",
+        "ratingLabel": "{rating}★ ({count})",
+        "noRating": "New profile",
+        "languagesLabel": "Languages",
+        "responseLabel": "Replies {time}",
+        "responseTime": {
+          "WITHIN_HOUR": "within an hour",
+          "WITHIN_DAY": "within 24 hours",
+          "WITHIN_WEEK": "within a week",
+          "WITHIN_MONTH": "within a month"
+        },
+        "viewProfile": "View profile",
+        "requestCta": "Send a request",
+        "matchScore": "{score}% match"
+      },
+      "whyMatch": {
+        "title": "Why this mentor?",
+        "breakdownLabel": "Score breakdown",
+        "components": {
+          "skills": "Skills",
+          "languages": "Languages",
+          "timezone": "Timezone",
+          "rating": "Reviews",
+          "response": "Responsiveness",
+          "recency": "Recent activity",
+          "diversity": "Availability"
+        },
+        "close": "Close"
+      }
+    },
+    "profile": {
+      "metaTitleSuffix": "Mentor — Mentora",
+      "metaDescriptionFallback": "Mentor profile on Mentora, Digizelle's 1-to-1 mentorship platform.",
+      "breadcrumb": "Mentor profile",
+      "notFoundTitle": "Mentor not found",
+      "back": "← Back to directory",
+      "header": {
+        "yearsLabel": "{years} years of experience",
+        "ratingLabel": "{rating}★",
+        "ratingCount": "{count, plural, =0 {No reviews} =1 {1 review} other {# reviews}}",
+        "responseLabel": "Replies {time}",
+        "languagesLabel": "Languages",
+        "timezoneLabel": "Timezone",
+        "locationLabel": "Location",
+        "rateLabel": "Rate",
+        "rateFree": "Free",
+        "rateValue": "€{amount}/hr"
+      },
+      "sections": {
+        "about": "About",
+        "expertise": "Expertise",
+        "expertiseEmpty": "The mentor hasn't listed any skills yet.",
+        "reviews": "Reviews",
+        "reviewsEmpty": "No reviews for this mentor yet.",
+        "availability": "Availability",
+        "availabilityHint": "Exact slots are shown after your request is accepted."
+      },
+      "ctaRequest": "Request a mentor",
+      "ctaRequestDisabled": "The mentor is not accepting new mentees",
+      "ctaEditProfile": "Edit my profile",
+      "notAcceptingNotice": "This mentor is not taking on new mentees at the moment.",
+      "modal": {
+        "title": "Send a request to {name}",
+        "description": "Introduce yourself briefly and explain what you would like to work on together.",
+        "messageLabel": "Your message",
+        "messagePlaceholder": "Hello! My name is… and I would like to make progress on…",
+        "messageHint": "Between 10 and 1500 characters.",
+        "frequencyLabel": "Preferred frequency",
+        "frequency": {
+          "WEEKLY": "Weekly",
+          "BIWEEKLY": "Bi-weekly",
+          "MONTHLY": "Monthly",
+          "AD_HOC": "Case by case"
+        },
+        "topicsLabel": "Priority topics",
+        "topicsHint": "Select 1 to 5 target skills.",
+        "submit": "Send request",
+        "submitting": "Sending…",
+        "successTitle": "Request sent!",
+        "successMessage": "Your request has been delivered. You'll receive a notification as soon as the mentor responds.",
+        "errorPrefix": "Error: ",
+        "cancel": "Cancel",
+        "loginRequired": "Log in to send a request",
+        "loginCta": "Log in"
+      }
+    },
+    "onboarding": {
+      "metaTitle": "Get started with Mentora",
+      "metaDescription": "Set up your mentee profile to receive personalized suggestions.",
+      "breadcrumb": "Onboarding",
+      "title": "Welcome to",
+      "titleHighlight": "Mentora.",
+      "subtitle": "Three steps to personalize your mentor suggestions.",
+      "prefillNotice": "You already have a mentee profile. Update it if your goals have changed.",
+      "stepIndicator": "Step {current} / {total}",
+      "step1": {
+        "title": "Your goals",
+        "subtitle": "Tell us what you want to achieve with a mentor.",
+        "goalsLabel": "Your goals",
+        "goalsPlaceholder": "E.g.: land my first developer role, launch my side project, build confidence…",
+        "goalsHint": "Between 30 and 2000 characters.",
+        "levelLabel": "Current level",
+        "level": {
+          "BEGINNER": "Beginner",
+          "INTERMEDIATE": "Intermediate",
+          "ADVANCED": "Advanced"
+        },
+        "formatLabel": "Preferred format",
+        "format": {
+          "REMOTE": "Remote",
+          "IN_PERSON": "In person",
+          "HYBRID": "Hybrid"
+        }
+      },
+      "step2": {
+        "title": "Skills to work on",
+        "subtitle": "Select the skills you want to develop as a priority.",
+        "skillsLabel": "Target skills",
+        "skillsPlaceholder": "E.g.: react, design system, public speaking…",
+        "skillsHint": "Slugs separated by commas. The skill hierarchy will be available later.",
+        "challengesLabel": "Current challenges (optional)",
+        "challengesPlaceholder": "E.g.: I struggle with architecture, I don't know how to sell myself in interviews…",
+        "noSkillsHint": "You can add more later from your profile."
+      },
+      "step3": {
+        "title": "Languages and timezone",
+        "subtitle": "So we can suggest mentors compatible with your rhythm.",
+        "languagesLabel": "Languages spoken",
+        "languagesPlaceholder": "fr, en",
+        "languagesHint": "ISO 639-1 codes separated by commas.",
+        "timezoneLabel": "Timezone",
+        "timezoneAutodetect": "Auto-detected",
+        "locationLabel": "City (optional)",
+        "discoveredViaLabel": "How did you hear about Mentora?",
+        "discoveredVia": {
+          "SEARCH": "Online search",
+          "SOCIAL": "Social media",
+          "FRIEND": "Word of mouth",
+          "EVENT": "Digizelle event",
+          "PARTNER": "Partner",
+          "OTHER": "Other"
+        }
+      },
+      "actions": {
+        "back": "Back",
+        "next": "Next",
+        "finish": "Finish",
+        "update": "Update my preferences",
+        "submitting": "Saving…"
+      },
+      "errors": {
+        "generic": "An error occurred. Please try again in a moment.",
+        "goalsRequired": "Your goals are required.",
+        "languagesRequired": "Please indicate at least one language."
+      },
+      "successRedirectTitle": "Profile saved!",
+      "successRedirectBody": "Redirecting to recommended mentors…"
+    },
+    "becomeAMentor": {
+      "metaTitle": "Become a mentor — Mentora",
+      "metaDescription": "Share your experience and support the next generation in tech.",
+      "breadcrumb": "Become a mentor",
+      "title": "Become",
+      "titleHighlight": "a Mentora mentor.",
+      "subtitle": "Four guided steps. Your application is then reviewed by the Digizelle team.",
+      "eligibilityNotice": "Mentora is free, volunteer-based and open to tech, design, product and career profiles.",
+      "stepIndicator": "Step {current} / {total}",
+      "pendingNotice": {
+        "title": "Application under review",
+        "body": "Your profile has been submitted. You'll receive an email as soon as it's approved.",
+        "submittedAt": "Submitted on {date}"
+      },
+      "alreadyApproved": {
+        "title": "You are already a mentor!",
+        "body": "Update your profile from your dashboard.",
+        "cta": "Go to my profile"
+      },
+      "photoComingSoon": "Image upload is coming soon. For now, paste a public URL.",
+      "step1": {
+        "title": "Mentor profile",
+        "subtitle": "Introduce yourself in a few words — what mentees will see.",
+        "headlineLabel": "Profile title",
+        "headlinePlaceholder": "E.g.: Tech Lead — I help juniors structure their code",
+        "headlineHint": "Maximum 120 characters.",
+        "bioLabel": "Bio",
+        "bioPlaceholder": "Share your background, your favorite topics, your approach to mentorship…",
+        "bioHint": "Between 120 and 4000 characters.",
+        "yearsLabel": "Years of experience",
+        "photoLabel": "Photo (URL)",
+        "photoPlaceholder": "https://…",
+        "linkedinLabel": "LinkedIn (optional)"
+      },
+      "step2": {
+        "title": "Expertise",
+        "subtitle": "List the skills you can pass on.",
+        "skillsLabel": "Skills",
+        "skillsPlaceholder": "E.g.: react, typescript, system design…",
+        "skillsHint": "Slugs separated by commas. You'll fine-tune levels after approval.",
+        "levelLabel": "Overall level",
+        "level": {
+          "BEGINNER": "Beginner",
+          "INTERMEDIATE": "Intermediate",
+          "ADVANCED": "Advanced",
+          "EXPERT": "Expert"
+        }
+      },
+      "step3": {
+        "title": "Availability",
+        "subtitle": "Set your preferences. You can add specific time slots later.",
+        "languagesLabel": "Languages spoken",
+        "languagesPlaceholder": "fr, en",
+        "timezoneLabel": "Timezone",
+        "timezoneAutodetect": "Auto-detected",
+        "formatLabel": "Preferred format",
+        "format": {
+          "REMOTE": "Remote",
+          "IN_PERSON": "In person",
+          "HYBRID": "Hybrid"
+        },
+        "maxMenteesLabel": "Maximum number of concurrent mentees",
+        "responseTimeLabel": "Typical response time",
+        "responseTime": {
+          "WITHIN_HOUR": "Within an hour",
+          "WITHIN_DAY": "Within 24 hours",
+          "WITHIN_WEEK": "Within a week",
+          "WITHIN_MONTH": "Within a month"
+        }
+      },
+      "step4": {
+        "title": "Summary",
+        "subtitle": "Review your information before submitting your application.",
+        "reviewHeadline": "Title",
+        "reviewBio": "Bio",
+        "reviewYears": "Experience",
+        "reviewSkills": "Skills",
+        "reviewLanguages": "Languages",
+        "reviewFormat": "Format",
+        "reviewResponseTime": "Responsiveness",
+        "reviewMaxMentees": "Capacity",
+        "consent": "I confirm that the information is accurate and that I accept the Digizelle mentor charter.",
+        "submitNotice": "Your profile will be reviewed within 5 business days."
+      },
+      "actions": {
+        "back": "Back",
+        "next": "Next",
+        "submit": "Submit my application",
+        "submitting": "Sending…",
+        "viewDashboard": "Go to my dashboard"
+      },
+      "errors": {
+        "generic": "An error occurred. Please try again in a moment.",
+        "headlineRequired": "The title is required.",
+        "bioTooShort": "The bio must be at least 120 characters.",
+        "languagesRequired": "Please indicate at least one language.",
+        "skillsRequired": "Please indicate at least one skill.",
+        "consentRequired": "You must accept the mentor charter."
+      }
+    },
+    "skillCategories": {
+      "TECHNICAL": "Technical",
+      "SOFT": "Soft skills",
+      "CAREER": "Career",
+      "BUSINESS": "Business",
+      "CREATIVE": "Creative"
+    }
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "eyebrow": "404 Error",
+    "title": "Hmm...",
+    "titleSuffix": "lost?",
+    "body": "The page you're looking for doesn't exist (anymore). Our mascot is just as confused. Want us to get you back on track?",
+    "home": "Back to home →",
+    "report": "Report a bug",
+    "shortcuts": {
+      "programs": "→ programs",
+      "mentora": "→ mentora",
+      "events": "→ events",
+      "blog": "→ blog"
+    }
+  },
+  "privacy": {
+    "metaTitle": "Privacy policy",
+    "metaDescription": "Digizelle privacy policy — data collected, purposes, retention, GDPR rights.",
+    "eyebrow": "Privacy policy",
+    "title": "Your data,",
+    "titleHighlight": "your control.",
+    "intro": "Digizelle takes the protection of your personal data very seriously. This policy describes, with full transparency, what data we collect, why, how it is protected, how long it is kept, and how you can exercise your rights in accordance with Regulation (EU) 2016/679 (GDPR) and the French Data Protection Act of January 6, 1978 as amended.",
+    "lastUpdated": "Last updated: May 2026",
+    "toc": "Table of contents",
+    "sections": {
+      "controller": {
+        "title": "Data controller",
+        "body": "Digizelle (French non-profit, association loi 1901) acts as the data controller within the meaning of article 4.7 of the GDPR for all personal data collected via this site and the Mentora & Community platform.\n\nContact details:\n• Registered office: EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\n• Single association contact: contact@digizelle.fr (all requests: general, GDPR, communication, press)\n\nThe role of GDPR contact point is held by the association's Tech Lead until an external delegate is appointed. For any request to exercise rights, report a breach, or discuss the compliance of processing, write to contact@digizelle.fr. The contact details for the CNIL (the French supervisory authority) are listed at the end of this document."
+      },
+      "data": {
+        "title": "Data collected",
+        "body": "We apply the principle of minimization: only data strictly necessary for each purpose is collected.\n\n— Contact form: first name, last name, email, subject, message. Legal basis: legitimate interest (responding to your request).\n— Mentora sign-up: first name, last name, email, hashed password (bcrypt), role (learner / mentor / partner), sign-up date. Legal basis: performance of the membership contract.\n— Mentor/mentee profile: skills, availability, background, optional photo. Legal basis: explicit consent.\n— Newsletter: email, sign-up source, date. Legal basis: consent (opt-in).\n— Technical data: truncated IP address, user-agent, pages visited (server logs, aggregated statistics).\n— Technical cookies: session, CSRF token, theme preference. See the Cookies page.\n\nNo sensitive data (origin, political opinions, religion, health, sexual orientation) is collected."
+      },
+      "purpose": {
+        "title": "Purposes",
+        "body": "Your data is used exclusively for the following purposes:\n• Responding to your requests (contact, press, partnership)\n• Managing your account in the Mentora area and the mentor/mentee matching\n• Sending you the Digizelle newsletter, which you've freely subscribed to\n• Informing you of events or programs you've registered for\n• Ensuring the security, availability and improvement of the site\n• Responding to legal obligations (judicial requisitions)\n\nYour data is never sold. No advertising profiling is carried out."
+      },
+      "retention": {
+        "title": "Retention period",
+        "body": "In accordance with the principle of storage limitation (article 5.1.e of the GDPR):\n• Contact messages: 2 years after the last exchange, then 1 year of intermediate archiving\n• Mentora user accounts: as long as the account is active; deleted on request within 30 days, or automatically after 24 months of inactivity\n• Newsletter sign-ups: until you unsubscribe (link in every email)\n• Technical logs (security, fraud prevention): 12 months maximum\n• Encrypted backups: kept for 90 days then destroyed\n\nAt the end of these periods, data is anonymized (aggregated statistics) or permanently deleted."
+      },
+      "rights": {
+        "title": "Your GDPR rights",
+        "body": "You have the following rights at all times, exercisable directly from your account or by email:\n\n• Right of access (article 15): summary of the data we hold, accessible from Community → Settings.\n• Right to rectification (article 16): direct edits from your profile.\n• Right to erasure / \"right to be forgotten\" (article 17): \"Delete my account\" button in Settings → 30-day grace period then irreversible purge.\n• Right to restrict processing (article 18): on request to the DPO (Data Protection Officer).\n• Right to portability (article 20): JSON export downloadable from Settings, in machine-readable format.\n• Right to object (article 21): 1-click marketing opt-out in every email or via Settings.\n• Right to withdraw your consent at any time.\n• Right to define post-mortem directives on your data (French Data Protection Act).\n\nTo exercise a right not covered by the built-in tools, write to contact@digizelle.fr specifying the nature of your request. Reply within 30 days (90 days in case of complexity, with notification). In case of disagreement, you can lodge a complaint with the CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
+      },
+      "subprocessors": {
+        "title": "Subprocessors & technical partners",
+        "body": "To operate, the site relies on subprocessors within the meaning of article 28 of the GDPR. All have been selected for their GDPR compliance and are bound by a Data Processing Agreement (DPA). The list, up to date as of the last revision, is:\n\n— Vercel Inc. (United States, EU infrastructure): Next.js hosting, CDN, serverless functions. Execution region: Europe (CDG / Paris). Data processed: HTTP logs, request content during execution.\n— Supabase Inc. (United States, EU infrastructure): PostgreSQL database, authentication, file storage. Region: eu-west-3 (Paris). Data processed: accounts, profiles, community content, mentorship sessions.\n— Resend Inc. (United States, EU routing available): sending of transactional emails (verification, reset, notifications) and newsletter campaigns. Data processed: email, first name, deliverability status.\n— Functional Software Inc. (Sentry): observability and error reporting on the server and browser side. Region: sentry.de.io (EU). Recorded sessions (replay) mask all text (`maskAllText`) and block media (`blockAllMedia`); request bodies are filtered before sending.\n— Auth.js v5 (open-source, run on Digizelle infrastructure): session and authentication management.\n— Google LLC, GitHub Inc., Discord Inc.: optional OAuth providers for social sign-in. If you don't use these options, no data is transmitted to them.\n\nNone of these subprocessors are authorized to use your data on their own account."
+      },
+      "transfers": {
+        "title": "Transfers outside the European Union",
+        "body": "Application data (accounts, profiles, content, logs) is stored and processed exclusively in the European Union (Supabase eu-west-3 Paris, Vercel CDG, Sentry sentry.de.io). No application transfer takes place to the United States or other third countries.\n\nSince the parent companies of these providers (Vercel Inc., Supabase Inc., Resend Inc., Functional Software Inc.) are based in the United States, administrative transfers (billing, support) may occur. They are governed by:\n• the European Commission's Standard Contractual Clauses (SCCs), 2021 version (decision 2021/914);\n• the EU-U.S. Data Privacy Framework where the provider is certified;\n• additional technical measures: TLS 1.3, AES-256 encryption at rest, principle of least privilege.\n\nIf you use Google, GitHub or Discord OAuth sign-in, the OAuth provider applies its own transfer policy."
+      },
+      "minors": {
+        "title": "Minors & youth protection",
+        "body": "Digizelle is primarily aimed at a young audience. French law sets the age of digital consent at 15 (article 8 of the GDPR, transposed into article 45 of the amended French Data Protection Act).\n\n• The sign-up form includes a mandatory honor declaration of being at least 15 years old (unchecked checkbox). Without this declaration, sign-up is refused.\n• For people aged 15 to 17, sign-up is allowed but no advertising profiling is applied and moderation is reinforced.\n• For anyone under 15, sign-up is forbidden. If discovered later (report, profile contradiction), the account is suspended within 24 hours then deleted after verification.\n• Parents or guardians may at any time request access, rectification or deletion of their child's data at contact@digizelle.fr by providing proof of their status.\n• A Data Protection Impact Assessment (DPIA) is being prepared for the parts that involve minors (public profiles, UGC community)."
+      },
+      "security": {
+        "title": "Security measures",
+        "body": "Digizelle implements appropriate technical and organizational measures to protect your data against loss, alteration or unauthorized access:\n• TLS 1.3 encryption on all communications (HTTPS enforced via HSTS)\n• Passwords stored hashed with bcrypt (cost ≥ 12), never in plain text\n• Reinforced authentication for administrator accounts\n• Supabase Row-Level Security (RLS) policies to compartmentalize data\n• Daily encrypted backups, with tested restorability\n• Logging of sensitive accesses, alerts in case of anomaly\n• Regular security audits and rapid patch application\n• Awareness training for volunteers with data access (internal charter)\n\nIn the event of a data breach likely to result in a risk to your rights, we will notify the CNIL within 72 hours (article 33 GDPR) and inform you individually if necessary."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "The site uses a minimal number of cookies, mainly technical (session, theme preference). No advertising tracking or third-party profiling cookies are placed without your explicit consent, in accordance with article 82 of the French Data Protection Act and CNIL recommendations. See our dedicated Cookies page for the detailed list and management options."
+      },
+      "contact": {
+        "title": "Data Protection Officer (DPO)",
+        "body": "Digizelle has appointed a dedicated GDPR contact point (internal DPO), independent of the operational functions concerned by the processing:\n\n• GDPR / DPO email: contact@digizelle.fr (the association's single contact address)\n• Mail: Digizelle — Data Protection Officer — EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre\n\nDPO duties (article 39 GDPR): inform and advise the data controller, monitor compliance, single point of contact for data subjects and the CNIL, follow-up on incidents and any notifications (articles 33-34).\n\nResponse time for requests: 30 days (extendable to 90 days in case of complexity, with reasoned notification). In case of disagreement, you can lodge a complaint with the CNIL — 3 place de Fontenoy, 75007 Paris — www.cnil.fr."
+      }
+    }
+  },
+  "programs": {
+    "metaTitle": "Programs",
+    "metaDescription": "Immersive Workshop, Masterclass, Hackathon, Mentora — four inclusive Digizelle formats.",
+    "eyebrow": "2026 Programs",
+    "title": "Four formats.",
+    "titleHighlight": "One shared ambition.",
+    "intro": "Pick the program that matches your pace, level and interests. All are accessible, all are free or fairly priced.",
+    "filters": {
+      "all": "All",
+      "discovery": "Discovery",
+      "deepening": "Deep dive",
+      "creation": "Creation",
+      "longterm": "Long term"
+    },
+    "items": {
+      "atelier": {
+        "title": "Immersive Workshop",
+        "tag": "Discovery",
+        "duration": "3 days",
+        "desc": "Hands-on sessions to explore a digital skill as a group.",
+        "bullets": [
+          "Intensive 3-day format",
+          "Groups of 12 max",
+          "Expert facilitators",
+          "All levels"
+        ],
+        "details": {
+          "intro": "Three days to discover a digital skill with no prerequisites: you set up, you practice, you ship a mini-project. Designed for school holidays and young people who want a taste of the role before committing further.",
+          "audience": "Ages 15-25, beginners or intermediate. No technical prerequisites — only the desire to experiment.",
+          "format": "12 participants maximum, 2 professional facilitators throughout, hosted at Epitech or partner spaces. Equipment provided.",
+          "outcomes": "Mini-project delivered, Digizelle certificate, access to the online community and the Programs newsletter to discover upcoming masterclasses and hackathons."
+        }
+      },
+      "masterclass": {
+        "title": "Masterclass",
+        "tag": "Deep dive",
+        "duration": "8 weeks",
+        "desc": "Learning cycle with experts to deepen your knowledge in a technical field.",
+        "bullets": [
+          "8 sessions of 3 hours",
+          "Industry mentors",
+          "Capstone project",
+          "Certification"
+        ],
+        "details": {
+          "intro": "Eight weeks, eight 3-hour sessions led by experts from Microsoft, AWS, Allianz and Epitech. You walk away with a delivered project, validated by a jury and recognized by partner recruiters.",
+          "audience": "Intermediate to advanced level (students with a 2-year degree minimum or experienced self-taught learners). Selection based on motivation letter.",
+          "format": "Weekly in-person sessions (Epitech Le Kremlin-Bicêtre) or hybrid. Followed by an industry mentor throughout the program.",
+          "outcomes": "Digizelle certification, capstone project for your portfolio, possible recommendation to partner companies (Microsoft, AWS, Allianz)."
+        }
+      },
+      "hackathon": {
+        "title": "Hackathon",
+        "tag": "Creation",
+        "duration": "48 h",
+        "desc": "48 hours to build as a team on a digital challenge with mentors.",
+        "bullets": [
+          "Tech & impact challenges",
+          "Teams of 4-5",
+          "Industry jury",
+          "Prizes to win"
+        ],
+        "details": {
+          "intro": "A weekend to go from an idea to a prototype defended in front of a jury of industry pros. Themes focused on tech & impact (inclusion, climate, responsible AI). Meals, venue and mentors included.",
+          "audience": "All levels from age 16. Sign up as a team (4-5 people) or solo — we'll match you on the day.",
+          "format": "48 hours non-stop with two on-site nights possible, 8-12 mentors rotating throughout, final 5-minute demo before a jury of 5 pros.",
+          "outcomes": "Winner's prize (equipment + sponsorship donated to an inclusion project), audience favorite prize, introductions to recruiters and project publication on the Digizelle platform."
+        }
+      },
+      "mentora": {
+        "title": "Mentora",
+        "tag": "Long term",
+        "duration": "6 months",
+        "desc": "1-to-1 mentorship program for sustained, longer-term support.",
+        "bullets": [
+          "Mentor/mentee matching",
+          "Monthly check-ins",
+          "Dedicated platform",
+          "Unlimited resources"
+        ],
+        "details": {
+          "intro": "Six months of support with a dedicated mentor. Personal goals, regular video sessions, custom resources and tracking on the Mentora platform. Ideal for those who need clear direction on their career path or entry into the working world.",
+          "audience": "Ages 16-30, students or young professionals looking for direction, a career change or career structuring in digital.",
+          "format": "Algorithmic matching based on your interests and needs, 1 video call per month minimum + unlimited messaging, access to the Mentora platform with goals, sessions and journal.",
+          "outcomes": "Clarified career plan, broader professional network, end-of-program certificate, opportunity to become a mentor yourself afterwards."
+        }
+      }
+    },
+    "detailsModal": {
+      "close": "Close",
+      "applyCta": "Sign up →",
+      "loginNote": "You'll be redirected to the sign-in or sign-up page.",
+      "sections": {
+        "audience": "Who is it for?",
+        "format": "How it works",
+        "outcomes": "What you'll gain",
+        "bullets": "Key points"
+      }
+    },
+    "calendar": {
+      "title": "Upcoming",
+      "titleHighlight": "sessions.",
+      "month": "Month",
+      "quarter": "Quarter",
+      "items": {
+        "0": {
+          "month": "May",
+          "day": "12",
+          "title": "Generative AI Workshop",
+          "tag": "Workshop"
+        },
+        "1": {
+          "month": "May",
+          "day": "24",
+          "title": "UX/UI Masterclass",
+          "tag": "Masterclass"
+        },
+        "2": {
+          "month": "June",
+          "day": "08",
+          "title": "Hackathon #4",
+          "tag": "Hackathon"
+        },
+        "3": {
+          "month": "June",
+          "day": "20",
+          "title": "Mentora — kick-off",
+          "tag": "Mentora"
+        }
+      }
+    }
+  },
+  "projects": {
+    "metaTitle": "Projects",
+    "metaDescription": "Digizelle platform, Mentora program, community space and Impact events, hackathons & on-the-ground workshops — all of the association's achievements.",
+    "eyebrow": "Projects",
+    "title": "What we've",
+    "titleHighlight": "built together.",
+    "intro": "The web platform, the mentorship program, the community and on-the-ground events — every piece is designed with the Digizelle community for the digital inclusion of young people.",
+    "filters": {
+      "all": "All",
+      "platform": "Platform",
+      "program": "Program",
+      "event": "Event",
+      "community": "Community"
+    },
+    "items": {
+      "0": {
+        "title": "Digizelle Platform",
+        "category": "Platform",
+        "desc": "The website and the app together: showcase, Mentora program and community space."
+      },
+      "1": {
+        "title": "Mentora",
+        "category": "Program",
+        "desc": "Mentor/mentee program with algorithmic matching, scheduled sessions, goals and messaging. Designed for young people far from digital opportunities."
+      },
+      "2": {
+        "title": "Digizelle Community",
+        "category": "Community",
+        "desc": "Online community space: feed, themed channels, badges, challenges. More than 200 active members daily."
+      },
+      "3": {
+        "title": "Digizelle Impact #1",
+        "category": "Event",
+        "desc": "Our flagship event on March 13, 2026 at Epitech Paris. Over 60 young people, panels with Microsoft · AWS · Allianz and a leadership keynote."
+      },
+      "4": {
+        "title": "Women in GenAI Hackathon",
+        "category": "Event",
+        "desc": "EY × Microsoft 2025 finalist. Digizelle team (Bleuenn, Inès, Rajeeva, Marine) on a GenAI project for inclusion."
+      },
+      "5": {
+        "title": "On-the-ground Workshop Series",
+        "category": "Program",
+        "desc": "In-person workshops at VivaTech, BECOMTECH × Epitech, HEC Paris. Topics: AI as my future career, imposter syndrome, leadership."
+      }
+    },
+    "stats": {
+      "0": {
+        "n": "+260",
+        "label": "Beneficiaries"
+      },
+      "1": {
+        "n": "5",
+        "label": "Events organized"
+      },
+      "2": {
+        "n": "3",
+        "label": "Projects delivered"
+      },
+      "3": {
+        "n": "8",
+        "label": "Partners"
+      }
+    },
+    "eventsCtaTitle": "The calendar and",
+    "eventsCtaHighlight": "photo albums.",
+    "eventsCtaBody": "Panels, hackathons, workshops — all our editions in one place.",
+    "eventsCta": "View events →"
+  },
+  "team": {
+    "metaTitle": "Team",
+    "metaDescription": "The Digizelle team: co-founders, leads, volunteers and mentors committed to digital inclusion.",
+    "eyebrow": "The team",
+    "title": "The faces",
+    "titleHighlight": "behind the mission.",
+    "intro": "Digizelle brings together more than 20 members with diverse backgrounds — design, development, communication, marketing, events — united around a shared mission: making digital accessible to everyone.",
+    "members": {
+      "0": {
+        "name": "Priscillia Meza Samira",
+        "role": "Co-founder",
+        "bio": "AI Solution Architect at Microsoft, Epitech student. Strategy, partnerships and long-term vision.",
+        "linkedin": "",
+        "github": ""
+      },
+      "1": {
+        "name": "Bleuenn Cloteaux",
+        "role": "Co-founder",
+        "bio": "IT Business Controller at Allianz Technology, Epitech student, co-founder of the association. Leads student engagement and on-the-ground programs.",
+        "linkedin": "",
+        "github": ""
+      },
+      "2": {
+        "name": "Corto Colloc",
+        "role": "Secretary General",
+        "bio": "Financial System Analyst at Kering. Administrative management, partnership tracking and internal coordination of the association.",
+        "linkedin": "",
+        "github": ""
+      },
+      "3": {
+        "name": "Franck Fambou",
+        "role": "Team Leader — Dev & Tech",
+        "bio": "AI Engineer, MSc Data Sciences & Business Intelligence. Leads the Digizelle platform and AI projects.",
+        "linkedin": "",
+        "github": ""
+      },
+      "4": {
+        "name": "Inès Roumier",
+        "role": "Team Leader — Communication & Events",
+        "bio": "Consultant | Banking sector. Identity, content, social media. Finalist at the Women in GenAI 2025 hackathon (EY × Microsoft).",
+        "linkedin": "",
+        "github": ""
+      },
+      "5": {
+        "name": "Rajeeva Ravichandiran",
+        "role": "Development",
+        "bio": "Active member of the tech team. Finalist at the Women in GenAI 2025 hackathon.",
+        "linkedin": "",
+        "github": ""
+      },
+      "6": {
+        "name": "Marine Fruitier",
+        "role": "Development",
+        "bio": "Contributes to internal tools and AI projects. Finalist at the Women in GenAI 2025 hackathon.",
+        "linkedin": "",
+        "github": ""
+      },
+      "7": {
+        "name": "Ellischa Balourd",
+        "role": "Field Product Manager",
+        "bio": "Field Product Manager at Microsoft — Sales Enablement. Product strategy, support for Microsoft partnerships and market expertise.",
+        "linkedin": "",
+        "github": ""
+      },
+      "8": {
+        "name": "20+ volunteers & mentors",
+        "role": "Digizelle Community",
+        "bio": "A multidisciplinary team committed to digital inclusion for young people — especially young women.",
+        "linkedin": "",
+        "github": ""
+      }
+    },
+    "join": {
+      "chip": "Volunteering",
+      "title": "Want to",
+      "titleHighlight": "join us?",
+      "body": "We're always looking for mentors, speakers, event volunteers and corporate partners. One hour a month or more — every contribution counts.",
+      "becomeVolunteer": "Become a volunteer →",
+      "becomeMentor": "Become a mentor"
+    }
   }
 }
