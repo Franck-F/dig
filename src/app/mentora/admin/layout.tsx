@@ -76,6 +76,16 @@ export default async function MentoraAdminLayout({ children }: { children: React
     { href: '/mentora/admin/matching', label: tShell('nav.admin.matching'), icon: '⇋', matchPrefix: true },
     { href: '/mentora/admin/moderation', label: tShell('nav.admin.moderation'), icon: '◈', matchPrefix: true },
     { href: '/mentora/admin/reports', label: tShell('nav.admin.reports'), icon: '◌', matchPrefix: true },
+    // Account-level settings (profile, RGPD export, danger zone)
+    // shared with Community + dashboard sidebars — same target so
+    // an admin always lands on /community/settings regardless of
+    // which space they came from.
+    {
+      href: '/community/settings',
+      label: tShell('nav.community.settings'),
+      icon: '⚙',
+      matchPrefix: true,
+    },
   ];
 
   async function signOutAction() {

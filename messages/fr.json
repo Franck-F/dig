@@ -3131,7 +3131,8 @@
         "challenges": "Défis",
         "flags": "Signaux abus",
         "auditLog": "Journal admin",
-        "rgpd": "Registre RGPD"
+        "rgpd": "Registre RGPD",
+        "settings": "Paramètres"
       },
       "moderation": {
         "title": "File de modération",

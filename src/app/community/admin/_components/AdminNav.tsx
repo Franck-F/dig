@@ -13,6 +13,10 @@ const SECTIONS = [
   { key: 'flags', href: '/community/admin/flags' },
   { key: 'auditLog', href: '/community/admin/audit-log' },
   { key: 'rgpd', href: '/community/admin/rgpd' },
+  // Account-level settings — same canonical target as the community
+  // and mentora sidebars. Lives inside the admin nav so an admin
+  // doesn't need to leave their workflow to reach profile/RGPD/2FA.
+  { key: 'settings', href: '/community/settings' },
 ] as const;
 
 /**
