@@ -6,6 +6,12 @@ import { getTranslations } from 'next-intl/server';
 
 import Frame from '@/components/Frame';
 import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  CameraIcon,
+  MapPinIcon,
+} from '@/components/icons';
+import {
   breadcrumbJsonLd,
   eventJsonLd,
   jsonLdScriptProps,
@@ -14,17 +20,14 @@ import {
 import { EVENT_PHOTOS } from '../_data';
 
 /**
- * Generic event-album page. Reads the event details from the `home.events.items.*`
- * i18n bundle (where every home-page card carries `slug`, `title`, `date`,
- * `venue`, `intro`) and renders a clean photo grid backed by EVENT_PHOTOS.
+ * Generic event-album page. Reads the entry from `home.events.items.*`
+ * and renders the same DA-aligned layout as the static
+ * /events/digizelle-impact-1 album: capped 16:9 hero, eyebrow chip,
+ * meta chips with real SVG icons, photo grid.
  *
- * The dedicated `/events/digizelle-impact-1/page.tsx` route stays — its
- * static segment takes precedence over this dynamic one. That page has
- * richer content (stats block, intro from a different i18n namespace) so
- * it earns its custom layout. Future custom pages follow the same
- * pattern: drop a `[customSlug]/page.tsx` next to it.
- *
- * SEO: every album emits its own Event + Breadcrumb JSON-LD.
+ * The static digizelle-impact-1 route still wins (Next picks the
+ * literal segment over the dynamic one) and earns its richer stats
+ * block; every other home-card slug lands here with a clean baseline.
  */
 
 const HOME_EVENT_KEYS = ['0', '1', '2', '3', '4'] as const;
@@ -43,8 +46,6 @@ async function findHomeEventBySlug(
 }
 
 export async function generateStaticParams() {
-  // Pre-render the slug list at build time so every home-card link
-  // resolves cleanly without a per-request lookup.
   const t = await getTranslations('home.events.items');
   return HOME_EVENT_KEYS.flatMap((key) =>
     t.has(`${key}.slug`) ? [{ slug: t(`${key}.slug`) }] : [],
@@ -82,8 +83,11 @@ export default async function EventAlbumPage({
   const venue = tItem('venue');
   const intro = tItem('intro');
 
-  const cover = EVENT_PHOTOS[0];
-  const rest = EVENT_PHOTOS.slice(1);
+  // Cover photo rotates with the slug index so two adjacent albums
+  // don't share the same hero — visually clearer in /events lists.
+  const coverIdx = HOME_EVENT_KEYS.indexOf(found.key) % EVENT_PHOTOS.length;
+  const cover = EVENT_PHOTOS[coverIdx];
+  const rest = EVENT_PHOTOS.filter((_, i) => i !== coverIdx);
 
   return (
     <Frame active="events">
@@ -100,8 +104,6 @@ export default async function EventAlbumPage({
         {...jsonLdScriptProps(
           eventJsonLd({
             name: title,
-            // Use a generic startDate when no ISO is available — the
-            // home-card date is human-formatted, not RFC 3339.
             startDate: '2026-01-01',
             locationName: venue,
             locationCity: 'Paris',
@@ -112,43 +114,56 @@ export default async function EventAlbumPage({
         )}
       />
 
-      <section className="dz-section" style={{ paddingTop: 32, paddingBottom: 0 }}>
+      {/* Back link */}
+      <section className="dz-section" style={{ paddingTop: 28, paddingBottom: 0 }}>
         <Link
           href="/events"
-          className="dz-small"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: 6,
+            fontSize: 13,
             color: '#7301FF',
             textDecoration: 'none',
             fontWeight: 600,
           }}
         >
-          ← Retour aux événements
+          <ArrowLeftIcon size={14} />
+          Retour aux événements
         </Link>
       </section>
 
-      <section className="dz-section" style={{ paddingTop: 24, paddingBottom: 24 }}>
+      {/* Title block */}
+      <section className="dz-section" style={{ paddingTop: 18, paddingBottom: 18 }}>
         <div style={{ maxWidth: 820 }}>
           <div
-            className="dz-small"
+            className="dz-eyebrow"
+            style={{ display: 'inline-flex', marginBottom: 14 }}
+          >
+            <span className="dot" />
+            <CameraIcon size={13} />
+            <span style={{ marginLeft: 4 }}>Album photo</span>
+          </div>
+          <h1
+            className="dz-h1"
             style={{
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: '#7301FF',
-              fontWeight: 700,
-              marginBottom: 14,
+              margin: 0,
+              fontSize: 'clamp(32px, 4.5vw, 46px)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.02em',
             }}
           >
-            Album · {date}
-          </div>
-          <h1 className="dz-h1" style={{ margin: 0, fontSize: 48, lineHeight: 1.05 }}>
             {title}
           </h1>
           <p
             className="dz-body"
-            style={{ fontSize: 17, marginTop: 18, maxWidth: 640, color: '#3a2960' }}
+            style={{
+              fontSize: 17,
+              marginTop: 16,
+              maxWidth: 640,
+              color: '#3a2960',
+              lineHeight: 1.6,
+            }}
           >
             {intro}
           </p>
@@ -156,28 +171,30 @@ export default async function EventAlbumPage({
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: 24,
-              marginTop: 24,
-              color: '#5a4882',
-              fontSize: 14,
-              fontWeight: 600,
+              gap: 10,
+              marginTop: 22,
             }}
           >
-            <span>📅 {date}</span>
-            <span>📍 {venue}</span>
+            <MetaChip Icon={CalendarIcon} label={date} />
+            <MetaChip Icon={MapPinIcon} label={venue} />
           </div>
         </div>
       </section>
 
-      <section className="dz-section" style={{ paddingTop: 0, paddingBottom: 24 }}>
+      {/* Hero photo — 16:9 within a 1080px column, capped 540px tall. */}
+      <section className="dz-section" style={{ paddingTop: 8, paddingBottom: 28 }}>
         <div
           style={{
             position: 'relative',
             width: '100%',
+            maxWidth: 1080,
+            margin: '0 auto',
             aspectRatio: '16 / 9',
-            borderRadius: 24,
+            maxHeight: 540,
+            borderRadius: 22,
             overflow: 'hidden',
             background: '#1a1240',
+            boxShadow: '0 24px 56px -28px rgba(36,18,80,0.45)',
           }}
         >
           <Image
@@ -191,13 +208,14 @@ export default async function EventAlbumPage({
         </div>
       </section>
 
-      <section className="dz-section" style={{ paddingTop: 16, paddingBottom: 64 }}>
+      {/* Photo grid */}
+      <section className="dz-section" style={{ paddingTop: 8, paddingBottom: 56 }}>
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
             gridAutoRows: '220px',
-            gap: 14,
+            gap: 12,
           }}
         >
           {rest.map((src, i) => {
@@ -207,7 +225,7 @@ export default async function EventAlbumPage({
                 key={src}
                 style={{
                   position: 'relative',
-                  borderRadius: 16,
+                  borderRadius: 14,
                   overflow: 'hidden',
                   background: '#1a1240',
                   gridRow: tall ? 'span 2' : 'span 1',
@@ -226,11 +244,43 @@ export default async function EventAlbumPage({
         </div>
         <p
           className="dz-small"
-          style={{ marginTop: 20, color: '#7a6a9a', textAlign: 'center' }}
+          style={{ marginTop: 18, color: '#7a6a9a', textAlign: 'center' }}
         >
           Photos © Digizelle — usage interne, droits à l&apos;image collectés sur place.
         </p>
       </section>
     </Frame>
+  );
+}
+
+/* ============================================================ */
+
+function MetaChip({
+  Icon,
+  label,
+}: {
+  Icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  label: string;
+}) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '8px 14px',
+        borderRadius: 999,
+        background: 'rgba(115,1,255,0.06)',
+        border: '1px solid rgba(115,1,255,0.18)',
+        color: '#3a2960',
+        fontSize: 13.5,
+        fontWeight: 600,
+      }}
+    >
+      <span style={{ color: '#7301FF', display: 'inline-flex' }}>
+        <Icon size={15} strokeWidth={2} />
+      </span>
+      {label}
+    </span>
   );
 }
