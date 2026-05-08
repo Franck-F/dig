@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
@@ -938,7 +939,21 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                   required
                   style={{ marginTop: 2, accentColor: '#7301FF', flexShrink: 0 }}
                 />
-                <span>{t('signupForm.ageDeclaration')}</span>
+                {/* `<contact>` tag in the i18n value renders as a real
+                    Link to /contact — keeps the legal text editable
+                    centrally without manual string concat in JSX. */}
+                <span>
+                  {t.rich('signupForm.ageDeclaration', {
+                    contact: (chunks) => (
+                      <Link
+                        href="/contact"
+                        style={{ color: '#7301FF', fontWeight: 600, textDecoration: 'underline' }}
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
+                </span>
               </label>
             </div>
             <button type="submit" disabled={signupPending} className="dz-btn dz-btn-primary dz-btn-lg" style={{ width: '100%', marginTop: 4, opacity: signupPending ? 0.7 : 1 }}>
