@@ -191,7 +191,7 @@ function SocialButtons({
   const [hoverKey, setHoverKey] = useState<ProviderKey | null>(null);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
       {PROVIDERS.map(({ key, label, Icon, tint, ring }) => {
         const isEnabled = enabled[key];
         const isPending = pending && pendingKey === key;
@@ -220,9 +220,9 @@ function SocialButtons({
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8,
-              padding: '18px 10px',
-              borderRadius: 18,
+              gap: 6,
+              padding: '12px 10px',
+              borderRadius: 16,
               cursor: isEnabled && !pending ? 'pointer' : 'not-allowed',
               opacity: !isEnabled ? 0.55 : isPending ? 0.7 : 1,
               // Glassmorphism layering
@@ -233,14 +233,14 @@ function SocialButtons({
               WebkitBackdropFilter: 'blur(28px) saturate(180%)',
               border: `1px solid ${isHover ? ring : 'rgba(255, 255, 255, 0.6)'}`,
               boxShadow: isHover
-                ? `0 12px 32px ${tint}, 0 1px 0 rgba(255,255,255,0.7) inset`
-                : '0 8px 24px rgba(115, 1, 255, 0.10), 0 1px 0 rgba(255,255,255,0.6) inset',
+                ? `0 10px 26px ${tint}, 0 1px 0 rgba(255,255,255,0.7) inset`
+                : '0 6px 18px rgba(115, 1, 255, 0.08), 0 1px 0 rgba(255,255,255,0.6) inset',
               transition: 'transform .22s cubic-bezier(.2,.7,.3,1), box-shadow .22s, border-color .22s, background .22s',
               transform: isHover ? 'translateY(-2px)' : 'translateY(0)',
               fontFamily: 'inherit',
               color: 'var(--ink)',
               fontWeight: 600,
-              fontSize: 13,
+              fontSize: 12.5,
               letterSpacing: '0.01em',
             }}
           >
@@ -250,11 +250,11 @@ function SocialButtons({
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 36,
-                height: 36,
-                borderRadius: 12,
+                width: 28,
+                height: 28,
+                borderRadius: 10,
                 background: 'rgba(255, 255, 255, 0.7)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 8px rgba(36,18,80,0.10)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 6px rgba(36,18,80,0.10)',
               }}
             >
               <Icon />
@@ -816,7 +816,9 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
               {loginPending ? t('loginForm.submitting') : t('loginForm.submit')}
             </button>
           </div>
-          <div className="dz-divider"><span className="dz-small">{t('loginForm.or')}</span></div>
+          <div className="dz-divider" style={{ margin: '14px 0 10px' }}>
+            <span className="dz-small">{t('loginForm.or')}</span>
+          </div>
           <SocialButtons enabled={oauthEnabled} disabledLabel={t("oauth.disabled")} next={nextPath} />
         </form>
       ) : (
@@ -963,7 +965,9 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
               {t('signupForm.terms')}
             </div>
           </div>
-          <div className="dz-divider" style={{ margin: '12px 0' }}><span className="dz-small">{t('loginForm.or')}</span></div>
+          <div className="dz-divider" style={{ margin: '14px 0 10px' }}>
+            <span className="dz-small">{t('loginForm.or')}</span>
+          </div>
           <SocialButtons enabled={oauthEnabled} disabledLabel={t("oauth.disabled")} next={nextPath} />
         </form>
       )}
