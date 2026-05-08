@@ -211,30 +211,119 @@
 /* =========================================================
    Glass primitives
    ========================================================= */
-.dz-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid var(--glass-border);
+/* .dz-glass family — historic API kept alive but visuals routed through
+   the new Liquid Glass tokens so existing callsites pick up the iOS 26
+   look automatically. The pseudo-elements adopt the same pattern as
+   .dz-lg / .dz-card: iridescent conic edge + specular highlight. */
+.dz-glass,
+.dz-glass-strong,
+.dz-glass-dark {
+  position: relative;
   border-radius: var(--r-lg);
-  box-shadow: var(--glass-shadow);
+  isolation: isolate;
+  transition:
+    transform 0.4s cubic-bezier(0.16,1,0.3,1),
+    box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.dz-glass {
+  background: var(--lg-bg-light);
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.04);
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.04);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    0 -1px 0 rgba(255,255,255,0.25) inset,
+    0 0 0 0.5px rgba(255,255,255,0.55) inset,
+    0 18px 44px -16px rgba(36,18,80,0.18),
+    0 6px 14px -6px rgba(115,1,255,0.14);
 }
 .dz-glass-strong {
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(36px) saturate(200%);
-  -webkit-backdrop-filter: blur(36px) saturate(200%);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--r-lg);
-  box-shadow: var(--glass-shadow-strong);
+  background: var(--lg-bg-strong);
+  -webkit-backdrop-filter: blur(38px) saturate(220%) brightness(1.04);
+  backdrop-filter: blur(38px) saturate(220%) brightness(1.04);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,1) inset,
+    0 -1px 0 rgba(255,255,255,0.40) inset,
+    0 0 0 0.5px rgba(255,255,255,0.7) inset,
+    0 28px 70px -22px rgba(36,18,80,0.30),
+    0 10px 24px -8px rgba(115,1,255,0.20);
 }
 .dz-glass-dark {
-  background: var(--glass-bg-dark);
-  backdrop-filter: blur(28px) saturate(160%);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: var(--r-lg);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  background: rgba(28, 18, 60, 0.45);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  backdrop-filter: blur(32px) saturate(180%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.18) inset,
+    0 -1px 0 rgba(0,0,0,0.32) inset,
+    0 0 0 0.5px rgba(255,255,255,0.10) inset,
+    0 28px 70px -18px rgba(0,0,0,0.55),
+    0 8px 20px -8px rgba(0,0,0,0.30);
   color: white;
+}
+.dz-glass::before,
+.dz-glass-strong::before,
+.dz-glass-dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.75;
+}
+.dz-glass::before,
+.dz-glass-strong::before { background: var(--lg-edge-light); }
+.dz-glass-dark::before { background: var(--lg-edge-dark); }
+.dz-glass::after,
+.dz-glass-strong::after,
+.dz-glass-dark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+.dz-glass::after,
+.dz-glass-strong::after {
+  background: var(--lg-specular), var(--lg-specular-bottom);
+}
+.dz-glass-dark::after {
+  background:
+    radial-gradient(140% 100% at 8% -10%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 38%),
+    radial-gradient(140% 100% at 100% 110%, rgba(115,1,255,0.55) 0%, rgba(115,1,255,0) 45%);
+}
+.dz-glass > *,
+.dz-glass-strong > *,
+.dz-glass-dark > * { position: relative; z-index: 2; }
+/* Dark theme: auto-flip .dz-glass / .dz-glass-strong to the dark recipe
+   so the new look stays cohesive everywhere. */
+body.dz-theme-dark .dz-glass,
+body.dz-theme-dark .dz-glass-strong {
+  background: rgba(28, 18, 60, 0.50);
+  color: white;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.16) inset,
+    0 -1px 0 rgba(0,0,0,0.32) inset,
+    0 0 0 0.5px rgba(255,255,255,0.08) inset,
+    0 28px 70px -18px rgba(0,0,0,0.55);
+}
+body.dz-theme-dark .dz-glass::before,
+body.dz-theme-dark .dz-glass-strong::before {
+  background: var(--lg-edge-dark);
+  opacity: 0.65;
+}
+body.dz-theme-dark .dz-glass::after,
+body.dz-theme-dark .dz-glass-strong::after {
+  background:
+    radial-gradient(140% 100% at 8% -10%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 40%),
+    radial-gradient(140% 100% at 100% 110%, rgba(163,75,245,0.55) 0%, rgba(163,75,245,0) 50%);
 }
 
 /* =========================================================
@@ -254,13 +343,44 @@
   box-shadow: 0 8px 24px rgba(115,1,255,0.35), 0 1px 0 rgba(255,255,255,0.4) inset;
 }
 .dz-btn-primary:hover { box-shadow: 0 12px 32px rgba(115,1,255,0.45), 0 1px 0 rgba(255,255,255,0.4) inset; }
+/* Ghost button — small piece of liquid glass. Iridescent edge applied
+   via a 1.5px masked pseudo-element so the pill border picks up the
+   same dispersion as the cards. */
 .dz-btn-ghost {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
+  position: relative;
+  background: var(--lg-bg-light);
+  backdrop-filter: blur(20px) saturate(180%) brightness(1.04);
+  -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.04);
+  border: 1px solid transparent;
   color: var(--ink);
+  isolation: isolate;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    0 -1px 0 rgba(255,255,255,0.30) inset,
+    0 0 0 0.5px rgba(255,255,255,0.55) inset,
+    0 6px 16px -6px rgba(115,1,255,0.20);
 }
+.dz-btn-ghost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: var(--lg-edge-light);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+.dz-btn-ghost > * { position: relative; z-index: 2; }
+body.dz-theme-dark .dz-btn-ghost {
+  background: rgba(40, 24, 88, 0.45);
+  color: rgba(255,255,255,0.95);
+}
+body.dz-theme-dark .dz-btn-ghost::before { background: var(--lg-edge-dark); }
 .dz-btn-outline {
   background: transparent;
   border: 1.5px solid var(--brand-violet);
@@ -282,27 +402,78 @@
   -webkit-text-fill-color: transparent;
 }
 .dz-eyebrow {
+  position: relative;
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 16px; border-radius: var(--r-pill);
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border-soft);
+  background: var(--lg-bg-strong);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid transparent;
   font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--brand-violet);
+  isolation: isolate;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    0 0 0 0.5px rgba(255,255,255,0.55) inset,
+    0 6px 14px -6px rgba(115,1,255,0.20);
 }
+.dz-eyebrow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--lg-edge-light);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+.dz-eyebrow > * { position: relative; z-index: 2; }
+body.dz-theme-dark .dz-eyebrow {
+  background: rgba(40, 24, 88, 0.55);
+  color: #c8a8ff;
+}
+body.dz-theme-dark .dz-eyebrow::before { background: var(--lg-edge-dark); }
 .dz-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-violet); animation: dz-pulse 2s infinite; }
 @keyframes dz-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
 
 /* =========================================================
    Header (glass)
    ========================================================= */
+/* Sticky top header — liquid glass with a stronger blur than the rest
+   so the underlying content reads as "behind frosted glass" while the
+   header stays unmistakably overlay. The bottom border is replaced by
+   a subtle gradient line so the chrome feels seamless against the
+   ambient page wash. */
 .dz-header {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(255,255,255,0.92);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  backdrop-filter: blur(12px) saturate(160%);
-  border-bottom: 1px solid rgba(115,1,255,0.08);
+  background: rgba(255,255,255,0.62);
+  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+  backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+  border-bottom: 1px solid transparent;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.62), rgba(255,255,255,0.62)),
+    linear-gradient(90deg, transparent 0%, rgba(115,1,255,0.18) 50%, transparent 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.85) inset,
+    0 -1px 0 rgba(255,255,255,0.30) inset,
+    0 12px 32px -16px rgba(36,18,80,0.16);
+}
+body.dz-theme-dark .dz-header {
+  background: rgba(28, 18, 60, 0.55);
+  background-image:
+    linear-gradient(rgba(28,18,60,0.55), rgba(28,18,60,0.55)),
+    linear-gradient(90deg, transparent 0%, rgba(163,75,245,0.45) 50%, transparent 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 -1px 0 rgba(0,0,0,0.30) inset,
+    0 12px 32px -16px rgba(0,0,0,0.45);
 }
 .dz-header-inner {
   max-width: 1440px;
@@ -366,22 +537,98 @@
 .dz-body { font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
 .dz-small { font-size: 14px; color: var(--ink-muted); }
 
+/* .dz-card — the platform's default surface. Inherits the same Liquid
+   Glass treatment as .dz-lg (iridescent edge + specular highlight + blur)
+   so every card across dashboard / admin / community gets the iOS 26
+   look without changing callsites. No hover lift by default — add
+   `.--interactive` (or just use `.dz-lg --interactive` directly) when a
+   card is also a click target. */
 .dz-card {
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid var(--glass-border);
+  position: relative;
+  background: var(--lg-bg-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+  backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+  border: 1px solid transparent;
   border-radius: var(--r-lg);
-  box-shadow: none;
+  isolation: isolate;
+  /* No overflow:hidden here — admin cards often host dropdowns,
+     popovers and absolute-positioned chips that need to escape. The
+     pseudo-element edge below uses inset:0 so it stays within the
+     border-radius even without clipping. */
   padding: 28px;
-  transition: none;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    0 -1px 0 rgba(255,255,255,0.25) inset,
+    0 0 0 0.5px rgba(255,255,255,0.55) inset,
+    0 18px 44px -16px rgba(36,18,80,0.18),
+    0 6px 14px -6px rgba(115,1,255,0.14),
+    0 1px 3px rgba(36,18,80,0.05);
+  transition:
+    transform 0.4s cubic-bezier(0.16,1,0.3,1),
+    box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
 }
-.dz-card:hover { transform: none; box-shadow: none; }
+.dz-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: var(--lg-edge-light);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+.dz-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--lg-specular), var(--lg-specular-bottom);
+  pointer-events: none;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  z-index: 0;
+  border-radius: inherit;
+}
+.dz-card > * { position: relative; z-index: 2; }
+.dz-card.--interactive { cursor: pointer; }
+.dz-card.--interactive:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,1) inset,
+    0 -1px 0 rgba(255,255,255,0.45) inset,
+    0 0 0 0.5px rgba(255,255,255,0.85) inset,
+    0 36px 80px -22px rgba(36,18,80,0.32),
+    0 14px 28px -8px rgba(115,1,255,0.26),
+    0 2px 6px rgba(36,18,80,0.08);
+}
+.dz-card.--interactive:hover::after { opacity: 0.95; }
+
 .dz-card-feature {
   background: linear-gradient(160deg, var(--brand-violet) 0%, var(--brand-violet-light) 100%);
   color: white;
   border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 20px 50px rgba(115,1,255,0.4);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.25) inset,
+    0 20px 50px -10px rgba(115,1,255,0.45),
+    0 6px 18px -6px rgba(244,111,177,0.28);
+}
+.dz-card-feature::before {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.95) 0%,
+    rgba(255,255,255,0.20) 30%,
+    rgba(255,255,255,0) 55%,
+    rgba(255,255,255,0.55) 100%);
+  opacity: 0.85;
+}
+.dz-card-feature::after {
+  background:
+    radial-gradient(140% 100% at 8% -10%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 45%),
+    radial-gradient(140% 100% at 100% 110%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%);
+  opacity: 0.95;
 }
 .dz-card-feature .dz-body { color: rgba(255,255,255,0.9); }
 
@@ -881,6 +1128,106 @@ body.dz-theme-dark .dz-lg.--strong:not(.--on-color) {
   background: rgba(40, 24, 88, 0.55);
 }
 
+/* =========================================================
+   Liquid Glass utility surfaces — modal + popover + sheet
+   Adopt one of these classes in place of an inline `background: white`
+   panel and the surface picks up the iOS 26 chrome (iridescent edge,
+   specular highlight, depth shadow) automatically. Designed to ride
+   above a backdrop overlay (modal) or a fixed anchor (popover).
+   ========================================================= */
+.dz-modal,
+.dz-popover {
+  position: relative;
+  background: var(--lg-bg-ultra);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.04);
+  backdrop-filter: blur(40px) saturate(220%) brightness(1.04);
+  border-radius: var(--r-lg);
+  isolation: isolate;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,1) inset,
+    0 -1px 0 rgba(255,255,255,0.40) inset,
+    0 0 0 0.5px rgba(255,255,255,0.7) inset,
+    0 36px 80px -22px rgba(36,18,80,0.34),
+    0 14px 32px -10px rgba(115,1,255,0.22);
+}
+.dz-modal::before,
+.dz-popover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: var(--lg-edge-light);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+}
+.dz-modal::after,
+.dz-popover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--lg-specular), var(--lg-specular-bottom);
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+.dz-modal > *,
+.dz-popover > * { position: relative; z-index: 2; }
+/* Smaller blur + tighter shadow for popovers (anchored to a control). */
+.dz-popover {
+  --lg-blur: 30px;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,1) inset,
+    0 -1px 0 rgba(255,255,255,0.35) inset,
+    0 0 0 0.5px rgba(255,255,255,0.7) inset,
+    0 22px 50px -16px rgba(36,18,80,0.28),
+    0 8px 20px -8px rgba(115,1,255,0.20);
+}
+body.dz-theme-dark .dz-modal,
+body.dz-theme-dark .dz-popover {
+  background: rgba(28, 18, 60, 0.65);
+  color: white;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.20) inset,
+    0 -1px 0 rgba(0,0,0,0.32) inset,
+    0 0 0 0.5px rgba(255,255,255,0.12) inset,
+    0 36px 80px -22px rgba(0,0,0,0.65),
+    0 14px 32px -10px rgba(0,0,0,0.40);
+}
+body.dz-theme-dark .dz-modal::before,
+body.dz-theme-dark .dz-popover::before {
+  background: var(--lg-edge-dark);
+  opacity: 0.70;
+}
+body.dz-theme-dark .dz-modal::after,
+body.dz-theme-dark .dz-popover::after {
+  background:
+    radial-gradient(140% 100% at 8% -10%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 40%),
+    radial-gradient(140% 100% at 100% 110%, rgba(163,75,245,0.55) 0%, rgba(163,75,245,0) 50%);
+}
+/* Backdrop overlay shown behind modals. Add `.dz-modal-backdrop` to
+   the fixed full-screen layer that hosts the modal. The radial wash
+   tints toward violet to keep the brand cohesion. */
+.dz-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 30% 20%, rgba(115,1,255,0.28), transparent 65%),
+    radial-gradient(60% 50% at 80% 80%, rgba(244,111,177,0.20), transparent 65%),
+    rgba(8, 4, 20, 0.55);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  backdrop-filter: blur(8px) saturate(140%);
+  z-index: 100;
+}
+
 /* Liquid pill — for nav links and tags inside footer / hero */
 .dz-lg-pill {
   position: relative;
@@ -1027,30 +1374,31 @@ body.dz-theme-dark .dz-lg.--strong:not(.--on-color) {
 }
 
 /* =========================================================
-   .dz-card — sober utility surface
-   The previous version had a heavy Liquid Glass treatment (chromatic edge,
-   specular highlight, deep shadow + hover lift). User feedback:
-   "le shadow derrière les blocs ne sont pas top, plus besoin de les mettre,
-    ainsi que l'animation sur eux n'est pas necessaire". We strip the cards
-   back to a flat surface with just a thin border. Premium Liquid Glass is
-   reserved for `.dz-lg` (homepage hero, /app universe cards, etc.).
+   .dz-card — dark theme variant
+   The base .dz-card definition (further up) carries the iOS 26 Liquid
+   Glass treatment for both themes; here we just retint the body for
+   the dark canvas. The iridescent edge + specular layers from the base
+   rules already adapt because they target the page wash, not a colour
+   token.
    ========================================================= */
-.dz-card {
-  position: relative;
-  /* Override any inherited transition / transform from earlier rules. */
-  transform: none;
-  transition: none;
-  /* Keep just a 1px border. No shadow, no pseudo-elements, no hover lift. */
-}
-.dz-card::before,
-.dz-card::after { content: none !important; }
-.dz-card:hover { transform: none; box-shadow: var(--glass-shadow); }
-
 .dz-frame.--dark .dz-card,
-.dz-app-shell[data-theme="dark"] .dz-card {
-  background: rgba(28, 18, 60, 0.42);
+.dz-app-shell[data-theme="dark"] .dz-card,
+body.dz-theme-dark .dz-card {
+  background: rgba(28, 18, 60, 0.50);
   color: #fff;
-  box-shadow: none;
+}
+.dz-frame.--dark .dz-card::before,
+.dz-app-shell[data-theme="dark"] .dz-card::before,
+body.dz-theme-dark .dz-card::before {
+  background: var(--lg-edge-dark);
+  opacity: 0.65;
+}
+.dz-frame.--dark .dz-card::after,
+.dz-app-shell[data-theme="dark"] .dz-card::after,
+body.dz-theme-dark .dz-card::after {
+  background:
+    radial-gradient(140% 100% at 8% -10%, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 40%),
+    radial-gradient(140% 100% at 100% 110%, rgba(163,75,245,0.55) 0%, rgba(163,75,245,0) 50%);
 }
 
 /* =========================================================
