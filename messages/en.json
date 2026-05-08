@@ -771,7 +771,8 @@
         "challenges": "Challenges",
         "flags": "Abuse signals",
         "auditLog": "Admin log",
-        "rgpd": "GDPR register"
+        "rgpd": "GDPR register",
+        "settings": "Settings"
       },
       "moderation": {
         "title": "Moderation queue",
@@ -1581,7 +1582,93 @@
     "navAriaLabel": "Footer navigation",
     "copyright": "© {year} Digizelle — French non-profit (loi 1901)",
     "craftedWith": "Crafted with",
-    "inLocation": "in Île-de-France"
+    "inLocation": "in Île-de-France",
+    "nav": {
+      "association": {
+        "title": "Association",
+        "links": [
+          {
+            "label": "About",
+            "href": "/about"
+          },
+          {
+            "label": "The team",
+            "href": "/team"
+          },
+          {
+            "label": "Achievements",
+            "href": "/projects"
+          },
+          {
+            "label": "Manifesto",
+            "href": "/about#manifeste"
+          }
+        ]
+      },
+      "programs": {
+        "title": "Programs",
+        "links": [
+          {
+            "label": "Immersive Workshop",
+            "href": "/programs#atelier"
+          },
+          {
+            "label": "Masterclass",
+            "href": "/programs#masterclass"
+          },
+          {
+            "label": "Hackathon",
+            "href": "/programs#hackathon"
+          },
+          {
+            "label": "Mentora",
+            "href": "/mentora"
+          }
+        ]
+      },
+      "resources": {
+        "title": "Resources",
+        "links": [
+          {
+            "label": "Blog",
+            "href": "/blog"
+          },
+          {
+            "label": "Events",
+            "href": "/events"
+          },
+          {
+            "label": "Community",
+            "href": "/community"
+          },
+          {
+            "label": "FAQ",
+            "href": "/faq"
+          }
+        ]
+      },
+      "legal": {
+        "title": "Legal",
+        "links": [
+          {
+            "label": "Legal notice",
+            "href": "/legal"
+          },
+          {
+            "label": "Privacy",
+            "href": "/privacy"
+          },
+          {
+            "label": "Cookies",
+            "href": "/cookies"
+          },
+          {
+            "label": "Contact",
+            "href": "/contact"
+          }
+        ]
+      }
+    }
   },
   "header": {
     "logoAlt": "Digizelle",
@@ -1619,7 +1706,17 @@
       "partnersLabel": "Partners"
     },
     "trust": {
-      "label": "Our partners & allies"
+      "label": "Our partners & allies",
+      "logos": {
+        "microsoft": "Microsoft",
+        "ey": "EY",
+        "allianz": "Allianz Technology",
+        "aws": "AWS",
+        "epitech": "Epitech",
+        "hec": "HEC Paris",
+        "stationf": "Station F",
+        "becomtech": "BECOMTECH"
+      }
     },
     "mascot": {
       "phrases": [
@@ -1630,6 +1727,170 @@
         "Digital for everyone.",
         "You'll love it!",
         "Hello!"
+      ]
+    },
+    "badge": {
+      "impactLabel": "Impact #1 · live",
+      "impactDate": "60+ youths at Epitech",
+      "communityLabel": "Community",
+      "communityCount": "200+ active",
+      "mentoraStatus": "Mentora — open"
+    },
+    "manifesto": {
+      "eyebrow": "Our manifesto",
+      "titleLine1": "Inclusive digital,",
+      "titleHighlight": "we are making it real.",
+      "body": "Digizelle works every day so young people — especially young women — across the Paris region and beyond find their place in tech. Workshops, masterclasses, hackathons, the Mentora program and an online community: a portfolio of formats to move from “I would love to” to “I am doing it”.",
+      "cards": {
+        "inclusion": {
+          "tag": "Inclusion",
+          "title": "Everyone, for real.",
+          "body": "We do not fake it: our cohorts are mixed, multi-background, multi-age. All our programs are free or fairly priced for young learners."
+        },
+        "mentorship": {
+          "tag": "Mentorship",
+          "title": "A human in front of you, not a chatbot.",
+          "body": "Mentora pairs every mentee with a volunteer mentor for 6 months. Algorithmic matching, video sessions, shared calendar, clear goals and unlimited messaging."
+        },
+        "community": {
+          "tag": "Community",
+          "title": "We learn better together.",
+          "body": "Our online community (200+ active members) gathers themed lounges, badges, regular challenges and daily peer support. Kind by default."
+        }
+      }
+    },
+    "programs": {
+      "eyebrow": "Our programs",
+      "titleLine1": "Four ways to move forward",
+      "titleLine2": "at your own pace.",
+      "items": {
+        "atelier": {
+          "title": "Immersive Workshop",
+          "desc": "Hands-on 3-day sessions to try out a digital skill.",
+          "tag": "Discovery"
+        },
+        "masterclass": {
+          "title": "Masterclass",
+          "desc": "Intensive classes with experts to dig into a technical area.",
+          "tag": "Deep dive"
+        },
+        "hackathon": {
+          "title": "Hackathon",
+          "desc": "48 hours to build in teams on a digital challenge with mentors.",
+          "tag": "Creation"
+        },
+        "mentora": {
+          "title": "Mentora",
+          "desc": "1-to-1 mentorship program for long-term support.",
+          "tag": "Long term"
+        }
+      }
+    },
+    "mentoraCta": {
+      "chip": "✨ New",
+      "title": "Mentora — your digital mentor,",
+      "titleHighlight": "within reach.",
+      "body": "A mentorship program combining humans and AI. Find your mentor, meet on video, track your progress and unlock resources tailored to your journey.",
+      "discover": "Discover Mentora →"
+    },
+    "events": {
+      "eyebrow": "A few highlights",
+      "title": "The year",
+      "titleHighlight": "in pictures.",
+      "all": "All events →",
+      "openAlbum": "Open album →",
+      "items": [
+        {
+          "title": "Digizelle Impact 2026 — Epitech Paris",
+          "date": "March 13, 2026",
+          "slug": "digizelle-impact-1",
+          "venue": "Epitech Paris",
+          "intro": "First edition of Digizelle Impact, our annual gathering of youth, mentors, partner companies and decision-makers around digital inclusion."
+        },
+        {
+          "title": "Women in Tech roundtable — HEC Paris",
+          "date": "2025 cycle",
+          "slug": "women-in-tech-hec",
+          "venue": "HEC Paris",
+          "intro": "Inspiring roundtable with women leaders in tech, hosted as part of the Women in Tech cycle at HEC Paris."
+        },
+        {
+          "title": "Women in GenAI Hackathon — EY × Microsoft",
+          "date": "2025 edition",
+          "slug": "hackathon-women-genai",
+          "venue": "EY · Microsoft",
+          "intro": "48 hours of building around generative AI, in teams with mentors and expert coaches from EY and Microsoft."
+        },
+        {
+          "title": "VivaTech 2025 — “AI my future career” workshop",
+          "date": "June 14, 2025",
+          "slug": "vivatech-2025",
+          "venue": "Porte de Versailles, Paris",
+          "intro": "Discovery workshop “AI my future career” at Europe’s biggest tech show — demos, exchanges and career guidance."
+        },
+        {
+          "title": "BECOMTECH × Epitech — Imposter syndrome",
+          "date": "June 24, 2025",
+          "slug": "becomtech-epitech-imposteur",
+          "venue": "Epitech Le Kremlin-Bicêtre",
+          "intro": "Talk and discussion on imposter syndrome in tech career paths, in partnership with BECOMTECH and Epitech."
+        }
+      ]
+    },
+    "testimonials": {
+      "eyebrow": "They joined the community",
+      "title": "Three voices among",
+      "titleHighlight": "200+ supported.",
+      "items": [
+        {
+          "name": "Lina, 19",
+          "role": "Immersive Workshop #3",
+          "quote": "Before Digizelle I thought tech was not for me. Three days later I had coded my first interface. The mentor who supported me became a real friend.",
+          "color": "#7301FF"
+        },
+        {
+          "name": "Idriss, 22",
+          "role": "Hackathon #3 — winner",
+          "quote": "I came alone and left with a team, a project, a prize and three job interviews. Digizelle does not push you — they make you capable.",
+          "color": "#A34BF5"
+        },
+        {
+          "name": "Salma, 24",
+          "role": "Mentora · season 2",
+          "quote": "My mentor works at Doctolib. We meet for an hour a month and it has become my best career tool. The format is exactly right.",
+          "color": "#F46FB1"
+        }
+      ]
+    },
+    "communityCta": {
+      "chip": "Join us",
+      "title": "Passionate about digital and want to be part of a vibrant, inclusive community?",
+      "body": "Become a Digizelle member and take part in our events, training and innovative projects. Together, let us inspire and support young talents on their digital journey.",
+      "joinUs": "Join us →",
+      "more": "Learn more"
+    },
+    "faq": {
+      "eyebrow": "Frequently asked",
+      "title": "Everything we get",
+      "titleHighlight": "asked the most.",
+      "seeAll": "See all questions →",
+      "items": [
+        {
+          "q": "Who is it for?",
+          "a": "For any young person (and not-so-young) curious about digital, whatever your level, background or path. Motivation is enough."
+        },
+        {
+          "q": "How much does it cost?",
+          "a": "All our programs are free or fairly priced for participants. Corporate sponsorship and partnerships fund most of it."
+        },
+        {
+          "q": "What level do I need?",
+          "a": "No prerequisites. Whether you are a beginner or already in tech, we have a format for you. Curiosity and commitment are enough."
+        },
+        {
+          "q": "How do I sign up?",
+          "a": "Create your account or write to us via the contact form. We get back to you within 48 hours to direct you to the right program."
+        }
       ]
     }
   },
