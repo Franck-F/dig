@@ -5,10 +5,14 @@ import { getTranslations } from 'next-intl/server';
 
 import { prisma } from '@/lib/prisma';
 
+import Pagination from '@/components/admin/Pagination';
+
 import { getCommunityViewer } from '../../_components/viewer';
 import ModerationQueueRowActions from './_components/ModerationQueueRowActions';
 
-type SearchParams = { tab?: 'pending' | 'resolved' };
+type SearchParams = { tab?: 'pending' | 'resolved'; page?: string };
+
+const PAGE_SIZE = 25;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('community.admin.moderation');
@@ -49,23 +53,39 @@ export default async function ModerationQueuePage({
 
   const sp = await searchParams;
   const tab = sp.tab === 'resolved' ? 'resolved' : 'pending';
+  const page = Math.max(1, Number(sp.page ?? '1') || 1);
   const t = await getTranslations('community.admin.moderation');
   const tReasons = await getTranslations('community.admin.moderation.reasonLabels');
 
-  const reports = await prisma.report.findMany({
-    where:
-      tab === 'pending'
-        ? { status: 'PENDING' }
-        : { status: { not: 'PENDING' } },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    include: {
-      reporter: { select: { id: true, handle: true, displayName: true } },
-      againstMember: { select: { id: true, handle: true } },
-      post: { select: { id: true, title: true, body: true, channel: { select: { slug: true } } } },
-      comment: { select: { id: true, body: true, postId: true } },
-    },
-  });
+  const where =
+    tab === 'pending'
+      ? { status: 'PENDING' as const }
+      : { status: { not: 'PENDING' as const } };
+
+  const [total, reports] = await Promise.all([
+    prisma.report.count({ where }),
+    prisma.report.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: {
+        reporter: { select: { id: true, handle: true, displayName: true } },
+        againstMember: { select: { id: true, handle: true } },
+        post: { select: { id: true, title: true, body: true, channel: { select: { slug: true } } } },
+        comment: { select: { id: true, body: true, postId: true } },
+      },
+    }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const buildHref = (p: number) => {
+    const next = new URLSearchParams();
+    if (tab === 'resolved') next.set('tab', 'resolved');
+    if (p > 1) next.set('page', String(p));
+    const qs = next.toString();
+    return `/community/admin/moderation${qs ? `?${qs}` : ''}`;
+  };
 
   return (
     <div>
@@ -163,6 +183,15 @@ export default async function ModerationQueuePage({
           </table>
         </div>
       )}
+
+      <div style={{ marginTop: 16 }}>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          buildHref={buildHref}
+          total={total}
+        />
+      </div>
     </div>
   );
 }
