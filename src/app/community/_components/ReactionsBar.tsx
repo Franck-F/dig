@@ -70,15 +70,20 @@ export default function ReactionsBar({
 
     startTransition(async () => {
       try {
-        // The actual server action is owned by 3B-2; signature {targetType,targetId,emoji}.
         const fn = toggleReaction as unknown as (
           input: { targetType: TargetType; targetId: string; emoji: string },
-        ) => Promise<unknown>;
-        await fn({ targetType, targetId, emoji });
+        ) => Promise<{ status?: string }>;
+        const res = await fn({ targetType, targetId, emoji });
+        // The action returns `ActionResult` (no throw on most failures
+        // — rate-limit, validation, target-not-found all come back as
+        // `{ status: 'error' }`). Roll back optimistic state if the
+        // server didn't accept the change.
+        if (res?.status === 'error') {
+          setOptimisticCounts(counts);
+          setOptimisticMine(myEmoji);
+        }
       } catch {
-        // Roll back optimistic state if the call fails. Silently — the UI
-        // already shows the "before" state if we keep `myEmoji` prop fresh
-        // on next server render.
+        // Network or unexpected throw — same rollback path.
         setOptimisticCounts(counts);
         setOptimisticMine(myEmoji);
       }

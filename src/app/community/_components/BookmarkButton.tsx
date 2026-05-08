@@ -24,15 +24,23 @@ export default function BookmarkButton({
 
   function onClick() {
     if (!canBookmark || pending) return;
+    const before = bookmarked;
     setBookmarked((b) => !b);
     startTransition(async () => {
       try {
         const fn = toggleBookmark as unknown as (
           input: { postId: string },
-        ) => Promise<unknown>;
-        await fn({ postId });
+        ) => Promise<{ status?: string }>;
+        const res = await fn({ postId });
+        // Roll back if the server returned ActionResult error (rate-
+        // limit, post not found, etc.). Without this branch a server-
+        // refused toggle would still appear "done" client-side until
+        // the next page revalidate.
+        if (res?.status === 'error') {
+          setBookmarked(before);
+        }
       } catch {
-        setBookmarked((b) => !b);
+        setBookmarked(before);
       }
     });
   }
