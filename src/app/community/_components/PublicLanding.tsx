@@ -10,6 +10,7 @@ import {
 import { prisma } from '@/lib/prisma';
 
 import FeedFilters from './FeedFilters';
+import FeedLoadMore from './FeedLoadMore';
 import PostCard, { type PostCardData } from './PostCard';
 import SoftPaywall from './SoftPaywall';
 
@@ -311,19 +312,13 @@ export default async function PublicLanding({
                 {cards.map((p) => (<PostCard key={p.id} post={p} />))}
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-              {nextCursor ? (
-                <Link
-                  href={`/community?${new URLSearchParams({
-                    ...(searchParams.channel ? { channel: searchParams.channel } : {}),
-                    cursor: nextCursor,
-                  }).toString()}#feed`}
-                  className="dz-btn dz-btn-ghost dz-btn-sm"
-                >
-                  {t('feed.loadMore')} →
-                </Link>
-              ) : null}
-            </div>
+            {/* Append-in-place pagination — see FeedLoadMore.tsx for
+                the rationale (preserved scroll, intersection auto-load,
+                graceful degradation when JS disabled via the button). */}
+            <FeedLoadMore
+              initialCursor={nextCursor}
+              channelSlug={searchParams.channel ?? null}
+            />
           </div>
           <aside style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'sticky', top: 88 }}>
             <div className="dz-card" style={{ padding: 20 }}>

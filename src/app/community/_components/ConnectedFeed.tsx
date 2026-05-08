@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 
 import Avatar from './Avatar';
 import PostCard, { type PostCardData } from './PostCard';
+import FeedLoadMore from './FeedLoadMore';
 import { getCommunityViewer } from './viewer';
 
 export type ConnectedFeedSearchParams = {
@@ -627,28 +628,15 @@ export default async function ConnectedFeed({
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-            {nextCursor ? (
-              <Link
-                href={`/community?${new URLSearchParams({
-                  ...(searchParams.channel ? { channel: searchParams.channel } : {}),
-                  cursor: nextCursor,
-                }).toString()}`}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 10,
-                  border: '1px solid rgba(115,1,255,0.18)',
-                  background: 'transparent',
-                  color: '#7301FF',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                }}
-              >
-                Charger plus →
-              </Link>
-            ) : null}
-          </div>
+          {/* Load-more is now a client island that appends pages in
+              place via a server action (preserves scroll position +
+              auto-loads on intersection). When `nextCursor` is null
+              the island renders nothing, so the original "no more"
+              empty state isn't needed here. */}
+          <FeedLoadMore
+            initialCursor={nextCursor}
+            channelSlug={searchParams.channel ?? null}
+          />
         </div>
 
         {/* RIGHT — events + leaderboard */}
