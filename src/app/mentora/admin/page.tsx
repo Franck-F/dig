@@ -42,7 +42,17 @@ function monthKey(d: Date): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
-export default async function MentoraAdminPage() {
+type Range = '12m' | '6m' | '30j';
+
+export default async function MentoraAdminPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ range?: string }>;
+}) {
+  const sp = (await searchParams) ?? {};
+  const range: Range =
+    sp.range === '6m' ? '6m' : sp.range === '30j' ? '30j' : '12m';
+
   const now = new Date();
   const monthAgo = new Date(now);
   monthAgo.setUTCDate(monthAgo.getUTCDate() - 30);
@@ -50,8 +60,11 @@ export default async function MentoraAdminPage() {
   weekAgo.setUTCDate(weekAgo.getUTCDate() - 7);
   const prevWeekStart = new Date(now);
   prevWeekStart.setUTCDate(prevWeekStart.getUTCDate() - 14);
+  // The chart range is dynamic: 12 / 6 months in the bar grid, or 30 days
+  // re-bucketed by week for the short range.
+  const chartMonths = range === '6m' ? 6 : range === '30j' ? 1 : 12;
   const yearAgo = new Date(now);
-  yearAgo.setUTCMonth(yearAgo.getUTCMonth() - 12);
+  yearAgo.setUTCMonth(yearAgo.getUTCMonth() - chartMonths);
 
   const [
     mentorTotal,
@@ -253,14 +266,15 @@ export default async function MentoraAdminPage() {
   const ratingLabel = avgRating !== null ? avgRating.toFixed(2) : '—';
   const ratingSub = reviewAgg._count._all > 0 ? `${formatNumber(reviewAgg._count._all)} avis` : '/ 5';
 
-  // ─── Bars: 12 trailing months including current ───
+  // ─── Bars: trailing N months including current ───
   const monthlyMap = new Map<string, number>();
   for (const row of rawMonthly) {
     const date = row.m instanceof Date ? row.m : new Date(row.m);
     monthlyMap.set(monthKey(date), Number(row.c));
   }
+  const barCount = chartMonths;
   const bars: { label: string; value: number }[] = [];
-  for (let i = 11; i >= 0; i--) {
+  for (let i = barCount - 1; i >= 0; i--) {
     const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
     const key = monthKey(startOfMonth(d));
     bars.push({
@@ -272,8 +286,9 @@ export default async function MentoraAdminPage() {
   if (!hasBarData) {
     // Fallback dummy curve so the chart isn't a flat baseline pre-seed.
     const dummy = [42, 58, 65, 72, 80, 95, 88, 102, 118, 135, 128, 142];
+    const sliced = dummy.slice(-bars.length);
     bars.forEach((b, i) => {
-      b.value = dummy[i] ?? 0;
+      b.value = sliced[i] ?? 0;
     });
   }
   const maxBar = Math.max(...bars.map((b) => b.value), 1);
@@ -299,13 +314,26 @@ export default async function MentoraAdminPage() {
   const ink = '#1a1f3a';
   const sub = '#545b7a';
 
-  const kpis = [
+  // Each KPI is a Link to its detail page so clicking the card drills
+  // down. Sessions and Satisfaction have no dedicated route yet so they
+  // both jump to /reports (with a hash so the section auto-scrolls).
+  const kpis: Array<{
+    label: string;
+    value: string;
+    delta: string;
+    color: string;
+    icon: string;
+    href: string;
+    hint: string;
+  }> = [
     {
       label: 'Mentors',
       value: formatNumber(mentorTotal),
       delta: `↑ ${formatNumber(mentorRecent)} ce mois`,
       color: '#7301FF',
       icon: '✦',
+      href: '/mentora/admin/mentors',
+      hint: 'Gérer les mentors',
     },
     {
       label: 'Mentorées',
@@ -313,6 +341,8 @@ export default async function MentoraAdminPage() {
       delta: `↑ ${formatNumber(menteeRecent)} ce mois`,
       color: '#A34BF5',
       icon: '☷',
+      href: '/mentora/admin/mentees',
+      hint: 'Gérer les mentorées',
     },
     {
       label: 'Matchings',
@@ -320,6 +350,8 @@ export default async function MentoraAdminPage() {
       delta: `${formatNumber(activeMentorships)}/${formatNumber(menteeTotal)}`,
       color: '#F46FB1',
       icon: '⇋',
+      href: '/mentora/admin/matching',
+      hint: 'Voir les matchings actifs',
     },
     {
       label: 'Sessions',
@@ -327,6 +359,8 @@ export default async function MentoraAdminPage() {
       delta: sessionsDelta,
       color: '#3B7BFF',
       icon: '◌',
+      href: '/mentora/admin/reports#sessions',
+      hint: 'Volumétrie sessions',
     },
     {
       label: 'Satisfaction',
@@ -334,6 +368,8 @@ export default async function MentoraAdminPage() {
       delta: ratingSub,
       color: '#23c55e',
       icon: '★',
+      href: '/mentora/admin/reports#satisfaction',
+      hint: 'Détail des notes',
     },
   ];
 
@@ -461,6 +497,7 @@ export default async function MentoraAdminPage() {
 
       {/* KPIs */}
       <div
+        className="dz-pilotage-kpis"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
@@ -469,9 +506,22 @@ export default async function MentoraAdminPage() {
         }}
       >
         {kpis.map((s) => (
-          <div
+          <Link
             key={s.label}
-            style={{ background: cardBg, border: cardBorder, borderRadius: 16, padding: 16 }}
+            href={s.href}
+            title={s.hint}
+            className="dz-pilotage-kpi"
+            style={{
+              background: cardBg,
+              border: cardBorder,
+              borderRadius: 16,
+              padding: 16,
+              textDecoration: 'none',
+              color: 'inherit',
+              display: 'block',
+              position: 'relative',
+              transition: 'transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease',
+            }}
           >
             <div
               style={{
@@ -496,6 +546,18 @@ export default async function MentoraAdminPage() {
               >
                 {s.icon}
               </div>
+              <span
+                aria-hidden
+                style={{
+                  fontSize: 14,
+                  color: sub,
+                  opacity: 0.6,
+                  transition: 'transform 0.15s ease, opacity 0.15s ease',
+                }}
+                className="dz-pilotage-kpi__arrow"
+              >
+                →
+              </span>
             </div>
             <div
               style={{
@@ -520,14 +582,31 @@ export default async function MentoraAdminPage() {
               {s.value}
             </div>
             <div style={{ fontSize: 11, color: s.color, fontWeight: 600 }}>{s.delta}</div>
-          </div>
+          </Link>
         ))}
       </div>
+      {/* Hover affordance: KPI cards lift slightly and the arrow slides
+          right so admins know they're consultable. */}
+      <style>{`
+        .dz-pilotage-kpi:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 28px rgba(115,1,255,0.10);
+          border-color: rgba(115,1,255,0.22) !important;
+        }
+        .dz-pilotage-kpi:hover .dz-pilotage-kpi__arrow {
+          transform: translateX(3px);
+          opacity: 1;
+          color: #7301FF;
+        }
+      `}</style>
 
       {/* Two-column grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
-          {/* Sessions par mois */}
+          {/* Sessions par mois — chart bars are individual links to the
+              report filtered by the bar's month. The range buttons reload
+              the page with a `?range=` query so the server-side query can
+              react. The whole chart card has a "Voir le rapport" CTA. */}
           <div style={{ background: cardBg, border: cardBorder, borderRadius: 20, padding: 24 }}>
             <div
               style={{
@@ -535,6 +614,8 @@ export default async function MentoraAdminPage() {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: 16,
+                gap: 10,
+                flexWrap: 'wrap',
               }}
             >
               <div>
@@ -545,28 +626,46 @@ export default async function MentoraAdminPage() {
                   12 derniers mois · cycle {CYCLE_NAME}
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: 6 }}>
-                {['12m', '6m', '30j'].map((f, i) => (
-                  <button
-                    key={f}
-                    type="button"
-                    style={{
-                      padding: '5px 10px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: i === 0 ? 'rgba(115,1,255,0.10)' : 'transparent',
-                      color: i === 0 ? '#7301FF' : sub,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {f}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                {(['12m', '6m', '30j'] as const).map((f) => {
+                  const active = f === range;
+                  return (
+                    <Link
+                      key={f}
+                      href={`/mentora/admin?range=${f}#sessions`}
+                      style={{
+                        padding: '5px 10px',
+                        borderRadius: 8,
+                        background: active ? 'rgba(115,1,255,0.10)' : 'transparent',
+                        color: active ? '#7301FF' : sub,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      {f}
+                    </Link>
+                  );
+                })}
+                <Link
+                  href="/mentora/admin/reports#sessions"
+                  style={{
+                    marginLeft: 4,
+                    padding: '6px 12px',
+                    borderRadius: 8,
+                    background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
+                    color: 'white',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                  }}
+                >
+                  Voir le rapport →
+                </Link>
               </div>
             </div>
             <div
+              id="sessions"
               style={{
                 display: 'flex',
                 alignItems: 'flex-end',
@@ -578,9 +677,17 @@ export default async function MentoraAdminPage() {
             >
               {bars.map((b, i) => {
                 const isLast = i === bars.length - 1;
+                // Map each bar to the (year, month) it represents so the
+                // detail link can filter by month. Index 11 = current month.
+                const offset = bars.length - 1 - i;
+                const date = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset, 1));
+                const ym = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
                 return (
-                  <div
+                  <Link
                     key={i}
+                    href={`/mentora/admin/reports?month=${ym}#sessions`}
+                    title={`${b.label} ${date.getUTCFullYear()} · ${formatNumber(b.value)} sessions`}
+                    className="dz-pilotage-bar"
                     style={{
                       flex: 1,
                       display: 'flex',
@@ -588,9 +695,12 @@ export default async function MentoraAdminPage() {
                       alignItems: 'center',
                       gap: 6,
                       height: '100%',
+                      textDecoration: 'none',
+                      color: 'inherit',
                     }}
                   >
                     <div
+                      className="dz-pilotage-bar__fill"
                       style={{
                         width: '100%',
                         height: `${(b.value / maxBar) * 100}%`,
@@ -601,6 +711,7 @@ export default async function MentoraAdminPage() {
                         opacity: isLast ? 1 : 0.85,
                         position: 'relative',
                         marginTop: 'auto',
+                        transition: 'opacity 0.15s ease, transform 0.15s ease',
                       }}
                     >
                       {isLast && (
@@ -624,10 +735,13 @@ export default async function MentoraAdminPage() {
                       )}
                     </div>
                     <div style={{ fontSize: 10, color: sub, fontWeight: 600 }}>{b.label}</div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
+            <style>{`
+              .dz-pilotage-bar:hover .dz-pilotage-bar__fill { opacity: 1; transform: scaleY(1.04); transform-origin: bottom; }
+            `}</style>
           </div>
 
           {/* Matching status */}

@@ -6,11 +6,20 @@ export const metadata = { title: 'Rapports · Admin Mentora' };
 /**
  * `/mentora/admin/reports` — exports & rapports synthèse.
  *
- * Affiche une vue agrégée par période (cette semaine, ce mois, total) sur
- * les indicateurs Mentora les plus suivis. Les boutons d'export (CSV) sont
- * volontairement non-fonctionnels pour l'instant — pipeline d'export à
- * implémenter dans une prochaine livraison.
+ * Vue agrégée par période (cette semaine, ce mois, total) sur les indicateurs
+ * Mentora. Chaque section a un bouton d'export CSV qui pointe vers
+ * `/api/admin/mentora/reports/export?kind=…` (admin-only, audit-logged,
+ * cap 5 000 lignes).
  */
+
+const EXPORT_KINDS = [
+  { kind: 'sessions', label: 'Toutes les sessions' },
+  { kind: 'mentorships', label: 'Tous les mentorships' },
+  { kind: 'requests', label: 'Toutes les demandes' },
+  { kind: 'reviews', label: 'Tous les avis' },
+  { kind: 'mentors', label: 'Tous les mentors' },
+  { kind: 'mentees', label: 'Toutes les mentorées' },
+] as const;
 export default async function ReportsPage() {
   const now = new Date();
   const weekAgo = new Date(now);
@@ -54,9 +63,16 @@ export default async function ReportsPage() {
     sessionsTotal > 0 ? Math.round((completionRate / sessionsTotal) * 100) : 0;
   const fmt = new Intl.NumberFormat('fr-FR');
 
-  const sections = [
+  const sections: Array<{
+    id: string;
+    title: string;
+    rows: { label: string; value: string }[];
+    exportKind: typeof EXPORT_KINDS[number]['kind'];
+  }> = [
     {
+      id: 'sessions',
       title: 'Sessions',
+      exportKind: 'sessions',
       rows: [
         { label: 'Total cumulé', value: fmt.format(sessionsTotal) },
         { label: 'Cette semaine', value: fmt.format(sessionsWeek) },
@@ -65,7 +81,9 @@ export default async function ReportsPage() {
       ],
     },
     {
+      id: 'mentorships',
       title: 'Mentorships',
+      exportKind: 'mentorships',
       rows: [
         { label: 'Total cumulé', value: fmt.format(mentorshipsTotal) },
         { label: 'Actifs', value: fmt.format(mentorshipsActive) },
@@ -73,7 +91,9 @@ export default async function ReportsPage() {
       ],
     },
     {
+      id: 'requests',
       title: 'Demandes de mentorat',
+      exportKind: 'requests',
       rows: [
         { label: 'Total reçues', value: fmt.format(requestsTotal) },
         { label: 'Acceptées', value: `${fmt.format(requestsAccepted)} (${acceptanceRate}%)` },
@@ -81,7 +101,9 @@ export default async function ReportsPage() {
       ],
     },
     {
+      id: 'satisfaction',
       title: 'Satisfaction',
+      exportKind: 'reviews',
       rows: [
         { label: 'Avis collectés', value: fmt.format(reviewsTotal) },
         {
@@ -112,8 +134,33 @@ export default async function ReportsPage() {
             Rapports & exports
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: '#545b7a' }}>
-            Vue synthèse temps réel · Exports CSV à venir.
+            Vue synthèse temps réel · Export CSV (max 5 000 lignes par fichier).
           </p>
+        </div>
+        {/* Bulk-export bar — every dataset in one click each. */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end' }}>
+          {EXPORT_KINDS.map((e) => (
+            <a
+              key={e.kind}
+              href={`/api/admin/mentora/reports/export?kind=${e.kind}`}
+              download
+              style={{
+                padding: '8px 14px',
+                borderRadius: 9,
+                border: '1px solid rgba(115,1,255,0.20)',
+                background: 'white',
+                color: '#7301FF',
+                fontSize: 12,
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <span aria-hidden>⬇</span> {e.label}
+            </a>
+          ))}
         </div>
       </div>
 
@@ -121,16 +168,44 @@ export default async function ReportsPage() {
         {sections.map((s) => (
           <div
             key={s.title}
+            id={s.id}
             style={{
               background: 'white',
               border: '1px solid rgba(115,1,255,0.10)',
               borderRadius: 16,
               padding: 22,
+              scrollMarginTop: 96,
             }}
           >
-            <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: '#1a1f3a', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-              {s.title}
-            </h3>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                marginBottom: 14,
+              }}
+            >
+              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#1a1f3a', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                {s.title}
+              </h3>
+              <a
+                href={`/api/admin/mentora/reports/export?kind=${s.exportKind}`}
+                download
+                title={`Exporter ${s.title.toLowerCase()} en CSV`}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: 7,
+                  background: 'rgba(115,1,255,0.08)',
+                  color: '#7301FF',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                }}
+              >
+                CSV ↓
+              </a>
+            </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <tbody>
                 {s.rows.map((r) => (

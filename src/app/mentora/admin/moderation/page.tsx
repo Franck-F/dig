@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import ModerationActions from './ModerationActions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Modération · Admin Mentora' };
@@ -23,7 +24,9 @@ export default async function MentoraModerationPage() {
   const thirtyDaysAgo = new Date(now);
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const [inactiveMentors, staleMentorships, lowReviews] = await Promise.all([
+  // The Review model has no `handledAt` field, so the audit log is the
+  // source of truth for whether a low review was already examined.
+  const [inactiveMentors, staleMentorships, lowReviews, handledReviewLogs] = await Promise.all([
     prisma.mentorProfile.findMany({
       where: { status: 'ACTIVE', updatedAt: { lt: sixtyDaysAgo } },
       take: 10,
@@ -71,7 +74,14 @@ export default async function MentoraModerationPage() {
         },
       },
     }),
+    prisma.auditLog.findMany({
+      where: { action: 'review.handled', targetType: 'Review' },
+      select: { targetId: true },
+    }),
   ]);
+  const handledReviewIds = new Set(
+    handledReviewLogs.map((l) => l.targetId).filter((v): v is string => Boolean(v)),
+  );
 
   const fullName = (u: { name: string | null; firstName: string | null; lastName: string | null; email: string }) =>
     u.name ?? ([u.firstName, u.lastName].filter(Boolean).join(' ').trim() || u.email);
@@ -130,11 +140,24 @@ export default async function MentoraModerationPage() {
           ) : (
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {inactiveMentors.map((m) => (
-                <li key={m.id} style={{ padding: '8px 0', borderBottom: '1px solid rgba(115,1,255,0.06)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1f3a' }}>{fullName(m.user)}</div>
-                  <div style={{ fontSize: 11, color: '#8b91ad' }}>
-                    Profil mis à jour le {dateFmt.format(m.updatedAt)} · {m.headline.slice(0, 60)}
+                <li
+                  key={m.id}
+                  style={{
+                    padding: '8px 0',
+                    borderBottom: '1px solid rgba(115,1,255,0.06)',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 180 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1f3a' }}>{fullName(m.user)}</div>
+                    <div style={{ fontSize: 11, color: '#8b91ad' }}>
+                      Profil mis à jour le {dateFmt.format(m.updatedAt)} · {m.headline.slice(0, 60)}
+                    </div>
                   </div>
+                  <ModerationActions variant="mentor-inactive" id={m.id} />
                 </li>
               ))}
             </ul>
@@ -148,13 +171,26 @@ export default async function MentoraModerationPage() {
           ) : (
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {staleMentorships.map((ms) => (
-                <li key={ms.id} style={{ padding: '8px 0', borderBottom: '1px solid rgba(115,1,255,0.06)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1f3a' }}>
-                    {fullName(ms.mentorProfile.user)} ↔ {fullName(ms.menteeProfile.user)}
+                <li
+                  key={ms.id}
+                  style={{
+                    padding: '8px 0',
+                    borderBottom: '1px solid rgba(115,1,255,0.06)',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 180 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1f3a' }}>
+                      {fullName(ms.mentorProfile.user)} ↔ {fullName(ms.menteeProfile.user)}
+                    </div>
+                    <div style={{ fontSize: 11, color: '#8b91ad' }}>
+                      Mentorship démarré le {ms.startedAt ? dateFmt.format(ms.startedAt) : '—'}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11, color: '#8b91ad' }}>
-                    Mentorship démarré le {ms.startedAt ? dateFmt.format(ms.startedAt) : '—'}
-                  </div>
+                  <ModerationActions variant="mentorship-stale" id={ms.id} />
                 </li>
               ))}
             </ul>
@@ -168,16 +204,33 @@ export default async function MentoraModerationPage() {
           ) : (
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {lowReviews.map((r) => (
-                <li key={r.id} style={{ padding: '8px 0', borderBottom: '1px solid rgba(115,1,255,0.06)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1f3a' }}>
-                    ★ {r.rating}/5 — {fullName(r.mentorship.mentorProfile.user)}
+                <li
+                  key={r.id}
+                  style={{
+                    padding: '8px 0',
+                    borderBottom: '1px solid rgba(115,1,255,0.06)',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 200 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1f3a' }}>
+                      ★ {r.rating}/5 — {fullName(r.mentorship.mentorProfile.user)}
+                    </div>
+                    <div style={{ fontSize: 11, color: '#8b91ad' }}>{dateFmt.format(r.createdAt)}</div>
+                    {r.comment && (
+                      <p style={{ margin: '4px 0 0', fontSize: 12, color: '#545b7a', fontStyle: 'italic' }}>
+                        « {r.comment.slice(0, 140)}{r.comment.length > 140 ? '…' : ''} »
+                      </p>
+                    )}
                   </div>
-                  <div style={{ fontSize: 11, color: '#8b91ad' }}>{dateFmt.format(r.createdAt)}</div>
-                  {r.comment && (
-                    <p style={{ margin: '4px 0 0', fontSize: 12, color: '#545b7a', fontStyle: 'italic' }}>
-                      « {r.comment.slice(0, 140)}{r.comment.length > 140 ? '…' : ''} »
-                    </p>
-                  )}
+                  <ModerationActions
+                    variant="review-low"
+                    id={r.id}
+                    reviewHandled={handledReviewIds.has(r.id)}
+                  />
                 </li>
               ))}
             </ul>
