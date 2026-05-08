@@ -1943,8 +1943,8 @@
       "intro": "Pour sa première édition, Digizelle Impact a réuni plus de 60 jeunes à Epitech Paris autour de tables rondes sur la féminisation de la tech, le leadership et l'entrepreneuriat. Avec des intervenant·es de Microsoft, AWS, Allianz, EY et HEC Paris, l'événement a été un moment fort de la communauté Digizelle — entre keynote, ateliers et networking stratégique.",
       "stats": {
         "youth": { "n": "60+", "label": "Jeunes présent·es" },
-        "speakers": { "n": "12+", "label": "Intervenant·es" },
-        "partners": { "n": "8", "label": "Partenaires" }
+        "speakers": { "n": "6", "label": "Intervenant·es" },
+        "partners": { "n": "1", "label": "Partenaire" }
       },
       "credit": "Photos · équipe Digizelle"
     },
