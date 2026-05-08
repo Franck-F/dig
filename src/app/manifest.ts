@@ -21,13 +21,14 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#0f0a2e',
     theme_color: '#7301FF',
     categories: ['education', 'social', 'nonprofit'],
+    // Icon set: only square PWA-grade assets. The previous entry pointed
+    // at /images/logo.png which is a 181×51 horizontal banner — Chrome
+    // logs `Resource size is not correct - typo in the Manifest?` because
+    // `sizes: 'any'` was incompatible with that aspect ratio. Until we
+    // ship proper square 192×192 / 512×512 icons (TODO: generate via the
+    // brand kit), we keep just the favicon — installability degrades to
+    // the browser default but the console stops complaining.
     icons: [
-      {
-        src: '/images/logo.png',
-        sizes: 'any',
-        type: 'image/png',
-        purpose: 'any',
-      },
       {
         src: '/favicon.ico',
         sizes: '48x48',

@@ -65,36 +65,6 @@ function sentryCspReportUri(): string | null {
 
 const cspReport = sentryCspReportUri();
 
-const cspDirectives = [
-  "default-src 'self'",
-  // Scripts: Next.js + RSC inline scripts. `unsafe-eval` only kept in dev
-  // for HMR; production strips it.
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com`,
-  // Styles: every page uses `style={{…}}` and styled-jsx → unsafe-inline
-  // is required. We compensate by hardening other directives.
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://*.supabase.co https://*.public.blob.vercel-storage.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://cdn.discordapp.com https://api.qrserver.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
-  // XHR / fetch: same origin + Supabase (REST + Realtime WS) + Resend +
-  // Sentry (both EU and US ingestion regions) + Vercel.
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://*.ingest.us.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com",
-  // Frames: deny all (used to be X-Frame-Options: DENY). OAuth providers
-  // never embed our pages in frames; if a future feature needs an iframe,
-  // explicitly allowlist that origin here.
-  "frame-ancestors 'none'",
-  // Forms: only post to ourselves (auth callbacks live on /api/auth/*).
-  "form-action 'self'",
-  // Misc tightening
-  "base-uri 'self'",
-  "object-src 'none'",
-  "upgrade-insecure-requests",
-  // Pipe CSP violations straight to Sentry. We use the legacy `report-uri`
-  // directive (still respected by all browsers); browsers that support the
-  // newer `report-to` Reporting API require an additional `Report-To`
-  // header — defer that to Phase 2 once we wire Sentry's Reporting API.
-  ...(cspReport ? [`report-uri ${cspReport}`] : []),
-];
-
 // CSP enforcement gate. Default: Report-Only — collect violations
 // without breaking the site for the first observation window. Flip
 // to enforced by setting `CSP_ENFORCE=1` once the report stream is
@@ -106,6 +76,51 @@ const cspEnforce = process.env.CSP_ENFORCE === '1';
 const cspHeaderName = cspEnforce
   ? 'Content-Security-Policy'
   : 'Content-Security-Policy-Report-Only';
+
+// Vercel Live — the toolbar/comments overlay injected on preview
+// deploys (and sometimes prod when "Toolbar in production" is on).
+// We always allowlist its origins so the toolbar works without
+// flooding the console with violations. The toolbar is opt-in at
+// the Vercel project level; harmless when not present.
+const VERCEL_LIVE = 'https://vercel.live';
+const VERCEL_LIVE_WS = 'wss://*.pusher.com'; // Vercel Live uses Pusher for realtime
+
+const cspDirectives = [
+  "default-src 'self'",
+  // Scripts: Next.js + RSC inline scripts. `unsafe-eval` only kept in dev
+  // for HMR; production strips it.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com ${VERCEL_LIVE}`,
+  // Styles: every page uses `style={{…}}` and styled-jsx → unsafe-inline
+  // is required. We compensate by hardening other directives.
+  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com ${VERCEL_LIVE}`,
+  `img-src 'self' data: blob: https://*.supabase.co https://*.public.blob.vercel-storage.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://cdn.discordapp.com https://api.qrserver.com ${VERCEL_LIVE}`,
+  `font-src 'self' https://fonts.gstatic.com data: ${VERCEL_LIVE}`,
+  // XHR / fetch: same origin + Supabase (REST + Realtime WS) + Resend +
+  // Sentry (both EU and US ingestion regions) + Vercel.
+  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://*.ingest.us.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com ${VERCEL_LIVE} ${VERCEL_LIVE_WS}`,
+  // Frames: same-origin embedding only, plus Vercel Live's iframe. The
+  // legacy `frame-ancestors 'none'` (above) still blocks others from
+  // framing US — `frame-src` is about what *we* may embed.
+  `frame-src 'self' ${VERCEL_LIVE}`,
+  // Frame-ancestors: deny all (used to be X-Frame-Options: DENY).
+  // OAuth providers never embed our pages.
+  "frame-ancestors 'none'",
+  // Forms: only post to ourselves (auth callbacks live on /api/auth/*).
+  "form-action 'self'",
+  // Misc tightening
+  "base-uri 'self'",
+  "object-src 'none'",
+  // upgrade-insecure-requests is silently ignored when CSP is delivered
+  // in report-only mode (Chrome warns about it on every page load), so
+  // we only emit it once we flip to enforce. HSTS already pins TLS for
+  // the apex domain, so the practical posture is unchanged.
+  ...(cspEnforce ? ['upgrade-insecure-requests'] : []),
+  // Pipe CSP violations straight to Sentry. We use the legacy `report-uri`
+  // directive (still respected by all browsers); browsers that support the
+  // newer `report-to` Reporting API require an additional `Report-To`
+  // header — defer that to Phase 2 once we wire Sentry's Reporting API.
+  ...(cspReport ? [`report-uri ${cspReport}`] : []),
+];
 
 const securityHeaders = [
   {
