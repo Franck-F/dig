@@ -736,8 +736,16 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
   const hidePasswordLabel = 'Masquer le mot de passe';
 
   return (
-    <div className="dz-glass-strong" style={{ padding: 48, borderRadius: 28, display: 'flex', flexDirection: 'column' }}>
-      <div className="dz-seg" style={{ alignSelf: 'flex-start', marginBottom: 28 }}>
+    <div
+      className="dz-glass-strong"
+      style={{
+        padding: '32px 36px',
+        borderRadius: 28,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div className="dz-seg" style={{ alignSelf: 'flex-start', marginBottom: 16 }}>
         <button type="button" className={tab === 'login' ? '--on' : ''} onClick={() => setTab('login')}>
           {t('tabs.login')}
         </button>
@@ -753,11 +761,11 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
               is sanitised server-side via safeNextPath() — anything
               off-origin is dropped. */}
           {nextPath && <input type="hidden" name="next" value={nextPath} />}
-          <h2 className="dz-h2" style={{ fontSize: 32 }}>
+          <h2 className="dz-h2" style={{ fontSize: 26, margin: 0, letterSpacing: '-0.01em' }}>
             {t('loginForm.title')} <span className="dz-grad-text">{t('loginForm.titleHighlight')}</span>
           </h2>
-          <p className="dz-small" style={{ marginTop: 8 }}>{t('loginForm.subtitle')}</p>
-          <div style={{ display: 'grid', gap: 16, marginTop: 28 }}>
+          <p className="dz-small" style={{ marginTop: 4 }}>{t('loginForm.subtitle')}</p>
+          <div style={{ display: 'grid', gap: 10, marginTop: 16 }}>
             <div>
               <label htmlFor="login-email" className="dz-label">{t('loginForm.email')}</label>
               <input
@@ -812,12 +820,12 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
         </form>
       ) : (
         <form action={signupAction}>
-          <h2 className="dz-h2" style={{ fontSize: 32 }}>
+          <h2 className="dz-h2" style={{ fontSize: 26, margin: 0, letterSpacing: '-0.01em' }}>
             {t('signupForm.title')} <span className="dz-grad-text">{t('signupForm.titleHighlight')}</span>
           </h2>
-          <p className="dz-small" style={{ marginTop: 8 }}>{t('signupForm.subtitle')}</p>
-          <div style={{ display: 'grid', gap: 14, marginTop: 24 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <p className="dz-small" style={{ marginTop: 4 }}>{t('signupForm.subtitle')}</p>
+          <div style={{ display: 'grid', gap: 10, marginTop: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div>
                 <label htmlFor="signup-firstname" className="dz-label">{t('signupForm.firstName')}</label>
                 <input id="signup-firstname" name="firstName" className="dz-input" required maxLength={80} autoComplete="given-name" />
@@ -887,7 +895,11 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                      case the user mistypes the year. Both flags are
                      enforced server-side; the input + checkbox are pure
                      UX. */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
+            {/* Birth year + age-over-15 declaration on a single row.
+                Saves vertical space without losing the dual-signal
+                (numeric year + self-declaration) that the server
+                cross-validates for RGPD Art. 8 compliance. */}
+            <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: 12, alignItems: 'flex-start' }}>
               <div>
                 <label htmlFor="signup-birthyear" className="dz-label">
                   {t('signupForm.birthYearLabel')}
@@ -906,18 +918,17 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                   autoComplete="bday-year"
                   style={{ width: '100%' }}
                 />
-                <span className="dz-small" style={{ display: 'block', marginTop: 4, fontSize: 12, color: '#6b6b8a' }}>
-                  {t('signupForm.birthYearHelper')}
-                </span>
               </div>
               <label
                 style={{
                   display: 'flex',
                   alignItems: 'flex-start',
-                  gap: 10,
+                  gap: 8,
                   cursor: 'pointer',
-                  fontSize: 13,
+                  fontSize: 12.5,
                   color: '#3a2960',
+                  paddingTop: 24,
+                  lineHeight: 1.45,
                 }}
               >
                 <input
@@ -925,19 +936,19 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                   name="ageOver15"
                   value="1"
                   required
-                  style={{ marginTop: 3 }}
+                  style={{ marginTop: 2, accentColor: '#7301FF', flexShrink: 0 }}
                 />
                 <span>{t('signupForm.ageDeclaration')}</span>
               </label>
             </div>
-            <button type="submit" disabled={signupPending} className="dz-btn dz-btn-primary dz-btn-lg" style={{ width: '100%', marginTop: 8, opacity: signupPending ? 0.7 : 1 }}>
+            <button type="submit" disabled={signupPending} className="dz-btn dz-btn-primary dz-btn-lg" style={{ width: '100%', marginTop: 4, opacity: signupPending ? 0.7 : 1 }}>
               {signupPending ? t('signupForm.submitting') : t('signupForm.submit')}
             </button>
-            <div className="dz-small" style={{ textAlign: 'center' }}>
+            <div className="dz-small" style={{ textAlign: 'center', fontSize: 11 }}>
               {t('signupForm.terms')}
             </div>
           </div>
-          <div className="dz-divider"><span className="dz-small">{t('loginForm.or')}</span></div>
+          <div className="dz-divider" style={{ margin: '12px 0' }}><span className="dz-small">{t('loginForm.or')}</span></div>
           <SocialButtons enabled={oauthEnabled} disabledLabel={t("oauth.disabled")} next={nextPath} />
         </form>
       )}

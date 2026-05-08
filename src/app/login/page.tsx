@@ -35,22 +35,22 @@ export default async function LoginPage() {
           >
             <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'radial-gradient(60% 60% at 20% 20%, rgba(255,255,255,0.30), transparent 70%)' }} />
             <div aria-hidden className="dz-login-grid-overlay" />
-            <div style={{ position: 'relative', padding: 48, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 620 }}>
+            <div style={{ position: 'relative', padding: '36px 36px 28px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 540 }}>
               <div>
                 <span className="dz-chip --white">{t('side.chip')}</span>
-                <h2 className="dz-h2" style={{ color: 'white', marginTop: 14 }}>
+                <h2 className="dz-h2" style={{ color: 'white', marginTop: 12, fontSize: 30, letterSpacing: '-0.01em' }}>
                   {t('side.titleLine1')}
                   <br />
                   {t('side.titleLine2')}
                 </h2>
-                <p style={{ color: 'rgba(255,255,255,0.85)', marginTop: 14, fontSize: 16, maxWidth: 380 }}>
+                <p style={{ color: 'rgba(255,255,255,0.85)', marginTop: 10, fontSize: 14.5, maxWidth: 380, lineHeight: 1.55 }}>
                   {t('side.body')}
                 </p>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flex: 1, minHeight: 320 }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flex: 1, minHeight: 220 }}>
                 <LoginCharacters />
               </div>
-              <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'rgba(255,255,255,0.85)', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 14, fontSize: 12, color: 'rgba(255,255,255,0.85)', flexWrap: 'wrap' }}>
                 <div>● {t('side.secure')}</div>
                 <div>● {t('side.rgpd')}</div>
                 <div>● {t('side.noSpam')}</div>

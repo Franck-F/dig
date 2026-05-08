@@ -529,15 +529,19 @@
 /* =========================================================
    Login page layout
    ========================================================= */
-.dz-login-section { padding-top: 24px; padding-bottom: 40px; }
+.dz-login-section { padding-top: 16px; padding-bottom: 24px; }
 .dz-login-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 24px;
   align-items: stretch;
-  min-height: 620px;
+  min-height: 0;
 }
-.dz-login-side { min-height: 620px; }
+/* Side panel matches the form's intrinsic height — used to be pinned
+   to 620px which forced the section to scroll on standard 13-inch
+   viewports. Now both columns size to content and the page fits in
+   one screen on desktop. */
+.dz-login-side { min-height: 540px; }
 .dz-login-grid-overlay {
   position: absolute;
   inset: 0;
