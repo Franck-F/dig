@@ -269,26 +269,42 @@
       "title": "L'année",
       "titleHighlight": "en images.",
       "all": "Tous les événements →",
+      "openAlbum": "Voir l'album →",
       "items": {
         "0": {
           "title": "Digizelle Impact 2026 — Epitech Paris",
-          "date": "13 mars 2026"
+          "date": "13 mars 2026",
+          "slug": "digizelle-impact-1",
+          "venue": "Epitech Paris",
+          "intro": "Première édition de Digizelle Impact, notre événement annuel qui rassemble jeunes, mentors, entreprises partenaires et décideurs autour de l'inclusion numérique."
         },
         "1": {
           "title": "Table ronde Women in Tech — HEC Paris",
-          "date": "Cycle 2025"
+          "date": "Cycle 2025",
+          "slug": "women-in-tech-hec",
+          "venue": "HEC Paris",
+          "intro": "Table ronde inspirante avec des femmes leaders du numérique, organisée dans le cadre du cycle Women in Tech à HEC Paris."
         },
         "2": {
           "title": "Hackathon Women in GenAI — EY × Microsoft",
-          "date": "Édition 2025"
+          "date": "Édition 2025",
+          "slug": "hackathon-women-genai",
+          "venue": "EY · Microsoft",
+          "intro": "48 heures de création autour de l'IA générative, en équipe avec mentors et coachs experts d'EY et Microsoft."
         },
         "3": {
           "title": "VivaTech 2025 — Atelier IA mon futur métier",
-          "date": "14 juin 2025"
+          "date": "14 juin 2025",
+          "slug": "vivatech-2025",
+          "venue": "Porte de Versailles, Paris",
+          "intro": "Atelier découverte « IA mon futur métier » au plus grand salon tech d'Europe — démos, échanges et orientation professionnelle."
         },
         "4": {
           "title": "BECOMTECH × Epitech — Syndrome de l'imposteur",
-          "date": "24 juin 2025"
+          "date": "24 juin 2025",
+          "slug": "becomtech-epitech-imposteur",
+          "venue": "Epitech Le Kremlin-Bicêtre",
+          "intro": "Conférence-débat sur le syndrome de l'imposteur dans les parcours tech, en partenariat avec BECOMTECH et Epitech."
         }
       }
     },

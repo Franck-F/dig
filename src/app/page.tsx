@@ -9,6 +9,7 @@ import Mascot3D from '@/components/Mascot3D';
 import Reveal from '@/components/Reveal';
 import { BrandScroller, BrandScrollerReverse } from '@/components/ui/brand-scoller';
 import { getPartnerLogos } from '@/lib/partners/logos';
+import { EVENT_PHOTOS } from '@/app/events/_data';
 import {
   breadcrumbJsonLd,
   faqPageJsonLd,
@@ -427,40 +428,98 @@ export default async function HomePage() {
           </Link>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gridTemplateRows: 'repeat(2, 220px)', gap: 16 }}>
-          {events.map((e, i) => (
-            <Reveal key={e.key} delay={i * 80}>
-              <div
-                className="dz-card"
-                style={{
-                  padding: 0,
-                  overflow: 'hidden',
-                  gridRow: 'span' in e ? e.span : undefined,
-                  position: 'relative',
-                  height: '100%',
-                  background: 'linear-gradient(135deg,#7301FF,#A34BF5)',
-                  transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
-                }}
-              >
-                <Image
-                  src="/images/exemple.png"
-                  alt=""
-                  width={600}
-                  height={400}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'multiply', opacity: 0.85 }}
-                />
-                <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(36,50,95,0.85))' }} />
-                <div style={{ position: 'absolute', left: 18, right: 18, bottom: 16, color: 'white' }}>
-                  <div style={{ fontSize: 11, opacity: 0.85, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
-                    {t(`events.items.${e.key}.date`)}
+          {events.map((e, i) => {
+            // Each card gets a stable cover photo from the shared
+            // EVENT_PHOTOS pool (rotating modulo the array length so
+            // adding events never invalidates the existing assignment).
+            // Clicking the card opens the dedicated album at
+            // /events/<slug>, dynamically built from i18n (see
+            // events/[slug]/page.tsx).
+            const cover = EVENT_PHOTOS[i % EVENT_PHOTOS.length];
+            const slug = t(`events.items.${e.key}.slug`);
+            const title = t(`events.items.${e.key}.title`);
+            const date = t(`events.items.${e.key}.date`);
+            const isBig = 'big' in e && e.big;
+            return (
+              <Reveal key={e.key} delay={i * 80}>
+                <Link
+                  href={`/events/${slug}`}
+                  aria-label={`${title} — ${t('events.openAlbum')}`}
+                  className="dz-event-card"
+                  style={{
+                    display: 'block',
+                    padding: 0,
+                    overflow: 'hidden',
+                    gridRow: 'span' in e ? e.span : undefined,
+                    position: 'relative',
+                    height: '100%',
+                    borderRadius: 'var(--r-lg, 22px)',
+                    background: '#1a1240',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s cubic-bezier(0.16,1,0.3,1)',
+                  }}
+                >
+                  <Image
+                    src={cover}
+                    alt={title}
+                    fill
+                    sizes={isBig ? '(max-width: 900px) 100vw, 56vw' : '(max-width: 900px) 100vw, 28vw'}
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, transparent 40%, rgba(15,8,32,0.82))',
+                    }}
+                  />
+                  <div style={{ position: 'absolute', left: 18, right: 18, bottom: 16, color: 'white' }}>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        opacity: 0.85,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.08em',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {date}
+                    </div>
+                    <div style={{ fontSize: isBig ? 22 : 15, fontWeight: 700, marginTop: 4, lineHeight: 1.25 }}>
+                      {title}
+                    </div>
+                    <div
+                      style={{
+                        marginTop: 10,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '5px 12px',
+                        borderRadius: 999,
+                        background: 'rgba(255,255,255,0.18)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      {t('events.openAlbum')}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 'big' in e && e.big ? 22 : 15, fontWeight: 700, marginTop: 4 }}>
-                    {t(`events.items.${e.key}.title`)}
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+                </Link>
+              </Reveal>
+            );
+          })}
         </div>
+        <style>{`
+          .dz-event-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 48px -20px rgba(36,18,80,0.45);
+          }
+        `}</style>
       </section>
       </Reveal>
 
