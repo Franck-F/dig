@@ -116,6 +116,17 @@ export default async function MentoraDashboardLayout({ children }: { children: R
   // Admin navigation overrides everything else when there's no role profile —
   // we don't want to push an admin towards "Devenir mentorée / Devenir mentor".
   // Admins get direct shortcuts to the pilotage surfaces instead.
+  // Settings entry surfaces account-level controls (profile, RGPD
+  // export, account deletion) from the Mentora sidebar. Same target
+  // as the Community sidebar — settings are user-level, not
+  // space-level, so a single canonical page serves both.
+  const settingsItem: AppShellNavItem = {
+    href: '/community/settings',
+    label: tShell('nav.community.settings'),
+    icon: '⚙',
+    matchPrefix: true,
+  };
+
   const adminNoProfileNav: AppShellNavItem[] = [
     { href: '/mentora/admin', label: 'Pilotage', icon: '◉' },
     { href: '/mentora/admin/mentors', label: 'Mentors', icon: '☷', matchPrefix: true },
@@ -124,6 +135,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
     { href: '/mentora/admin/moderation', label: 'Modération', icon: '◇', matchPrefix: true },
     { href: '/mentora/admin/reports', label: 'Rapports', icon: '◌', matchPrefix: true },
     { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '✉', matchPrefix: true, badge: unreadCount },
+    settingsItem,
   ];
 
   const nav: AppShellNavItem[] =
@@ -135,6 +147,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
           { href: '/mentora/dashboard/messages', label: tShell('nav.mentor.messages'), icon: '✉', matchPrefix: true, badge: null },
           { href: '/mentora/dashboard/availability', label: tShell('nav.mentor.availability'), icon: '◇', matchPrefix: true },
           { href: '/mentora/dashboard/notifications', label: tShell('nav.mentor.notifications'), icon: '✦', matchPrefix: true, badge: unreadCount },
+          settingsItem,
         ]
       : kind === 'mentee'
         ? [
@@ -144,6 +157,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
             { href: '/mentora/dashboard/messages', label: tShell('nav.mentee.messages'), icon: '✉', matchPrefix: true },
             { href: '/mentora/dashboard/requests', label: tShell('nav.mentee.goals'), icon: '◈', matchPrefix: true },
             { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '☼', matchPrefix: true, badge: unreadCount },
+            settingsItem,
           ]
         : isAdmin
           ? adminNoProfileNav
@@ -152,6 +166,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
               { href: '/mentora/onboarding', label: 'Devenir mentorée', icon: '✦' },
               { href: '/mentora/become-a-mentor', label: 'Devenir mentor', icon: '☷' },
               { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '✉', matchPrefix: true, badge: unreadCount },
+              settingsItem,
             ];
 
   const profileColor =
