@@ -832,14 +832,30 @@ body.dz-theme-dark .dz-header {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  align-items: stretch;
+  /* Switched from `stretch` to `start`: when the user toggles to
+     Inscription the right column gains ~6 fields and the form pushes
+     well past the side panel's natural height. With `stretch` the side
+     card was being inflated to match — flex content (mascot, footer
+     chips) flowed past the fold and looked broken. With `start` each
+     column sizes to its own content, and the side card stays sticky
+     so the welcome copy + characters remain visible while the user
+     fills out the form. */
+  align-items: start;
   min-height: 0;
 }
-/* Side panel matches the form's intrinsic height — used to be pinned
-   to 620px which forced the section to scroll on standard 13-inch
-   viewports. Now both columns size to content and the page fits in
-   one screen on desktop. */
-.dz-login-side { min-height: 540px; }
+.dz-login-side {
+  min-height: 540px;
+  position: sticky;
+  /* Header is ~80 px tall; 96 px gives a comfortable gap. Falls back
+     to a no-op on browsers that don't support sticky in grid (none in
+     scope today). */
+  top: 96px;
+  /* Cap so the card never exceeds the viewport — its inner content
+     uses justify-content: space-between, which would otherwise spread
+     vertically into something awkward on tall viewports. */
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+}
 .dz-login-grid-overlay {
   position: absolute;
   inset: 0;
@@ -851,7 +867,13 @@ body.dz-theme-dark .dz-header {
 }
 @media (max-width: 1024px) {
   .dz-login-grid { grid-template-columns: 1fr !important; min-height: 0; }
-  .dz-login-side { min-height: 480px; }
+  .dz-login-side {
+    min-height: 480px;
+    /* On a single-column layout sticky is harmful — the side card would
+       overlap the form when the user scrolls. Drop back to inline flow. */
+    position: static;
+    max-height: none;
+  }
 }
 @media (max-width: 768px) {
   .dz-login-side { min-height: 420px; }
