@@ -827,34 +827,60 @@ body.dz-theme-dark .dz-header {
 /* =========================================================
    Login page layout
    ========================================================= */
-.dz-login-section { padding-top: 16px; padding-bottom: 24px; }
+/* Split-screen auth layout: the left brand card occupies the full
+   visible viewport (header excluded) and never scrolls. The right
+   pane holds the form and scrolls internally when its content exceeds
+   the viewport (typically the Inscription tab). The page itself
+   doesn't scroll on desktop — it's a fixed two-column app shell. */
+.dz-login-section {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  /* Header is ~80 px (sticky liquid glass). Subtract that plus the
+     16+16 vertical padding so the section fills the rest of the
+     viewport exactly. The 88 px figure includes a small fudge for
+     header borders + mobile safe-area. */
+  height: calc(100vh - 88px);
+  /* Children handle their own scrolling — the section is a frame. */
+  overflow: hidden;
+}
 .dz-login-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  /* Switched from `stretch` to `start`: when the user toggles to
-     Inscription the right column gains ~6 fields and the form pushes
-     well past the side panel's natural height. With `stretch` the side
-     card was being inflated to match — flex content (mascot, footer
-     chips) flowed past the fold and looked broken. With `start` each
-     column sizes to its own content, and the side card stays sticky
-     so the welcome copy + characters remain visible while the user
-     fills out the form. */
-  align-items: start;
+  align-items: stretch;
+  height: 100%;
   min-height: 0;
 }
 .dz-login-side {
-  min-height: 540px;
-  position: sticky;
-  /* Header is ~80 px tall; 96 px gives a comfortable gap. Falls back
-     to a no-op on browsers that don't support sticky in grid (none in
-     scope today). */
-  top: 96px;
-  /* Cap so the card never exceeds the viewport — its inner content
-     uses justify-content: space-between, which would otherwise spread
-     vertically into something awkward on tall viewports. */
-  max-height: calc(100vh - 120px);
+  /* Stretches to the section height; the inner flex column uses
+     justify-content: space-between to anchor the chip+title up top,
+     the LoginCharacters in the middle, and the secure/rgpd/no-spam
+     row at the bottom. */
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
+}
+.dz-login-form-pane {
+  height: 100%;
+  min-height: 0;
+  /* The actual scroll container. Padding-right keeps the scrollbar
+     from touching the form's edge. */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  /* Tame the scrollbar to match the brand. Falls back to native UI
+     on browsers that don't support these properties. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(115,1,255,0.30) transparent;
+}
+.dz-login-form-pane::-webkit-scrollbar { width: 8px; }
+.dz-login-form-pane::-webkit-scrollbar-track { background: transparent; }
+.dz-login-form-pane::-webkit-scrollbar-thumb {
+  background: rgba(115,1,255,0.25);
+  border-radius: 4px;
+}
+.dz-login-form-pane::-webkit-scrollbar-thumb:hover {
+  background: rgba(115,1,255,0.40);
 }
 .dz-login-grid-overlay {
   position: absolute;
@@ -866,13 +892,27 @@ body.dz-theme-dark .dz-header {
   pointer-events: none;
 }
 @media (max-width: 1024px) {
-  .dz-login-grid { grid-template-columns: 1fr !important; min-height: 0; }
+  /* Below desktop the split-screen lock makes no sense: the form has
+     to expand and the page returns to natural document flow with the
+     window scroll handling overflow. */
+  .dz-login-section {
+    height: auto;
+    overflow: visible;
+  }
+  .dz-login-grid {
+    grid-template-columns: 1fr !important;
+    height: auto;
+    align-items: start;
+  }
   .dz-login-side {
+    height: auto;
     min-height: 480px;
-    /* On a single-column layout sticky is harmful — the side card would
-       overlap the form when the user scrolls. Drop back to inline flow. */
-    position: static;
-    max-height: none;
+    overflow: hidden;
+  }
+  .dz-login-form-pane {
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
   }
 }
 @media (max-width: 768px) {

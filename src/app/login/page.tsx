@@ -58,7 +58,13 @@ export default async function LoginPage() {
             </div>
           </div>
 
-          <LoginForm oauthEnabled={oauthEnabled} />
+          {/* Right pane scrolls internally so the left brand card stays
+              pinned to the viewport. The wrapper carries the overflow
+              + flex-column treatment so LoginForm itself doesn't have
+              to know about the layout. */}
+          <div className="dz-login-form-pane">
+            <LoginForm oauthEnabled={oauthEnabled} />
+          </div>
         </div>
       </section>
     </Frame>
