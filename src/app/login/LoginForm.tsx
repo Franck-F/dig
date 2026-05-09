@@ -674,6 +674,12 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
   const nextPath =
     rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '';
   const [tab, setTab] = useState<'login' | 'signup'>('login');
+  // Two independent products. The user must pick at least one. When
+  // Mentora is on, a sub-role (STUDENT / MENTOR) is required; when off
+  // the role is irrelevant and the form sends `null`. The hidden inputs
+  // below carry these to the server action.
+  const [mentoraOn, setMentoraOn] = useState(true);
+  const [communityOn, setCommunityOn] = useState(true);
   const [role, setRole] = useState<RoleValue>('STUDENT');
 
   const [loginState, loginAction, loginPending] = useActionState(signIn, initialState);
@@ -857,16 +863,67 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                 hideLabel={hidePasswordLabel}
               />
             </div>
+            {/* Product access: Mentora and Community are independent.
+                The user must pick at least one. The signUp action
+                validates and sets `mentoraEnabled` / `communityEnabled`
+                on the User row from these hidden inputs. */}
             <div>
-              <span className="dz-label">{t('signupForm.iAm')}</span>
-              <input type="hidden" name="role" value={role} />
+              <span className="dz-label">{t('signupForm.access')}</span>
+              <input type="hidden" name="mentoraEnabled" value={mentoraOn ? '1' : '0'} />
+              <input type="hidden" name="communityEnabled" value={communityOn ? '1' : '0'} />
+              <input type="hidden" name="role" value={mentoraOn ? role : 'STUDENT'} />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                {ROLES.map(([labelKey, value]) => (
-                  <button key={value} type="button" onClick={() => setRole(value)} className={`dz-btn dz-btn-sm ${value === role ? 'dz-btn-primary' : 'dz-btn-ghost'}`}>
-                    {t(`signupForm.roles.${labelKey}`)}
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  onClick={() => setMentoraOn((v) => !v)}
+                  aria-pressed={mentoraOn}
+                  className={`dz-btn dz-btn-sm ${mentoraOn ? 'dz-btn-primary' : 'dz-btn-ghost'}`}
+                  style={{ justifyContent: 'flex-start', gap: 8 }}
+                >
+                  <span aria-hidden style={{ fontSize: 14 }}>{mentoraOn ? '✓' : '○'}</span>
+                  {t('signupForm.products.mentora')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCommunityOn((v) => !v)}
+                  aria-pressed={communityOn}
+                  className={`dz-btn dz-btn-sm ${communityOn ? 'dz-btn-primary' : 'dz-btn-ghost'}`}
+                  style={{ justifyContent: 'flex-start', gap: 8 }}
+                >
+                  <span aria-hidden style={{ fontSize: 14 }}>{communityOn ? '✓' : '○'}</span>
+                  {t('signupForm.products.community')}
+                </button>
               </div>
+              {!mentoraOn && !communityOn && (
+                <p
+                  role="alert"
+                  style={{
+                    margin: '8px 0 0',
+                    fontSize: 12,
+                    color: '#d94e92',
+                    fontWeight: 600,
+                  }}
+                >
+                  {t('signupForm.products.atLeastOne')}
+                </p>
+              )}
+              {mentoraOn && (
+                <div style={{ marginTop: 12 }}>
+                  <span className="dz-label" style={{ fontSize: 12 }}>{t('signupForm.iAm')}</span>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 4 }}>
+                    {ROLES.map(([labelKey, value]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setRole(value)}
+                        className={`dz-btn dz-btn-sm ${value === role ? 'dz-btn-primary' : 'dz-btn-ghost'}`}
+                      >
+                        {t(`signupForm.roles.${labelKey}`)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {/* Honey-pot — invisible to humans, magnetic to naive bots that
                 fill every input by name. Server rejects on any non-empty

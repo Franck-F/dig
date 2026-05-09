@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { NotificationType } from '@prisma/client';
 
@@ -8,6 +9,7 @@ import Frame from '@/components/Frame';
 import { auth, signOut } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
+import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
 
 /** Mentora-section notification types — community types are filtered out so
  *  the bell stays in section context. */
@@ -42,6 +44,12 @@ export default async function MentoraDiscoverLayout({ children }: { children: Re
 
   if (!userId) {
     return <Frame active="mentora">{children}</Frame>;
+  }
+
+  const access = await getProductAccess();
+  if (!access.mentora && !access.isAdmin) {
+    if (!access.roleConfirmed) redirect('/welcome/role');
+    redirect('/app');
   }
 
   const [roleProfile, unreadCount, latestNotifs, t, tShell, tNotifTypes, tBellCopy] = await Promise.all([
@@ -135,10 +143,10 @@ export default async function MentoraDiscoverLayout({ children }: { children: Re
       title="Trouver un mentor"
       subtitle="Mentora · Catalogue"
       nav={nav}
-      switchItems={[
-        { href: '/mentora/dashboard', label: tShell('switch.mentora'), icon: '✦', matchPrefix: '/mentora' },
-        { href: '/community', label: tShell('switch.community'), icon: '☷', matchPrefix: '/community' },
-      ]}
+      switchItems={buildSwitchItems(access, {
+        mentora: tShell('switch.mentora'),
+        community: tShell('switch.community'),
+      })}
       profile={{
         name: displayName,
         sub: subLabel,

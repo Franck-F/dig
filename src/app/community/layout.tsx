@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { NotificationType } from '@prisma/client';
 
@@ -6,6 +7,7 @@ import AppShell, { type AppShellNavItem } from '@/components/app-shell/AppShell'
 import Frame from '@/components/Frame';
 import { auth, signOut } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
 
 /** Community-section notification types. The bell drops Mentora-only notifs
  *  so the user stays in section context; "Voir tout" still merges both. */
@@ -42,6 +44,17 @@ export default async function CommunityLayout({ children }: { children: ReactNod
 
   if (!userId) {
     return <Frame active="community">{children}</Frame>;
+  }
+
+  const access = await getProductAccess();
+
+  // Universe gate: a user who didn't opt into Community can't browse it.
+  // Brand-new OAuth users (roleConfirmed=false) are sent to the chooser;
+  // anyone else gets bumped to the hub. Admins bypass — they always see
+  // everything regardless of their own flags.
+  if (!access.community && !access.isAdmin) {
+    if (!access.roleConfirmed) redirect('/welcome/role');
+    redirect('/app');
   }
 
   // Connected user — fetch the bits the AppShell needs.
@@ -139,10 +152,12 @@ export default async function CommunityLayout({ children }: { children: ReactNod
           </a>
         ) : null
       }
-      switchItems={[
-        { href: '/mentora/dashboard', label: tShell('switch.mentora'), icon: '✦', matchPrefix: '/mentora' },
-        { href: '/community', label: tShell('switch.community'), icon: '☷', matchPrefix: '/community' },
-      ]}
+      // Filtered to the universes the user opted into. A community-only
+      // user sees a single tab; both-products users see both.
+      switchItems={buildSwitchItems(access, {
+        mentora: tShell('switch.mentora'),
+        community: tShell('switch.community'),
+      })}
       profile={{
         name: displayName,
         sub: tShell('profile.community'),

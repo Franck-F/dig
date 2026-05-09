@@ -6,27 +6,23 @@ import Link from 'next/link';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
-import RoleChooserForm from './RoleChooserForm';
+import AccessChooserForm from './AccessChooserForm';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Bienvenue · choisis ton rôle · Digizelle',
+  title: 'Bienvenue · choisis tes accès · Digizelle',
   description:
-    'Une dernière étape avant d’entrer : indique-nous si tu rejoins Digizelle en tant qu’apprenant·e ou en tant que mentor.',
+    'Mentora et Communauté sont deux produits indépendants. Active celui qui te correspond — ou les deux.',
 };
 
 /**
- * One-time gate shown to brand-new OAuth signups.
+ * One-time chooser for brand-new accounts.
  *
  * The auth `events.signIn` hook sets `roleConfirmed: false` on first
- * OAuth sign-in (the schema default `STUDENT` is just a placeholder).
- * `/app` and `/mentora/onboarding` redirect here whenever they see a
- * user whose role hasn't been confirmed.
- *
- * If the user is already confirmed (credentials signup, or returning
- * OAuth user), we silently bounce them to `/app` so the page is a no-op
- * for everyone except the targeted cohort.
+ * OAuth sign-in. Mentora (1-to-1 mentorship) and Community (forum /
+ * channels) are independent products — the user picks any non-empty
+ * combination. Users who already confirmed get bounced to /app.
  */
 export default async function WelcomeRolePage() {
   const session = await auth();
@@ -34,10 +30,15 @@ export default async function WelcomeRolePage() {
 
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { firstName: true, name: true, email: true, role: true, roleConfirmed: true },
+    select: {
+      firstName: true,
+      name: true,
+      email: true,
+      role: true,
+      roleConfirmed: true,
+    },
   });
   if (!me) redirect('/login');
-  // Already confirmed (or admin) — no need to ask again.
   if (me.roleConfirmed || me.role === 'ADMIN') redirect('/app');
 
   const firstName =
@@ -60,8 +61,6 @@ export default async function WelcomeRolePage() {
         overflow: 'hidden',
       }}
     >
-      {/* Logo header — minimal, no full nav. The user is mid-onboarding,
-          everything else can wait until they pick. */}
       <header
         style={{
           width: '100%',
@@ -84,7 +83,7 @@ export default async function WelcomeRolePage() {
         </Link>
       </header>
 
-      <section style={{ width: '100%', maxWidth: 980, margin: '0 auto', textAlign: 'center', flex: 1 }}>
+      <section style={{ width: '100%', maxWidth: 1100, margin: '0 auto', textAlign: 'center', flex: 1 }}>
         <div
           style={{
             display: 'inline-flex',
@@ -114,7 +113,7 @@ export default async function WelcomeRolePage() {
             lineHeight: 1.05,
           }}
         >
-          Comment souhaites-tu
+          Choisis tes accès
           <br />
           <span
             style={{
@@ -125,23 +124,23 @@ export default async function WelcomeRolePage() {
               color: 'transparent',
             }}
           >
-            rejoindre Digizelle ?
+            sur Digizelle.
           </span>
         </h1>
         <p
           style={{
             margin: '14px auto 0',
-            maxWidth: 640,
+            maxWidth: 700,
             fontSize: 16,
             lineHeight: 1.55,
             color: 'rgba(255,255,255,0.78)',
           }}
         >
-          Choisis ton parcours pour qu’on adapte l’expérience à ton objectif. Tu pourras toujours nous écrire
-          plus tard si tu veux changer de rôle.
+          Mentora et Communauté sont deux produits indépendants. Active celui qui correspond à ton
+          objectif — ou les deux. Tu pourras toujours nous écrire plus tard pour ajuster.
         </p>
 
-        <RoleChooserForm />
+        <AccessChooserForm />
 
         <p style={{ marginTop: 28, fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
           Tu es partenaire ou entreprise ?{' '}

@@ -59,23 +59,31 @@ const MIN_AGE_YEARS = 15; // RGPD Art. 8 — French digital consent floor.
 const MAX_BIRTH_YEAR = CURRENT_YEAR - MIN_AGE_YEARS;
 const MIN_BIRTH_YEAR = CURRENT_YEAR - 120;
 
-const signUpSchema = z.object({
-  firstName: z.string().min(1, 'firstNameRequired').max(80),
-  lastName: z.string().min(1, 'lastNameRequired').max(80),
-  email: z.string().email('emailInvalid').max(200),
-  password: z.string().min(8, 'passwordTooShort').max(200),
-  role: z.nativeEnum(UserRole),
-  // Year of birth is parsed separately so we can return distinct error
-  // codes for "missing", "below 15", and "implausible" (the form needs to
-  // tell the user what to fix, and we don't want a single generic
-  // `invalidBirthYear` to mask the parental-consent message).
-  birthYear: z
-    .coerce
-    .number()
-    .int()
-    .min(MIN_BIRTH_YEAR, 'invalidBirthYear')
-    .max(MAX_BIRTH_YEAR, 'belowMinAge'),
-});
+const signUpSchema = z
+  .object({
+    firstName: z.string().min(1, 'firstNameRequired').max(80),
+    lastName: z.string().min(1, 'lastNameRequired').max(80),
+    email: z.string().email('emailInvalid').max(200),
+    password: z.string().min(8, 'passwordTooShort').max(200),
+    role: z.nativeEnum(UserRole),
+    /** "1" / "0" string from the hidden form inputs. */
+    mentoraEnabled: z.enum(['0', '1']).default('1'),
+    communityEnabled: z.enum(['0', '1']).default('1'),
+    // Year of birth is parsed separately so we can return distinct error
+    // codes for "missing", "below 15", and "implausible" (the form needs to
+    // tell the user what to fix, and we don't want a single generic
+    // `invalidBirthYear` to mask the parental-consent message).
+    birthYear: z
+      .coerce
+      .number()
+      .int()
+      .min(MIN_BIRTH_YEAR, 'invalidBirthYear')
+      .max(MAX_BIRTH_YEAR, 'belowMinAge'),
+  })
+  .refine((v) => v.mentoraEnabled === '1' || v.communityEnabled === '1', {
+    message: 'pickAtLeastOneProduct',
+    path: ['mentoraEnabled'],
+  });
 
 const codeSchema = z
   .string()
@@ -288,6 +296,8 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
     email: formData.get('email'),
     password: formData.get('password'),
     role: formData.get('role'),
+    mentoraEnabled: formData.get('mentoraEnabled') ?? '1',
+    communityEnabled: formData.get('communityEnabled') ?? '1',
     birthYear: formData.get('birthYear'),
   });
   if (!parsed.success) {
@@ -295,6 +305,8 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
   }
 
   const { firstName, lastName, email, password, role, birthYear } = parsed.data;
+  const mentoraEnabled = parsed.data.mentoraEnabled === '1';
+  const communityEnabled = parsed.data.communityEnabled === '1';
 
   const rl = await checkAuthRateLimit('signUp', email);
   if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
@@ -316,10 +328,11 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
         name: `${firstName} ${lastName}`,
         passwordHash,
         role,
-        // Credentials signup picked a role inline — bypass the OAuth
-        // /welcome/role gate. (Default in schema is true anyway, but be
-        // explicit so the contract is unambiguous.)
+        // Credentials signup picked everything inline — bypass the OAuth
+        // /welcome/role gate.
         roleConfirmed: true,
+        mentoraEnabled,
+        communityEnabled,
         birthYear,
       },
     });
@@ -333,6 +346,8 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
         passwordHash,
         role,
         roleConfirmed: true,
+        mentoraEnabled,
+        communityEnabled,
         emailVerified: null,
         birthYear,
       },

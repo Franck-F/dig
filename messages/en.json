@@ -1997,8 +1997,7 @@
       "iAm": "I am...",
       "roles": {
         "learner": "Learner",
-        "mentor": "Mentor",
-        "partner": "Partner"
+        "mentor": "Mentor"
       },
       "submit": "Create my account →",
       "submitting": "Creating…",
@@ -2006,7 +2005,13 @@
       "ageDeclaration": "I confirm I am at least 15 years old (below that, parental consent is required — <contact>contact us</contact>).",
       "birthYearLabel": "Year of birth",
       "birthYearPlaceholder": "e.g. 2007",
-      "birthYearHelper": "Required to comply with the minimum sign-up age (15, GDPR Art. 8). Year only, never the full date."
+      "birthYearHelper": "Required to comply with the minimum sign-up age (15, GDPR Art. 8). Year only, never the full date.",
+      "access": "I want access to",
+      "products": {
+        "mentora": "Mentora",
+        "community": "Community",
+        "atLeastOne": "Pick at least one product to continue."
+      }
     },
     "feedback": {
       "successPrefix": "✓ ",

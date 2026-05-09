@@ -9,33 +9,47 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
 /**
- * One-time role chooser for new OAuth signups.
+ * Multi-product access chooser for new accounts.
  *
- * Brand-new OAuth users have `roleConfirmed: false` (set in the auth
- * `events.signIn` hook). The `/welcome/role` page is the only place that
- * flips it back to true after the user picks Apprenant·e or Mentor.
+ * Mentora (1-to-1 mentorship) and Community (forum / channels / défis)
+ * are now treated as two independent products. A user can sign up for
+ * one, the other, or both. Brand-new OAuth users land here with
+ * `roleConfirmed: false` and both access flags `false`; the UI lets
+ * them tick at least one and the action persists the resulting flags.
  *
- * Partner is intentionally NOT offered in the public chooser — partner
- * accounts are admin-provisioned (different KYC + agreement). Admin role
- * is granted server-side; never reachable from this action.
+ * Partner is not offered in the public chooser — partner accounts are
+ * admin-provisioned. Admin role is granted server-side; never reachable
+ * from this action.
  */
 
-const PUBLIC_ROLES = [UserRole.STUDENT, UserRole.MENTOR] as const;
-const schema = z.object({
-  role: z.enum([UserRole.STUDENT, UserRole.MENTOR]),
-});
+export const ACCESS_INPUT = z
+  .object({
+    /** Mentora role when the user wants Mentora access; null = no Mentora. */
+    mentora: z.enum([UserRole.STUDENT, UserRole.MENTOR]).nullable(),
+    /** Community access toggle. */
+    community: z.boolean(),
+  })
+  .refine((v) => v.mentora !== null || v.community, {
+    message: 'pick_at_least_one',
+    path: ['mentora'],
+  });
 
-export type ConfirmRoleResult =
+export type ConfirmAccessInput = z.input<typeof ACCESS_INPUT>;
+
+export type ConfirmAccessResult =
   | { status: 'success' }
   | { status: 'error'; error: string };
 
-export async function confirmRole(input: { role: string }): Promise<ConfirmRoleResult> {
+export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmAccessResult> {
   const session = await auth();
   if (!session?.user?.id) return { status: 'error', error: 'unauthorized' };
 
-  const parsed = schema.safeParse(input);
-  if (!parsed.success) return { status: 'error', error: 'invalid_role' };
-  const role = parsed.data.role;
+  const parsed = ACCESS_INPUT.safeParse(input);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0]?.message ?? 'invalid_input';
+    return { status: 'error', error: issue };
+  }
+  const { mentora, community } = parsed.data;
 
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -43,23 +57,35 @@ export async function confirmRole(input: { role: string }): Promise<ConfirmRoleR
   });
   if (!me) return { status: 'error', error: 'unauthorized' };
 
-  // Defence-in-depth: refuse to overwrite an already-confirmed role
-  // or to demote an admin (the chooser only offers STUDENT/MENTOR).
+  // Defence-in-depth.
   if (me.roleConfirmed) return { status: 'error', error: 'already_confirmed' };
   if (me.role === UserRole.ADMIN) return { status: 'error', error: 'forbidden' };
-  if (!PUBLIC_ROLES.includes(role)) return { status: 'error', error: 'invalid_role' };
+
+  // The User.role enum keeps a single value (it's mostly a Mentora
+  // concept). When the user picks community-only, we leave the role at
+  // STUDENT (the schema default) — the access flag is what gates
+  // Mentora visibility now, not the role itself.
+  const nextRole: UserRole = mentora ?? UserRole.STUDENT;
 
   await prisma.user.update({
     where: { id: me.id },
-    data: { role, roleConfirmed: true },
+    data: {
+      role: nextRole,
+      roleConfirmed: true,
+      mentoraEnabled: mentora !== null,
+      communityEnabled: community,
+    },
   });
 
-  // Bust the hub cache so /app reads the new role on the next visit.
   revalidatePath('/app');
   revalidatePath('/mentora/onboarding');
+  revalidatePath('/community');
 
-  // Send the user straight to the right next step instead of the hub —
-  // mentors need the application wizard, students need the mentee
-  // onboarding. The thrown redirect propagates to the client form.
-  redirect(role === UserRole.MENTOR ? '/mentora/become-a-mentor' : '/mentora/onboarding');
+  // Route the user to the most relevant next step.
+  // - Mentora MENTOR → application wizard
+  // - Mentora STUDENT → mentee onboarding
+  // - Community-only → the community feed
+  if (mentora === UserRole.MENTOR) redirect('/mentora/become-a-mentor');
+  if (mentora === UserRole.STUDENT) redirect('/mentora/onboarding');
+  redirect('/community');
 }

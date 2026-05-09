@@ -40,6 +40,13 @@ model User {
   /// flips it back to true after an unconfirmed OAuth user picks. Default
   /// is `true` so all pre-existing users are unaffected by this column.
   roleConfirmed Boolean   @default(true)
+  /// Per-product access flags. Mentora (mentorat 1-to-1) and Community
+  /// (forum / canaux / défis) are now treated as two independent
+  /// products — a user can sign up for one, the other, or both. The
+  /// signup flow sets these explicitly; the migration backfills both
+  /// to true for pre-existing users so nothing changes for them.
+  mentoraEnabled    Boolean @default(false)
+  communityEnabled  Boolean @default(false)
   image         String?
   /// Marketing email opt-out. RGPD + CAN-SPAM require a 1-click way to
   /// unsubscribe; the /email/unsubscribe page flips this to false. We

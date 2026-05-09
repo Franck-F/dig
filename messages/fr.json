@@ -2184,8 +2184,7 @@
       "iAm": "Je suis...",
       "roles": {
         "learner": "Apprenant·e",
-        "mentor": "Mentor",
-        "partner": "Partenaire"
+        "mentor": "Mentor"
       },
       "submit": "Créer mon compte →",
       "submitting": "Création…",
@@ -2193,7 +2192,13 @@
       "ageDeclaration": "Je certifie avoir au moins 15 ans (en dessous, le consentement parental est requis — <contact>contacte-nous</contact>).",
       "birthYearLabel": "Année de naissance",
       "birthYearPlaceholder": "ex. 2007",
-      "birthYearHelper": "Requis pour respecter l'âge minimum d'inscription (15 ans, RGPD Art. 8). Année uniquement, jamais la date complète."
+      "birthYearHelper": "Requis pour respecter l'âge minimum d'inscription (15 ans, RGPD Art. 8). Année uniquement, jamais la date complète.",
+      "access": "Je veux accéder à",
+      "products": {
+        "mentora": "Mentora",
+        "community": "Communauté",
+        "atLeastOne": "Choisis au moins un produit pour continuer."
+      }
     },
     "feedback": {
       "successPrefix": "✓ ",

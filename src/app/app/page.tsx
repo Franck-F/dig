@@ -59,7 +59,7 @@ export default async function AppHubPage() {
   // a placeholder). Bounce them through the `/welcome/role` chooser.
   const adminCheck = await prisma.user.findUnique({
     where: { id: userId },
-    select: { role: true, roleConfirmed: true },
+    select: { role: true, roleConfirmed: true, mentoraEnabled: true, communityEnabled: true },
   });
   if (adminCheck?.role === 'ADMIN') {
     redirect('/mentora/admin');
@@ -67,6 +67,16 @@ export default async function AppHubPage() {
   if (adminCheck && !adminCheck.roleConfirmed) {
     redirect('/welcome/role');
   }
+  // Single-product accounts shortcut straight to their universe instead
+  // of seeing a half-empty hub. Both-products accounts continue to /app.
+  if (adminCheck?.mentoraEnabled && !adminCheck.communityEnabled) {
+    // No redirect — the hub still renders, but only the Mentora card.
+  } else if (!adminCheck?.mentoraEnabled && adminCheck?.communityEnabled) {
+    redirect('/community');
+  }
+
+  const mentoraEnabled = Boolean(adminCheck?.mentoraEnabled);
+  const communityEnabled = Boolean(adminCheck?.communityEnabled);
 
   // Pull just enough to make the cards live without slowing the hub.
   const [user, mentorshipCount, unreadCount, nextSession, recentChannel] = await Promise.all([
@@ -383,9 +393,21 @@ export default async function AppHubPage() {
       >
         <div
           className="dz-app-hub-grid"
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 28 }}
+          style={{
+            display: 'grid',
+            // Single-product accounts get a wider single card; both-product
+            // accounts keep the two-card layout. Stays clamped at 720 px so
+            // a lone card doesn't stretch into a billboard on desktop.
+            gridTemplateColumns:
+              mentoraEnabled && communityEnabled
+                ? 'repeat(2, 1fr)'
+                : 'minmax(0, 720px)',
+            gap: 28,
+            justifyContent: 'center',
+          }}
         >
-          {/* MENTORA */}
+          {/* MENTORA — only rendered when the user opted into this product. */}
+          {mentoraEnabled && (
           <Link
             href={mentoraHref}
             className="dz-hub-universe"
@@ -541,8 +563,10 @@ export default async function AppHubPage() {
               </div>
             </div>
           </Link>
+          )}
 
-          {/* COMMUNAUTÉ */}
+          {/* COMMUNAUTÉ — only rendered when the user opted in. */}
+          {communityEnabled && (
           <Link
             href="/community"
             className="dz-hub-universe"
@@ -682,6 +706,7 @@ export default async function AppHubPage() {
               </div>
             </div>
           </Link>
+          )}
         </div>
       </section>
 

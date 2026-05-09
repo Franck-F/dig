@@ -6,6 +6,7 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { auth } from '@/auth';
 
 import { getMentorProfileForCurrentUser } from '@/lib/actions/mentora/mentor-profile';
+import { getProductAccess } from '@/lib/access/product-access';
 
 import MentorApplicationWizard from './MentorApplicationWizard';
 
@@ -39,6 +40,13 @@ export default async function BecomeAMentorPage() {
 
   if (!session?.user) {
     redirect('/login?next=/mentora/become-a-mentor');
+  }
+
+  // Universe gate: a user without Mentora access can't apply as a mentor.
+  const access = await getProductAccess();
+  if (!access.mentora && !access.isAdmin) {
+    if (!access.roleConfirmed) redirect('/welcome/role');
+    redirect('/app');
   }
 
   let snapshot: MentorProfileSnapshot | null = null;
