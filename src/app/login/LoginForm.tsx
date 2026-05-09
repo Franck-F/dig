@@ -674,12 +674,12 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
   const nextPath =
     rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '';
   const [tab, setTab] = useState<'login' | 'signup'>('login');
-  // Two independent products. The user must pick at least one. When
-  // Mentora is on, a sub-role (STUDENT / MENTOR) is required; when off
-  // the role is irrelevant and the form sends `null`. The hidden inputs
-  // below carry these to the server action.
-  const [mentoraOn, setMentoraOn] = useState(true);
-  const [communityOn, setCommunityOn] = useState(true);
+  // Two independent products. The user must pick at least one. We
+  // intentionally start both OFF so signup is an explicit choice — the
+  // server validates and the submit button stays disabled until at
+  // least one is selected.
+  const [mentoraOn, setMentoraOn] = useState(false);
+  const [communityOn, setCommunityOn] = useState(false);
   const [role, setRole] = useState<RoleValue>('STUDENT');
 
   const [loginState, loginAction, loginPending] = useActionState(signIn, initialState);
@@ -1017,7 +1017,21 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                 </span>
               </label>
             </div>
-            <button type="submit" disabled={signupPending} className="dz-btn dz-btn-primary dz-btn-lg" style={{ width: '100%', marginTop: 4, opacity: signupPending ? 0.7 : 1 }}>
+            <button
+              type="submit"
+              // Disabled while pending OR until the user picked at least
+              // one product. The server validates too — this just keeps
+              // the affordance honest so users don't click and then read
+              // a server-side error.
+              disabled={signupPending || (!mentoraOn && !communityOn)}
+              className="dz-btn dz-btn-primary dz-btn-lg"
+              style={{
+                width: '100%',
+                marginTop: 4,
+                opacity: signupPending || (!mentoraOn && !communityOn) ? 0.55 : 1,
+                cursor: !mentoraOn && !communityOn ? 'not-allowed' : undefined,
+              }}
+            >
               {signupPending ? t('signupForm.submitting') : t('signupForm.submit')}
             </button>
             <div className="dz-small" style={{ textAlign: 'center', fontSize: 11 }}>

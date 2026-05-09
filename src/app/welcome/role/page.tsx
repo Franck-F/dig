@@ -36,10 +36,20 @@ export default async function WelcomeRolePage() {
       email: true,
       role: true,
       roleConfirmed: true,
+      mentoraEnabled: true,
+      communityEnabled: true,
     },
   });
   if (!me) redirect('/login');
-  if (me.roleConfirmed || me.role === 'ADMIN') redirect('/app');
+  // Skip the chooser ONLY when the user has truly settled their access:
+  // confirmed AND has at least one product enabled. A user with
+  // `roleConfirmed: true` but both flags false (drift, broken link) still
+  // needs the chooser — otherwise /app would bounce them back here in a
+  // loop.
+  if (me.role === 'ADMIN') redirect('/app');
+  if (me.roleConfirmed && (me.mentoraEnabled || me.communityEnabled)) {
+    redirect('/app');
+  }
 
   const firstName =
     me.firstName ?? me.name?.split(' ')[0] ?? me.email.split('@')[0] ?? 'toi';

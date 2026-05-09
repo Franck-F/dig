@@ -109,22 +109,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
   events: {
     /**
-     * On first OAuth sign-in, stamp `emailVerified` so future credential
-     * gates and downstream logic that key off this flag work uniformly.
-     * The provider has already vouched for the email, so we trust it.
+     * On first OAuth sign-in:
+     *   1. Stamp `emailVerified` (the provider has vouched for it).
+     *   2. Force `roleConfirmed: false` and clear both product flags so
+     *      the /welcome/role chooser fires unconditionally — the schema
+     *      defaults already do this, but we set them explicitly as
+     *      defence-in-depth in case PrismaAdapter or a manual upsert
+     *      ever side-steps the defaults.
      *
-     * Also flip `roleConfirmed` to false: the schema default for
-     * `User.role` is `STUDENT`, but for OAuth signups the user never had
-     * the chance to pick. The /welcome/role gate (checked from /app and
-     * /mentora/onboarding) sends them through a one-time chooser before
-     * they enter the app proper.
+     * `isNewUser` is only true on the very first sign-in. When an OAuth
+     * provider links to a pre-existing email (we run with
+     * `allowDangerousEmailAccountLinking: true`), `isNewUser` is false
+     * and we leave the existing access flags untouched — the user has
+     * already been through the onboarding once.
      */
     async signIn({ user, account, isNewUser }) {
       if (!user?.id || !account || account.provider === 'credentials') return;
       if (isNewUser) {
         await prisma.user.update({
           where: { id: user.id },
-          data: { emailVerified: new Date(), roleConfirmed: false },
+          data: {
+            emailVerified: new Date(),
+            roleConfirmed: false,
+            mentoraEnabled: false,
+            communityEnabled: false,
+          },
         });
       }
     },

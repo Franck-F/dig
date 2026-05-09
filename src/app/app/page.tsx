@@ -64,7 +64,17 @@ export default async function AppHubPage() {
   if (adminCheck?.role === 'ADMIN') {
     redirect('/mentora/admin');
   }
-  if (adminCheck && !adminCheck.roleConfirmed) {
+  // Send the user to /welcome/role when:
+  //   1. They never confirmed (brand-new OAuth user), OR
+  //   2. They have neither product enabled — covers OAuth users that
+  //      slipped past the events.signIn hook (linked accounts, schema
+  //      drift, migration not yet applied) and ended up with both
+  //      flags false. Either way the chooser is the safest landing.
+  if (
+    adminCheck &&
+    (!adminCheck.roleConfirmed ||
+      (!adminCheck.mentoraEnabled && !adminCheck.communityEnabled))
+  ) {
     redirect('/welcome/role');
   }
   // Single-product accounts shortcut straight to their universe instead

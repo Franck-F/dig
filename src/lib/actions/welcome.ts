@@ -53,13 +53,25 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
 
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { id: true, role: true, roleConfirmed: true },
+    select: {
+      id: true,
+      role: true,
+      roleConfirmed: true,
+      mentoraEnabled: true,
+      communityEnabled: true,
+    },
   });
   if (!me) return { status: 'error', error: 'unauthorized' };
 
-  // Defence-in-depth.
-  if (me.roleConfirmed) return { status: 'error', error: 'already_confirmed' };
+  // Defence-in-depth: refuse for admins (they're not supposed to re-pick
+  // their own product access via this flow). Allow re-confirmation when
+  // the user is "stuck" — confirmed but with neither product enabled —
+  // so they can recover from drift without admin help.
   if (me.role === UserRole.ADMIN) return { status: 'error', error: 'forbidden' };
+  const stuckWithNoAccess = !me.mentoraEnabled && !me.communityEnabled;
+  if (me.roleConfirmed && !stuckWithNoAccess) {
+    return { status: 'error', error: 'already_confirmed' };
+  }
 
   // The User.role enum keeps a single value (it's mostly a Mentora
   // concept). When the user picks community-only, we leave the role at
