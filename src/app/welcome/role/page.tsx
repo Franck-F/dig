@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Bienvenue · choisis tes accès · Digizelle',
   description:
-    'Mentora et Communauté sont deux produits indépendants. Active celui qui te correspond — ou les deux.',
+    'Active l’espace qui te ressemble — Mentora pour cheminer avec un·e mentor·e, la Communauté pour grandir avec les autres. Tu peux choisir l’un, l’autre ou les deux.',
 };
 
 /**
@@ -160,8 +160,8 @@ export default async function WelcomeRolePage() {
             color: 'rgba(255,255,255,0.78)',
           }}
         >
-          Mentora et Communauté sont deux produits indépendants. Active celui qui correspond à ton
-          objectif — ou les deux. Tu pourras toujours nous écrire plus tard pour ajuster.
+          Mentora t’accompagne en 1-to-1 avec un·e mentor·e. La Communauté te connecte aux autres digizellien·nes au quotidien.
+          Active ce qui te parle aujourd’hui — tu pourras toujours ajouter l’autre plus tard.
         </p>
 
         <AccessChooserForm />

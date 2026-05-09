@@ -10,7 +10,7 @@ const ERROR_LABEL: Record<string, string> = {
   unauthorized: 'Ta session a expiré. Reconnecte-toi pour continuer.',
   invalid_input: 'Choix invalide.',
   invalid_role: 'Choix invalide.',
-  pick_at_least_one: 'Choisis au moins un produit pour continuer.',
+  pick_at_least_one: 'Active au moins un espace pour continuer.',
   already_confirmed: 'Tes accès sont déjà définis. Direction le tableau de bord.',
   forbidden: 'Cette action n’est pas disponible pour ton compte.',
   server_error: 'Erreur serveur — réessaie dans un instant.',
@@ -197,7 +197,7 @@ export default function AccessChooserForm() {
 }
 
 function ctaLabel(mentoraOn: boolean, communityOn: boolean, mentoraSub: MentoraSub): string {
-  if (!mentoraOn && !communityOn) return 'Choisis au moins un produit';
+  if (!mentoraOn && !communityOn) return 'Active un espace pour continuer';
   if (mentoraOn && communityOn) {
     return mentoraSub === 'MENTOR'
       ? 'Continuer en mentor + communauté →'

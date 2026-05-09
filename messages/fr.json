@@ -2193,11 +2193,11 @@
       "birthYearLabel": "Année de naissance",
       "birthYearPlaceholder": "ex. 2007",
       "birthYearHelper": "Requis pour respecter l'âge minimum d'inscription (15 ans, RGPD Art. 8). Année uniquement, jamais la date complète.",
-      "access": "Je veux accéder à",
+      "access": "J'aimerais accéder à",
       "products": {
         "mentora": "Mentora",
         "community": "Communauté",
-        "atLeastOne": "Choisis au moins un produit pour continuer."
+        "atLeastOne": "Active au moins un espace pour continuer."
       }
     },
     "feedback": {
