@@ -318,40 +318,73 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
     return { status: 'error', error: 'emailAlreadyExists' };
   }
 
+  // Defensive write: when 20260509130000_user_product_access hasn't
+  // been applied yet, INSERT/UPDATE referencing the new columns fails
+  // with P2022. Fall back to writing only the legacy fields so signup
+  // succeeds; the access flags will be set the next time the user
+  // visits a flag-aware page (post-migration) or via /welcome/role.
   if (existing) {
-    // Pre-existing unverified user: refresh credentials.
-    await prisma.user.update({
-      where: { email },
-      data: {
-        firstName,
-        lastName,
-        name: `${firstName} ${lastName}`,
-        passwordHash,
-        role,
-        // Credentials signup picked everything inline — bypass the OAuth
-        // /welcome/role gate.
-        roleConfirmed: true,
-        mentoraEnabled,
-        communityEnabled,
-        birthYear,
-      },
-    });
+    try {
+      await prisma.user.update({
+        where: { email },
+        data: {
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+          passwordHash,
+          role,
+          roleConfirmed: true,
+          mentoraEnabled,
+          communityEnabled,
+          birthYear,
+        },
+      });
+    } catch {
+      await prisma.user.update({
+        where: { email },
+        data: {
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+          passwordHash,
+          role,
+          roleConfirmed: true,
+          birthYear,
+        },
+      });
+    }
   } else {
-    await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        name: `${firstName} ${lastName}`,
-        passwordHash,
-        role,
-        roleConfirmed: true,
-        mentoraEnabled,
-        communityEnabled,
-        emailVerified: null,
-        birthYear,
-      },
-    });
+    try {
+      await prisma.user.create({
+        data: {
+          email,
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+          passwordHash,
+          role,
+          roleConfirmed: true,
+          mentoraEnabled,
+          communityEnabled,
+          emailVerified: null,
+          birthYear,
+        },
+      });
+    } catch {
+      await prisma.user.create({
+        data: {
+          email,
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+          passwordHash,
+          role,
+          roleConfirmed: true,
+          emailVerified: null,
+          birthYear,
+        },
+      });
+    }
   }
 
   const code = await issueCode(email, VerificationPurpose.EMAIL_VERIFICATION);

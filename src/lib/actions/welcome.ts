@@ -79,15 +79,37 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
   // Mentora visibility now, not the role itself.
   const nextRole: UserRole = mentora ?? UserRole.STUDENT;
 
-  await prisma.user.update({
-    where: { id: me.id },
-    data: {
-      role: nextRole,
-      roleConfirmed: true,
-      mentoraEnabled: mentora !== null,
-      communityEnabled: community,
-    },
-  });
+  // Defensive write: if `prisma migrate deploy` hasn't applied
+  // 20260509130000_user_product_access yet, the columns
+  // `mentoraEnabled` / `communityEnabled` don't exist and Prisma throws
+  // P2022 on the UPDATE. We fall back to a write that only sets the
+  // legacy fields (role + roleConfirmed). The read-side fallback in
+  // `getProductAccess` then treats both products as enabled, which is
+  // less granular than the user's pick but keeps them moving forward.
+  // Once the migration lands, the primary path fires and the pick is
+  // honoured correctly.
+  try {
+    await prisma.user.update({
+      where: { id: me.id },
+      data: {
+        role: nextRole,
+        roleConfirmed: true,
+        mentoraEnabled: mentora !== null,
+        communityEnabled: community,
+      },
+    });
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[confirmAccess] columns missing — falling back. Run `prisma migrate deploy`.',
+        err,
+      );
+    }
+    await prisma.user.update({
+      where: { id: me.id },
+      data: { role: nextRole, roleConfirmed: true },
+    });
+  }
 
   revalidatePath('/app');
   revalidatePath('/mentora/onboarding');

@@ -126,15 +126,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ user, account, isNewUser }) {
       if (!user?.id || !account || account.provider === 'credentials') return;
       if (isNewUser) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            emailVerified: new Date(),
-            roleConfirmed: false,
-            mentoraEnabled: false,
-            communityEnabled: false,
-          },
-        });
+        // Defensive write: if 20260509130000_user_product_access isn't
+        // applied yet, the new flag columns don't exist and Prisma
+        // throws P2022. Fall back to the legacy update so OAuth signin
+        // doesn't 500. Welcome chooser still fires via roleConfirmed.
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              emailVerified: new Date(),
+              roleConfirmed: false,
+              mentoraEnabled: false,
+              communityEnabled: false,
+            },
+          });
+        } catch {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { emailVerified: new Date(), roleConfirmed: false },
+          });
+        }
       }
     },
   },
