@@ -873,6 +873,17 @@ body.dz-theme-dark .dz-header {
   scrollbar-width: thin;
   scrollbar-color: rgba(115,1,255,0.30) transparent;
 }
+/* Make the form card fill the pane height so the right column matches
+   the left card (no gap at the bottom in Connexion mode). When the
+   inscription form is taller than the viewport the pane scrolls and
+   the card grows naturally past 100% — this only kicks in for short
+   content. The card's flex-column already keeps content top-anchored. */
+.dz-login-form-pane > * {
+  min-height: 100%;
+  /* Box-sizing reset so the card's own padding doesn't push it past
+     100% and create a needless scrollbar in Connexion mode. */
+  box-sizing: border-box;
+}
 .dz-login-form-pane::-webkit-scrollbar { width: 8px; }
 .dz-login-form-pane::-webkit-scrollbar-track { background: transparent; }
 .dz-login-form-pane::-webkit-scrollbar-thumb {
