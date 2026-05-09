@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { getProductAccess } from '@/lib/access/product-access';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,11 +58,8 @@ export default async function AppHubPage() {
   // when `roleConfirmed === false`, the user landed here without ever
   // picking Apprenant·e or Mentor (the schema default `STUDENT` is just
   // a placeholder). Bounce them through the `/welcome/role` chooser.
-  const adminCheck = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { role: true, roleConfirmed: true, mentoraEnabled: true, communityEnabled: true },
-  });
-  if (adminCheck?.role === 'ADMIN') {
+  const access = await getProductAccess();
+  if (access.isAdmin) {
     redirect('/mentora/admin');
   }
   // Send the user to /welcome/role when:
@@ -70,23 +68,17 @@ export default async function AppHubPage() {
   //      slipped past the events.signIn hook (linked accounts, schema
   //      drift, migration not yet applied) and ended up with both
   //      flags false. Either way the chooser is the safest landing.
-  if (
-    adminCheck &&
-    (!adminCheck.roleConfirmed ||
-      (!adminCheck.mentoraEnabled && !adminCheck.communityEnabled))
-  ) {
+  if (!access.roleConfirmed || (!access.mentora && !access.community)) {
     redirect('/welcome/role');
   }
   // Single-product accounts shortcut straight to their universe instead
   // of seeing a half-empty hub. Both-products accounts continue to /app.
-  if (adminCheck?.mentoraEnabled && !adminCheck.communityEnabled) {
-    // No redirect — the hub still renders, but only the Mentora card.
-  } else if (!adminCheck?.mentoraEnabled && adminCheck?.communityEnabled) {
+  if (!access.mentora && access.community) {
     redirect('/community');
   }
 
-  const mentoraEnabled = Boolean(adminCheck?.mentoraEnabled);
-  const communityEnabled = Boolean(adminCheck?.communityEnabled);
+  const mentoraEnabled = access.mentora;
+  const communityEnabled = access.community;
 
   // Pull just enough to make the cards live without slowing the hub.
   const [user, mentorshipCount, unreadCount, nextSession, recentChannel] = await Promise.all([

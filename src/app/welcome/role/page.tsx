@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { getProductAccess } from '@/lib/access/product-access';
 
 import AccessChooserForm from './AccessChooserForm';
 
@@ -28,26 +29,24 @@ export default async function WelcomeRolePage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/welcome/role');
 
-  const me = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      firstName: true,
-      name: true,
-      email: true,
-      role: true,
-      roleConfirmed: true,
-      mentoraEnabled: true,
-      communityEnabled: true,
-    },
-  });
+  // Profile bits (firstName/name/email) come from a plain query;
+  // access flags go through `getProductAccess` which has its own
+  // defensive fallback when the migration hasn't been applied yet.
+  const [me, access] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { firstName: true, name: true, email: true },
+    }),
+    getProductAccess(),
+  ]);
   if (!me) redirect('/login');
   // Skip the chooser ONLY when the user has truly settled their access:
   // confirmed AND has at least one product enabled. A user with
   // `roleConfirmed: true` but both flags false (drift, broken link) still
   // needs the chooser — otherwise /app would bounce them back here in a
   // loop.
-  if (me.role === 'ADMIN') redirect('/app');
-  if (me.roleConfirmed && (me.mentoraEnabled || me.communityEnabled)) {
+  if (access.isAdmin) redirect('/app');
+  if (access.roleConfirmed && (access.mentora || access.community)) {
     redirect('/app');
   }
 

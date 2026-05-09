@@ -28,26 +28,62 @@ export async function getProductAccess(): Promise<ProductAccess> {
     return { userId: null, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
   }
 
-  const me = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      role: true,
-      roleConfirmed: true,
-      mentoraEnabled: true,
-      communityEnabled: true,
-    },
-  });
-  if (!me) {
-    return { userId, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
+  // Defensive fetch: when `prisma migrate deploy` hasn't yet applied
+  // 20260509130000_user_product_access on the live DB the columns
+  // `mentoraEnabled` / `communityEnabled` don't exist and Prisma
+  // throws P2022 (column does not exist). We fall back to a query
+  // that doesn't select them and assume both products are enabled
+  // so the app stays usable until the migration lands. The
+  // `roleConfirmed` gate still drives the welcome chooser for new
+  // OAuth users in the meantime.
+  try {
+    const me = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        role: true,
+        roleConfirmed: true,
+        mentoraEnabled: true,
+        communityEnabled: true,
+      },
+    });
+    if (!me) {
+      return { userId, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
+    }
+    const isAdmin = me.role === 'ADMIN';
+    return {
+      userId,
+      mentora: isAdmin ? true : me.mentoraEnabled,
+      community: isAdmin ? true : me.communityEnabled,
+      isAdmin,
+      roleConfirmed: me.roleConfirmed,
+    };
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[getProductAccess] columns missing — falling back. Run `prisma migrate deploy`.',
+        err,
+      );
+    }
+    // Fallback path. Read only the legacy fields so this query can't
+    // hit the same column-missing error.
+    const fallback = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true, roleConfirmed: true },
+    });
+    if (!fallback) {
+      return { userId, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
+    }
+    const isAdmin = fallback.role === 'ADMIN';
+    return {
+      userId,
+      // Pre-migration: every user could see both products, so we keep
+      // that behaviour rather than locking everyone out.
+      mentora: true,
+      community: true,
+      isAdmin,
+      roleConfirmed: fallback.roleConfirmed,
+    };
   }
-  const isAdmin = me.role === 'ADMIN';
-  return {
-    userId,
-    mentora: isAdmin ? true : me.mentoraEnabled,
-    community: isAdmin ? true : me.communityEnabled,
-    isAdmin,
-    roleConfirmed: me.roleConfirmed,
-  };
 }
 
 /**

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { getProductAccess } from '@/lib/access/product-access';
 
 import { getMenteeProfileForCurrentUser } from '@/lib/actions/mentora/mentee-profile';
 
@@ -46,14 +47,19 @@ export default async function OnboardingPage({
   // Mentors landed on the wrong wizard — this onboarding asks for goals /
   // skills the user wants to develop, which only makes sense for mentees.
   // We also enforce the universe gate: a community-only user can't reach
-  // this page even by typing the URL.
+  // this page even by typing the URL. `getProductAccess` is the
+  // canonical access reader (with a defensive fallback when the new
+  // columns aren't migrated yet).
+  const access = await getProductAccess();
+  if (!access.roleConfirmed) redirect('/welcome/role');
+  if (access.isAdmin) redirect('/mentora/admin');
+  if (!access.mentora) redirect('/app');
+  // The mentor flag is still on User.role — we only need a tiny query
+  // to know which Mentora wizard to send them through.
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { role: true, roleConfirmed: true, mentoraEnabled: true },
+    select: { role: true },
   });
-  if (me && !me.roleConfirmed) redirect('/welcome/role');
-  if (me?.role === 'ADMIN') redirect('/mentora/admin');
-  if (me && !me.mentoraEnabled) redirect('/app');
   if (me?.role === 'MENTOR') redirect('/mentora/become-a-mentor');
 
   let prefill: OnboardingPrefill = null;
