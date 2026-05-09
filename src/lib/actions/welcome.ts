@@ -22,7 +22,13 @@ import { prisma } from '@/lib/prisma';
  * from this action.
  */
 
-export const ACCESS_INPUT = z
+// NOTE: A `'use server'` file can only export async functions
+// (Next.js constraint — runtime non-async exports are rejected at
+// import time with "A 'use server' file can only export async
+// functions, found object"). The schema and the input type stay
+// module-private; the action signature uses an inline shape for the
+// public surface.
+const ACCESS_INPUT = z
   .object({
     /** Mentora role when the user wants Mentora access; null = no Mentora. */
     mentora: z.enum([UserRole.STUDENT, UserRole.MENTOR]).nullable(),
@@ -34,7 +40,7 @@ export const ACCESS_INPUT = z
     path: ['mentora'],
   });
 
-export type ConfirmAccessInput = z.input<typeof ACCESS_INPUT>;
+type ConfirmAccessInput = z.input<typeof ACCESS_INPUT>;
 
 export type ConfirmAccessResult =
   | { status: 'success' }
