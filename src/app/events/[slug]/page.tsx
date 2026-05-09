@@ -10,6 +10,7 @@ import {
   eventJsonLd,
   jsonLdScriptProps,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 import { EVENT_PHOTOS } from '../_data';
 
@@ -50,12 +51,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const found = await findHomeEventBySlug(slug);
-  if (!found) return { title: 'Événement · Digizelle' };
+  if (!found) {
+    return pageMetadata({
+      path: `/events/${slug}`,
+      title: 'Événement introuvable',
+      description: 'Cet événement n’existe pas ou a été retiré.',
+      noIndex: true,
+    });
+  }
   const t = await getTranslations('home.events.items');
-  return {
-    title: `${t(`${found.key}.title`)} · Digizelle`,
+  return pageMetadata({
+    path: `/events/${slug}`,
+    title: t(`${found.key}.title`),
     description: t(`${found.key}.intro`),
-  };
+  });
 }
 
 export default async function EventAlbumPage({

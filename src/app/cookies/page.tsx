@@ -3,11 +3,16 @@ import { getTranslations } from 'next-intl/server';
 import Frame from '@/components/Frame';
 import LegalTOC, { type LegalTOCItem } from '@/components/LegalTOC';
 import { breadcrumbJsonLd, jsonLdScriptProps } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 import ManagePreferencesButton from './ManagePreferencesButton';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('cookies');
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  return pageMetadata({
+    path: '/cookies',
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+  });
 }
 
 export default async function CookiesPage() {

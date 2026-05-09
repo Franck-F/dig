@@ -3,10 +3,15 @@ import { getTranslations } from 'next-intl/server';
 import Frame from '@/components/Frame';
 import LegalTOC, { type LegalTOCItem } from '@/components/LegalTOC';
 import { breadcrumbJsonLd, jsonLdScriptProps } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('privacy');
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  return pageMetadata({
+    path: '/privacy',
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+  });
 }
 
 export default async function PrivacyPage() {

@@ -9,6 +9,7 @@ import {
   breadcrumbJsonLd,
   jsonLdScriptProps,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 const POST_INDICES = ['0', '1', '2', '3', '4', '5'] as const;
 type PostIdx = (typeof POST_INDICES)[number];
@@ -39,12 +40,32 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const i = await findIndex(slug);
-  if (!i) return { title: 'Article introuvable' };
+  if (!i) {
+    return pageMetadata({
+      path: `/blog/${slug}`,
+      title: 'Article introuvable',
+      description: 'Cet article n’existe pas ou a été retiré.',
+      noIndex: true,
+    });
+  }
   const t = await getTranslations('blog');
-  return {
+  // ISO date drives `article:published_time` and feeds the BlogPosting
+  // JSON-LD freshness signal — important for both classic SEO and GEO.
+  const iso = (() => {
+    try {
+      return t(`posts.${i}.iso`);
+    } catch {
+      return undefined;
+    }
+  })();
+  return pageMetadata({
+    path: `/blog/${slug}`,
     title: t(`posts.${i}.title`),
     description: t(`posts.${i}.excerpt`),
-  };
+    ogType: 'article',
+    publishedTime: iso,
+    modifiedTime: iso,
+  });
 }
 
 export default async function BlogPostPage({

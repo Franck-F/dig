@@ -11,16 +11,18 @@ import {
   itemListJsonLd,
   jsonLdScriptProps,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 import BlogList from './BlogList';
 import NewsletterInline from './NewsletterInline';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('blog');
-  return {
+  return pageMetadata({
+    path: '/blog',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 const POSTS = ['0', '1', '2', '3', '4', '5'] as const;

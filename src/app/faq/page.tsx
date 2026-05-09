@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import Frame from '@/components/Frame';
 import LegalTOC, { type LegalTOCItem } from '@/components/LegalTOC';
 import { breadcrumbJsonLd, faqPageJsonLd, jsonLdScriptProps } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 import FaqClient from './FaqClient';
 
 /**
@@ -36,10 +37,11 @@ const CATEGORIES = [
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('faqPage');
-  return {
+  return pageMetadata({
+    path: '/faq',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 export default async function FaqPage() {

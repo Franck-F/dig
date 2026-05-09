@@ -9,15 +9,17 @@ import {
   itemListJsonLd,
   jsonLdScriptProps,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 import EventsClient from './EventsClient';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('events');
-  return {
+  return pageMetadata({
+    path: '/events',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 export default async function EventsPage() {

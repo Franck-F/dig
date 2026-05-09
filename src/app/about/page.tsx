@@ -8,10 +8,15 @@ import {
   breadcrumbJsonLd,
   jsonLdScriptProps,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('about');
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  return pageMetadata({
+    path: '/about',
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+  });
 }
 
 const valueIcons = ['◇', '✦', '☷', '◐'] as const;

@@ -3,15 +3,17 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
 import Frame from '@/components/Frame';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 import ProjectsList from './ProjectsList';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('projects');
-  return {
+  return pageMetadata({
+    path: '/projects',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 const statsCount = 4;

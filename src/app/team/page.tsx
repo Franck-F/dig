@@ -9,13 +9,15 @@ import {
   jsonLdScriptProps,
   personJsonLd,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('team');
-  return {
+  return pageMetadata({
+    path: '/team',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 const teamColors = [

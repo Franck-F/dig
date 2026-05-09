@@ -8,13 +8,18 @@ import {
   jsonLdScriptProps,
   serviceJsonLd,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 import CalendarRangeToggle from './CalendarRange';
 import ProgramsList from './ProgramsList';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('programs');
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  return pageMetadata({
+    path: '/programs',
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+  });
 }
 
 const programKeys = ['atelier', 'masterclass', 'hackathon', 'mentora'] as const;

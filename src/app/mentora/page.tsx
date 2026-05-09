@@ -9,6 +9,7 @@ import {
   jsonLdScriptProps,
   serviceJsonLd,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 
 import FeaturedMentors from './_components/FeaturedMentors';
 
@@ -16,10 +17,11 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('mentora');
-  return {
+  return pageMetadata({
+    path: '/mentora',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 const stepsCount = 4;

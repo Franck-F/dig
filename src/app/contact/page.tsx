@@ -8,14 +8,16 @@ import {
   contactPageJsonLd,
   jsonLdScriptProps,
 } from '@/lib/seo/jsonld';
+import { pageMetadata } from '@/lib/seo/page-metadata';
 import ContactForm from './ContactForm';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('contact');
-  return {
+  return pageMetadata({
+    path: '/contact',
     title: t('metaTitle'),
     description: t('metaDescription'),
-  };
+  });
 }
 
 export default async function ContactPage() {
