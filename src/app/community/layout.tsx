@@ -110,7 +110,8 @@ export default async function CommunityLayout({ children }: { children: ReactNod
       badge: unreadCount,
     },
     {
-      href: '/community/settings',
+      // Settings live at the product-agnostic /account/settings now.
+      href: '/account/settings',
       label: tShell('nav.community.settings'),
       icon: '⚙',
       matchPrefix: true,
@@ -167,7 +168,7 @@ export default async function CommunityLayout({ children }: { children: ReactNod
       }}
       profileHref={
         user?.communityMember?.handle
-          ? '/community/settings'
+          ? '/account/settings'
           : '/community/onboarding'
       }
       searchPlaceholder={tShell('topbar.searchCommunity')}

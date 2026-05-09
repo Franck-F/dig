@@ -77,11 +77,10 @@ export default async function MentoraAdminLayout({ children }: { children: React
     { href: '/mentora/admin/moderation', label: tShell('nav.admin.moderation'), icon: '◈', matchPrefix: true },
     { href: '/mentora/admin/reports', label: tShell('nav.admin.reports'), icon: '◌', matchPrefix: true },
     // Account-level settings (profile, RGPD export, danger zone)
-    // shared with Community + dashboard sidebars — same target so
-    // an admin always lands on /community/settings regardless of
-    // which space they came from.
+    // share a single product-agnostic page at /account/settings — same
+    // target from every space (Mentora dashboard, Community, Admin).
     {
-      href: '/community/settings',
+      href: '/account/settings',
       label: tShell('nav.community.settings'),
       icon: '⚙',
       matchPrefix: true,

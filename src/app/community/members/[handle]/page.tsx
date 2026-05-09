@@ -240,7 +240,7 @@ export default async function MemberProfilePage({
             </div>
             {isOwner && (
               <Link
-                href="/community/settings"
+                href="/account/settings"
                 className="dz-btn dz-btn-primary dz-btn-sm"
                 style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
               >

@@ -132,7 +132,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
   // as the Community sidebar — settings are user-level, not
   // space-level, so a single canonical page serves both.
   const settingsItem: AppShellNavItem = {
-    href: '/community/settings',
+    href: '/account/settings',
     label: tShell('nav.community.settings'),
     icon: '⚙',
     matchPrefix: true,

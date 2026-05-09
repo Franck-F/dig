@@ -16,7 +16,7 @@ const SECTIONS = [
   // Account-level settings — same canonical target as the community
   // and mentora sidebars. Lives inside the admin nav so an admin
   // doesn't need to leave their workflow to reach profile/RGPD/2FA.
-  { key: 'settings', href: '/community/settings' },
+  { key: 'settings', href: '/account/settings' },
 ] as const;
 
 /**
