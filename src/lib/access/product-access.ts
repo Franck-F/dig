@@ -60,29 +60,40 @@ export async function getProductAccess(): Promise<ProductAccess> {
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(
-        '[getProductAccess] columns missing — falling back. Run `prisma migrate deploy`.',
+        '[getProductAccess] primary read failed — falling back.',
         err,
       );
     }
     // Fallback path. Read only the legacy fields so this query can't
-    // hit the same column-missing error.
-    const fallback = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true, roleConfirmed: true },
-    });
-    if (!fallback) {
-      return { userId, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
+    // hit the same column-missing error. Wrapped in its own try/catch
+    // so the helper NEVER throws — pages that consume it must always
+    // get a usable shape, even if Prisma is borked entirely.
+    try {
+      const fallback = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true, roleConfirmed: true },
+      });
+      if (!fallback) {
+        return { userId, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
+      }
+      const isAdmin = fallback.role === 'ADMIN';
+      return {
+        userId,
+        // Pre-migration / DB outage: assume both products visible so the
+        // app stays usable rather than locking everyone out.
+        mentora: true,
+        community: true,
+        isAdmin,
+        roleConfirmed: fallback.roleConfirmed,
+      };
+    } catch (innerErr) {
+      console.error('[getProductAccess] fallback also failed', innerErr);
+      // Last-resort shape: pretend the user has both products and is
+      // already confirmed. Unlocks the app — the worst that can happen
+      // is the welcome chooser is skipped, which is fine for an emergency
+      // mode where the DB itself is misbehaving.
+      return { userId, mentora: true, community: true, isAdmin: false, roleConfirmed: true };
     }
-    const isAdmin = fallback.role === 'ADMIN';
-    return {
-      userId,
-      // Pre-migration: every user could see both products, so we keep
-      // that behaviour rather than locking everyone out.
-      mentora: true,
-      community: true,
-      isAdmin,
-      roleConfirmed: fallback.roleConfirmed,
-    };
   }
 }
 

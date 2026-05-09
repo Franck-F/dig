@@ -31,14 +31,29 @@ export default async function WelcomeRolePage() {
 
   // Profile bits (firstName/name/email) come from a plain query;
   // access flags go through `getProductAccess` which has its own
-  // defensive fallback when the migration hasn't been applied yet.
-  const [me, access] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { firstName: true, name: true, email: true },
-    }),
-    getProductAccess(),
-  ]);
+  // defensive fallback. We wrap the entire fetch in try/catch so a
+  // transient DB blip doesn't surface as a 500 — the page falls back
+  // to a generic greeting and the chooser still works.
+  let me: { firstName: string | null; name: string | null; email: string } | null = null;
+  let access;
+  try {
+    const result = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { firstName: true, name: true, email: true },
+      }),
+      getProductAccess(),
+    ]);
+    me = result[0];
+    access = result[1];
+  } catch (err) {
+    // Surface to Vercel logs with a tag we can grep.
+    console.error('[welcome/role] data fetch failed', err);
+    // Show the chooser anyway with a generic greeting — the action itself
+    // still works (it has its own defensive write path).
+    me = { firstName: null, name: null, email: session.user.email ?? '' };
+    access = { userId: session.user.id, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
+  }
   if (!me) redirect('/login');
   // Skip the chooser ONLY when the user has truly settled their access:
   // confirmed AND has at least one product enabled. A user with

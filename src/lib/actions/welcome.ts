@@ -79,15 +79,11 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
   // Mentora visibility now, not the role itself.
   const nextRole: UserRole = mentora ?? UserRole.STUDENT;
 
-  // Defensive write: if `prisma migrate deploy` hasn't applied
-  // 20260509130000_user_product_access yet, the columns
-  // `mentoraEnabled` / `communityEnabled` don't exist and Prisma throws
-  // P2022 on the UPDATE. We fall back to a write that only sets the
-  // legacy fields (role + roleConfirmed). The read-side fallback in
-  // `getProductAccess` then treats both products as enabled, which is
-  // less granular than the user's pick but keeps them moving forward.
-  // Once the migration lands, the primary path fires and the pick is
-  // honoured correctly.
+  // Defensive write: primary update sets all four fields; on any
+  // failure we log and fall back to the legacy fields only. The
+  // fallback also has its own try/catch so the action returns an
+  // error result instead of throwing — Server Actions throwing
+  // surfaces as the global error boundary on the *source* page.
   try {
     await prisma.user.update({
       where: { id: me.id },
@@ -99,16 +95,16 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
       },
     });
   } catch (err) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        '[confirmAccess] columns missing — falling back. Run `prisma migrate deploy`.',
-        err,
-      );
+    console.error('[confirmAccess] primary update failed; falling back', err);
+    try {
+      await prisma.user.update({
+        where: { id: me.id },
+        data: { role: nextRole, roleConfirmed: true },
+      });
+    } catch (fallbackErr) {
+      console.error('[confirmAccess] fallback update also failed', fallbackErr);
+      return { status: 'error', error: 'server_error' };
     }
-    await prisma.user.update({
-      where: { id: me.id },
-      data: { role: nextRole, roleConfirmed: true },
-    });
   }
 
   revalidatePath('/app');

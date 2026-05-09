@@ -9,9 +9,11 @@ type MentoraSub = 'STUDENT' | 'MENTOR';
 const ERROR_LABEL: Record<string, string> = {
   unauthorized: 'Ta session a expiré. Reconnecte-toi pour continuer.',
   invalid_input: 'Choix invalide.',
+  invalid_role: 'Choix invalide.',
   pick_at_least_one: 'Choisis au moins un produit pour continuer.',
   already_confirmed: 'Tes accès sont déjà définis. Direction le tableau de bord.',
   forbidden: 'Cette action n’est pas disponible pour ton compte.',
+  server_error: 'Erreur serveur — réessaie dans un instant.',
 };
 
 /**
@@ -41,12 +43,28 @@ export default function AccessChooserForm() {
     }
     setError(null);
     startTransition(async () => {
-      const res = await confirmAccess({
-        mentora: mentoraOn ? mentoraSub : null,
-        community: communityOn,
-      });
-      if (res?.status === 'error') {
-        setError(ERROR_LABEL[res.error] ?? 'Erreur — réessaie dans un instant.');
+      try {
+        const res = await confirmAccess({
+          mentora: mentoraOn ? mentoraSub : null,
+          community: communityOn,
+        });
+        if (res?.status === 'error') {
+          setError(ERROR_LABEL[res.error] ?? 'Erreur — réessaie dans un instant.');
+        }
+      } catch (e) {
+        // Next.js's `redirect()` intentionally throws NEXT_REDIRECT —
+        // the framework handles it, so we re-throw to let it through.
+        // Anything else is a real failure and we surface a friendly
+        // message instead of triggering the global error boundary.
+        if (
+          e instanceof Error &&
+          (e.message.includes('NEXT_REDIRECT') ||
+            (e as { digest?: string }).digest?.startsWith('NEXT_REDIRECT'))
+        ) {
+          throw e;
+        }
+        console.error('[chooser] action threw', e);
+        setError('Erreur — réessaie dans un instant.');
       }
     });
   };
