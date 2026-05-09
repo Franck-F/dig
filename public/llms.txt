@@ -1,0 +1,39 @@
+# Digizelle
+
+> Digizelle is a French non-profit (loi 1901, founded 2023) dedicated to digital
+> inclusion of young people — especially young women — in the Paris region and
+> beyond. Workshops, masterclasses, hackathons, the Mentora 1-to-1 mentorship
+> program and an online community help young people move from "I'd love to" to
+> "I'm doing it" in the tech world.
+
+The site is bilingual (French primary, English partial). All structured data
+is exposed via JSON-LD on each page (Organization, Article, Event, FAQPage,
+Person, Service, BreadcrumbList).
+
+## About the organization
+- [About Digizelle](https://digizelle.fr/about): mission, values, milestones, founder.
+- [The team](https://digizelle.fr/team): 8 active members with roles, bios and links.
+- [Contact](https://digizelle.fr/contact): contact form for the public, DPO email for RGPD requests.
+- [Manifesto](https://digizelle.fr/about#manifesto): three pillars — inclusion, mentorship, community.
+
+## Programs and offerings
+- [Programs overview](https://digizelle.fr/programs): four formats — Atelier Immersif (3 days), Masterclass (intensive), Hackathon (48h), Mentora (long-term mentorship).
+- [Mentora](https://digizelle.fr/mentora): 1-to-1 mentorship pairing youth with volunteer mentors for 6 months. Algorithmic matching, video sessions, shared calendar, messaging.
+- [Events](https://digizelle.fr/events): upcoming and past events, partner co-organisations (Microsoft, EY, HEC, Epitech, Allianz Technology, AWS, Station F, BECOMTECH).
+
+## Editorial content
+- [Blog](https://digizelle.fr/blog): editorial posts on tech inclusion, hackathon recaps, AI tooling, stack choices. JSON-LD `BlogPosting` per article with `datePublished`.
+- [FAQ](https://digizelle.fr/faq): 30+ Q&A grouped by category (general, signup, programs, Mentora, community, privacy). Indexed as `FAQPage` JSON-LD.
+
+## Legal
+- [Mentions légales](https://digizelle.fr/legal): legal notice, publisher info.
+- [Confidentialité](https://digizelle.fr/privacy): RGPD privacy policy, lawful bases, data subject rights.
+- [Cookies](https://digizelle.fr/cookies): cookie inventory, third-party usage, consent management.
+
+## Sitemap
+- [XML sitemap](https://digizelle.fr/sitemap.xml): full URL index for crawlers.
+- [Robots](https://digizelle.fr/robots.txt): explicit allow-list for AI crawlers (GPTBot, ClaudeBot, anthropic-ai, Google-Extended, PerplexityBot, CCBot, Applebot-Extended).
+
+## Optional
+- [Connected app — Mentora dashboard](https://digizelle.fr/mentora/dashboard): authenticated mentee/mentor dashboard. Auth-gated; no public content for crawlers.
+- [Connected app — Community feed](https://digizelle.fr/community): authenticated community feed. Auth-gated; no public content for crawlers.

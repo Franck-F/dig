@@ -21,19 +21,17 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#0f0a2e',
     theme_color: '#7301FF',
     categories: ['education', 'social', 'nonprofit'],
-    // Icon set: only square PWA-grade assets. The previous entry pointed
-    // at /images/logo.png which is a 181×51 horizontal banner — Chrome
-    // logs `Resource size is not correct - typo in the Manifest?` because
-    // `sizes: 'any'` was incompatible with that aspect ratio. Until we
-    // ship proper square 192×192 / 512×512 icons (TODO: generate via the
-    // brand kit), we keep just the favicon — installability degrades to
-    // the browser default but the console stops complaining.
+    // Square PWA-grade icons generated from the brand mascot
+    // (1563×1563 source → resized via sharp at build prep time;
+    // see commit notes). `purpose: 'any'` covers desktop / tab,
+    // `purpose: 'maskable'` covers Android adaptive icons (the
+    // maskable variant has ~15% safe-zone padding so the OS can
+    // crop circles, squircles, etc. without clipping the mascot).
     icons: [
-      {
-        src: '/favicon.ico',
-        sizes: '48x48',
-        type: 'image/x-icon',
-      },
+      { src: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' },
+      { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
   };
 }

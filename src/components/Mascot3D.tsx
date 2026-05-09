@@ -12,8 +12,29 @@ type Mascot3DProps = {
   float?: boolean;
   glow?: boolean;
   priority?: boolean;
+  /**
+   * Forwarded to Next.js Image's `sizes` so responsive variants are
+   * picked correctly. Defaults to `(max-width: 900px) 80vw, 580px` to
+   * match the hero grid on the home page.
+   */
+  sizes?: string;
   style?: React.CSSProperties;
   phrases?: string[];
+};
+
+/**
+ * Pre-generated 10×10 LQIP blur placeholders, base64 PNG, one per
+ * mascot file. Generated once via sharp (see commit notes) and inlined
+ * here so the hero LCP image fades in from a coloured blur instead of
+ * a blank rect — no extra network round-trip and no per-render cost.
+ */
+const MASCOT_BLUR_DATA_URLS: Record<string, string> = {
+  '/images/robot-mascotte.png':
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAANlBMVEVQMYCHYMVzVbNWRZnJtNI+On0QGD9DN4GIXcuHV8qAYrd/WsFhRqS4qMCrlMqVcdrMl/+be8vBQP1uAAAADnRSTlMB749P/WsNJZxdx3a1+3b1zSkAAAAJcEhZcwAALiMAAC4jAXilP3YAAABESURBVHicTcRJEsAgCATAYRFQI+r/P+shqZR9aODmfzXqF6dm7anZ0cbIYFUNWNskQrsZnFa4xyKH8RSgTwasPOXtcgBoDgH6hdJuIwAAAABJRU5ErkJggg==',
+  '/images/robot-mascotte-1.png':
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAMFBMVEWOdaVVT5NoTayKXcfKm+qhf8mgZ9zFqMmqn7yOc79OW4Z8XLiBUMR8Vr17aqt5WLvE0KULAAAAD3RSTlMBJjbZ/f32/v4fUl/Be93WIwchAAAACXBIWXMAAC4jAAAuIwF4pT92AAAARUlEQVR4nDWMyQ0AIQwDDTk503+3iLD7sUYj2wCA0m8mrVUfVWGWkU7d3fX6RmZmVFJvkf2Vp+p8NII5cgb0iP+4ETUAB0iHAXYheLpFAAAAAElFTkSuQmCC',
+  '/images/robot-mascotte-2.png':
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAOVBMVEVMaXFDO4eKZcG1qbl7UL91VLiKXcokMWVIO4uDVMaddNSRbdrBjPCSYdKNeLHSnfqzl8nKtNqkisHaSsO0AAAAEHRSTlMAVfz4lOyrHzJZ/g74ytz+iRuQKQAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAENJREFUeJw1jFkOACEMQhntprNV73/YidPKB7wQAgBAj+W/VDc1kZY0x+jB96zVJZaPe7FYUC95YfxeWcKY99tJtPIDTQwBbHygSHMAAAAASUVORK5CYII=',
 };
 
 export default function Mascot3D({
@@ -27,6 +48,7 @@ export default function Mascot3D({
   float = true,
   glow = true,
   priority = false,
+  sizes = '(max-width: 900px) 80vw, 580px',
   style,
   phrases,
 }: Mascot3DProps) {
@@ -114,6 +136,18 @@ export default function Mascot3D({
           width={width}
           height={finalHeight}
           priority={priority}
+          // Tells the browser to start downloading the LCP image
+          // alongside the HTML/CSS instead of after layout. `priority`
+          // already implies fetchpriority high in Next.js 16, but we
+          // keep this explicit so non-priority callers (secondary
+          // mascots) opt in only when they are the LCP.
+          fetchPriority={priority ? 'high' : 'auto'}
+          sizes={sizes}
+          // Coloured 10×10 blur preview while the full image streams
+          // in. Falls back to "empty" for callers that pass a custom
+          // src not in the pre-baked map.
+          placeholder={MASCOT_BLUR_DATA_URLS[src] ? 'blur' : 'empty'}
+          blurDataURL={MASCOT_BLUR_DATA_URLS[src]}
           draggable={false}
           className="dz-mascot-img"
           style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }}
