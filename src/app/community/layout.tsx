@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { NotificationType } from '@prisma/client';
@@ -66,7 +67,7 @@ export default async function CommunityLayout({ children }: { children: ReactNod
         name: true,
         email: true,
         role: true,
-        communityMember: { select: { handle: true, displayName: true, avatarUrl: true } },
+        communityMember: { select: { handle: true, displayName: true, avatarUrl: true, isModerator: true } },
       },
     }),
     prisma.notification.count({ where: { userId, readAt: null, type: { in: COMMUNITY_NOTIF_TYPES } } }),
@@ -95,8 +96,16 @@ export default async function CommunityLayout({ children }: { children: ReactNod
   })();
 
   const isAdmin = user?.role === 'ADMIN';
+  const isModerator = isAdmin || Boolean(user?.communityMember?.isModerator);
 
-  const nav: AppShellNavItem[] = [
+  // Detect whether we're rendering an /community/admin/* route so we
+  // can swap the sidebar to the admin sections (matching the handoff
+  // single-sidebar pattern, no double-nav).
+  const pathname = (await headers()).get('x-pathname') ?? '';
+  const isAdminRoute = pathname.startsWith('/community/admin');
+
+  // Member-side navigation — the canonical sidebar for non-admin pages.
+  const memberNav: AppShellNavItem[] = [
     { href: '/community', label: tShell('nav.community.feed'), icon: '◉' },
     { href: '/community/channels', label: tShell('nav.community.channels'), icon: '☷', matchPrefix: true },
     { href: '/community/members', label: tShell('nav.community.members'), icon: '✦', matchPrefix: true },
@@ -118,10 +127,34 @@ export default async function CommunityLayout({ children }: { children: ReactNod
     },
     // Admin-only entry point — surfaces the moderation suite from the
     // community sidebar so admins don't have to memorize /community/admin.
-    ...(isAdmin
-      ? ([{ href: '/community/admin/moderation', label: 'Modération', icon: '◇', matchPrefix: false }] as AppShellNavItem[])
+    ...(isModerator
+      ? ([{ href: '/community/admin', label: 'Administration', icon: '◇', matchPrefix: true }] as AppShellNavItem[])
       : []),
   ];
+
+  // Admin-side navigation — surfaced ONLY when an admin/mod is on a
+  // /community/admin/* route. Replaces the member sidebar so the user
+  // sees a single, focused nav (no double-sidebar).
+  const adminNav: AppShellNavItem[] = [
+    { href: '/community/admin', label: 'Pilotage', icon: '◉' },
+    { href: '/community/admin/moderation', label: 'Modération', icon: '◇', matchPrefix: true },
+    { href: '/community/admin/content', label: 'Contenu', icon: '✦', matchPrefix: true },
+    { href: '/community/admin/channels', label: 'Salons', icon: '☷', matchPrefix: true },
+    { href: '/community/admin/badges', label: 'Badges', icon: '☆', matchPrefix: true },
+    { href: '/community/admin/users', label: 'Membres', icon: '✦', matchPrefix: true },
+    { href: '/community/admin/challenges', label: 'Défis', icon: '◇', matchPrefix: true },
+    { href: '/community/admin/animation', label: 'Animation', icon: '✦', matchPrefix: true },
+    { href: '/community/admin/flags', label: 'Signaux abus', icon: '◌', matchPrefix: true },
+    { href: '/community/admin/analytics', label: 'Analytics', icon: '◉', matchPrefix: true },
+    { href: '/community/admin/audit-log', label: 'Journal admin', icon: '☷', matchPrefix: true },
+    { href: '/community/admin/rgpd', label: 'Registre RGPD', icon: '◇', matchPrefix: true },
+    { href: '/community/admin/settings', label: 'Paramètres', icon: '⚙', matchPrefix: true },
+    // Escape hatch back to the member view — preserved as a "back" item
+    // at the bottom so admins are never stuck in admin chrome.
+    { href: '/community', label: '← Vue membre', icon: '↩', matchPrefix: false },
+  ];
+
+  const nav = isAdminRoute && isModerator ? adminNav : memberNav;
 
   async function signOutAction() {
     'use server';

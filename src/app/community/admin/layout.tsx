@@ -7,15 +7,21 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import { getCommunityViewer } from '../_components/viewer';
-import AdminNav from './_components/AdminNav';
 
 /**
- * `/community/admin/**` shell. Top-of-tree gate: viewer must be a community
- * member AND either UserRole = ADMIN or `member.isModerator = true`. Anyone
- * else is bounced to the public feed (we deliberately don't 404 — that would
+ * `/community/admin/**` shell.
+ *
+ * Top-of-tree gate: viewer must be a community member AND either
+ * UserRole = ADMIN or `member.isModerator = true`. Anyone else is
+ * bounced to the public feed (we deliberately don't 404 — that would
  * leak the existence of the route).
  *
- *  Renders a sticky sidebar with section links + the active page content.
+ * **Visual chrome**: the parent `community/layout.tsx` already renders
+ * the `AppShell` (sidebar + topbar) and swaps to admin nav items when
+ * `x-pathname` starts with `/community/admin`. This nested layout
+ * therefore renders ONLY the page-level header (back link + title)
+ * and the children — no second sidebar (which would duplicate the
+ * navigation surface, fixed in this pass).
  */
 export default async function CommunityAdminLayout({ children }: { children: ReactNode }) {
   const viewer = await getCommunityViewer();
@@ -58,23 +64,12 @@ export default async function CommunityAdminLayout({ children }: { children: Rea
           <h1 className="dz-h1" style={{ fontSize: 30, marginTop: 8 }}>
             {t('title')}
           </h1>
-          <p className="dz-small" style={{ marginTop: 6, fontSize: 14 }}>{t('subtitle')}</p>
+          <p className="dz-small" style={{ marginTop: 6, fontSize: 14 }}>
+            {t('subtitle')}
+          </p>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '220px 1fr',
-            gap: 32,
-            alignItems: 'start',
-          }}
-          className="dz-admin-grid"
-        >
-          <aside style={{ position: 'sticky', top: 96 }}>
-            <AdminNav />
-          </aside>
-          <div style={{ minWidth: 0 }}>{children}</div>
-        </div>
+        {children}
       </div>
     </section>
   );
