@@ -3645,11 +3645,74 @@
         "badges": "Badges",
         "users": "Membres",
         "challenges": "Défis",
+        "animation": "Animation",
         "flags": "Signaux abus",
         "analytics": "Analytics",
         "auditLog": "Journal admin",
         "rgpd": "Registre RGPD",
-        "settings": "Paramètres"
+        "adminSettings": "Paramètres",
+        "settings": "Mon compte"
+      },
+      "animationPage": {
+        "metaTitle": "Animation — Communauté Digizelle",
+        "kicker": "Rituels & événements",
+        "title": "Animation",
+        "weekTitle": "Planning d'animation · sem. {week}",
+        "addRitualCta": "+ Ajouter un rituel",
+        "days": [
+          { "label": "LUN", "num": "06", "title": "Live UX · Karim", "time": "19h", "color": "#7301FF" },
+          { "label": "MAR", "num": "07", "title": "Atelier Web3", "time": "18h", "color": "#A34BF5" },
+          { "label": "MER", "num": "08", "title": "Office hours", "time": "12h", "color": "#F46FB1" },
+          { "label": "JEU", "num": "09", "title": "Rituel Promo #4", "time": "20h", "color": "#3B7BFF" },
+          { "label": "VEN", "num": "10", "title": "Drink communauté", "time": "19h", "color": "#23c55e" },
+          { "label": "SAM", "num": "11", "title": "—", "time": "", "color": "" },
+          { "label": "DIM", "num": "12", "title": "Talk Femmes & IA", "time": "18h", "color": "#FFB823" }
+        ],
+        "broadcast": {
+          "title": "Annonce communauté",
+          "body": "Pousse une notif aux membres : nouveau live, nouveau challenge, alerte importante.",
+          "placeholder": "Ton message en quelques mots…",
+          "submit": "Envoyer"
+        }
+      },
+      "adminSettingsPage": {
+        "metaTitle": "Paramètres — Communauté Digizelle",
+        "kicker": "Charte & gouvernance",
+        "title": "Paramètres",
+        "subtitle": "Le contrat moral entre membres.",
+        "charterCard": {
+          "title": "Charte & règles",
+          "charter": "Charte communauté",
+          "charterMeta": "v3.2 · publiée le 12 mars",
+          "editCta": "Éditer",
+          "applicationGate": "Acceptation à l'inscription",
+          "applicationGateMeta": "Bloque l'accès tant que non signée",
+          "blockedWords": "Mots interdits",
+          "blockedWordsMeta": "42 mots · règles actives",
+          "configureCta": "Configurer",
+          "autoSanctions": "Sanctions automatiques",
+          "autoSanctionsMeta": "3 avertissements = suspension 7 j",
+          "quarantine": "Quarantaine nouveau membre",
+          "quarantineMeta": "7 premiers jours"
+        },
+        "moderatorsCard": {
+          "title": "Modérateurs",
+          "permissions": "Permissions",
+          "addCta": "+ Ajouter un modérateur",
+          "items": {
+            "0": { "name": "Karim Belhaj", "meta": "Lead modo · 142 actions ce mois" },
+            "1": { "name": "Sofia Khelifi", "meta": "Modo · Tech · 96 actions ce mois" },
+            "2": { "name": "Naïma Berrada", "meta": "Modo · UX · 64 actions ce mois" }
+          }
+        },
+        "privacyCard": {
+          "title": "Confidentialité",
+          "openToVisitors": "Communauté ouverte aux visiteurs",
+          "openToVisitorsMeta": "Lecture seule des posts publics",
+          "noIndex": "Désindexation moteurs de recherche",
+          "rgpd": "Export RGPD à la demande",
+          "rgpdMeta": "Sous 7 jours ouvrés"
+        }
       },
       "analytics": {
         "metaTitle": "Analytics — Communauté Digizelle",

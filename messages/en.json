@@ -790,11 +790,74 @@
         "badges": "Badges",
         "users": "Members",
         "challenges": "Challenges",
+        "animation": "Animation",
         "flags": "Abuse signals",
         "analytics": "Analytics",
         "auditLog": "Admin log",
         "rgpd": "GDPR register",
-        "settings": "Settings"
+        "adminSettings": "Settings",
+        "settings": "My account"
+      },
+      "animationPage": {
+        "metaTitle": "Animation — Digizelle Community",
+        "kicker": "Rituals & events",
+        "title": "Animation",
+        "weekTitle": "Animation planner · week {week}",
+        "addRitualCta": "+ Add a ritual",
+        "days": [
+          { "label": "MON", "num": "06", "title": "Live UX · Karim", "time": "7pm", "color": "#7301FF" },
+          { "label": "TUE", "num": "07", "title": "Web3 workshop", "time": "6pm", "color": "#A34BF5" },
+          { "label": "WED", "num": "08", "title": "Office hours", "time": "12pm", "color": "#F46FB1" },
+          { "label": "THU", "num": "09", "title": "Cohort #4 ritual", "time": "8pm", "color": "#3B7BFF" },
+          { "label": "FRI", "num": "10", "title": "Community drink", "time": "7pm", "color": "#23c55e" },
+          { "label": "SAT", "num": "11", "title": "—", "time": "", "color": "" },
+          { "label": "SUN", "num": "12", "title": "Talk: Women & AI", "time": "6pm", "color": "#FFB823" }
+        ],
+        "broadcast": {
+          "title": "Community announcement",
+          "body": "Push a notification to members: new live, new challenge, important alert.",
+          "placeholder": "Your message in a few words…",
+          "submit": "Send"
+        }
+      },
+      "adminSettingsPage": {
+        "metaTitle": "Settings — Digizelle Community",
+        "kicker": "Charter & governance",
+        "title": "Settings",
+        "subtitle": "The moral contract between members.",
+        "charterCard": {
+          "title": "Charter & rules",
+          "charter": "Community charter",
+          "charterMeta": "v3.2 · published March 12",
+          "editCta": "Edit",
+          "applicationGate": "Acceptance at signup",
+          "applicationGateMeta": "Block access until signed",
+          "blockedWords": "Banned words",
+          "blockedWordsMeta": "42 words · rules active",
+          "configureCta": "Configure",
+          "autoSanctions": "Automatic sanctions",
+          "autoSanctionsMeta": "3 warnings = 7-day suspension",
+          "quarantine": "New member quarantine",
+          "quarantineMeta": "First 7 days"
+        },
+        "moderatorsCard": {
+          "title": "Moderators",
+          "permissions": "Permissions",
+          "addCta": "+ Add a moderator",
+          "items": {
+            "0": { "name": "Karim Belhaj", "meta": "Lead mod · 142 actions this month" },
+            "1": { "name": "Sofia Khelifi", "meta": "Mod · Tech · 96 actions this month" },
+            "2": { "name": "Naïma Berrada", "meta": "Mod · UX · 64 actions this month" }
+          }
+        },
+        "privacyCard": {
+          "title": "Privacy",
+          "openToVisitors": "Community open to visitors",
+          "openToVisitorsMeta": "Read-only public posts",
+          "noIndex": "Search engine de-indexing",
+          "rgpd": "GDPR export on demand",
+          "rgpdMeta": "Within 7 business days"
+        }
       },
       "analytics": {
         "metaTitle": "Analytics — Digizelle Community",

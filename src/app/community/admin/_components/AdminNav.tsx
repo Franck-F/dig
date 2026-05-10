@@ -11,13 +11,19 @@ const SECTIONS = [
   { key: 'badges', href: '/community/admin/badges' },
   { key: 'users', href: '/community/admin/users' },
   { key: 'challenges', href: '/community/admin/challenges' },
+  // Charter-level rituals — weekly planner + broadcast notif. Lives
+  // alongside Challenges since they share the "community animation"
+  // mental model.
+  { key: 'animation', href: '/community/admin/animation' },
   { key: 'flags', href: '/community/admin/flags' },
   { key: 'analytics', href: '/community/admin/analytics' },
   { key: 'auditLog', href: '/community/admin/audit-log' },
   { key: 'rgpd', href: '/community/admin/rgpd' },
+  // Community-level governance settings (charter, moderators,
+  // privacy). Distinct from the user's account settings link below.
+  { key: 'adminSettings', href: '/community/admin/settings' },
   // Account-level settings — same canonical target as the community
-  // and mentora sidebars. Lives inside the admin nav so an admin
-  // doesn't need to leave their workflow to reach profile/RGPD/2FA.
+  // and mentora sidebars.
   { key: 'settings', href: '/account/settings' },
 ] as const;
 
