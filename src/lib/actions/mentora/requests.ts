@@ -262,6 +262,54 @@ export async function withdrawMentorshipRequest(
   }
 }
 
+// ─────────────── Admin nudge-pending (Matching page) ─────────────────────
+//
+// Re-pings every mentor with a PENDING request older than 48h. Capped at
+// 200 mentors per call to stay within request budget; idempotent — sends
+// at most one REQUEST_RECEIVED notification per mentor per call.
+export async function nudgePendingMentorshipRequests(): Promise<
+  | { status: 'success'; nudged: number; skipped: number }
+  | { status: 'error'; error: string }
+> {
+  try {
+    const ctx = await requireUser();
+    const me = await prisma.user.findUnique({
+      where: { id: ctx.userId },
+      select: { role: true },
+    });
+    if (me?.role !== 'ADMIN') return { status: 'error', error: 'unauthorized' };
+
+    const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000);
+    const stale = await prisma.mentorshipRequest.findMany({
+      where: { status: 'PENDING', createdAt: { lt: cutoff } },
+      orderBy: { createdAt: 'asc' },
+      take: 200,
+      select: {
+        id: true,
+        toMentor: { select: { userId: true } },
+      },
+    });
+
+    // De-dup by mentor — one nudge each, even if they have multiple
+    // stale requests.
+    const seen = new Set<string>();
+    let nudged = 0;
+    let skipped = 0;
+    for (const r of stale) {
+      if (seen.has(r.toMentor.userId)) {
+        skipped++;
+        continue;
+      }
+      seen.add(r.toMentor.userId);
+      await notify(r.toMentor.userId, 'REQUEST_RECEIVED', { requestId: r.id });
+      nudged++;
+    }
+    return { status: 'success', nudged, skipped };
+  } catch {
+    return { status: 'error', error: 'nudge_failed' };
+  }
+}
+
 // Used by cron — exported for the cron route. Side-effecting; not a typical user action.
 export async function expirePendingRequests(): Promise<{ expired: number }> {
   const due = await prisma.mentorshipRequest.findMany({
