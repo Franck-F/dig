@@ -32,6 +32,16 @@ model User {
   lastName               String?
   passwordHash           String?
   role                   UserRole  @default(STUDENT)
+  /// "Super admin" flag — additive on top of `role = ADMIN`.
+  /// Plain admins can do day-to-day admin work (moderation, analytics,
+  /// content); super admins are the only ones allowed to manage other
+  /// admins (promote / demote / delete admin accounts) and override
+  /// platform-wide governance (charter publish, banned-words mass
+  /// reset, etc.). Existing role checks (`role === 'ADMIN'`) are
+  /// untouched — super admins remain admins; this just gates the
+  /// extra-sensitive operations behind a second flag. Default false
+  /// so the schema change is non-breaking.
+  isSuperAdmin           Boolean   @default(false)
   /// Tracks whether the user has explicitly chosen their role. Set to
   /// false the moment a brand-new OAuth signup creates a User row (the
   /// schema default `STUDENT` is a placeholder — we want to ask). The

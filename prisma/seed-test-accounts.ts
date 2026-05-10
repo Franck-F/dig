@@ -1,8 +1,15 @@
 /**
  * Test accounts seed.
  *
- * Creates three ready-to-use accounts:
- *   • admin@digizelle.test    — role ADMIN, password "Admin!2026"
+ * Creates four ready-to-use accounts:
+ *   • admin@digizelle.test    — role ADMIN + isSuperAdmin: true,
+ *                                password "Admin!2026". The bootstrap
+ *                                super admin: only one allowed to
+ *                                manage other admins.
+ *   • admin2@digizelle.test   — role ADMIN + isSuperAdmin: false,
+ *                                password "Admin2!2026". Regular admin
+ *                                — day-to-day admin work, no power
+ *                                over the super admin.
  *   • mentor@digizelle.test   — role MENTOR with an ACTIVE MentorProfile
  *                                + featured skills + accepting mentees,
  *                                password "Mentor!2026"
@@ -31,6 +38,9 @@ const prisma = new PrismaClient();
 const ADMIN_EMAIL = "admin@digizelle.test";
 const ADMIN_PASSWORD = "Admin!2026";
 
+const ADMIN2_EMAIL = "admin2@digizelle.test";
+const ADMIN2_PASSWORD = "Admin2!2026";
+
 const MENTOR_EMAIL = "mentor@digizelle.test";
 const MENTOR_PASSWORD = "Mentor!2026";
 
@@ -40,12 +50,16 @@ const MENTEE_PASSWORD = "Mentee!2026";
 async function main() {
   console.log("→ Seeding test accounts…");
 
-  // ── ADMIN ────────────────────────────────────────────────────────────────
+  // ── SUPER ADMIN ──────────────────────────────────────────────────────────
+  // Bootstrap super admin — the only account flagged with
+  // `isSuperAdmin: true`. Re-running the seed re-asserts the flag so it
+  // can't be accidentally cleared by another script.
   const adminHash = await hash(ADMIN_PASSWORD, 12);
   const admin = await prisma.user.upsert({
     where: { email: ADMIN_EMAIL },
     update: {
       role: UserRole.ADMIN,
+      isSuperAdmin: true,
       emailVerified: new Date(),
       passwordHash: adminHash,
     },
@@ -55,12 +69,43 @@ async function main() {
       lastName: "Digizelle",
       name: "Admin Digizelle",
       role: UserRole.ADMIN,
+      isSuperAdmin: true,
       emailVerified: new Date(),
       passwordHash: adminHash,
     },
-    select: { id: true, email: true, role: true },
+    select: { id: true, email: true, role: true, isSuperAdmin: true },
   });
-  console.log(`  ✓ Admin: ${admin.email} (role=${admin.role})`);
+  console.log(
+    `  ✓ Super admin: ${admin.email} (role=${admin.role}, isSuperAdmin=${admin.isSuperAdmin})`,
+  );
+
+  // ── ADMIN (non-super) ────────────────────────────────────────────────────
+  // Standard admin account — full admin powers EXCEPT the operations
+  // gated behind `isSuperAdmin = true` (managing other admins, etc.).
+  const admin2Hash = await hash(ADMIN2_PASSWORD, 12);
+  const admin2 = await prisma.user.upsert({
+    where: { email: ADMIN2_EMAIL },
+    update: {
+      role: UserRole.ADMIN,
+      isSuperAdmin: false,
+      emailVerified: new Date(),
+      passwordHash: admin2Hash,
+    },
+    create: {
+      email: ADMIN2_EMAIL,
+      firstName: "Admin",
+      lastName: "Staff",
+      name: "Admin Staff",
+      role: UserRole.ADMIN,
+      isSuperAdmin: false,
+      emailVerified: new Date(),
+      passwordHash: admin2Hash,
+    },
+    select: { id: true, email: true, role: true, isSuperAdmin: true },
+  });
+  console.log(
+    `  ✓ Admin: ${admin2.email} (role=${admin2.role}, isSuperAdmin=${admin2.isSuperAdmin})`,
+  );
 
   // ── MENTOR ───────────────────────────────────────────────────────────────
   const mentorHash = await hash(MENTOR_PASSWORD, 12);
@@ -232,9 +277,10 @@ async function main() {
   console.log("─────────────────────────────────────────────────────────────");
   console.log("Test accounts ready.");
   console.log("");
-  console.log(`  ADMIN   →  ${ADMIN_EMAIL}    /   ${ADMIN_PASSWORD}`);
-  console.log(`  MENTOR  →  ${MENTOR_EMAIL}   /   ${MENTOR_PASSWORD}`);
-  console.log(`  MENTEE  →  ${MENTEE_EMAIL}   /   ${MENTEE_PASSWORD}`);
+  console.log(`  SUPER ADMIN →  ${ADMIN_EMAIL}    /   ${ADMIN_PASSWORD}`);
+  console.log(`  ADMIN       →  ${ADMIN2_EMAIL}   /   ${ADMIN2_PASSWORD}`);
+  console.log(`  MENTOR      →  ${MENTOR_EMAIL}   /   ${MENTOR_PASSWORD}`);
+  console.log(`  MENTEE      →  ${MENTEE_EMAIL}   /   ${MENTEE_PASSWORD}`);
   console.log("");
   console.log("All have emailVerified set so they can log in immediately.");
   console.log("Login at  http://localhost:3000/login");

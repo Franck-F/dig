@@ -31,6 +31,7 @@ export default async function MentoraAdminLayout({ children }: { children: React
       firstName: true,
       lastName: true,
       role: true,
+      isSuperAdmin: true,
       totpEnabledAt: true,
     },
   });
@@ -104,9 +105,11 @@ export default async function MentoraAdminLayout({ children }: { children: React
       ]}
       profile={{
         name: displayName,
-        sub: tShell('profile.admin'),
+        // Super admins see "Super admin" instead of the generic admin
+        // label so the privileged status is visible at a glance.
+        sub: user.isSuperAdmin ? 'Super admin' : tShell('profile.admin'),
         initial: initials,
-        color: '#24325F',
+        color: user.isSuperAdmin ? '#7301FF' : '#24325F',
         email: user.email,
       }}
       searchPlaceholder={tShell('topbar.searchAdmin')}

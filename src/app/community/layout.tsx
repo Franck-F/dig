@@ -67,6 +67,7 @@ export default async function CommunityLayout({ children }: { children: ReactNod
         name: true,
         email: true,
         role: true,
+        isSuperAdmin: true,
         communityMember: { select: { handle: true, displayName: true, avatarUrl: true, isModerator: true } },
       },
     }),
@@ -194,9 +195,16 @@ export default async function CommunityLayout({ children }: { children: ReactNod
       })}
       profile={{
         name: displayName,
-        sub: tShell('profile.community'),
+        // Super admins see "Super admin" instead of the generic
+        // member/admin sub-label so the privileged status is visible
+        // at a glance from the bottom of every community page.
+        sub: user?.isSuperAdmin
+          ? 'Super admin'
+          : isAdmin
+            ? tShell('profile.admin')
+            : tShell('profile.community'),
         initial,
-        color: '#F46FB1',
+        color: user?.isSuperAdmin ? '#7301FF' : '#F46FB1',
         email: user?.email,
       }}
       profileHref={
