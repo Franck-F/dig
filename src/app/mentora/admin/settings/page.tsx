@@ -3,6 +3,8 @@ import { getTranslations } from 'next-intl/server';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { getMentoraProgrammeSettings } from '@/lib/actions/platform-settings';
+import { MentoraBoolToggle } from './SettingsToggles';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,6 +56,7 @@ export default async function MentoraAdminSettingsPage() {
   if (me?.role !== 'ADMIN') redirect('/mentora/admin');
 
   const t = await getTranslations('mentora.dashboard.adminSettingsPage');
+  const settings = await getMentoraProgrammeSettings();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -102,7 +105,7 @@ export default async function MentoraAdminSettingsPage() {
           />
           <SettingRow
             label={t('programme.capacity')}
-            meta={t('programme.capacityMeta')}
+            meta={`Min ${settings.capacityMin} · Max ${settings.capacityMax} binômes`}
             cta={t('programme.adjustCta')}
             ctaTone="ghost"
           />
@@ -229,7 +232,16 @@ export default async function MentoraAdminSettingsPage() {
           <h2 style={{ margin: '0 0 14px', fontSize: 17, fontWeight: 700 }}>
             {t('security.title')}
           </h2>
-          <SettingRow label={t('security.twoFa')} meta={t('security.twoFaMeta')} toggle on />
+          <SettingRow
+            label={t('security.twoFa')}
+            meta={t('security.twoFaMeta')}
+            customRight={
+              <MentoraBoolToggle
+                field="require2faAdmin"
+                initialOn={settings.require2faAdmin}
+              />
+            }
+          />
           <SettingRow label={t('security.sso')} meta={t('security.ssoMeta')} toggle on />
           <SettingRow
             label={t('security.retention')}
@@ -367,6 +379,7 @@ function SettingRow({
   toggle = false,
   on = false,
   isLast = false,
+  customRight,
 }: {
   label: string;
   meta: string;
@@ -375,6 +388,9 @@ function SettingRow({
   toggle?: boolean;
   on?: boolean;
   isLast?: boolean;
+  /** Slot for a wired client-side control (toggle, stepper). When set
+   *  it wins over `cta` and the static `toggle` block. */
+  customRight?: React.ReactNode;
 }) {
   return (
     <div
@@ -392,7 +408,9 @@ function SettingRow({
           {meta}
         </div>
       </div>
-      {toggle ? (
+      {customRight ? (
+        customRight
+      ) : toggle ? (
         <ToggleVisual on={on} />
       ) : (
         cta && (

@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { getCommunityViewer } from '../../_components/viewer';
+import { getCommunitySettings } from '@/lib/actions/platform-settings';
+import { CommunityBoolToggle, CommunityNumberStepper } from './SettingsToggles';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +45,7 @@ export default async function CommunityAdminSettingsPage() {
   if (viewer.kind !== 'member' || !viewer.isModerator) redirect('/community');
 
   const t = await getTranslations('community.admin.adminSettingsPage');
+  const settings = await getCommunitySettings();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -81,31 +84,66 @@ export default async function CommunityAdminSettingsPage() {
           </h2>
           <SettingRow
             label={t('charterCard.charter')}
-            meta={t('charterCard.charterMeta')}
+            meta={
+              settings.charterPublishedAt
+                ? `${settings.charterVersion} · publiée le ${settings.charterPublishedAt
+                    .toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' })}`
+                : `${settings.charterVersion} · pas encore publiée`
+            }
             cta={t('charterCard.editCta')}
           />
           <SettingRow
             label={t('charterCard.applicationGate')}
             meta={t('charterCard.applicationGateMeta')}
-            toggle
-            on
+            customRight={
+              <CommunityBoolToggle
+                field="requireCharterAccept"
+                initialOn={settings.requireCharterAccept}
+              />
+            }
           />
           <SettingRow
             label={t('charterCard.blockedWords')}
-            meta={t('charterCard.blockedWordsMeta')}
+            meta={
+              settings.bannedWords
+                ? `${settings.bannedWords.split(/\s*,\s*|\n/).filter(Boolean).length} mots · règles actives`
+                : 'Aucun mot configuré'
+            }
             cta={t('charterCard.configureCta')}
           />
           <SettingRow
             label={t('charterCard.autoSanctions')}
-            meta={t('charterCard.autoSanctionsMeta')}
-            toggle
-            on
+            meta={
+              settings.autoSanctionThreshold > 0
+                ? `${settings.autoSanctionThreshold} avertissements = suspension 7 j`
+                : 'Désactivées'
+            }
+            customRight={
+              <CommunityNumberStepper
+                field="autoSanctionThreshold"
+                initialValue={settings.autoSanctionThreshold}
+                min={0}
+                max={20}
+                unit="avert."
+              />
+            }
           />
           <SettingRow
             label={t('charterCard.quarantine')}
-            meta={t('charterCard.quarantineMeta')}
-            toggle
-            on
+            meta={
+              settings.quarantineDays > 0
+                ? `${settings.quarantineDays} premiers jours`
+                : 'Désactivée'
+            }
+            customRight={
+              <CommunityNumberStepper
+                field="quarantineDays"
+                initialValue={settings.quarantineDays}
+                min={0}
+                max={60}
+                unit="j"
+              />
+            }
             isLast
           />
         </section>
@@ -186,14 +224,19 @@ export default async function CommunityAdminSettingsPage() {
             <SettingRow
               label={t('privacyCard.openToVisitors')}
               meta={t('privacyCard.openToVisitorsMeta')}
-              toggle
-              on={false}
+              customRight={
+                <CommunityBoolToggle
+                  field="openToVisitors"
+                  initialOn={settings.openToVisitors}
+                />
+              }
             />
             <SettingRow
               label={t('privacyCard.noIndex')}
               meta={t('privacyCard.noIndex')}
-              toggle
-              on={false}
+              customRight={
+                <CommunityBoolToggle field="noIndex" initialOn={settings.noIndex} />
+              }
               metaHidden
             />
             <SettingRow
@@ -236,6 +279,7 @@ function SettingRow({
   on = false,
   isLast = false,
   metaHidden = false,
+  customRight,
 }: {
   label: string;
   meta: string;
@@ -245,6 +289,10 @@ function SettingRow({
   isLast?: boolean;
   /** Skip rendering the meta line (used when label/meta are the same). */
   metaHidden?: boolean;
+  /** Slot for a fully-custom right-hand control (e.g. a wired toggle
+   *  or numeric stepper client island). When supplied it wins over
+   *  `cta` and the static `toggle` block. */
+  customRight?: React.ReactNode;
 }) {
   return (
     <div
@@ -264,7 +312,9 @@ function SettingRow({
           </div>
         )}
       </div>
-      {toggle ? (
+      {customRight ? (
+        customRight
+      ) : toggle ? (
         <span
           aria-hidden
           style={{
