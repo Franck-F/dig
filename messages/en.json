@@ -3547,6 +3547,10 @@
       "step1": {
         "title": "Your Mentora goals",
         "subtitle": "Pick 1 to 3 priority goals. That's the basis for matching you with mentors.",
+        "photoLabel": "Profile photo",
+        "photoHint": "PNG, JPG, WebP or GIF. Cropped and compressed to 320×320. Optional — you can add a photo later.",
+        "photoUploadCta": "Upload a photo",
+        "photoRemoveCta": "Remove photo",
         "goalCardsLabel": "Main goal",
         "goalCards": {
           "first-job": { "title": "Land my first job", "desc": "Tech, design, data, product" },
@@ -3638,7 +3642,10 @@
       "errors": {
         "generic": "An error occurred. Please try again in a moment.",
         "goalsRequired": "Your goals are required.",
-        "languagesRequired": "Please indicate at least one language."
+        "languagesRequired": "Please indicate at least one language.",
+        "imageInvalidType": "The file must be an image.",
+        "imageTooLarge": "Image still too large after compression. Pick a simpler file.",
+        "imageReadFailed": "Could not read this file."
       },
       "successRedirectTitle": "Profile saved!",
       "successRedirectBody": "Redirecting to recommended mentors…"

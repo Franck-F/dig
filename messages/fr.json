@@ -1777,6 +1777,10 @@
       "step1": {
         "title": "Tes objectifs sur Mentora",
         "subtitle": "Choisis 1 à 3 objectifs prioritaires. C'est la base du matching avec tes futurs mentors.",
+        "photoLabel": "Photo de profil",
+        "photoHint": "PNG, JPG, WebP ou GIF. Recadrée et compressée en 320×320. Optionnelle — tu peux ajouter une photo plus tard.",
+        "photoUploadCta": "Téléverser une photo",
+        "photoRemoveCta": "Retirer la photo",
         "goalCardsLabel": "Objectif principal",
         "goalCards": {
           "first-job": { "title": "Décrocher mon premier job", "desc": "Tech, design, data, produit" },
@@ -1868,7 +1872,10 @@
       "errors": {
         "generic": "Une erreur est survenue. Réessayez dans un instant.",
         "goalsRequired": "Vos objectifs sont obligatoires.",
-        "languagesRequired": "Indiquez au moins une langue."
+        "languagesRequired": "Indiquez au moins une langue.",
+        "imageInvalidType": "Le fichier doit être une image.",
+        "imageTooLarge": "Image trop lourde après compression. Choisissez un fichier plus simple.",
+        "imageReadFailed": "Impossible de lire ce fichier."
       },
       "successRedirectTitle": "Profil enregistré !",
       "successRedirectBody": "Redirection vers les mentors recommandés…"

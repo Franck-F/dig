@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useTransition, type CSSProperties, type ReactNode } from 'react';
+import { useRef, useState, useTransition, type CSSProperties, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { upsertMenteeProfile } from '@/lib/actions/mentora/mentee-profile';
 import { addMenteeGoalSkill } from '@/lib/actions/mentora/mentee-profile';
 import { getSkillIdsBySlugs } from '@/lib/mentora/skills';
+import { resizeImageToDataUrl } from '@/lib/images/resize';
 
 import OnboardingShell from '@/components/app-shell/OnboardingShell';
 import { useTheme } from '@/components/ThemeProvider';
@@ -57,6 +58,9 @@ export type OnboardingPrefill = {
   currentChallenges: string | null;
   discoveredVia: DiscoveredVia;
   goalSkillSlugs: string[];
+  /** Avatar data URI (or null). Pre-fills the photo tile in step 1
+   *  when re-opening the wizard. */
+  photoUrl?: string | null;
 } | null;
 
 type WizardSkill = { slug: string; name: string };
@@ -190,6 +194,42 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
   const [customSkillDraft, setCustomSkillDraft] = useState('');
   const [goals, setGoals] = useState(prefill?.goals ?? '');
 
+  // ──── Step 1 — Photo de profil ─────────────────────────────────────
+  // Mirror of the mentor application wizard's photo step. Optional —
+  // mentees can skip and the directory falls back to gradient initials.
+  // 320×320 JPEG via the shared resize helper, ~250KB cap so the data
+  // URI stays well under Postgres TEXT limits and the action's 800K
+  // base64 ceiling.
+  const [photoUrl, setPhotoUrl] = useState<string>(prefill?.photoUrl ?? '');
+  const photoFileRef = useRef<HTMLInputElement>(null);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoErr, setPhotoErr] = useState<string | null>(null);
+
+  const onPhotoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (e.target) e.target.value = '';
+    if (!file) return;
+    setPhotoErr(null);
+    if (!file.type.startsWith('image/')) {
+      setPhotoErr(t('errors.imageInvalidType'));
+      return;
+    }
+    setPhotoBusy(true);
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 320);
+      const approxBytes = Math.floor(dataUrl.length * 0.75);
+      if (approxBytes > 250 * 1024) {
+        setPhotoErr(t('errors.imageTooLarge'));
+        return;
+      }
+      setPhotoUrl(dataUrl);
+    } catch {
+      setPhotoErr(t('errors.imageReadFailed'));
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
+
   const toggleSkill = (slug: string) => {
     setSelectedSkills((prev) => {
       const next = new Set(prev);
@@ -315,6 +355,15 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
           currentChallenges: challengesWithPrefs,
           preferredFormat,
           discoveredVia,
+          // Pass photoUrl when the user uploaded one. When they didn't,
+          // we send `null` only if they had a previous photo and just
+          // cleared it; otherwise omit the key so the upsert leaves
+          // the existing value alone.
+          photoUrl: photoUrl
+            ? photoUrl
+            : prefill?.photoUrl
+              ? null
+              : undefined,
         });
         if (profileRes.status === 'error') {
           setError(profileRes.error ?? t('errors.generic'));
@@ -469,6 +518,124 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
         h1={tStep1('title')}
         sub={tStep1('subtitle')}
       />
+
+      {/* Photo card — same pattern as the mentor application wizard so
+          both onboardings have a consistent visual identity step. */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 18,
+          padding: 20,
+          borderRadius: 16,
+          background: cardBg,
+          border: cardBd,
+          marginBottom: 22,
+        }}
+      >
+        <div
+          aria-hidden
+          style={{
+            width: 84,
+            height: 84,
+            borderRadius: '50%',
+            flexShrink: 0,
+            position: 'relative',
+            background: photoUrl
+              ? `${isDark ? '#1c123c' : '#fff'} url("${photoUrl}") center/cover no-repeat`
+              : 'linear-gradient(135deg, #7301FF, #A34BF5)',
+            color: photoUrl ? 'transparent' : 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 700,
+            fontSize: 26,
+            boxShadow: photoUrl ? '0 8px 18px rgba(36,18,80,0.18)' : 'none',
+            border: cardBd,
+          }}
+        >
+          {!photoUrl && '✦'}
+          <button
+            type="button"
+            onClick={() => photoFileRef.current?.click()}
+            disabled={photoBusy}
+            aria-label={tStep1('photoUploadCta')}
+            style={{
+              position: 'absolute',
+              bottom: -4,
+              right: -4,
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              border: '2px solid white',
+              background: '#7301FF',
+              color: 'white',
+              fontSize: 12,
+              cursor: photoBusy ? 'wait' : 'pointer',
+              fontFamily: 'inherit',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            ✎
+          </button>
+        </div>
+        <input
+          ref={photoFileRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          onChange={onPhotoFile}
+          style={{ display: 'none' }}
+          aria-hidden
+          tabIndex={-1}
+        />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: ink }}>
+            {tStep1('photoLabel')}
+          </div>
+          <div style={{ fontSize: 12, color: sub, marginTop: 2 }}>
+            {tStep1('photoHint')}
+          </div>
+          {photoUrl && (
+            <button
+              type="button"
+              onClick={() => {
+                setPhotoUrl('');
+                setPhotoErr(null);
+              }}
+              style={{
+                marginTop: 8,
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                color: '#7301FF',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                fontFamily: 'inherit',
+              }}
+            >
+              {tStep1('photoRemoveCta')}
+            </button>
+          )}
+          {photoErr && (
+            <div
+              role="alert"
+              style={{
+                marginTop: 8,
+                fontSize: 11,
+                color: '#d94e92',
+                fontWeight: 600,
+              }}
+            >
+              {photoErr}
+            </div>
+          )}
+        </div>
+      </div>
+
       <div style={fieldGap}>
         {/* Goal cards (radio-like selection) */}
         <div>

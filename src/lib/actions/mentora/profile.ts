@@ -260,6 +260,12 @@ const upsertMenteeProfileSchema = z.object({
   currentChallenges: z.string().max(50_000).optional().nullable(),
   preferredFormat: z.nativeEnum(PreferredFormat).optional(),
   discoveredVia: z.nativeEnum(DiscoveredVia).optional(),
+  // Optional avatar — data URI from the onboarding photo step (resized
+  // to 320×320 client-side, ~250KB cap enforced in the wizard). Stored
+  // as-is on MenteeProfile.photoUrl to mirror MentorProfile.photoUrl.
+  // Capped at 600KB worth of base64 (≈ 800KB chars) to defend against
+  // a client that bypasses the resize helper.
+  photoUrl: z.string().max(800_000).optional().nullable(),
 });
 
 export async function updateMenteeProfile(
@@ -279,6 +285,11 @@ export async function updateMenteeProfile(
       currentChallenges: parsed.data.currentChallenges ?? null,
       preferredFormat: parsed.data.preferredFormat ?? 'REMOTE',
       discoveredVia: parsed.data.discoveredVia ?? 'SEARCH',
+      // photoUrl is intentionally treated as "set when provided, leave
+      // alone when undefined". null clears the field; missing key keeps
+      // the existing value on update — important so a user editing
+      // languages doesn't accidentally wipe their photo.
+      ...(parsed.data.photoUrl !== undefined ? { photoUrl: parsed.data.photoUrl } : {}),
     };
 
     const row = await prisma.menteeProfile.upsert({

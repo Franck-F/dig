@@ -45,5 +45,8 @@ export async function getMenteeProfileForCurrentUser() {
     currentChallenges: row.currentChallenges,
     discoveredVia: row.discoveredVia,
     goalSkillSlugs: row.goalSkills.map((g) => g.skill.slug),
+    // Surface the photo so re-opening the wizard pre-fills the avatar
+    // tile instead of starting blank.
+    photoUrl: row.photoUrl,
   };
 }

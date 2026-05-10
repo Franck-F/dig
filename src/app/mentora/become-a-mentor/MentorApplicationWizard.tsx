@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { createMentorProfile, addMentorSkill } from '@/lib/actions/mentora/mentor-profile';
 import { addAvailabilityRule } from '@/lib/actions/mentora/availability';
 import { getSkillIdsBySlugs } from '@/lib/mentora/skills';
+import { resizeImageToDataUrl } from '@/lib/images/resize';
 
 import OnboardingShell from '@/components/app-shell/OnboardingShell';
 import { useTheme } from '@/components/ThemeProvider';
@@ -1456,43 +1457,6 @@ function SlotGrid({
   );
 }
 
-/**
- * Read an image File and return a `size × size` JPEG data URL, cover-fit.
- * Mirrors the helper in `MentorProfileForm.tsx` so the upload UX is
- * identical between the application wizard and the profile editor.
- */
-function resizeImageToDataUrl(file: File, size: number): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(reader.error);
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('image load'));
-      img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = size;
-          canvas.height = size;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) {
-            reject(new Error('no canvas context'));
-            return;
-          }
-          const ratio = Math.max(size / img.width, size / img.height);
-          const w = img.width * ratio;
-          const h = img.height * ratio;
-          const dx = (size - w) / 2;
-          const dy = (size - h) / 2;
-          ctx.fillStyle = '#fff';
-          ctx.fillRect(0, 0, size, size);
-          ctx.drawImage(img, dx, dy, w, h);
-          resolve(canvas.toDataURL('image/jpeg', 0.85));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      img.src = reader.result as string;
-    };
-    reader.readAsDataURL(file);
-  });
-}
+// Image resize helper extracted to `@/lib/images/resize` and shared
+// across the mentor wizard, mentee onboarding, profile editor and
+// community settings. See lib/images/resize.ts.
