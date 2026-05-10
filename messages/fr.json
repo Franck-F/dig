@@ -715,6 +715,128 @@
         "cta_pending": "Activation…",
         "seeCommunity": "Voir la communauté"
       },
+      "adminSettingsPage": {
+        "kicker": "Programme & équipe",
+        "title": "Paramètres",
+        "programme": {
+          "title": "Programme",
+          "activeCycle": "Cycle actif",
+          "activeCycleMeta": "Printemps 2026 · 12 sem. · 24 binômes",
+          "configureCta": "Configurer",
+          "nextCycle": "Prochain cycle",
+          "nextCycleMeta": "Été 2026 · démarre le 1er juillet",
+          "prepareCta": "Préparer",
+          "capacity": "Capacité par cycle",
+          "capacityMeta": "Min 16 · Max 32 binômes",
+          "adjustCta": "Ajuster",
+          "matchingCriteria": "Critères matching",
+          "matchingCriteriaMeta": "6 dimensions · pondérations actives",
+          "editCta": "Éditer",
+          "applicationPeriod": "Période de candidature",
+          "applicationPeriodMeta": "Ouverte jusqu'au 15 mai"
+        },
+        "team": {
+          "title": "Équipe Digizelle",
+          "permissions": "Permissions",
+          "inviteCta": "+ Inviter un·e admin",
+          "members": {
+            "0": { "name": "Naïma B.", "role": "Lead programme" },
+            "1": { "name": "Camille R.", "role": "Coordinatrice" },
+            "2": { "name": "Yacine M.", "role": "Tech & data" }
+          }
+        },
+        "comms": {
+          "title": "Communications & marque",
+          "templates": "Templates e-mails",
+          "templatesMeta": "12 templates · 3 modifiés ce mois",
+          "manageCta": "Gérer",
+          "brand": "Charte graphique",
+          "brandMeta": "Logo, couleurs, signature mail",
+          "viewCta": "Voir",
+          "menteeOnboarding": "Onboarding mentorées",
+          "menteeOnboardingMeta": "Multi-étapes · 5 écrans",
+          "mentorOnboarding": "Onboarding mentors",
+          "mentorOnboardingMeta": "Multi-étapes · 4 écrans",
+          "customizeCta": "Personnaliser"
+        },
+        "security": {
+          "title": "Sécurité & RGPD",
+          "twoFa": "Authentification 2FA obligatoire",
+          "twoFaMeta": "Pour tous les rôles élevés",
+          "sso": "SSO Google Workspace",
+          "ssoMeta": "Pour les domaines @digizelle.fr",
+          "retention": "Conservation données mentorées",
+          "retentionMeta": "3 ans après la fin du programme",
+          "modifyCta": "Modifier",
+          "auditLog": "Journal d'audit",
+          "auditLogMeta": "Toutes les actions admin · 90 jours",
+          "consultCta": "Consulter",
+          "rgpdExport": "Export RGPD utilisateur",
+          "rgpdExportMeta": "Délai légal · 7 jours ouvrés"
+        },
+        "integrations": {
+          "title": "Intégrations",
+          "items": {
+            "calendar": { "letter": "C", "name": "Calendar", "meta": "Sync agendas mentors", "on": true },
+            "slack": { "letter": "S", "name": "Slack", "meta": "Notifications équipe", "on": true },
+            "zoom": { "letter": "Z", "name": "Zoom", "meta": "Sessions en visio", "on": true },
+            "stripe": { "letter": "S", "name": "Stripe", "meta": "Dons & paiements", "on": false },
+            "notion": { "letter": "N", "name": "Notion", "meta": "Base de ressources", "on": true },
+            "mailjet": { "letter": "M", "name": "Mailjet", "meta": "Newsletter & emailing", "on": true },
+            "hubspot": { "letter": "H", "name": "HubSpot", "meta": "CRM partenaires", "on": true },
+            "looker": { "letter": "L", "name": "Looker", "meta": "Analytics avancées", "on": false }
+          }
+        }
+      },
+      "communityEventsPage": {
+        "title": "Événements",
+        "kicker": "Communauté",
+        "filters": ["Tous", "Live", "Atelier", "Demo"],
+        "upcomingTitle": "Événements à venir",
+        "registerCta": "S'inscrire",
+        "registeredCta": "✓ Inscrit·e",
+        "live": {
+          "tag": "● LIVE MAINTENANT",
+          "title": "Live UX avec Karim",
+          "body": "1.2k spectateurs · 5 portfolios décryptés en direct",
+          "cta": "Rejoindre →"
+        },
+        "myRegistrations": "Mes inscriptions",
+        "organizer": "Tu organises ?",
+        "organizerBody": "Propose un atelier, un live ou un meetup à la communauté.",
+        "organizerCta": "+ Proposer un événement",
+        "items": {
+          "0": { "day": "07", "month": "MAI", "title": "Atelier Web3 fondamentaux", "tag": "Atelier", "isLive": false, "host": "Léa Martins · Mentor · Visio · 90 min" },
+          "1": { "day": "12", "month": "MAI", "title": "Talk : Femmes & IA", "tag": "Live", "isLive": true, "host": "Sofia Khelifi · OVHcloud · Live + Q&A en direct" },
+          "2": { "day": "20", "month": "MAI", "title": "Hackathon #4 — Kick-off", "tag": "Hackathon", "isLive": false, "host": "Toute la promo · Présentiel · Paris 11" },
+          "3": { "day": "02", "month": "JUIN", "title": "Demo Day cohorte Tech", "tag": "Demo", "isLive": false, "host": "14 mentorées présenteront · Présentiel · Station F" },
+          "4": { "day": "14", "month": "JUIN", "title": "Critique de portfolios UX", "tag": "Live", "isLive": true, "host": "Karim Belhaj · Live · 8 portfolios revus" }
+        },
+        "myItems": {
+          "0": { "title": "Atelier Web3", "meta": "07 mai · 19h" },
+          "1": { "title": "Demo Day Tech", "meta": "02 juin · 18h" }
+        }
+      },
+      "communityResourcesPage": {
+        "title": "Ressources",
+        "kicker": "Bibliothèque communauté",
+        "categories": {
+          "templates": { "label": "Templates", "count": "48 ressources" },
+          "videos": { "label": "Vidéos", "count": "124 ressources" },
+          "articles": { "label": "Articles", "count": "96 ressources" },
+          "tools": { "label": "Outils", "count": "32 ressources" }
+        },
+        "libraryTitle": "Bibliothèque communauté",
+        "shareCta": "+ Partager une ressource",
+        "items": {
+          "0": { "title": "Guide UX 2026 (PDF)", "meta": "par Karim B. · 1 240 téléchargements", "tag": "Template", "icon": "templates" },
+          "1": { "title": "Comment passer un entretien Front", "meta": "par Sofia K. · 980 téléchargements", "tag": "Vidéo", "icon": "videos" },
+          "2": { "title": "Plan de carrière Tech (Notion)", "meta": "par Marwane O. · 720 téléchargements", "tag": "Template", "icon": "templates" },
+          "3": { "title": "Boîte à outils Reconversion Data", "meta": "par Lou T. · 540 téléchargements", "tag": "Article", "icon": "articles" },
+          "4": { "title": "12 prompts ChatGPT pour le portfolio", "meta": "par Karim B. · 480 téléchargements", "tag": "Outil", "icon": "tools" },
+          "5": { "title": "Atelier salaire & négo · replay", "meta": "par Sofia K. · 320 téléchargements", "tag": "Vidéo", "icon": "videos" }
+        }
+      },
       "agendaPage": {
         "kicker": "Mentora · Sessions",
         "title": "Agenda",

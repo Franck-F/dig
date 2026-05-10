@@ -2414,6 +2414,128 @@
         "cta_pending": "Activating…",
         "seeCommunity": "View community"
       },
+      "adminSettingsPage": {
+        "kicker": "Programme & team",
+        "title": "Settings",
+        "programme": {
+          "title": "Programme",
+          "activeCycle": "Active cycle",
+          "activeCycleMeta": "Spring 2026 · 12 weeks · 24 pairs",
+          "configureCta": "Configure",
+          "nextCycle": "Next cycle",
+          "nextCycleMeta": "Summer 2026 · starts July 1",
+          "prepareCta": "Prepare",
+          "capacity": "Capacity per cycle",
+          "capacityMeta": "Min 16 · Max 32 pairs",
+          "adjustCta": "Adjust",
+          "matchingCriteria": "Matching criteria",
+          "matchingCriteriaMeta": "6 dimensions · weights active",
+          "editCta": "Edit",
+          "applicationPeriod": "Application window",
+          "applicationPeriodMeta": "Open until May 15"
+        },
+        "team": {
+          "title": "Digizelle team",
+          "permissions": "Permissions",
+          "inviteCta": "+ Invite an admin",
+          "members": {
+            "0": { "name": "Naïma B.", "role": "Programme lead" },
+            "1": { "name": "Camille R.", "role": "Coordinator" },
+            "2": { "name": "Yacine M.", "role": "Tech & data" }
+          }
+        },
+        "comms": {
+          "title": "Communications & brand",
+          "templates": "Email templates",
+          "templatesMeta": "12 templates · 3 changed this month",
+          "manageCta": "Manage",
+          "brand": "Brand kit",
+          "brandMeta": "Logo, colors, email signature",
+          "viewCta": "View",
+          "menteeOnboarding": "Mentee onboarding",
+          "menteeOnboardingMeta": "Multi-step · 5 screens",
+          "mentorOnboarding": "Mentor onboarding",
+          "mentorOnboardingMeta": "Multi-step · 4 screens",
+          "customizeCta": "Customize"
+        },
+        "security": {
+          "title": "Security & GDPR",
+          "twoFa": "Mandatory 2FA",
+          "twoFaMeta": "For all elevated roles",
+          "sso": "SSO Google Workspace",
+          "ssoMeta": "For @digizelle.fr domains",
+          "retention": "Mentee data retention",
+          "retentionMeta": "3 years after programme end",
+          "modifyCta": "Modify",
+          "auditLog": "Audit log",
+          "auditLogMeta": "All admin actions · 90 days",
+          "consultCta": "Open",
+          "rgpdExport": "User GDPR export",
+          "rgpdExportMeta": "Legal SLA · 7 business days"
+        },
+        "integrations": {
+          "title": "Integrations",
+          "items": {
+            "calendar": { "letter": "C", "name": "Calendar", "meta": "Sync mentor agendas", "on": true },
+            "slack": { "letter": "S", "name": "Slack", "meta": "Team notifications", "on": true },
+            "zoom": { "letter": "Z", "name": "Zoom", "meta": "Video sessions", "on": true },
+            "stripe": { "letter": "S", "name": "Stripe", "meta": "Donations & payments", "on": false },
+            "notion": { "letter": "N", "name": "Notion", "meta": "Resource library", "on": true },
+            "mailjet": { "letter": "M", "name": "Mailjet", "meta": "Newsletter & emailing", "on": true },
+            "hubspot": { "letter": "H", "name": "HubSpot", "meta": "Partner CRM", "on": true },
+            "looker": { "letter": "L", "name": "Looker", "meta": "Advanced analytics", "on": false }
+          }
+        }
+      },
+      "communityEventsPage": {
+        "title": "Events",
+        "kicker": "Community",
+        "filters": ["All", "Live", "Workshop", "Demo"],
+        "upcomingTitle": "Upcoming events",
+        "registerCta": "Register",
+        "registeredCta": "✓ Registered",
+        "live": {
+          "tag": "● LIVE NOW",
+          "title": "Live UX with Karim",
+          "body": "1.2k viewers · 5 portfolios reviewed live",
+          "cta": "Join →"
+        },
+        "myRegistrations": "My registrations",
+        "organizer": "Hosting something?",
+        "organizerBody": "Propose a workshop, a live or a meetup to the community.",
+        "organizerCta": "+ Submit an event",
+        "items": {
+          "0": { "day": "07", "month": "MAY", "title": "Web3 fundamentals workshop", "tag": "Workshop", "isLive": false, "host": "Léa Martins · Mentor · Video · 90 min" },
+          "1": { "day": "12", "month": "MAY", "title": "Talk: Women & AI", "tag": "Live", "isLive": true, "host": "Sofia Khelifi · OVHcloud · Live + Q&A" },
+          "2": { "day": "20", "month": "MAY", "title": "Hackathon #4 — Kick-off", "tag": "Hackathon", "isLive": false, "host": "Whole cohort · In person · Paris 11" },
+          "3": { "day": "02", "month": "JUN", "title": "Tech cohort Demo Day", "tag": "Demo", "isLive": false, "host": "14 mentees presenting · In person · Station F" },
+          "4": { "day": "14", "month": "JUN", "title": "UX portfolio reviews", "tag": "Live", "isLive": true, "host": "Karim Belhaj · Live · 8 portfolios reviewed" }
+        },
+        "myItems": {
+          "0": { "title": "Web3 workshop", "meta": "May 7 · 7pm" },
+          "1": { "title": "Tech Demo Day", "meta": "Jun 2 · 6pm" }
+        }
+      },
+      "communityResourcesPage": {
+        "title": "Resources",
+        "kicker": "Community library",
+        "categories": {
+          "templates": { "label": "Templates", "count": "48 resources" },
+          "videos": { "label": "Videos", "count": "124 resources" },
+          "articles": { "label": "Articles", "count": "96 resources" },
+          "tools": { "label": "Tools", "count": "32 resources" }
+        },
+        "libraryTitle": "Community library",
+        "shareCta": "+ Share a resource",
+        "items": {
+          "0": { "title": "UX guide 2026 (PDF)", "meta": "by Karim B. · 1,240 downloads", "tag": "Template", "icon": "templates" },
+          "1": { "title": "How to ace a Front-end interview", "meta": "by Sofia K. · 980 downloads", "tag": "Video", "icon": "videos" },
+          "2": { "title": "Tech career plan (Notion)", "meta": "by Marwane O. · 720 downloads", "tag": "Template", "icon": "templates" },
+          "3": { "title": "Data career-change toolkit", "meta": "by Lou T. · 540 downloads", "tag": "Article", "icon": "articles" },
+          "4": { "title": "12 ChatGPT prompts for your portfolio", "meta": "by Karim B. · 480 downloads", "tag": "Tool", "icon": "tools" },
+          "5": { "title": "Salary & negotiation workshop · replay", "meta": "by Sofia K. · 320 downloads", "tag": "Video", "icon": "videos" }
+        }
+      },
       "agendaPage": {
         "kicker": "Mentora · Sessions",
         "title": "Agenda",
