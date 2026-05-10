@@ -1,9 +1,15 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { ResourceCategory } from '@prisma/client';
 
 import { auth } from '@/auth';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
+import {
+  getFeaturedResource,
+  listResourcesForAudience,
+} from '@/lib/actions/resources';
+import { fmtDate } from '../_components/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,19 +17,39 @@ const FILTER_KEYS = ['ux-ui', 'career', 'career-change', 'tech', 'soft-skills'] 
 type FilterKey = (typeof FILTER_KEYS)[number];
 type FilterValue = 'all' | FilterKey;
 
-const KIND_COLOR: Record<string, string> = {
-  PDF: '#F46FB1',
-  Replay: '#7301FF',
-  Template: '#A34BF5',
-  Article: '#3B7BFF',
-  Notion: '#23c55e',
+const FILTER_TO_DB: Record<FilterKey, ResourceCategory> = {
+  'ux-ui': ResourceCategory.UX_UI,
+  career: ResourceCategory.CAREER,
+  'career-change': ResourceCategory.CAREER_CHANGE,
+  tech: ResourceCategory.TECH,
+  'soft-skills': ResourceCategory.SOFT_SKILLS,
 };
 
-const MENTEE_INDICES = ['0', '1', '2', '3', '4', '5'] as const;
-const MENTOR_INDICES = ['0', '1', '2', '3'] as const;
-/** Indices that should display the "NEW" pill — kept in code rather
- *  than i18n so the editorial team only edits prose, never visual flags. */
-const MENTEE_NEW_INDICES = new Set<string>(['0', '3']);
+const DB_TO_FILTER: Partial<Record<ResourceCategory, FilterKey>> = {
+  [ResourceCategory.UX_UI]: 'ux-ui',
+  [ResourceCategory.CAREER]: 'career',
+  [ResourceCategory.CAREER_CHANGE]: 'career-change',
+  [ResourceCategory.TECH]: 'tech',
+  [ResourceCategory.SOFT_SKILLS]: 'soft-skills',
+};
+
+const KIND_COLOR: Record<string, string> = {
+  PDF: '#F46FB1',
+  REPLAY: '#7301FF',
+  TEMPLATE: '#A34BF5',
+  ARTICLE: '#3B7BFF',
+  TOOL: '#23c55e',
+  NOTION: '#23c55e',
+};
+
+const KIND_LABEL: Record<string, string> = {
+  PDF: 'PDF',
+  REPLAY: 'Replay',
+  TEMPLATE: 'Template',
+  ARTICLE: 'Article',
+  TOOL: 'Outil',
+  NOTION: 'Notion',
+};
 
 function isFilterKey(value: string | undefined): value is FilterKey {
   return (
@@ -33,20 +59,16 @@ function isFilterKey(value: string | undefined): value is FilterKey {
 }
 
 /**
- * Resources library — designed against `mentora-mentee-tabs.jsx#Resources`
- * and `mentora-mentor-tabs.jsx#Resources`.
+ * Mentora resources library — backed by the `Resource` table.
  *
  * Two role-driven variants on the same route:
- *   - Mentee: filter chips → "À LA UNE" gradient banner → grid of curated
- *     resource cards (PDF / Replay / Template / Article kind badges +
- *     category badge + NEW pill + author + meta + "Ouvrir" CTA).
- *   - Mentor: header card with "+ Nouveau document" CTA → grid of the
- *     resources the mentor shares with their mentees, each with
- *     "Modifier" / "Partager" actions.
+ *   - Mentee: filter chips + featured banner + grid of curated cards
+ *     (read-only). Empty state invites them to wait for new content.
+ *   - Mentor: header + "+ Nouveau document" CTA → /mentora/dashboard/resources/new
+ *     + grid of the resources THEY authored, with edit/share affordances.
  *
- * Static content for now — the platform doesn't yet have a Resource
- * table. All copy lives in i18n so the page is bilingual and easy to
- * curate without a code change.
+ * Authoring flows live in dedicated routes (linked but not implemented
+ * inline here to keep the page lean).
  */
 export default async function ResourcesPage({
   searchParams,
@@ -64,7 +86,7 @@ export default async function ResourcesPage({
   const isMentor = profile.kind === 'mentor';
 
   if (isMentor) {
-    return <MentorView t={t} />;
+    return <MentorView t={t} authorId={session.user.id} />;
   }
 
   return <MenteeView t={t} filter={filter} />;
@@ -72,29 +94,21 @@ export default async function ResourcesPage({
 
 // ───────────── Mentee variant ─────────────────────────────────────────
 
-function MenteeView({
+async function MenteeView({
   t,
   filter,
 }: {
   t: Awaited<ReturnType<typeof getTranslations<'mentora.dashboard.resourcesPage'>>>;
   filter: FilterValue;
 }) {
-  const allItems = MENTEE_INDICES.map((i) => ({
-    idx: i,
-    kind: t(`menteeItems.${i}.kind`),
-    category: t(`menteeItems.${i}.category`),
-    title: t(`menteeItems.${i}.title`),
-    author: t(`menteeItems.${i}.author`),
-    meta: t(`menteeItems.${i}.meta`),
-    isNew: MENTEE_NEW_INDICES.has(i),
-  }));
-
-  const filteredItems =
-    filter === 'all' ? allItems : allItems.filter((it) => it.category === filter);
+  const items = await listResourcesForAudience('MENTORA', {
+    category: filter === 'all' ? undefined : FILTER_TO_DB[filter],
+    limit: 60,
+  });
+  const featured = filter === 'all' ? await getFeaturedResource('MENTORA') : null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-      {/* Header */}
       <div>
         <span
           style={{
@@ -115,9 +129,12 @@ function MenteeView({
         </p>
       </div>
 
-      {/* Filter chips */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <FilterChip href="/mentora/dashboard/resources" active={filter === 'all'} label={t('filterAll')} />
+        <FilterChip
+          href="/mentora/dashboard/resources"
+          active={filter === 'all'}
+          label={t('filterAll')}
+        />
         {FILTER_KEYS.map((k) => (
           <FilterChip
             key={k}
@@ -128,9 +145,7 @@ function MenteeView({
         ))}
       </div>
 
-      {/* Featured banner — only on the All view so it doesn't overshadow
-          the filtered list. */}
-      {filter === 'all' && (
+      {featured && (
         <div
           style={{
             background:
@@ -176,12 +191,18 @@ function MenteeView({
               ✦ {t('featured.tag')}
             </span>
             <h2 style={{ margin: '10px 0 4px', fontSize: 22, fontWeight: 700 }}>
-              {t('featured.title')}
+              {featured.title}
             </h2>
-            <p style={{ margin: 0, fontSize: 14, opacity: 0.9 }}>{t('featured.body')}</p>
+            {featured.description && (
+              <p style={{ margin: 0, fontSize: 14, opacity: 0.9 }}>
+                {featured.description}
+              </p>
+            )}
           </div>
-          <button
-            type="button"
+          <a
+            href={featured.url}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               padding: '11px 20px',
               borderRadius: 11,
@@ -194,139 +215,167 @@ function MenteeView({
               flexShrink: 0,
               fontFamily: 'inherit',
               position: 'relative',
+              textDecoration: 'none',
             }}
           >
             {t('featured.cta')}
-          </button>
+          </a>
         </div>
       )}
 
-      {/* Resource grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 16,
-        }}
-      >
-        {filteredItems.map((it) => {
-          const accent = KIND_COLOR[it.kind] ?? '#7301FF';
-          return (
-            <article
-              key={it.idx}
-              className="dz-card"
-              style={{
-                padding: 18,
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                gap: 10,
-              }}
-            >
-              {it.isNew && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 14,
-                    right: 14,
-                    padding: '3px 8px',
-                    borderRadius: 999,
-                    background: 'linear-gradient(135deg, #F46FB1, #A34BF5)',
-                    color: 'white',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    letterSpacing: '0.06em',
-                  }}
-                >
-                  {t('newPill')}
-                </span>
-              )}
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <span
-                  style={{
-                    padding: '3px 10px',
-                    borderRadius: 999,
-                    background: `${accent}18`,
-                    color: accent,
-                    fontSize: 10,
-                    fontWeight: 700,
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  {t(`kindLabels.${it.kind}`) ?? it.kind}
-                </span>
-                <span
-                  style={{
-                    padding: '3px 10px',
-                    borderRadius: 999,
-                    background: 'rgba(115,1,255,0.06)',
-                    color: '#7301FF',
-                    fontSize: 10,
-                    fontWeight: 700,
-                  }}
-                >
-                  {isFilterKey(it.category) ? t(`filters.${it.category}`) : it.category}
-                </span>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 700,
-                    color: '#1a1f3a',
-                    lineHeight: 1.3,
-                    minHeight: 40,
-                  }}
-                >
-                  {it.title}
-                </div>
-                <div className="dz-small" style={{ fontSize: 12, marginTop: 6 }}>
-                  {t('byAuthor', { author: it.author })} · {it.meta}
-                </div>
-              </div>
-              <div style={{ flex: 1 }} />
-              <button
-                type="button"
+      {items.length === 0 ? (
+        <div className="dz-card" style={{ padding: 24 }}>
+          <p className="dz-body" style={{ margin: 0 }}>
+            Aucune ressource pour le moment dans cette catégorie. Reviens bientôt.
+          </p>
+        </div>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 16,
+          }}
+        >
+          {items.map((r) => {
+            const accent = KIND_COLOR[r.kind] ?? '#7301FF';
+            const author =
+              r.author.name ??
+              ([r.author.firstName, r.author.lastName]
+                .filter(Boolean)
+                .join(' ')
+                .trim() ||
+                r.author.email);
+            // "NEW" pill for resources created in the last 14 days.
+            const isNew =
+              Date.now() - r.createdAt.getTime() < 14 * 24 * 60 * 60 * 1000;
+            const filterKey = DB_TO_FILTER[r.category];
+            const categoryLabel =
+              filterKey ? t(`filters.${filterKey}`) : 'Divers';
+
+            return (
+              <article
+                key={r.id}
+                className="dz-card"
                 style={{
-                  width: '100%',
-                  padding: '11px 16px',
-                  borderRadius: 11,
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
-                  color: 'white',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
+                  padding: 18,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  gap: 10,
                 }}
               >
-                {t('openCta')}
-              </button>
-            </article>
-          );
-        })}
-      </div>
+                {isNew && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: 14,
+                      right: 14,
+                      padding: '3px 8px',
+                      borderRadius: 999,
+                      background: 'linear-gradient(135deg, #F46FB1, #A34BF5)',
+                      color: 'white',
+                      fontSize: 10,
+                      fontWeight: 800,
+                      letterSpacing: '0.06em',
+                    }}
+                  >
+                    {t('newPill')}
+                  </span>
+                )}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <span
+                    style={{
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                      background: `${accent}18`,
+                      color: accent,
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {KIND_LABEL[r.kind] ?? r.kind}
+                  </span>
+                  <span
+                    style={{
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                      background: 'rgba(115,1,255,0.06)',
+                      color: '#7301FF',
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {categoryLabel}
+                  </span>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: '#1a1f3a',
+                      lineHeight: 1.3,
+                      minHeight: 40,
+                    }}
+                  >
+                    {r.title}
+                  </div>
+                  <div
+                    className="dz-small"
+                    style={{ fontSize: 12, marginTop: 6 }}
+                  >
+                    {t('byAuthor', { author })} · {fmtDate(r.createdAt)}
+                  </div>
+                </div>
+                <div style={{ flex: 1 }} />
+                <a
+                  href={r.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: '100%',
+                    padding: '11px 16px',
+                    borderRadius: 11,
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
+                    color: 'white',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {t('openCta')}
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
 
 // ───────────── Mentor variant ─────────────────────────────────────────
 
-function MentorView({
+async function MentorView({
   t,
+  authorId,
 }: {
   t: Awaited<ReturnType<typeof getTranslations<'mentora.dashboard.resourcesPage'>>>;
+  authorId: string;
 }) {
-  const items = MENTOR_INDICES.map((i) => ({
-    idx: i,
-    kind: t(`mentorItems.${i}.kind`),
-    title: t(`mentorItems.${i}.title`),
-    meta: t(`mentorItems.${i}.meta`),
-  }));
+  // Mentors see ONLY the resources they authored.
+  const items = await listResourcesForAudience('MENTORA', { limit: 60 }).then(
+    (rows) => rows.filter((r) => r.authorId === authorId),
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-      {/* Header */}
       <div>
         <span
           style={{
@@ -347,7 +396,6 @@ function MentorView({
         </p>
       </div>
 
-      {/* Section title + new-doc CTA */}
       <div
         style={{
           display: 'flex',
@@ -361,7 +409,7 @@ function MentorView({
           {t('mentorTitle')}
         </h2>
         <Link
-          href="/mentora/dashboard/resources"
+          href="/mentora/dashboard/resources/new"
           style={{
             padding: '10px 18px',
             borderRadius: 11,
@@ -391,14 +439,10 @@ function MentorView({
             gap: 16,
           }}
         >
-          {items.map((it) => {
-            const accent = KIND_COLOR[it.kind] ?? '#7301FF';
+          {items.map((r) => {
+            const accent = KIND_COLOR[r.kind] ?? '#7301FF';
             return (
-              <article
-                key={it.idx}
-                className="dz-card"
-                style={{ padding: 20 }}
-              >
+              <article key={r.id} className="dz-card" style={{ padding: 20 }}>
                 <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                   <div
                     aria-hidden
@@ -417,7 +461,7 @@ function MentorView({
                       letterSpacing: '0.04em',
                     }}
                   >
-                    {it.kind}
+                    {KIND_LABEL[r.kind] ?? r.kind}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
@@ -428,16 +472,17 @@ function MentorView({
                         lineHeight: 1.3,
                       }}
                     >
-                      {it.title}
+                      {r.title}
                     </div>
                     <div className="dz-small" style={{ fontSize: 12, marginTop: 4 }}>
-                      {it.meta}
+                      Créé le {fmtDate(r.createdAt)} ·{' '}
+                      {r.downloadCount.toLocaleString('fr-FR')} ouvertures
                     </div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-                  <button
-                    type="button"
+                  <Link
+                    href={`/mentora/dashboard/resources/${r.id}/edit`}
                     style={{
                       flex: 1,
                       padding: '10px 14px',
@@ -449,12 +494,16 @@ function MentorView({
                       fontWeight: 700,
                       cursor: 'pointer',
                       fontFamily: 'inherit',
+                      textAlign: 'center',
+                      textDecoration: 'none',
                     }}
                   >
                     {t('editCta')}
-                  </button>
-                  <button
-                    type="button"
+                  </Link>
+                  <a
+                    href={r.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       flex: 1,
                       padding: '10px 14px',
@@ -466,10 +515,12 @@ function MentorView({
                       fontWeight: 700,
                       cursor: 'pointer',
                       fontFamily: 'inherit',
+                      textAlign: 'center',
+                      textDecoration: 'none',
                     }}
                   >
                     {t('shareCta')}
-                  </button>
+                  </a>
                 </div>
               </article>
             );

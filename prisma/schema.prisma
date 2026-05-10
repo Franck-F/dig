@@ -24,14 +24,14 @@ datasource db {
 // stamps it; credentials signups stay null until 6-digit code verification).
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  emailVerified DateTime?
-  name          String?
-  firstName     String?
-  lastName      String?
-  passwordHash  String?
-  role          UserRole  @default(STUDENT)
+  id                     String    @id @default(cuid())
+  email                  String    @unique
+  emailVerified          DateTime?
+  name                   String?
+  firstName              String?
+  lastName               String?
+  passwordHash           String?
+  role                   UserRole  @default(STUDENT)
   /// Tracks whether the user has explicitly chosen their role. Set to
   /// false the moment a brand-new OAuth signup creates a User row (the
   /// schema default `STUDENT` is a placeholder — we want to ask). The
@@ -39,21 +39,21 @@ model User {
   /// their role inline. The `/welcome/role` page is the only place that
   /// flips it back to true after an unconfirmed OAuth user picks. Default
   /// is `true` so all pre-existing users are unaffected by this column.
-  roleConfirmed Boolean   @default(true)
+  roleConfirmed          Boolean   @default(true)
   /// Per-product access flags. Mentora (mentorat 1-to-1) and Community
   /// (forum / canaux / défis) are now treated as two independent
   /// products — a user can sign up for one, the other, or both. The
   /// signup flow sets these explicitly; the migration backfills both
   /// to true for pre-existing users so nothing changes for them.
-  mentoraEnabled    Boolean @default(false)
-  communityEnabled  Boolean @default(false)
-  image         String?
+  mentoraEnabled         Boolean   @default(false)
+  communityEnabled       Boolean   @default(false)
+  image                  String?
   /// Marketing email opt-out. RGPD + CAN-SPAM require a 1-click way to
   /// unsubscribe; the /email/unsubscribe page flips this to false. We
   /// keep transactional emails (verification, password reset, session
   /// reminders) flowing regardless — only newsletter / digest blasts
   /// honour this flag.
-  marketingEmailsEnabled Boolean @default(true)
+  marketingEmailsEnabled Boolean   @default(true)
   /// Set by the Resend webhook on `email.bounced` (hard bounce) or
   /// `email.complained` (marked as spam). All future sends — marketing
   /// AND transactional — skip these addresses to protect IP reputation.
@@ -65,49 +65,59 @@ model User {
   /// app (auth refuses sign-in, lookups skip these). A J+30 cron purges
   /// rows where `deletedAt` is older than 30 days. Restoration before
   /// purge is supported by setting deletedAt back to null.
-  deletedAt     DateTime?
+  deletedAt              DateTime?
   /// Year of birth declared at signup. Defence-in-depth on RGPD Art. 8 —
   /// supplements the "I am 15+" attestation checkbox by letting us refuse
   /// sign-ups whose declared year would put them under the French digital
   /// consent floor of 15. Year-only (not full DOB) so we minimise the data
   /// stored. Nullable: existing users who pre-date this column have null.
-  birthYear     Int?
+  birthYear              Int?
   /// TOTP secret in base32, only present once 2FA setup has been
   /// confirmed. Stored as-is because the secret is required by the HMAC
   /// verification step at sign-in time; we compensate with strict access
   /// control + audit logging on read paths. Set to null when 2FA is
   /// disabled.
-  totpSecret    String?
+  totpSecret             String?
   /// Set the moment 2FA setup is confirmed (first valid TOTP code seen).
   /// Null = 2FA not enabled. ADMIN role users without this set are forced
   /// through the setup flow before they can enter `/community/admin/*` or
   /// `/mentora/admin/*`.
-  totpEnabledAt DateTime?
+  totpEnabledAt          DateTime?
   /// Bcrypt-hashed single-use backup codes. 10 codes generated at setup
   /// time; consumed individually when used. Empty array = no codes left.
-  totpBackupCodeHashes String[] @default([])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  totpBackupCodeHashes   String[]  @default([])
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   // ── Auth.js back-relations (OAuth) ─────────────────────────────────────
-  accounts          Account[]
+  accounts Account[]
 
   // ── Mentora back-relations ─────────────────────────────────────────────
   mentorProfile     MentorProfile?
   menteeProfile     MenteeProfile?
-  sessionsCancelled Session[]            @relation("sessionCancelledBy")
-  reviewsAuthored   Review[]             @relation("reviewAuthor")
-  messagesSent      MentorshipMessage[]  @relation("messageSender")
+  sessionsCancelled Session[]           @relation("sessionCancelledBy")
+  reviewsAuthored   Review[]            @relation("reviewAuthor")
+  messagesSent      MentorshipMessage[] @relation("messageSender")
   notifications     Notification[]
 
   // ── Community back-relation (1↔1; all community models hang off CommunityMember) ──
-  communityMember   CommunityMember?
+  communityMember CommunityMember?
 
   // ── Audit log (admin actions) ─────────────────────────────────────────
-  auditLogs         AuditLog[]
+  auditLogs AuditLog[]
 
   // ── Mentora cycles (admin-created cohorts) ───────────────────────────
-  cyclesCreated     Cycle[]              @relation("CyclesCreated")
+  cyclesCreated Cycle[] @relation("CyclesCreated")
+
+  // ── Resources, events, rituals (cross-product editorial content) ─────
+  resourcesAuthored           Resource[]
+  communityEventsHosted       CommunityEvent[]             @relation("communityEventHost")
+  communityEventRegistrations CommunityEventRegistration[] @relation("communityEventRegistration")
+  communityRitualsCreated     CommunityRitual[]            @relation("communityRitualCreator")
+
+  // ── Settings updaters (singleton-row models) ─────────────────────────
+  communitySettingsUpdates CommunitySettings[]        @relation("communitySettingsUpdater")
+  mentoraSettingsUpdates   MentoraProgrammeSettings[] @relation("mentoraSettingsUpdater")
 
   // The purge cron filters soft-deleted users by `deletedAt < threshold`.
   // Without an index Postgres falls back to a sequential scan; small
@@ -170,7 +180,7 @@ enum VerificationPurpose {
 model VerificationCode {
   id         String              @id @default(cuid())
   email      String
-  codeHash   String              // bcrypt hash of the 6-digit code
+  codeHash   String // bcrypt hash of the 6-digit code
   purpose    VerificationPurpose
   expiresAt  DateTime
   consumedAt DateTime?
@@ -319,21 +329,21 @@ enum CycleStatus {
 /// linked to a cycle (would require a v2 migration to backfill);
 /// cycles serve admin pilotage + reporting for now.
 model Cycle {
-  id            String       @id @default(cuid())
-  name          String       // human display, e.g. "Printemps 2026"
-  slug          String       @unique  // URL-safe, e.g. "printemps-2026"
-  startsAt      DateTime
-  endsAt        DateTime
-  phase         CyclePhase   @default(ONBOARDING)
-  status        CycleStatus  @default(DRAFT)
+  id          String      @id @default(cuid())
+  name        String // human display, e.g. "Printemps 2026"
+  slug        String      @unique // URL-safe, e.g. "printemps-2026"
+  startsAt    DateTime
+  endsAt      DateTime
+  phase       CyclePhase  @default(ONBOARDING)
+  status      CycleStatus @default(DRAFT)
   /// Free-text editorial summary surfaced on the admin Cycles page
   /// and in the recap export. Markdown allowed.
-  description   String?
-  archivedAt    DateTime?
-  createdById   String
-  createdBy     User         @relation("CyclesCreated", fields: [createdById], references: [id], onDelete: Restrict)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  description String?
+  archivedAt  DateTime?
+  createdById String
+  createdBy   User        @relation("CyclesCreated", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([status, phase])
   @@index([startsAt])
@@ -384,30 +394,30 @@ model MentorProfile {
   id                   String       @id @default(cuid())
   userId               String       @unique
   user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  headline             String       // <= 120 chars (validated in action)
-  bio                  String       // <= 4000
-  yearsExperience      Int          // 0..60
-  hourlyRate           Int?         // EUR cents, null = free
-  timezone             String       // IANA, e.g. "Europe/Paris"
-  location             String?      // free-form city/country
+  headline             String // <= 120 chars (validated in action)
+  bio                  String // <= 4000
+  yearsExperience      Int // 0..60
+  hourlyRate           Int? // EUR cents, null = free
+  timezone             String // IANA, e.g. "Europe/Paris"
+  location             String? // free-form city/country
   photoUrl             String?
   linkedinUrl          String?
-  languages            String[]     // ISO 639-1 codes, e.g. ["fr","en"]
+  languages            String[] // ISO 639-1 codes, e.g. ["fr","en"]
   isAcceptingMentees   Boolean      @default(true)
   maxConcurrentMentees Int          @default(5)
   responseTime         ResponseTime @default(WITHIN_WEEK)
   status               MentorStatus @default(DRAFT)
-  reviewNote           String?      // admin moderator note on rejection
-  deletedAt            DateTime?    // soft-delete; cascades from User soft-delete
+  reviewNote           String? // admin moderator note on rejection
+  deletedAt            DateTime? // soft-delete; cascades from User soft-delete
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
-  publishedAt          DateTime?    // set when status moves to ACTIVE first time
+  publishedAt          DateTime? // set when status moves to ACTIVE first time
 
   /// FTS — generated `tsvector` column maintained by Postgres
   /// (setweight(headline, A) || setweight(bio, B)). Indexed by GIN.
   /// Prisma can't manage this directly so we read it via $queryRaw in
   /// `discoverMentors` and let the SQL migration own the DDL.
-  searchTsv            Unsupported("tsvector")?
+  searchTsv Unsupported("tsvector")?
 
   skills           MentorSkill[]
   rules            AvailabilityRule[]
@@ -423,15 +433,15 @@ model MenteeProfile {
   id                String          @id @default(cuid())
   userId            String          @unique
   user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goals             String          // <= 2000
+  goals             String // <= 2000
   level             MenteeLevel     @default(BEGINNER)
   languages         String[]
   timezone          String
   location          String?
-  currentChallenges String?         // <= 2000
+  currentChallenges String? // <= 2000
   preferredFormat   PreferredFormat @default(REMOTE)
   discoveredVia     DiscoveredVia   @default(SEARCH)
-  deletedAt         DateTime?       // soft-delete; cascades from User soft-delete
+  deletedAt         DateTime? // soft-delete; cascades from User soft-delete
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
@@ -448,7 +458,7 @@ model Skill {
   parentSkillId String?
   parent        Skill?        @relation("SkillHierarchy", fields: [parentSkillId], references: [id], onDelete: SetNull)
   children      Skill[]       @relation("SkillHierarchy")
-  aliases       String[]      // for fuzzy search
+  aliases       String[] // for fuzzy search
 
   mentorSkills    MentorSkill[]
   goalSkills      MenteeGoalSkill[]
@@ -456,7 +466,7 @@ model Skill {
   mentorshipGoals MentorshipGoal[]
 
   // ── Community back-relation: typed post tagging reuses Skill ──────────
-  postTags        PostTag[]
+  postTags PostTag[]
 
   @@index([category])
   @@index([parentSkillId])
@@ -494,14 +504,14 @@ model MentorshipRequest {
   fromMentee        MenteeProfile            @relation("requestsFromMentee", fields: [fromMenteeId], references: [id], onDelete: Cascade)
   toMentorId        String
   toMentor          MentorProfile            @relation("requestsToMentor", fields: [toMentorId], references: [id], onDelete: Cascade)
-  message           String                   // <= 1500
+  message           String // <= 1500
   proposedFrequency MentorshipFrequency      @default(MONTHLY)
   status            MentorshipRequestStatus  @default(PENDING)
   declineReason     String?
   topics            MentorshipRequestTopic[]
   createdAt         DateTime                 @default(now())
   respondedAt       DateTime?
-  expiresAt         DateTime                 // createdAt + 14d, set in action
+  expiresAt         DateTime // createdAt + 14d, set in action
 
   @@unique([fromMenteeId, toMentorId, status]) // prevents duplicate PENDING
   @@index([toMentorId, status])
@@ -548,7 +558,7 @@ model MentorshipGoal {
   mentorship   Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
   skillId      String?
   skill        Skill?     @relation(fields: [skillId], references: [id], onDelete: SetNull)
-  description  String     // <= 500
+  description  String // <= 500
   isAchieved   Boolean    @default(false)
   achievedAt   DateTime?
   createdAt    DateTime   @default(now())
@@ -560,10 +570,10 @@ model AvailabilityRule {
   id              String        @id @default(cuid())
   mentorProfileId String
   mentorProfile   MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  dayOfWeek       Int           // 0=Sun..6=Sat (matches JS Date.getDay)
-  startMinute     Int           // 0..1439
-  endMinute       Int           // > startMinute, <= 1440
-  timezone        String        // snapshot of mentor's tz at rule creation
+  dayOfWeek       Int // 0=Sun..6=Sat (matches JS Date.getDay)
+  startMinute     Int // 0..1439
+  endMinute       Int // > startMinute, <= 1440
+  timezone        String // snapshot of mentor's tz at rule creation
 
   @@index([mentorProfileId, dayOfWeek])
 }
@@ -585,15 +595,15 @@ model Session {
   id                 String        @id @default(cuid())
   mentorshipId       String
   mentorship         Mentorship    @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
-  scheduledAt        DateTime      // UTC
+  scheduledAt        DateTime // UTC
   durationMinutes    Int           @default(45) // 15..240
   format             SessionFormat @default(REMOTE_VIDEO)
   location           String?
   meetingUrl         String?
   status             SessionStatus @default(SCHEDULED)
-  agenda             String?       // <= 2000
-  mentorNotesPrivate String?       // mentor-only
-  sharedNotes        String?       // visible to both
+  agenda             String? // <= 2000
+  mentorNotesPrivate String? // mentor-only
+  sharedNotes        String? // visible to both
   cancellationReason String?
   cancelledById      String?
   cancelledBy        User?         @relation("sessionCancelledBy", fields: [cancelledById], references: [id], onDelete: SetNull)
@@ -620,10 +630,10 @@ model Review {
   mentorship       Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
   sessionId        String?
   session          Session?   @relation(fields: [sessionId], references: [id], onDelete: SetNull)
-  authorUserId     String     // mentee user id (denormalized for fast lookup)
+  authorUserId     String // mentee user id (denormalized for fast lookup)
   author           User       @relation("reviewAuthor", fields: [authorUserId], references: [id], onDelete: Cascade)
-  rating           Int        // 1..5 (validated in action)
-  comment          String?    // <= 2000
+  rating           Int // 1..5 (validated in action)
+  comment          String? // <= 2000
   isPublic         Boolean    @default(true)
   helpfulnessVotes Int        @default(0)
   createdAt        DateTime   @default(now())
@@ -639,7 +649,7 @@ model MentorshipMessage {
   mentorship    Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
   senderUserId  String
   sender        User       @relation("messageSender", fields: [senderUserId], references: [id], onDelete: Cascade)
-  body          String     // <= 4000
+  body          String // <= 4000
   attachmentUrl String?
   readByOtherAt DateTime?
   sentAt        DateTime   @default(now())
@@ -653,7 +663,7 @@ model Notification {
   userId    String
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      NotificationType
-  payload   Json             // freeform; includes entity ids + i18n params
+  payload   Json // freeform; includes entity ids + i18n params
   readAt    DateTime?
   createdAt DateTime         @default(now())
 
@@ -664,23 +674,23 @@ model Notification {
 // ─── Community — Enums ──────────────────────────────────────────────────
 
 enum ChannelType {
-  PUBLIC          // anyone reads, members write
-  RESTRICTED      // public read, request-to-join to write
-  PRIVATE         // members only (read + write); invite-only
-  ANNOUNCEMENT    // admins post; members read + react only
+  PUBLIC // anyone reads, members write
+  RESTRICTED // public read, request-to-join to write
+  PRIVATE // members only (read + write); invite-only
+  ANNOUNCEMENT // admins post; members read + react only
 }
 
 enum PostStatus {
   DRAFT
   PUBLISHED
-  ARCHIVED        // by author
-  REPORTED        // soft state — visible until admin acts
-  REMOVED         // by admin
+  ARCHIVED // by author
+  REPORTED // soft state — visible until admin acts
+  REMOVED // by admin
 }
 
 enum CommentStatus {
   PUBLISHED
-  REMOVED         // soft-delete; placeholder rendered
+  REMOVED // soft-delete; placeholder rendered
 }
 
 enum ReactionEmoji {
@@ -701,13 +711,13 @@ enum ReactionTargetType {
 
 enum MemberStatus {
   ACTIVE
-  MUTED           // read-only globally
-  SUSPENDED       // loses access to PRIVATE channels
-  BANNED          // no read of any community surface beyond public anon view
+  MUTED // read-only globally
+  SUSPENDED // loses access to PRIVATE channels
+  BANNED // no read of any community surface beyond public anon view
 }
 
 enum ChannelMemberStatus {
-  PENDING         // RESTRICTED only: awaiting approval
+  PENDING // RESTRICTED only: awaiting approval
   ACTIVE
   LEFT
   REMOVED
@@ -746,7 +756,7 @@ enum ModerationActionType {
   UNBAN_USER
   PIN_POST
   UNPIN_POST
-  LOCK_POST           // disables comments
+  LOCK_POST // disables comments
   UNLOCK_POST
   GRANT_BADGE
   REVOKE_BADGE
@@ -780,63 +790,63 @@ enum BadgeKind {
 
 enum ChallengeStatus {
   DRAFT
-  OPEN          // accepting submissions
-  VOTING        // submissions closed, voting open
-  CLOSED        // ended; winners frozen
+  OPEN // accepting submissions
+  VOTING // submissions closed, voting open
+  CLOSED // ended; winners frozen
 }
 
 // ─── Community — Models ─────────────────────────────────────────────────
 
 model CommunityMember {
-  id                       String          @id @default(cuid())
-  userId                   String          @unique
-  user                     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  handle                   String          @unique               // 3..30 lowercase [a-z0-9_]
-  displayName              String?         // <= 60 chars; falls back to user.name
-  bio                      String?         // <= 600 chars
-  avatarUrl                String?
-  bannerColor              String          @default("#7301FF")   // hex; for profile header
-  joinedAt                 DateTime        @default(now())
-  status                   MemberStatus    @default(ACTIVE)
-  statusReason             String?         // admin note when MUTED / SUSPENDED / BANNED
-  statusUntil              DateTime?       // optional auto-restore
-  isFounder                Boolean         @default(false)
-  isCoreTeam               Boolean         @default(false)
-  isModerator              Boolean         @default(false)       // role-clean: keeps UserRole flat
-  postCount                Int             @default(0)           // denormalized
-  commentCount             Int             @default(0)
-  reactionsReceivedCount   Int             @default(0)
-  reactionsGivenCount      Int             @default(0)
-  digestEnabled            Boolean         @default(true)
-  lastDigestSentAt         DateTime?
+  id                     String       @id @default(cuid())
+  userId                 String       @unique
+  user                   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  handle                 String       @unique // 3..30 lowercase [a-z0-9_]
+  displayName            String? // <= 60 chars; falls back to user.name
+  bio                    String? // <= 600 chars
+  avatarUrl              String?
+  bannerColor            String       @default("#7301FF") // hex; for profile header
+  joinedAt               DateTime     @default(now())
+  status                 MemberStatus @default(ACTIVE)
+  statusReason           String? // admin note when MUTED / SUSPENDED / BANNED
+  statusUntil            DateTime? // optional auto-restore
+  isFounder              Boolean      @default(false)
+  isCoreTeam             Boolean      @default(false)
+  isModerator            Boolean      @default(false) // role-clean: keeps UserRole flat
+  postCount              Int          @default(0) // denormalized
+  commentCount           Int          @default(0)
+  reactionsReceivedCount Int          @default(0)
+  reactionsGivenCount    Int          @default(0)
+  digestEnabled          Boolean      @default(true)
+  lastDigestSentAt       DateTime?
   /// Tracking for the *weekly* content recap (separate flow from the
   /// daily notification digest above). The weekly cron updates this
   /// timestamp; the daily one keeps using `lastDigestSentAt`. Two
   /// distinct emails, two distinct gates — see Phase 4 task #50.
-  lastWeeklyDigestSentAt   DateTime?
-  lastSeenAt               DateTime?       // updated on any community page view
-  onboardedAt              DateTime?       // null = needs /community/onboarding
-  deletedAt                DateTime?       // soft-delete; cascades from User soft-delete
-  createdAt                DateTime        @default(now())
-  updatedAt                DateTime        @updatedAt
+  lastWeeklyDigestSentAt DateTime?
+  lastSeenAt             DateTime? // updated on any community page view
+  onboardedAt            DateTime? // null = needs /community/onboarding
+  deletedAt              DateTime? // soft-delete; cascades from User soft-delete
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @updatedAt
 
   channelMemberships       ChannelMembership[]
   posts                    Post[]
   comments                 Comment[]
   reactions                Reaction[]
   bookmarks                Bookmark[]
-  mentionsMade             Mention[]            @relation("mentionsAuthor")
-  mentionsReceived         Mention[]            @relation("mentionsTarget")
-  reportsFiled             Report[]             @relation("reportsByMember")
-  reportsAgainst           Report[]             @relation("reportsAgainstMember")
-  reportsResolved          Report[]             @relation("reportsResolvedBy")
-  moderationActionsTaken   ModerationAction[]   @relation("modActor")
-  moderationActionsAgainst ModerationAction[]   @relation("modTarget")
-  challengesAuthored       Challenge[]          @relation("challengeAuthor")
+  mentionsMade             Mention[]             @relation("mentionsAuthor")
+  mentionsReceived         Mention[]             @relation("mentionsTarget")
+  reportsFiled             Report[]              @relation("reportsByMember")
+  reportsAgainst           Report[]              @relation("reportsAgainstMember")
+  reportsResolved          Report[]              @relation("reportsResolvedBy")
+  moderationActionsTaken   ModerationAction[]    @relation("modActor")
+  moderationActionsAgainst ModerationAction[]    @relation("modTarget")
+  challengesAuthored       Challenge[]           @relation("challengeAuthor")
   challengeSubmissions     ChallengeSubmission[]
   challengeVotes           ChallengeVote[]
   badges                   MemberBadge[]
-  channelsCreated          Channel[]            @relation("channelCreator")
+  channelsCreated          Channel[]             @relation("channelCreator")
 
   @@index([status])
   @@index([isFounder])
@@ -845,24 +855,24 @@ model CommunityMember {
 }
 
 model Channel {
-  id                 String              @id @default(cuid())
-  slug               String              @unique               // kebab, 2..40 chars
-  name               String                                    // <= 60
-  description        String?                                   // <= 500
-  emoji              String?                                   // 1 grapheme; small icon
-  coverColor         String              @default("#7301FF")
-  type               ChannelType         @default(PUBLIC)
-  isDefault          Boolean             @default(false)       // auto-join new members
-  position           Int                 @default(0)           // sort order in directory
-  createdById        String?
-  createdBy          CommunityMember?    @relation("channelCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  pinnedPostIds      String[]            @default([])          // up to 3 cuids; validated in action
-  archivedAt         DateTime?           // soft-archive
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  id            String           @id @default(cuid())
+  slug          String           @unique // kebab, 2..40 chars
+  name          String // <= 60
+  description   String? // <= 500
+  emoji         String? // 1 grapheme; small icon
+  coverColor    String           @default("#7301FF")
+  type          ChannelType      @default(PUBLIC)
+  isDefault     Boolean          @default(false) // auto-join new members
+  position      Int              @default(0) // sort order in directory
+  createdById   String?
+  createdBy     CommunityMember? @relation("channelCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  pinnedPostIds String[]         @default([]) // up to 3 cuids; validated in action
+  archivedAt    DateTime? // soft-archive
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
-  memberships        ChannelMembership[]
-  posts              Post[]
+  memberships ChannelMembership[]
+  posts       Post[]
 
   @@index([type, archivedAt])
   @@index([isDefault])
@@ -870,18 +880,18 @@ model Channel {
 }
 
 model ChannelMembership {
-  id           String                @id @default(cuid())
+  id           String              @id @default(cuid())
   channelId    String
-  channel      Channel               @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channel      Channel             @relation(fields: [channelId], references: [id], onDelete: Cascade)
   memberId     String
-  member       CommunityMember       @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  status       ChannelMemberStatus   @default(ACTIVE)
-  joinedAt     DateTime              @default(now())
+  member       CommunityMember     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  status       ChannelMemberStatus @default(ACTIVE)
+  joinedAt     DateTime            @default(now())
   leftAt       DateTime?
-  isMuted      Boolean               @default(false)           // member silences channel digest entries
-  notifyOnPost Boolean               @default(false)
-  invitedById  String?                                          // CommunityMember.id, optional
-  lastReadAt   DateTime?                                        // last time the member opened this channel — drives per-user unread counts
+  isMuted      Boolean             @default(false) // member silences channel digest entries
+  notifyOnPost Boolean             @default(false)
+  invitedById  String? // CommunityMember.id, optional
+  lastReadAt   DateTime? // last time the member opened this channel — drives per-user unread counts
 
   @@unique([channelId, memberId])
   @@index([memberId, status])
@@ -889,43 +899,43 @@ model ChannelMembership {
 }
 
 model Post {
-  id              String          @id @default(cuid())
-  authorId        String
-  author          CommunityMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  channelId       String
-  channel         Channel         @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  title           String?         // <= 140
-  body            String          @db.Text                     // raw markdown <= 10000
+  id             String                   @id @default(cuid())
+  authorId       String
+  author         CommunityMember          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  channelId      String
+  channel        Channel                  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  title          String? // <= 140
+  body           String                   @db.Text // raw markdown <= 10000
   /// Postgres tsvector column kept in sync with title (weight A) and body
   /// (weight B) via a stored generated expression — see migration
   /// 20260507220000_post_fulltext_search. Indexed with GIN. We declare
   /// it as `Unsupported` so Prisma knows it exists (no `migrate diff`
   /// drift) but we only read it via $queryRaw.
-  searchTsv       Unsupported("tsvector")?
-  bodyTextLength  Int             @default(0)                  // computed for sort/search
-  attachmentUrls  String[]        @default([])                 // forward-compat (no upload UI v1)
-  status          PostStatus      @default(PUBLISHED)
-  isPinned        Boolean         @default(false)              // surfaced on top of channel feed
-  isLocked        Boolean         @default(false)              // disables new comments
-  publishedAt     DateTime?
-  editedAt        DateTime?
-  editReason      String?
-  removedAt       DateTime?
-  removalReason   String?
-  reactionCount   Int             @default(0)
-  commentCount    Int             @default(0)
-  bookmarkCount   Int             @default(0)
-  reportCount     Int             @default(0)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  searchTsv      Unsupported("tsvector")?
+  bodyTextLength Int                      @default(0) // computed for sort/search
+  attachmentUrls String[]                 @default([]) // forward-compat (no upload UI v1)
+  status         PostStatus               @default(PUBLISHED)
+  isPinned       Boolean                  @default(false) // surfaced on top of channel feed
+  isLocked       Boolean                  @default(false) // disables new comments
+  publishedAt    DateTime?
+  editedAt       DateTime?
+  editReason     String?
+  removedAt      DateTime?
+  removalReason  String?
+  reactionCount  Int                      @default(0)
+  commentCount   Int                      @default(0)
+  bookmarkCount  Int                      @default(0)
+  reportCount    Int                      @default(0)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
 
-  tags            PostTag[]
-  hashtags        PostHashtag[]
-  comments        Comment[]
-  reactions       Reaction[]      @relation("reactionsOnPost")
-  bookmarks       Bookmark[]
-  mentions        Mention[]       @relation("mentionsInPost")
-  reports         Report[]        @relation("reportsOnPost")
+  tags      PostTag[]
+  hashtags  PostHashtag[]
+  comments  Comment[]
+  reactions Reaction[]    @relation("reactionsOnPost")
+  bookmarks Bookmark[]
+  mentions  Mention[]     @relation("mentionsInPost")
+  reports   Report[]      @relation("reportsOnPost")
 
   @@index([channelId, publishedAt(sort: Desc)])
   @@index([authorId, status])
@@ -934,19 +944,19 @@ model Post {
 }
 
 model PostTag {
-  postId   String
-  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  skillId  String
-  skill    Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  postId  String
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
 
   @@id([postId, skillId])
   @@index([skillId])
 }
 
 model PostHashtag {
-  postId   String
-  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  tag      String  // lowercased, no leading #, 1..32 chars [a-z0-9_]
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    String // lowercased, no leading #, 1..32 chars [a-z0-9_]
 
   @@id([postId, tag])
   @@index([tag])
@@ -958,10 +968,10 @@ model Comment {
   post            Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
   authorId        String
   author          CommunityMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  parentCommentId String?         // null = top-level; non-null = single-level reply
+  parentCommentId String? // null = top-level; non-null = single-level reply
   parent          Comment?        @relation("commentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
   replies         Comment[]       @relation("commentReplies")
-  body            String          @db.Text                     // raw markdown <= 4000
+  body            String          @db.Text // raw markdown <= 4000
   status          CommentStatus   @default(PUBLISHED)
   editedAt        DateTime?
   removedAt       DateTime?
@@ -969,9 +979,9 @@ model Comment {
   reactionCount   Int             @default(0)
   createdAt       DateTime        @default(now())
 
-  reactions       Reaction[]      @relation("reactionsOnComment")
-  mentions        Mention[]       @relation("mentionsInComment")
-  reports         Report[]        @relation("reportsOnComment")
+  reactions Reaction[] @relation("reactionsOnComment")
+  mentions  Mention[]  @relation("mentionsInComment")
+  reports   Report[]   @relation("reportsOnComment")
 
   @@index([postId, createdAt])
   @@index([authorId])
@@ -979,102 +989,102 @@ model Comment {
 }
 
 model Reaction {
-  id           String              @id @default(cuid())
-  memberId     String
-  member       CommunityMember     @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  targetType   ReactionTargetType
-  targetId     String              // Post.id or Comment.id (polymorphic; FK enforced via app)
-  emoji        ReactionEmoji
-  postId       String?             // mirror of targetId when targetType=POST
-  post         Post?               @relation("reactionsOnPost", fields: [postId], references: [id], onDelete: Cascade)
-  commentId    String?
-  comment      Comment?            @relation("reactionsOnComment", fields: [commentId], references: [id], onDelete: Cascade)
-  createdAt    DateTime            @default(now())
+  id         String             @id @default(cuid())
+  memberId   String
+  member     CommunityMember    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  targetType ReactionTargetType
+  targetId   String // Post.id or Comment.id (polymorphic; FK enforced via app)
+  emoji      ReactionEmoji
+  postId     String? // mirror of targetId when targetType=POST
+  post       Post?              @relation("reactionsOnPost", fields: [postId], references: [id], onDelete: Cascade)
+  commentId  String?
+  comment    Comment?           @relation("reactionsOnComment", fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt  DateTime           @default(now())
 
-  @@unique([memberId, targetType, targetId])  // one reaction per (user, target)
+  @@unique([memberId, targetType, targetId]) // one reaction per (user, target)
   @@index([targetType, targetId])
   @@index([memberId])
 }
 
 model Bookmark {
-  id           String          @id @default(cuid())
-  memberId     String
-  member       CommunityMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  postId       String
-  post         Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
-  createdAt    DateTime        @default(now())
+  id        String          @id @default(cuid())
+  memberId  String
+  member    CommunityMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now())
 
   @@unique([memberId, postId])
   @@index([memberId, createdAt])
 }
 
 model Mention {
-  id              String          @id @default(cuid())
-  authorId        String
-  author          CommunityMember @relation("mentionsAuthor", fields: [authorId], references: [id], onDelete: Cascade)
-  targetMemberId  String
-  targetMember    CommunityMember @relation("mentionsTarget", fields: [targetMemberId], references: [id], onDelete: Cascade)
-  postId          String?
-  post            Post?           @relation("mentionsInPost", fields: [postId], references: [id], onDelete: Cascade)
-  commentId       String?
-  comment         Comment?        @relation("mentionsInComment", fields: [commentId], references: [id], onDelete: Cascade)
-  createdAt       DateTime        @default(now())
+  id             String          @id @default(cuid())
+  authorId       String
+  author         CommunityMember @relation("mentionsAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  targetMemberId String
+  targetMember   CommunityMember @relation("mentionsTarget", fields: [targetMemberId], references: [id], onDelete: Cascade)
+  postId         String?
+  post           Post?           @relation("mentionsInPost", fields: [postId], references: [id], onDelete: Cascade)
+  commentId      String?
+  comment        Comment?        @relation("mentionsInComment", fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
 
-  @@unique([targetMemberId, postId, commentId])  // de-dup: one notif per (target, post|comment)
+  @@unique([targetMemberId, postId, commentId]) // de-dup: one notif per (target, post|comment)
   @@index([targetMemberId, createdAt])
 }
 
 model Challenge {
-  id                  String          @id @default(cuid())
-  slug                String          @unique          // kebab; 4..60 chars
-  title               String          // <= 120
-  description         String          @db.Text         // markdown <= 4000
-  prize               String?         // free-text <= 200
+  id                  String           @id @default(cuid())
+  slug                String           @unique // kebab; 4..60 chars
+  title               String // <= 120
+  description         String           @db.Text // markdown <= 4000
+  prize               String? // free-text <= 200
   coverImageUrl       String?
-  authorId            String?         // admin who created it
+  authorId            String? // admin who created it
   author              CommunityMember? @relation("challengeAuthor", fields: [authorId], references: [id], onDelete: SetNull)
-  status              ChallengeStatus @default(DRAFT)
+  status              ChallengeStatus  @default(DRAFT)
   submissionOpensAt   DateTime
   submissionClosesAt  DateTime
   votingClosesAt      DateTime
   resultsAnnouncedAt  DateTime?
-  winnerSubmissionIds String[]        @default([])     // up to 3 cuids; populated on close
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  winnerSubmissionIds String[]         @default([]) // up to 3 cuids; populated on close
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
-  submissions         ChallengeSubmission[]
+  submissions ChallengeSubmission[]
 
   @@index([status, submissionClosesAt])
   @@index([votingClosesAt])
 }
 
 model ChallengeSubmission {
-  id           String          @id @default(cuid())
-  challengeId  String
-  challenge    Challenge       @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  authorId     String
-  author       CommunityMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  title        String          // <= 120
-  body         String          @db.Text   // markdown <= 6000
-  projectUrl   String?         // validated URL
-  voteCount    Int             @default(0)
-  isWinner     Boolean         @default(false)
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id          String          @id @default(cuid())
+  challengeId String
+  challenge   Challenge       @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      CommunityMember @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title       String // <= 120
+  body        String          @db.Text // markdown <= 6000
+  projectUrl  String? // validated URL
+  voteCount   Int             @default(0)
+  isWinner    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
-  votes        ChallengeVote[]
+  votes ChallengeVote[]
 
-  @@unique([challengeId, authorId])  // one submission per member per challenge
+  @@unique([challengeId, authorId]) // one submission per member per challenge
   @@index([challengeId, voteCount(sort: Desc)])
 }
 
 model ChallengeVote {
-  id            String              @id @default(cuid())
-  submissionId  String
-  submission    ChallengeSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  voterId       String
-  voter         CommunityMember     @relation(fields: [voterId], references: [id], onDelete: Cascade)
-  createdAt     DateTime            @default(now())
+  id           String              @id @default(cuid())
+  submissionId String
+  submission   ChallengeSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  voterId      String
+  voter        CommunityMember     @relation(fields: [voterId], references: [id], onDelete: Cascade)
+  createdAt    DateTime            @default(now())
 
   @@unique([submissionId, voterId])
   @@index([voterId])
@@ -1084,20 +1094,20 @@ model Report {
   id              String           @id @default(cuid())
   reporterId      String
   reporter        CommunityMember  @relation("reportsByMember", fields: [reporterId], references: [id], onDelete: Cascade)
-  againstMemberId String?          // denormalized: target post/comment author at time of report
+  againstMemberId String? // denormalized: target post/comment author at time of report
   againstMember   CommunityMember? @relation("reportsAgainstMember", fields: [againstMemberId], references: [id], onDelete: SetNull)
   postId          String?
   post            Post?            @relation("reportsOnPost", fields: [postId], references: [id], onDelete: Cascade)
   commentId       String?
   comment         Comment?         @relation("reportsOnComment", fields: [commentId], references: [id], onDelete: Cascade)
   reason          ReportReason
-  details         String?          // <= 1000
+  details         String? // <= 1000
   status          ReportStatus     @default(PENDING)
   resolvedAt      DateTime?
-  resolvedById    String?          // admin/moderator member.id (SetNull on member delete)
+  resolvedById    String? // admin/moderator member.id (SetNull on member delete)
   resolvedBy      CommunityMember? @relation("reportsResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
-  resolution      String?          // <= 500 admin note
-  linkedActionId  String?          // FK-by-string to ModerationAction.id when resolved
+  resolution      String? // <= 500 admin note
+  linkedActionId  String? // FK-by-string to ModerationAction.id when resolved
   createdAt       DateTime         @default(now())
 
   @@index([status, createdAt])
@@ -1107,36 +1117,36 @@ model Report {
 }
 
 model ModerationAction {
-  id             String                @id @default(cuid())
+  id             String               @id @default(cuid())
   type           ModerationActionType
-  actorId        String?               // moderator/admin member.id (SetNull on actor delete)
-  actor          CommunityMember?      @relation("modActor", fields: [actorId], references: [id], onDelete: SetNull)
+  actorId        String? // moderator/admin member.id (SetNull on actor delete)
+  actor          CommunityMember?     @relation("modActor", fields: [actorId], references: [id], onDelete: SetNull)
   targetMemberId String?
-  targetMember   CommunityMember?      @relation("modTarget", fields: [targetMemberId], references: [id], onDelete: SetNull)
+  targetMember   CommunityMember?     @relation("modTarget", fields: [targetMemberId], references: [id], onDelete: SetNull)
   postId         String?
   commentId      String?
   channelId      String?
   badgeId        String?
-  reportId       String?               // back-ref to Report.id when triggered from a report
-  reason         String?               // <= 1000
-  payload        Json?                 // optional structured data
-  createdAt      DateTime              @default(now())
+  reportId       String? // back-ref to Report.id when triggered from a report
+  reason         String? // <= 1000
+  payload        Json? // optional structured data
+  createdAt      DateTime             @default(now())
 
   @@index([targetMemberId, createdAt])
   @@index([type, createdAt])
 }
 
 model Badge {
-  id           String        @id @default(cuid())
-  kind         BadgeKind     @unique
-  slug         String        @unique
-  name         String        // FR display, <= 40
-  description  String        // FR, <= 200
-  iconEmoji    String        // 1 grapheme
-  color        String        @default("#7301FF")
-  isAuto       Boolean       @default(true)   // false = admin-grant only
+  id          String    @id @default(cuid())
+  kind        BadgeKind @unique
+  slug        String    @unique
+  name        String // FR display, <= 40
+  description String // FR, <= 200
+  iconEmoji   String // 1 grapheme
+  color       String    @default("#7301FF")
+  isAuto      Boolean   @default(true) // false = admin-grant only
 
-  awards       MemberBadge[]
+  awards MemberBadge[]
 }
 
 model MemberBadge {
@@ -1146,8 +1156,8 @@ model MemberBadge {
   badgeId     String
   badge       Badge           @relation(fields: [badgeId], references: [id], onDelete: Cascade)
   awardedAt   DateTime        @default(now())
-  awardedById String?         // null when awarded by engine
-  note        String?         // optional admin note
+  awardedById String? // null when awarded by engine
+  note        String? // optional admin note
 
   @@unique([memberId, badgeId])
   @@index([memberId])
@@ -1172,29 +1182,29 @@ enum EmailQueueStatus {
 }
 
 model EmailQueueItem {
-  id            String           @id @default(cuid())
-  to            String
-  subject       String
-  html          String           @db.Text
-  text          String?          @db.Text
+  id           String           @id @default(cuid())
+  to           String
+  subject      String
+  html         String           @db.Text
+  text         String?          @db.Text
   /// Identifier for the batch this item belongs to (e.g.
   /// `newsletter:2026-05-07T12:34:56Z`). Two items with the same
   /// (audienceTag, to) tuple are deduplicated by the @@unique below —
   /// re-running an enqueue is a no-op.
-  audienceTag   String
-  status        EmailQueueStatus @default(PENDING)
-  attempts      Int              @default(0)
-  maxAttempts   Int              @default(3)
-  lastError     String?
-  scheduledFor  DateTime         @default(now())
+  audienceTag  String
+  status       EmailQueueStatus @default(PENDING)
+  attempts     Int              @default(0)
+  maxAttempts  Int              @default(3)
+  lastError    String?
+  scheduledFor DateTime         @default(now())
   /// Set by the drainer when it claims the item; cleared on completion.
   /// A row stuck in SENDING with a lockedAt older than 5 min is
   /// considered abandoned and reclaimed.
-  lockedAt      DateTime?
-  sentAt        DateTime?
-  failedAt      DateTime?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  lockedAt     DateTime?
+  sentAt       DateTime?
+  failedAt     DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@unique([audienceTag, to])
   @@index([status, scheduledFor])
@@ -1219,16 +1229,250 @@ model AuditLog {
   id          String   @id @default(cuid())
   actorUserId String
   actor       User     @relation(fields: [actorUserId], references: [id], onDelete: Cascade)
-  action      String   // <area>.<verb>, max 80 chars
-  targetType  String?  // model name e.g. "MentorProfile", "Challenge", "User"
-  targetId    String?  // id of the target entity (no FK — entities may be deleted)
-  payload     Json?    // small contextual blob; PII-minimised
-  ip          String?  // client IP at action time
-  userAgent   String?  // truncated to 200 chars
+  action      String // <area>.<verb>, max 80 chars
+  targetType  String? // model name e.g. "MentorProfile", "Challenge", "User"
+  targetId    String? // id of the target entity (no FK — entities may be deleted)
+  payload     Json? // small contextual blob; PII-minimised
+  ip          String? // client IP at action time
+  userAgent   String? // truncated to 200 chars
   createdAt   DateTime @default(now())
 
   @@index([actorUserId, createdAt(sort: Desc)])
   @@index([action, createdAt(sort: Desc)])
   @@index([targetType, targetId, createdAt(sort: Desc)])
   @@index([createdAt(sort: Desc)])
+}
+
+// ─── Resources (shared library — Mentora + Community) ──────────────────
+//
+// A Resource is a piece of content (PDF, replay video, Notion template,
+// article, tool link) shared with mentees and/or community members.
+// Authoring is currently mentor-only or admin-only; mentees consume.
+//
+// `audience` decides where the resource shows up:
+//   - MENTORA: surfaced on /mentora/dashboard/resources (mentee + mentor views)
+//   - COMMUNITY: surfaced on /community/resources (everyone)
+//   - BOTH: shown on both pages (default for editorial picks)
+//
+// `kind` drives the badge color + icon in the UI. `category` is a soft
+// taxonomy chip (carrière / ux-ui / tech / soft-skills / career-change).
+//
+// `url` is the destination (PDF download, video URL, Notion link).
+// `coverImageUrl` is optional; the UI falls back to a kind-coloured box.
+enum ResourceKind {
+  PDF
+  REPLAY
+  TEMPLATE
+  ARTICLE
+  TOOL
+  NOTION
+}
+
+enum ResourceCategory {
+  UX_UI
+  CAREER
+  CAREER_CHANGE
+  TECH
+  SOFT_SKILLS
+  OTHER
+}
+
+enum ResourceAudience {
+  MENTORA
+  COMMUNITY
+  BOTH
+}
+
+model Resource {
+  id            String           @id @default(cuid())
+  title         String // <= 200
+  description   String? // <= 2000
+  url           String // <= 2048
+  coverImageUrl String?
+  kind          ResourceKind
+  category      ResourceCategory @default(OTHER)
+  audience      ResourceAudience @default(MENTORA)
+  /// Editorial flag for "À LA UNE" rotations on the resources page.
+  isFeatured    Boolean          @default(false)
+  /// Pinned to the top of the list — admin override that doesn't bump
+  /// the createdAt sort order.
+  isPinned      Boolean          @default(false)
+  /// Increments each time a viewer hits the open/download button so we
+  /// can sort the library by popularity. Updated client-side via a
+  /// fire-and-forget server action; eventual consistency is fine.
+  downloadCount Int              @default(0)
+  /// Display tag (e.g. "Promo #4") rendered as a chip alongside category.
+  pillLabel     String?
+  authorId      String
+  author        User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  archivedAt    DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([audience, archivedAt, createdAt(sort: Desc)])
+  @@index([category, archivedAt])
+  @@index([authorId])
+  @@index([isFeatured, audience])
+}
+
+// ─── Community Events ───────────────────────────────────────────────────
+//
+// Light-weight calendar of community-scoped events (lives, ateliers,
+// hackathons, demo days). Distinct from mentorship `Session` rows
+// which are 1-on-1 between a mentor and a mentee.
+//
+// `format` mirrors mentorship session formats so the chip palette
+// stays consistent. `kind` adds an editorial axis (Live / Atelier /
+// Hackathon / Demo / Talk).
+//
+// Registrations live in `EventRegistration` so a viewer can see "Mes
+// inscriptions" and unregister with one click.
+enum CommunityEventKind {
+  LIVE
+  WORKSHOP
+  HACKATHON
+  DEMO
+  TALK
+  MEETUP
+  OTHER
+}
+
+enum CommunityEventFormat {
+  REMOTE_VIDEO
+  IN_PERSON
+  HYBRID
+}
+
+model CommunityEvent {
+  id          String               @id @default(cuid())
+  title       String // <= 200
+  description String? // <= 4000
+  kind        CommunityEventKind
+  format      CommunityEventFormat @default(REMOTE_VIDEO)
+  startsAt    DateTime
+  durationMin Int                  @default(60) // 15..480
+  location    String? // physical address when IN_PERSON
+  meetingUrl  String? // video link
+  /// Live indicator — when true the event is broadcasting NOW. Toggled
+  /// by the host (and auto-flipped by a future cron that reads
+  /// startsAt + durationMin).
+  isLive      Boolean              @default(false)
+  /// Soft cap; a null value means "no limit".
+  capacity    Int?
+  hostId      String
+  host        User                 @relation("communityEventHost", fields: [hostId], references: [id], onDelete: Cascade)
+  cancelledAt DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  registrations CommunityEventRegistration[]
+
+  @@index([startsAt, cancelledAt])
+  @@index([kind, startsAt])
+  @@index([hostId])
+}
+
+model CommunityEventRegistration {
+  id           String         @id @default(cuid())
+  eventId      String
+  event        CommunityEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User           @relation("communityEventRegistration", fields: [userId], references: [id], onDelete: Cascade)
+  registeredAt DateTime       @default(now())
+  cancelledAt  DateTime?
+
+  @@unique([eventId, userId])
+  @@index([userId, registeredAt(sort: Desc)])
+}
+
+// ─── Community Rituals (admin-curated weekly planner) ───────────────────
+//
+// One-off or recurring rituals shown on /community/admin/animation.
+// They feed the public events list when `isPublished = true` AND the
+// ritual is recurring on the current week. The simplest possible
+// model — heavier scheduling lives in `CommunityEvent`.
+model CommunityRitual {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  /// Day of the week (0 = Monday … 6 = Sunday) for recurring rituals.
+  dayOfWeek   Int
+  /// Time of day in minutes-since-midnight (0..1439).
+  startMinute Int
+  durationMin Int      @default(60)
+  /// Hex colour for the ritual block on the planner. Defaults to brand
+  /// violet but admins can pick a different accent per ritual.
+  colorHex    String   @default("#7301FF")
+  isPublished Boolean  @default(false)
+  createdById String
+  createdBy   User     @relation("communityRitualCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([dayOfWeek, startMinute])
+}
+
+// ─── Community Settings (singleton governance config) ──────────────────
+//
+// Single-row table holding the community-wide governance flags exposed
+// on /community/admin/settings. Initialised with sensible defaults on
+// first read; UPDATEs only — never multiple rows.
+model CommunitySettings {
+  id                    String    @id @default("singleton")
+  charterVersion        String    @default("v1.0")
+  charterPublishedAt    DateTime?
+  /// Block users from posting until they signed the latest charter
+  /// version. Off by default to avoid breaking the existing flow.
+  requireCharterAccept  Boolean   @default(false)
+  /// Apply automatic sanctions after N warnings (e.g. 3 → suspension 7d).
+  /// 0 disables auto-sanctions entirely.
+  autoSanctionThreshold Int       @default(3)
+  /// Read-only access for unauthenticated visitors. When true, the
+  /// public landing page surfaces a paywalled feed; when false it shows
+  /// the marketing splash only.
+  openToVisitors        Boolean   @default(false)
+  /// Emit `<meta name="robots" content="noindex">` on community routes
+  /// so search engines don't surface internal threads.
+  noIndex               Boolean   @default(false)
+  /// New members are quarantined (read-only) for the first N days so
+  /// moderators can flag spammers before they can post.
+  quarantineDays        Int       @default(0)
+  /// Banned-words list — flat newline-separated string. Splitting +
+  /// matching happens at runtime inside `lib/community/moderation`.
+  bannedWords           String?
+  updatedById           String?
+  updatedBy             User?     @relation("communitySettingsUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  updatedAt             DateTime  @updatedAt
+}
+
+// ─── Mentora Programme Settings (singleton admin config) ───────────────
+//
+// Same singleton pattern as CommunitySettings but for the Mentora admin
+// programme console. Keeps every "tweakable" knob (capacity bounds,
+// matching weights, application window) in one row instead of scattering
+// them across the User / Cycle tables.
+model MentoraProgrammeSettings {
+  id                   String    @id @default("singleton")
+  /// Min and max binôme count per cycle. Cycle creation refuses values
+  /// outside this range.
+  capacityMin          Int       @default(16)
+  capacityMax          Int       @default(32)
+  /// Number of dimensions used by the matching algorithm. The actual
+  /// weights are encoded in code; this number is the surfaced count
+  /// for the admin UI ("6 dimensions · pondérations actives").
+  matchingDimensions   Int       @default(6)
+  /// Window during which mentees can apply to the next cycle. When
+  /// closed, the public landing page shows the "Next cycle starts in X
+  /// days" copy instead of an apply CTA.
+  applicationOpensAt   DateTime?
+  applicationClosesAt  DateTime?
+  /// Hard 2FA gate for ADMIN / mentor accounts (already enforced at
+  /// the app layer; this flag mirrors the toggle in the settings UI).
+  require2faAdmin      Boolean   @default(true)
+  /// Mentee data retention in years (3 default per the design copy).
+  /// Cron purges anonymise/scrub mentee rows older than this.
+  menteeRetentionYears Int       @default(3)
+  updatedById          String?
+  updatedBy            User?     @relation("mentoraSettingsUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  updatedAt            DateTime  @updatedAt
 }
