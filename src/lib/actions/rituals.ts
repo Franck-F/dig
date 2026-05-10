@@ -7,6 +7,7 @@ import { NotificationType } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import { logAdmin } from '@/lib/audit/log';
+import { requireSuperAdmin } from '@/lib/auth/super-admin';
 
 /**
  * Community rituals — weekly planner backing
@@ -86,7 +87,11 @@ export async function createCommunityRitual(
 export async function deleteCommunityRitual(
   id: string,
 ): Promise<{ status: 'success' } | { status: 'error'; error: string }> {
-  const guard = await requireMod();
+  // Permanent delete — gated to super admins only. Plain admins can
+  // create / edit / unpublish rituals (via update + isPublished=false),
+  // but only super admins can erase them outright. See user_super_admin
+  // migration + lib/auth/super-admin for the rationale.
+  const guard = await requireSuperAdmin();
   if (!guard.ok) return { status: 'error', error: guard.error };
   try {
     const existing = await prisma.communityRitual.findUnique({
@@ -94,10 +99,12 @@ export async function deleteCommunityRitual(
       select: { createdById: true },
     });
     if (!existing) return { status: 'error', error: 'not_found' };
-    if (!guard.isAdmin && existing.createdById !== guard.userId) {
-      return { status: 'error', error: 'forbidden' };
-    }
     await prisma.communityRitual.delete({ where: { id } });
+    await logAdmin(guard.userId, {
+      action: 'communityRitual.delete',
+      targetType: 'CommunityRitual',
+      targetId: id,
+    }).catch(() => {});
     revalidatePath('/community/admin/animation');
     return { status: 'success' };
   } catch {

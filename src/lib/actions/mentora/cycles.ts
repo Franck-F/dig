@@ -7,6 +7,7 @@ import { CyclePhase, CycleStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { requireUser } from './_helpers';
 import { logAdmin } from '@/lib/audit/log';
+import { requireSuperAdmin } from '@/lib/auth/super-admin';
 
 /**
  * Mentora cycle (cohort) CRUD. Admin-only — every action checks
@@ -205,8 +206,16 @@ export async function updateCycleStatus(input: z.input<typeof updateStatusSchema
 const deleteSchema = z.object({ cycleId: z.string().min(1) });
 
 export async function deleteCycle(input: z.input<typeof deleteSchema>): Promise<ActionResult> {
+  // Permanent cycle deletion — gated to super admins. A cycle is the
+  // root of a cohort's lifecycle (mentor pairings, sessions, reviews
+  // all hang off it); losing one is unrecoverable. Plain admins can
+  // still ARCHIVE (status=ARCHIVED) which preserves the row and is
+  // the recommended path for closed cohorts. The super-admin gate
+  // here is the second barrier on top of the existing ACTIVE-cannot-
+  // delete check.
+  const guard = await requireSuperAdmin();
+  if (!guard.ok) return err(guard.error);
   try {
-    const me = await ensureAdmin();
     const parsed = deleteSchema.safeParse(input);
     if (!parsed.success) return err('invalid_input');
 
@@ -220,7 +229,7 @@ export async function deleteCycle(input: z.input<typeof deleteSchema>): Promise<
     if (cycle.status === CycleStatus.ACTIVE) return err('active_cannot_delete');
 
     await prisma.cycle.delete({ where: { id: cycle.id } });
-    await logAdmin(me.userId, {
+    await logAdmin(guard.userId, {
       action: 'cycle.delete',
       targetType: 'Cycle',
       targetId: cycle.id,

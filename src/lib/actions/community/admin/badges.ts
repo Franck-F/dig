@@ -13,6 +13,7 @@ import {
 } from '../_helpers';
 import { createCommunityNotification } from '@/lib/community/notifications';
 import { logAdmin } from '@/lib/audit/log';
+import { requireSuperAdmin } from '@/lib/auth/super-admin';
 
 /**
  * Admin badge actions. Spec §5.2 badges admin.
@@ -99,6 +100,16 @@ export async function revokeBadge(
   input: z.input<typeof revokeSchema>,
 ): Promise<ActionResult> {
   try {
+    // Permanent badge revocation deletes the MemberBadge row outright
+    // (the original award timestamp is lost — re-awarding generates a
+    // new one). Gated to super admins to match the "all permanent
+    // deletions" policy. Plain admins can still award/revoke via
+    // automated rules (Badge.isAuto = true) which run server-side
+    // without going through this entry point.
+    const sa = await requireSuperAdmin();
+    if (!sa.ok) {
+      return sa.error === 'unauthorized' ? err('unauthorized') : err('forbidden');
+    }
     const ctx = await requireCommunityAdmin();
     const parsed = revokeSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
