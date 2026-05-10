@@ -159,6 +159,45 @@ export default async function GoalsPage() {
         ))}
       </div>
 
+      {/* Section title + "+ Nouvel objectif" CTA — rendered ALWAYS, so
+          users can add a goal even when the list is empty. The CTA
+          links to the first available mentorship's detail page where
+          the goal-creation form lives; if the user has no mentorships
+          yet we route them to /mentora/dashboard/mentorships so they
+          can pick one. */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+          flexWrap: 'wrap',
+          gap: 12,
+        }}
+      >
+        <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>
+          {t('listTitle', { count: activeCount })}
+        </h2>
+        <a
+          href={
+            mentorships.length > 0
+              ? `/mentora/dashboard/mentorships/${mentorships[0]!.id}`
+              : '/mentora/dashboard/mentorships'
+          }
+          style={{
+            padding: '10px 18px',
+            borderRadius: 11,
+            background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
+            color: 'white',
+            fontSize: 13,
+            fontWeight: 700,
+            textDecoration: 'none',
+            boxShadow: '0 8px 18px rgba(115,1,255,0.30)',
+          }}
+        >
+          {t('card.newGoal')}
+        </a>
+      </div>
+
       {mentorshipsWithGoals.length === 0 ? (
         <div className="dz-card" style={{ padding: 24 }}>
           <p className="dz-body" style={{ margin: 0 }}>
@@ -167,10 +206,12 @@ export default async function GoalsPage() {
         </div>
       ) : (
         <>
-          {/* Section title with new-goal CTA aligned to the design */}
+          {/* Section title with new-goal CTA — moved out above so it
+              renders even when the list is empty. The duplicate header
+              has been removed; this branch keeps just the cards list. */}
           <div
             style={{
-              display: 'flex',
+              display: 'none',
               justifyContent: 'space-between',
               alignItems: 'baseline',
               flexWrap: 'wrap',
