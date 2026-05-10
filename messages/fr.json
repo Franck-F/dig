@@ -715,6 +715,48 @@
         "cta_pending": "Activation…",
         "seeCommunity": "Voir la communauté"
       },
+      "agendaPage": {
+        "kicker": "Mentora · Sessions",
+        "title": "Agenda",
+        "rangeLabel": "Semaine du {start} au {end}",
+        "today": "Aujourd'hui",
+        "viewWeek": "Semaine",
+        "viewMonth": "Mois",
+        "viewList": "Liste",
+        "kpis": {
+          "thisWeek": "Sessions cette semaine",
+          "hoursPlanned": "Heures planifiées",
+          "freeSlots": "Créneaux libres",
+          "thisMonth": "Sessions ce mois"
+        },
+        "kpiHours": "{hours} h{minutes, select, 0 {} other {{minutes}}}",
+        "days": ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"],
+        "noSessions": "Aucune session planifiée pour cette semaine.",
+        "untitledSession": "Session de mentorat"
+      },
+      "feedbacksPage": {
+        "kicker": "Retours mentorés",
+        "title": "Feedbacks",
+        "kpis": {
+          "average": "Note moyenne",
+          "averageMeta": "sur {count} retours",
+          "recommendation": "Recommandation",
+          "recommendationMeta": "{recommended} mentorées sur {total}",
+          "totalSessions": "Sessions cumulées",
+          "totalSessionsMeta": "depuis {since}",
+          "completion": "Taux de complétion",
+          "completionMeta": "cycles terminés"
+        },
+        "topMentor": {
+          "tag": "★ TOP MENTOR — Q1 2026",
+          "title": "Tu fais partie des 5 % mentors les mieux notés.",
+          "body": "Merci pour ton engagement auprès de la communauté Digizelle."
+        },
+        "listTitle": "Retours de vos mentorées",
+        "empty": "Aucun retour pour le moment. Tes premières reviews apparaîtront ici dès qu'une mentorée terminera un cycle.",
+        "anonReviewer": "Mentorée Digizelle",
+        "cycleAndDate": "{cycle} · {date}"
+      },
       "resourcesPage": {
         "kicker": "Bibliothèque",
         "menteeTitle": "Ressources",
@@ -796,6 +838,8 @@
         "mentorships": "Mes mentorats",
         "sessions": "Mes sessions",
         "messages": "Messages",
+        "agenda": "Agenda",
+        "feedbacks": "Feedbacks",
         "resources": "Ressources",
         "goals": "Objectifs",
         "notifications": "Notifications",

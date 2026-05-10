@@ -2414,6 +2414,48 @@
         "cta_pending": "Activating…",
         "seeCommunity": "View community"
       },
+      "agendaPage": {
+        "kicker": "Mentora · Sessions",
+        "title": "Agenda",
+        "rangeLabel": "Week of {start} to {end}",
+        "today": "Today",
+        "viewWeek": "Week",
+        "viewMonth": "Month",
+        "viewList": "List",
+        "kpis": {
+          "thisWeek": "Sessions this week",
+          "hoursPlanned": "Hours planned",
+          "freeSlots": "Free slots",
+          "thisMonth": "Sessions this month"
+        },
+        "kpiHours": "{hours} h{minutes, select, 0 {} other {{minutes}}}",
+        "days": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+        "noSessions": "No sessions scheduled this week.",
+        "untitledSession": "Mentorship session"
+      },
+      "feedbacksPage": {
+        "kicker": "Mentee feedback",
+        "title": "Feedbacks",
+        "kpis": {
+          "average": "Average rating",
+          "averageMeta": "across {count} reviews",
+          "recommendation": "Recommendation",
+          "recommendationMeta": "{recommended} of {total} mentees",
+          "totalSessions": "Sessions delivered",
+          "totalSessionsMeta": "since {since}",
+          "completion": "Completion rate",
+          "completionMeta": "cycles finished"
+        },
+        "topMentor": {
+          "tag": "★ TOP MENTOR — Q1 2026",
+          "title": "You're in the top 5% best-rated mentors.",
+          "body": "Thank you for your commitment to the Digizelle community."
+        },
+        "listTitle": "Reviews from your mentees",
+        "empty": "No reviews yet. Your first reviews will land here as soon as a mentee wraps up a cycle.",
+        "anonReviewer": "Digizelle mentee",
+        "cycleAndDate": "{cycle} · {date}"
+      },
       "resourcesPage": {
         "kicker": "Library",
         "menteeTitle": "Resources",
@@ -2495,6 +2537,8 @@
         "mentorships": "My mentorships",
         "sessions": "My sessions",
         "messages": "Messages",
+        "agenda": "Agenda",
+        "feedbacks": "Feedbacks",
         "resources": "Resources",
         "goals": "Goals",
         "notifications": "Notifications",

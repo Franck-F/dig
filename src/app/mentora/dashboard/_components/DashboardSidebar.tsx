@@ -14,6 +14,10 @@ const ITEMS: Item[] = [
   { href: '/mentora/dashboard/requests', key: 'requests', show: (r) => r !== 'none' },
   { href: '/mentora/dashboard/mentorships', key: 'mentorships', show: (r) => r !== 'none' },
   { href: '/mentora/dashboard/sessions', key: 'sessions', show: (r) => r !== 'none' },
+  // Mentor-only week-view calendar of upcoming sessions. Mentees see
+  // "Sessions" instead, which gives the same data in a list shape.
+  { href: '/mentora/dashboard/agenda', key: 'agenda', show: (r) => r === 'mentor' },
+  { href: '/mentora/dashboard/feedbacks', key: 'feedbacks', show: (r) => r === 'mentor' },
   { href: '/mentora/dashboard/messages', key: 'messages', show: (r) => r !== 'none' },
   { href: '/mentora/dashboard/resources', key: 'resources', show: (r) => r !== 'none' },
   // Mentee-only: personal goal-tracker. Mentors see goal progress per
