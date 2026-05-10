@@ -448,6 +448,11 @@ model MenteeProfile {
   languages         String[]
   timezone          String
   location          String?
+  /// Profile photo URL (data URI or storage URL). Mirrors
+  /// MentorProfile.photoUrl so both sides of a mentorship have the
+  /// same identity surface. Optional — onboarded mentees can skip
+  /// this step (the avatar falls back to gradient initials).
+  photoUrl          String?
   currentChallenges String? // <= 2000
   preferredFormat   PreferredFormat @default(REMOTE)
   discoveredVia     DiscoveredVia   @default(SEARCH)

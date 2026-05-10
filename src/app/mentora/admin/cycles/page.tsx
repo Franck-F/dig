@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { CyclePhase, CycleStatus } from '@prisma/client';
 
 import { prisma } from '@/lib/prisma';
+import { isCurrentUserSuperAdmin } from '@/lib/auth/super-admin';
 import CycleCreateForm from './CycleCreateForm';
 import CycleRow from './CycleRow';
 
@@ -24,12 +25,15 @@ export const metadata = { title: 'Cycles · Admin Mentora' };
  * audit-log every change.
  */
 export default async function CyclesAdminPage() {
-  const cycles = await prisma.cycle.findMany({
-    orderBy: [{ status: 'asc' }, { startsAt: 'desc' }],
-    include: {
-      createdBy: { select: { id: true, name: true, email: true } },
-    },
-  });
+  const [cycles, isSuperAdmin] = await Promise.all([
+    prisma.cycle.findMany({
+      orderBy: [{ status: 'asc' }, { startsAt: 'desc' }],
+      include: {
+        createdBy: { select: { id: true, name: true, email: true } },
+      },
+    }),
+    isCurrentUserSuperAdmin(),
+  ]);
 
   const dateFmt = new Intl.DateTimeFormat('fr-FR', {
     day: 'numeric',
@@ -157,6 +161,7 @@ export default async function CyclesAdminPage() {
                       createdByName={c.createdBy.name ?? c.createdBy.email}
                       mentorCount={counts.mentors}
                       menteeCount={counts.mentees}
+                      isSuperAdmin={isSuperAdmin}
                     />
                   );
                 })}

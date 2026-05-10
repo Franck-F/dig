@@ -26,6 +26,11 @@ type Award = {
 type Props = {
   badges: ManualBadge[];
   recentAwards: Award[];
+  /** Badge revocation deletes the MemberBadge row outright (the
+   *  award timestamp is lost). Gated to super admins server-side
+   *  (lib/auth/super-admin); the UI hides the "Révoquer" button
+   *  for non-super admins so the affordance matches the policy. */
+  isSuperAdmin: boolean;
 };
 
 /**
@@ -62,7 +67,7 @@ type Props = {
  *
  *  This is a known v1 limitation; spec §11 hints at the v1.1 polish.
  */
-export default function BadgeGrantForm({ badges, recentAwards }: Props) {
+export default function BadgeGrantForm({ badges, recentAwards, isSuperAdmin }: Props) {
   const t = useTranslations('community.admin.badges');
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -190,7 +195,27 @@ export default function BadgeGrantForm({ badges, recentAwards }: Props) {
                     </span>
                   </td>
                   <td style={td}>
-                    <button type="button" className="dz-btn dz-btn-sm dz-btn-ghost" onClick={() => revoke(a.id)} disabled={pending}>
+                    <button
+                      type="button"
+                      className="dz-btn dz-btn-sm dz-btn-ghost"
+                      onClick={() => revoke(a.id)}
+                      disabled={pending || !isSuperAdmin}
+                      title={
+                        !isSuperAdmin
+                          ? 'Suppression définitive — réservée au super admin'
+                          : undefined
+                      }
+                      style={
+                        !isSuperAdmin
+                          ? { opacity: 0.45, cursor: 'not-allowed' }
+                          : undefined
+                      }
+                    >
+                      {!isSuperAdmin && (
+                        <span aria-hidden style={{ marginRight: 4 }}>
+                          🔒
+                        </span>
+                      )}
                       {t('revokeCta')}
                     </button>
                   </td>

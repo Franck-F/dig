@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { prisma } from '@/lib/prisma';
+import { isCurrentUserSuperAdmin } from '@/lib/auth/super-admin';
 
 import { getCommunityViewer } from '../../_components/viewer';
 import BadgeGrantForm from './_components/BadgeGrantForm';
@@ -25,7 +26,7 @@ export default async function AdminBadgesPage() {
 
   const t = await getTranslations('community.admin.badges');
 
-  const [badges, recentAwards] = await Promise.all([
+  const [badges, recentAwards, isSuperAdmin] = await Promise.all([
     prisma.badge.findMany({
       orderBy: [{ isAuto: 'asc' }, { kind: 'asc' }],
     }),
@@ -37,6 +38,7 @@ export default async function AdminBadgesPage() {
         member: { select: { handle: true, displayName: true } },
       },
     }),
+    isCurrentUserSuperAdmin(),
   ]);
 
   return (
@@ -61,6 +63,7 @@ export default async function AdminBadgesPage() {
           badgeIcon: a.badge.iconEmoji,
           awardedAt: a.awardedAt.toISOString(),
         }))}
+        isSuperAdmin={isSuperAdmin}
       />
 
       <div>

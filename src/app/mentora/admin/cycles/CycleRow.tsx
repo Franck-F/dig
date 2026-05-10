@@ -50,6 +50,7 @@ export default function CycleRow({
   createdByName,
   mentorCount,
   menteeCount,
+  isSuperAdmin,
 }: {
   cycleId: string;
   name: string;
@@ -65,6 +66,10 @@ export default function CycleRow({
   mentorCount: number;
   /** Distinct mentees, same approximation as mentorCount. */
   menteeCount: number;
+  /** Permanent deletion is gated to super admins (see lib/auth/
+   *  super-admin). Plain admins still see the button but it's
+   *  disabled with a tooltip explaining the restriction. */
+  isSuperAdmin: boolean;
 }) {
   const progress = PHASE_PROGRESS[phase];
   const accentColor = STATUS_COLOR[status];
@@ -293,7 +298,15 @@ export default function CycleRow({
           <button
             type="button"
             onClick={onDelete}
-            disabled={pending}
+            disabled={pending || !isSuperAdmin}
+            title={
+              !isSuperAdmin
+                ? 'Suppression définitive — réservée au super admin'
+                : undefined
+            }
+            aria-label={
+              !isSuperAdmin ? 'Suppression réservée au super admin' : 'Supprimer le cycle'
+            }
             style={{
               padding: '8px 16px',
               borderRadius: 10,
@@ -302,10 +315,19 @@ export default function CycleRow({
               color: '#a8235e',
               fontSize: 12,
               fontWeight: 700,
-              cursor: pending ? 'not-allowed' : 'pointer',
+              cursor: pending || !isSuperAdmin ? 'not-allowed' : 'pointer',
+              opacity: !isSuperAdmin ? 0.45 : 1,
               fontFamily: 'inherit',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
             }}
           >
+            {!isSuperAdmin && (
+              <span aria-hidden style={{ fontSize: 11 }}>
+                🔒
+              </span>
+            )}
             Supprimer
           </button>
         )}
