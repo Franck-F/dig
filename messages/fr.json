@@ -1647,7 +1647,11 @@
         "subtitle": "Renseignez les compétences que vous pouvez transmettre.",
         "skillsLabel": "Compétences",
         "skillsPlaceholder": "Ex : react, typescript, system design…",
-        "skillsHint": "Sélectionne 1 à 5 compétences principales. Tu affineras les niveaux après validation.",
+        "skillsHint": "Sélectionne celles qui te parlent — ou ajoute les tiennes juste en dessous.",
+        "customSkillsLabel": "Ajouter une compétence personnalisée",
+        "customSkillsPlaceholder": "Tape une compétence puis appuie sur Entrée…",
+        "customSkillsAdd": "Ajouter",
+        "customSkillsRemove": "Retirer",
         "levelLabel": "Niveau global",
         "level": {
           "BEGINNER": "Débutant",
@@ -1714,12 +1718,12 @@
         "label": "Mentorées que tu peux accompagner",
         "hint": "Coche tous les profils auxquels tu te sens utile.",
         "items": {
-          "career-change": { "emoji": "🔄", "title": "Étudiantes en reconversion" },
-          "fresh-grad": { "emoji": "🎓", "title": "Jeunes diplômées" },
-          "first-job": { "emoji": "💼", "title": "Premier job" },
-          "founder": { "emoji": "🚀", "title": "Entrepreneuses" },
-          "career-up": { "emoji": "📈", "title": "Évolution de carrière" },
-          "all": { "emoji": "✨", "title": "Tous niveaux" }
+          "career-change": { "title": "Étudiantes en reconversion" },
+          "fresh-grad": { "title": "Jeunes diplômées" },
+          "first-job": { "title": "Premier job" },
+          "founder": { "title": "Entrepreneuses" },
+          "career-up": { "title": "Évolution de carrière" },
+          "all": { "title": "Tous niveaux" }
         }
       },
       "seniority": {

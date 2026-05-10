@@ -54,6 +54,93 @@ type Props = {
 };
 
 /**
+ * Brand-aligned SVG icons for the "Mentees you can support" checkbox
+ * row. Replaces the previous emoji-soup with line-stroke geometry that
+ * matches the platform's design language. Sized at 20 px to slot
+ * cleanly inside the existing 36×36 tinted container.
+ */
+function MenteeTypeIcon({ kind, size = 20 }: { kind: MenteeTypeKey; size?: number }) {
+  const common = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.8,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true,
+  };
+  switch (kind) {
+    case 'career-change':
+      // Refresh / loop arrows — same shape as the mentee onboarding
+      // "Reconversion" goal so the visual link is intentional.
+      return (
+        <svg {...common}>
+          <path d="M4 9a8 8 0 0 1 13.5-3.5L20 8" />
+          <path d="M20 3v5h-5" />
+          <path d="M20 15a8 8 0 0 1-13.5 3.5L4 16" />
+          <path d="M4 21v-5h5" />
+        </svg>
+      );
+    case 'fresh-grad':
+      // Graduation cap
+      return (
+        <svg {...common}>
+          <path d="M22 10 12 5 2 10l10 5 10-5z" />
+          <path d="M6 12v4c0 1.1 2.7 3 6 3s6-1.9 6-3v-4" />
+          <path d="M22 10v6" />
+        </svg>
+      );
+    case 'first-job':
+      // Briefcase
+      return (
+        <svg {...common}>
+          <rect x="3" y="7" width="18" height="13" rx="2.5" />
+          <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+          <path d="M3 13h18" />
+        </svg>
+      );
+    case 'founder':
+      // Rocket
+      return (
+        <svg {...common}>
+          <path d="M14 4s4-1 6 1 1 6 1 6c-3 6-8 9-13 10l-3-3c1-5 4-10 10-13z" />
+          <circle cx="15" cy="9" r="1.6" />
+          <path d="M8 16l-2 4 4-2" />
+        </svg>
+      );
+    case 'career-up':
+      // Ascending bars
+      return (
+        <svg {...common}>
+          <path d="M3 21h18" />
+          <rect x="5" y="14" width="3" height="7" rx="0.5" />
+          <rect x="10.5" y="9" width="3" height="12" rx="0.5" />
+          <rect x="16" y="4" width="3" height="17" rx="0.5" />
+        </svg>
+      );
+    case 'all':
+      // Sparkle — same brand glyph as the "Other" goal card.
+      return (
+        <svg {...common}>
+          <path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8L12 3z" />
+        </svg>
+      );
+  }
+}
+
+/** Brand accent per mentee type — drives the icon-box tint. */
+const MENTEE_TYPE_COLOR: Record<MenteeTypeKey, string> = {
+  'career-change': '#A34BF5',
+  'fresh-grad': '#7301FF',
+  'first-job': '#3B7BFF',
+  founder: '#F46FB1',
+  'career-up': '#23c55e',
+  all: '#FFB823',
+};
+
+/**
  * Four-step mentor application wizard, redesigned to match the Claude
  * Design handoff:
  *
@@ -125,6 +212,11 @@ export default function MentorApplicationWizard({ skills }: Props) {
 
   // ──── Step 2 ────────────────────────────────────────────────────────
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set());
+  /** Free-text skills the user typed in. Don't map to existing Skill
+   *  rows in the DB so we track them separately and surface them on
+   *  the bio at submit time so admins / mentees see them. */
+  const [customSkills, setCustomSkills] = useState<string[]>([]);
+  const [customSkillDraft, setCustomSkillDraft] = useState('');
   const [skillLevel, setSkillLevel] = useState<SkillLevelT>('INTERMEDIATE');
   const [seniority, setSeniority] = useState<SeniorityKey>('senior');
   const [selectedMenteeTypes, setSelectedMenteeTypes] = useState<Set<MenteeTypeKey>>(new Set());
@@ -137,6 +229,26 @@ export default function MentorApplicationWizard({ skills }: Props) {
       else next.add(slug);
       return next;
     });
+  };
+
+  const addCustomSkill = () => {
+    const v = customSkillDraft.trim();
+    if (!v) return;
+    const trimmed = v.slice(0, 60);
+    const lower = trimmed.toLowerCase();
+    // Dedup case-insensitively against curated chips and other custom entries.
+    const inCurated = skills.some((s) => s.name.toLowerCase() === lower);
+    const inCustom = customSkills.some((c) => c.toLowerCase() === lower);
+    if (inCurated || inCustom) {
+      setCustomSkillDraft('');
+      return;
+    }
+    setCustomSkills((prev) => [...prev, trimmed]);
+    setCustomSkillDraft('');
+  };
+
+  const removeCustomSkill = (idx: number) => {
+    setCustomSkills((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const toggleMenteeType = (key: MenteeTypeKey) => {
@@ -212,20 +324,25 @@ export default function MentorApplicationWizard({ skills }: Props) {
         // selected seniority bucket.
         const yearsExperience = Math.max(years, SENIORITY_TO_YEARS[seniority]);
 
-        // Merge mentee-type tags into the bio so they're surfaced on
-        // the mentor profile without a schema migration. Keeps the
-        // signal in one searchable text field for now; if/when admin
-        // wants a structured filter, we'll promote it to its own column.
+        // Merge mentee-type tags + custom skills into the bio so
+        // they're surfaced on the mentor profile without a schema
+        // migration. Keeps the signal in one searchable text field for
+        // now; if/when admin wants structured filters, we'll promote
+        // each to its own column.
         const menteeTypeTags =
           selectedMenteeTypes.size > 0
             ? `\n\nProfils accompagnés : ${[...selectedMenteeTypes]
                 .map((k) => tMenteeTypes(`items.${k}.title`))
                 .join(', ')}`
             : '';
+        const customSkillsTag =
+          customSkills.length > 0
+            ? `\n\nCompétences complémentaires : ${customSkills.join(', ')}`
+            : '';
 
         const res = await createMentorProfile({
           headline: headline.trim(),
-          bio: `${bio.trim()}${menteeTypeTags}`,
+          bio: `${bio.trim()}${menteeTypeTags}${customSkillsTag}`,
           yearsExperience,
           timezone,
           languages,
@@ -588,7 +705,7 @@ export default function MentorApplicationWizard({ skills }: Props) {
         sub={tStep2('subtitle')}
       />
       <div style={{ display: 'grid', gap: 22 }}>
-        {/* Skill chips */}
+        {/* Skill chips + custom input */}
         <div>
           <FieldLabel hint={tStep2('skillsHint')}>{tStep2('skillsLabel')}</FieldLabel>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -601,6 +718,75 @@ export default function MentorApplicationWizard({ skills }: Props) {
                 title={s.slug}
               />
             ))}
+            {/* User-added skills — dashed-border chips so they're
+                visually distinct from the curated set, with an inline
+                × to remove them. */}
+            {customSkills.map((c, i) => (
+              <button
+                key={`custom-${c}-${i}`}
+                type="button"
+                onClick={() => removeCustomSkill(i)}
+                title={tStep2('customSkillsRemove')}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: 999,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: '1px dashed #A34BF5',
+                  background: 'rgba(163,75,245,0.10)',
+                  color: '#A34BF5',
+                  fontFamily: 'inherit',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <span>{c}</span>
+                <span aria-hidden style={{ opacity: 0.7, fontSize: 14, lineHeight: 1 }}>
+                  ×
+                </span>
+              </button>
+            ))}
+          </div>
+          {/* Custom skill input — type + Enter (or click + Ajouter) to
+              push a new chip into the list above. No cap. */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <input
+              type="text"
+              value={customSkillDraft}
+              onChange={(e) => setCustomSkillDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addCustomSkill();
+                }
+              }}
+              placeholder={tStep2('customSkillsPlaceholder')}
+              aria-label={tStep2('customSkillsLabel')}
+              maxLength={60}
+              style={{ ...inputStyle, flex: 1 }}
+            />
+            <button
+              type="button"
+              onClick={addCustomSkill}
+              disabled={customSkillDraft.trim().length === 0}
+              style={{
+                padding: '12px 18px',
+                borderRadius: 11,
+                border: 'none',
+                background: 'linear-gradient(135deg, #A34BF5, #24325F)',
+                color: 'white',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: customSkillDraft.trim().length === 0 ? 'not-allowed' : 'pointer',
+                opacity: customSkillDraft.trim().length === 0 ? 0.45 : 1,
+                fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              + {tStep2('customSkillsAdd')}
+            </button>
           </div>
         </div>
 
@@ -638,7 +824,7 @@ export default function MentorApplicationWizard({ skills }: Props) {
 
         {/* Skill level (per-skill default) */}
         <div>
-          <FieldLabel hint={tStep2('skillsHint')}>{tStep2('levelLabel')}</FieldLabel>
+          <FieldLabel>{tStep2('levelLabel')}</FieldLabel>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
             {SKILL_LEVELS.map((l) => {
               const active = skillLevel === l;
@@ -691,8 +877,24 @@ export default function MentorApplicationWizard({ skills }: Props) {
                     onChange={() => toggleMenteeType(k)}
                     style={{ accentColor: '#A34BF5' }}
                   />
-                  <span aria-hidden style={{ fontSize: 18 }}>
-                    {tMenteeTypes(`items.${k}.emoji`)}
+                  {/* Brand SVG icon in a tinted square — replaces the
+                      previous emoji and matches the design language of
+                      the manifesto / onboarding step 1 cards. */}
+                  <span
+                    aria-hidden
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 9,
+                      background: `${MENTEE_TYPE_COLOR[k]}18`,
+                      color: MENTEE_TYPE_COLOR[k],
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <MenteeTypeIcon kind={k} />
                   </span>
                   <span style={{ fontSize: 13, color: ink, fontWeight: 600 }}>
                     {tMenteeTypes(`items.${k}.title`)}

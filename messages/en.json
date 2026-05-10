@@ -3346,7 +3346,11 @@
         "subtitle": "List the skills you can pass on.",
         "skillsLabel": "Skills",
         "skillsPlaceholder": "E.g.: react, typescript, system design…",
-        "skillsHint": "Pick 1 to 5 core skills. You'll fine-tune levels after approval.",
+        "skillsHint": "Pick the ones that resonate — or add your own just below.",
+        "customSkillsLabel": "Add a custom skill",
+        "customSkillsPlaceholder": "Type a skill then press Enter…",
+        "customSkillsAdd": "Add",
+        "customSkillsRemove": "Remove",
         "levelLabel": "Overall level",
         "level": {
           "BEGINNER": "Beginner",
@@ -3413,12 +3417,12 @@
         "label": "Mentees you can support",
         "hint": "Tick all the profiles you feel useful for.",
         "items": {
-          "career-change": { "emoji": "🔄", "title": "Career changers" },
-          "fresh-grad": { "emoji": "🎓", "title": "Fresh graduates" },
-          "first-job": { "emoji": "💼", "title": "First job" },
-          "founder": { "emoji": "🚀", "title": "Founders" },
-          "career-up": { "emoji": "📈", "title": "Career growth" },
-          "all": { "emoji": "✨", "title": "All levels" }
+          "career-change": { "title": "Career changers" },
+          "fresh-grad": { "title": "Fresh graduates" },
+          "first-job": { "title": "First job" },
+          "founder": { "title": "Founders" },
+          "career-up": { "title": "Career growth" },
+          "all": { "title": "All levels" }
         }
       },
       "seniority": {
