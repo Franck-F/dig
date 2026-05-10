@@ -715,6 +715,54 @@
         "cta_pending": "Activation…",
         "seeCommunity": "Voir la communauté"
       },
+      "resourcesPage": {
+        "kicker": "Bibliothèque",
+        "menteeTitle": "Ressources",
+        "mentorTitle": "Mes ressources",
+        "menteeSubtitle": "Sélection de ressources Digizelle pour t'aider à progresser.",
+        "mentorSubtitle": "Les ressources que tu partages avec tes mentorées.",
+        "filterAll": "Tous",
+        "filters": {
+          "ux-ui": "UX/UI",
+          "career": "Carrière",
+          "career-change": "Reconversion",
+          "tech": "Tech",
+          "soft-skills": "Soft skills"
+        },
+        "featured": {
+          "tag": "À LA UNE",
+          "title": "Pack reconversion · 12 ressources clés",
+          "body": "Sélection éditoriale spéciale Promo #4. PDF + replays + templates Notion.",
+          "cta": "Tout télécharger →"
+        },
+        "kindLabels": {
+          "PDF": "PDF",
+          "Replay": "Replay",
+          "Template": "Template",
+          "Article": "Article"
+        },
+        "newPill": "NEW",
+        "byAuthor": "par {author}",
+        "openCta": "Ouvrir",
+        "newResourceCta": "+ Nouveau document",
+        "shareCta": "Partager",
+        "editCta": "Modifier",
+        "menteeItems": {
+          "0": { "kind": "PDF", "category": "career", "title": "Le guide complet de l'entretien tech", "author": "Karim Belhaj", "meta": "25 pages · M.A.J Mars 2026" },
+          "1": { "kind": "Replay", "category": "ux-ui", "title": "Masterclass : structurer son portfolio UX", "author": "Sofia Khelifi", "meta": "52 min · 1.2k vues" },
+          "2": { "kind": "Template", "category": "career-change", "title": "Plan 90 jours pour reconversion tech", "author": "Équipe Digizelle", "meta": "Notion · Modèle gratuit" },
+          "3": { "kind": "Article", "category": "career", "title": "Négocier son salaire quand on débute", "author": "Sofia Khelifi", "meta": "8 min de lecture" },
+          "4": { "kind": "Replay", "category": "soft-skills", "title": "Hackathon #2 — keynote d'ouverture", "author": "Bleuenn Cloteaux", "meta": "58 min" },
+          "5": { "kind": "PDF", "category": "tech", "title": "Cheatsheet React hooks essentiels", "author": "Nina Bessonneau", "meta": "4 pages" }
+        },
+        "mentorEmpty": "Tu n'as pas encore partagé de ressource. Crée ton premier document pour démarrer ta bibliothèque.",
+        "mentorItems": {
+          "0": { "kind": "PDF", "title": "Guide UX 2026 — édition Karim", "meta": "Partagé avec 8 mentorées · créé en mars 2026" },
+          "1": { "kind": "Notion", "title": "Template plan de carrière", "meta": "Partagé avec 5 mentorées · mis à jour 12 mars" },
+          "2": { "kind": "Replay", "title": "Masterclass : portfolio en 3 semaines", "meta": "Partagé avec 124 vues · replay public" },
+          "3": { "kind": "PDF", "title": "Cheatsheet entretien tech", "meta": "Partagé avec 12 mentorées · créé en janvier" }
+        }
+      },
       "goalsPage": {
         "kicker": "Suivi de parcours",
         "title": "Mes objectifs",
@@ -748,6 +796,7 @@
         "mentorships": "Mes mentorats",
         "sessions": "Mes sessions",
         "messages": "Messages",
+        "resources": "Ressources",
         "goals": "Objectifs",
         "notifications": "Notifications",
         "availability": "Disponibilités",
@@ -1097,6 +1146,13 @@
       "today": "Aujourd'hui",
       "unread": "{count, plural, one {# non lu} other {# non lus}}",
       "selectThread": "Sélectionnez une conversation pour voir les messages.",
+      "selectThreadTitle": "Choisis une conversation",
+      "selectThreadBody": "Tes derniers échanges avec tes mentor·e·s apparaîtront ici.",
+      "conversationsTitle": "Conversations",
+      "searchPlaceholder": "Rechercher…",
+      "headerOnline": "En ligne",
+      "totalUnread": "{count} non {count, plural, one {lu} other {lus}}",
+      "openMentorshipCta": "Ouvrir le mentorat →",
       "lastMessage": "Dernier message le {date}",
       "lockedBanner": "Conversation en lecture seule (mentorat clôturé).",
       "openInDetailCta": "Ouvrir dans le mentorat →"

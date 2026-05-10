@@ -2414,6 +2414,54 @@
         "cta_pending": "Activating…",
         "seeCommunity": "View community"
       },
+      "resourcesPage": {
+        "kicker": "Library",
+        "menteeTitle": "Resources",
+        "mentorTitle": "My resources",
+        "menteeSubtitle": "Curated Digizelle resources to help you grow.",
+        "mentorSubtitle": "Resources you share with your mentees.",
+        "filterAll": "All",
+        "filters": {
+          "ux-ui": "UX/UI",
+          "career": "Career",
+          "career-change": "Career change",
+          "tech": "Tech",
+          "soft-skills": "Soft skills"
+        },
+        "featured": {
+          "tag": "FEATURED",
+          "title": "Career-change pack · 12 key resources",
+          "body": "Editorial selection for Promo #4 — PDFs, replays and Notion templates.",
+          "cta": "Download all →"
+        },
+        "kindLabels": {
+          "PDF": "PDF",
+          "Replay": "Replay",
+          "Template": "Template",
+          "Article": "Article"
+        },
+        "newPill": "NEW",
+        "byAuthor": "by {author}",
+        "openCta": "Open",
+        "newResourceCta": "+ New document",
+        "shareCta": "Share",
+        "editCta": "Edit",
+        "menteeItems": {
+          "0": { "kind": "PDF", "category": "career", "title": "The complete tech interview guide", "author": "Karim Belhaj", "meta": "25 pages · Updated March 2026" },
+          "1": { "kind": "Replay", "category": "ux-ui", "title": "Masterclass: structuring your UX portfolio", "author": "Sofia Khelifi", "meta": "52 min · 1.2k views" },
+          "2": { "kind": "Template", "category": "career-change", "title": "90-day plan for tech career change", "author": "Digizelle Team", "meta": "Notion · Free template" },
+          "3": { "kind": "Article", "category": "career", "title": "Negotiating salary as a junior", "author": "Sofia Khelifi", "meta": "8 min read" },
+          "4": { "kind": "Replay", "category": "soft-skills", "title": "Hackathon #2 — opening keynote", "author": "Bleuenn Cloteaux", "meta": "58 min" },
+          "5": { "kind": "PDF", "category": "tech", "title": "React hooks cheatsheet", "author": "Nina Bessonneau", "meta": "4 pages" }
+        },
+        "mentorEmpty": "You haven't shared a resource yet. Create your first document to start your library.",
+        "mentorItems": {
+          "0": { "kind": "PDF", "title": "UX guide 2026 — Karim's edition", "meta": "Shared with 8 mentees · created March 2026" },
+          "1": { "kind": "Notion", "title": "Career plan template", "meta": "Shared with 5 mentees · updated March 12" },
+          "2": { "kind": "Replay", "title": "Masterclass: portfolio in 3 weeks", "meta": "Shared with 124 views · public replay" },
+          "3": { "kind": "PDF", "title": "Tech interview cheatsheet", "meta": "Shared with 12 mentees · created in January" }
+        }
+      },
       "goalsPage": {
         "kicker": "Journey tracking",
         "title": "My goals",
@@ -2447,6 +2495,7 @@
         "mentorships": "My mentorships",
         "sessions": "My sessions",
         "messages": "Messages",
+        "resources": "Resources",
         "goals": "Goals",
         "notifications": "Notifications",
         "availability": "Availability",
@@ -2796,6 +2845,13 @@
       "today": "Today",
       "unread": "{count, plural, one {# unread} other {# unread}}",
       "selectThread": "Select a conversation to see messages.",
+      "selectThreadTitle": "Pick a conversation",
+      "selectThreadBody": "Your latest exchanges with your mentors will show up here.",
+      "conversationsTitle": "Conversations",
+      "searchPlaceholder": "Search…",
+      "headerOnline": "Online",
+      "totalUnread": "{count} unread",
+      "openMentorshipCta": "Open mentorship →",
       "lastMessage": "Last message on {date}",
       "lockedBanner": "Read-only conversation (mentorship closed).",
       "openInDetailCta": "Open in mentorship →"
