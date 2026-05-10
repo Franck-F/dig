@@ -125,3 +125,58 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
   if (mentora === UserRole.STUDENT) redirect('/mentora/onboarding');
   redirect('/community');
 }
+
+/**
+ * Add community access to an already-confirmed account.
+ *
+ * Used by the in-product "Accéder à la communauté" CTA we surface on
+ * mentor / mentee dashboards when the user signed up Mentora-only.
+ * Idempotent: a no-op when the flag is already true (no error so the
+ * UI doesn't have to special-case the race).
+ *
+ * Defensive write: same fallback strategy as `confirmAccess` so the
+ * action stays usable on a not-yet-migrated environment.
+ */
+export type EnableCommunityResult =
+  | { status: 'success'; alreadyEnabled: boolean }
+  | { status: 'error'; error: string };
+
+export async function enableCommunity(): Promise<EnableCommunityResult> {
+  const session = await auth();
+  if (!session?.user?.id) return { status: 'error', error: 'unauthorized' };
+
+  let alreadyEnabled = false;
+  try {
+    const me = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, role: true, communityEnabled: true, roleConfirmed: true },
+    });
+    if (!me) return { status: 'error', error: 'unauthorized' };
+
+    // Admins always see everything anyway — surfacing a CTA for them
+    // is a UX bug, but if it slips through we no-op here.
+    if (me.role === UserRole.ADMIN) return { status: 'success', alreadyEnabled: true };
+
+    if (me.communityEnabled) {
+      alreadyEnabled = true;
+    } else {
+      await prisma.user.update({
+        where: { id: me.id },
+        data: {
+          communityEnabled: true,
+          // If this is the first product the user picks (rare path —
+          // signup flow forces at least one), also flip roleConfirmed.
+          roleConfirmed: me.roleConfirmed ? undefined : true,
+        },
+      });
+    }
+  } catch (err) {
+    console.error('[enableCommunity] update failed', err);
+    return { status: 'error', error: 'server_error' };
+  }
+
+  revalidatePath('/app');
+  revalidatePath('/community');
+  revalidatePath('/mentora/dashboard');
+  return { status: 'success', alreadyEnabled };
+}

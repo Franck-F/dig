@@ -2406,6 +2406,14 @@
       "nextStepTitle": "Final presentation",
       "nextStepDesc": "Present your project to the Digizelle jury.",
       "prepare": "Prepare →",
+      "joinCommunity": {
+        "eyebrow": "Digizelle Community",
+        "title": "Join the community whenever you're ready",
+        "body": "Channels, challenges, lives, meetups — a kind space alongside your mentorship. Create your account in one click.",
+        "cta": "Join the community →",
+        "cta_pending": "Activating…",
+        "seeCommunity": "View community"
+      },
       "nav": {
         "overview": "Overview",
         "requests": "Requests",
@@ -3396,11 +3404,11 @@
         "consentSub": "Electronically signed. Your profile will be reviewed within 5 business days.",
         "submitNotice": "Your profile will be reviewed within 5 business days.",
         "charteCards": {
-          "0": { "emoji": "💛", "title": "Care & active listening", "desc": "I commit to listening without judgment, asking open questions, and respecting my mentee's pace." },
-          "1": { "emoji": "🔒", "title": "Confidentiality", "desc": "Whatever is shared in session stays between us. No information leaves Mentora without explicit consent." },
-          "2": { "emoji": "⏰", "title": "Availability & punctuality", "desc": "I notify 24h ahead if I can't make it, and I always offer a new slot." },
-          "3": { "emoji": "🛡️", "title": "Non-discriminatory stance", "desc": "I commit against any form of discrimination or harassment, in session and in the community." },
-          "4": { "emoji": "🎁", "title": "Volunteer & Digizelle frame", "desc": "Mentorship is free of charge. No commercial transaction within Mentora." }
+          "0": { "title": "Care & active listening", "desc": "I commit to listening without judgment, asking open questions, and respecting my mentee's pace." },
+          "1": { "title": "Confidentiality", "desc": "Whatever is shared in session stays between us. No information leaves Mentora without explicit consent." },
+          "2": { "title": "Availability & punctuality", "desc": "I notify 24h ahead if I can't make it, and I always offer a new slot." },
+          "3": { "title": "Non-discriminatory stance", "desc": "I commit against any form of discrimination or harassment, in session and in the community." },
+          "4": { "title": "Volunteer & Digizelle frame", "desc": "Mentorship is free of charge. No commercial transaction within Mentora." }
         }
       },
       "slots": {

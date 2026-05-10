@@ -707,6 +707,14 @@
       "nextStepTitle": "Restitution finale",
       "nextStepDesc": "Présentez votre projet devant le jury Digizelle.",
       "prepare": "Préparer →",
+      "joinCommunity": {
+        "eyebrow": "Communauté Digizelle",
+        "title": "Rejoins la communauté quand tu veux",
+        "body": "Salons, défis, lives, rencontres — un espace bienveillant en plus de ton mentorat. Tu peux y créer ton compte en un clic.",
+        "cta": "Accéder à la communauté →",
+        "cta_pending": "Activation…",
+        "seeCommunity": "Voir la communauté"
+      },
       "nav": {
         "overview": "Vue d'ensemble",
         "requests": "Demandes",
@@ -1697,11 +1705,11 @@
         "consentSub": "Signé électroniquement. Votre profil sera examiné sous 5 jours ouvrés.",
         "submitNotice": "Votre profil sera examiné sous 5 jours ouvrés.",
         "charteCards": {
-          "0": { "emoji": "💛", "title": "Bienveillance & écoute active", "desc": "Je m'engage à écouter sans juger, à poser des questions ouvertes, à respecter le rythme de ma mentorée." },
-          "1": { "emoji": "🔒", "title": "Confidentialité", "desc": "Tout ce qui est partagé en session reste entre nous. Aucune info ne quitte Mentora sans accord explicite." },
-          "2": { "emoji": "⏰", "title": "Disponibilité & ponctualité", "desc": "Je préviens 24h à l'avance en cas d'empêchement. Je propose toujours un nouveau créneau." },
-          "3": { "emoji": "🛡️", "title": "Posture non-discriminatoire", "desc": "Je m'engage contre toute forme de discrimination ou de harcèlement, en session comme dans la communauté." },
-          "4": { "emoji": "🎁", "title": "Bénévolat & cadre Digizelle", "desc": "Le mentorat est gratuit. Aucune transaction commerciale dans le cadre de Mentora." }
+          "0": { "title": "Bienveillance & écoute active", "desc": "Je m'engage à écouter sans juger, à poser des questions ouvertes, à respecter le rythme de ma mentorée." },
+          "1": { "title": "Confidentialité", "desc": "Tout ce qui est partagé en session reste entre nous. Aucune info ne quitte Mentora sans accord explicite." },
+          "2": { "title": "Disponibilité & ponctualité", "desc": "Je préviens 24h à l'avance en cas d'empêchement. Je propose toujours un nouveau créneau." },
+          "3": { "title": "Posture non-discriminatoire", "desc": "Je m'engage contre toute forme de discrimination ou de harcèlement, en session comme dans la communauté." },
+          "4": { "title": "Bénévolat & cadre Digizelle", "desc": "Le mentorat est gratuit. Aucune transaction commerciale dans le cadre de Mentora." }
         }
       },
       "slots": {

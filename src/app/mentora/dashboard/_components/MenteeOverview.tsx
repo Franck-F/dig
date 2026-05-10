@@ -2,8 +2,10 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { prisma } from '@/lib/prisma';
 import { recommendMentorsForMe } from '@/lib/actions/mentora/discover';
+import { getProductAccess } from '@/lib/access/product-access';
 import StatusPill from './StatusPill';
 import { fmtDateTime } from './format';
+import JoinCommunityCta from './JoinCommunityCta';
 
 type CurrentMentee = {
   kind: 'mentee';
@@ -55,6 +57,10 @@ export default async function MenteeOverview({ profile }: { profile: CurrentMent
   const tSessions = await getTranslations('mentora.sessions');
   // tRequests kept for parity with prior version (used inside StatusPill labels for sessions)
   void (await getTranslations('mentora.requests'));
+
+  // Read product access so we can offer a "join the community" CTA to
+  // mentees who signed up Mentora-only.
+  const access = await getProductAccess();
 
   const menteeProfileId = profile.profile.id;
   const userId = profile.user.id;
@@ -163,6 +169,11 @@ export default async function MenteeOverview({ profile }: { profile: CurrentMent
       {/* The greeting (Bonjour {name}) is rendered by the AppShell topbar —
           no need to duplicate it here. The subtitle below it lives in the
           shell as well, so the page jumps straight to the KPI strip. */}
+
+      {/* Cross-product nudge — only renders for mentees who haven't yet
+          opted into the Community space. Disappears as soon as the
+          flag flips, no manual dismiss needed. */}
+      {!access.community && <JoinCommunityCta />}
 
       {/* KPI strip */}
       <div

@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import type { CurrentRoleProfile } from '@/lib/mentora/getCurrentRoleProfile';
 import { prisma } from '@/lib/prisma';
+import { getProductAccess } from '@/lib/access/product-access';
+import JoinCommunityCta from './JoinCommunityCta';
 
 /* ------------------------------------------------------------------
    Mentor dashboard overview (RSC).
@@ -59,6 +61,11 @@ export default async function MentorOverview({ profile }: MentorOverviewProps) {
   const user = profile.user;
   const mentorProfile = profile.mentorProfile;
   const mentorProfileId = mentorProfile.id;
+
+  // Read product access so we can offer a "join the community" CTA to
+  // mentors who signed up Mentora-only. Cheap single-row fetch; the
+  // helper is fully defensive against pre-migration environments.
+  const access = await getProductAccess();
 
   // ── Aggregate counts (active mentorships, upcoming, pending feedback, ratings) ──
   const now = new Date();
@@ -319,6 +326,11 @@ export default async function MentorOverview({ profile }: MentorOverviewProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Cross-product nudge — only renders for mentors who haven't yet
+          opted into the Community space. Disappears as soon as the
+          flag flips, no manual dismiss needed. */}
+      {!access.community && <JoinCommunityCta />}
+
       {/* ── Top KPI strip ───────────────────────────────────────────── */}
       <div
         style={{

@@ -141,6 +141,80 @@ const MENTEE_TYPE_COLOR: Record<MenteeTypeKey, string> = {
 };
 
 /**
+ * Charte commitment icons — line-stroke SVGs that mirror the meaning
+ * of each clause (heart, padlock, clock, shield, gift) and replace
+ * the previous emoji-soup. Same 22 px stroke style as the goal /
+ * mentee-type icons so the wizard reads as one coherent visual system.
+ */
+function CharteIcon({ index, size = 22 }: { index: number; size?: number }) {
+  const common = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.8,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true,
+  };
+  switch (index) {
+    case 0:
+      // Heart — care & active listening
+      return (
+        <svg {...common}>
+          <path d="M12 21s-7-4.5-9-9.5C1.5 7.5 4 4 7.5 4c2 0 3.5 1 4.5 2.5C13 5 14.5 4 16.5 4 20 4 22.5 7.5 21 11.5c-2 5-9 9.5-9 9.5z" />
+        </svg>
+      );
+    case 1:
+      // Padlock — confidentiality
+      return (
+        <svg {...common}>
+          <rect x="4" y="11" width="16" height="10" rx="2.5" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 2:
+      // Clock — availability & punctuality
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="13" r="8" />
+          <path d="M12 9v4l2.5 2" />
+          <path d="M9 3h6" />
+          <path d="M5 6l1.5-1.5" />
+          <path d="M19 6l-1.5-1.5" />
+        </svg>
+      );
+    case 3:
+      // Shield — non-discriminatory stance
+      return (
+        <svg {...common}>
+          <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      );
+    case 4:
+      // Gift — volunteer & free-of-charge frame
+      return (
+        <svg {...common}>
+          <rect x="3" y="9" width="18" height="12" rx="1.5" />
+          <path d="M3 13h18" />
+          <path d="M12 9v12" />
+          <path d="M12 9c-2 0-4-1.2-4-3a2 2 0 0 1 4 0c0 1.8-2 3-4 3" />
+          <path d="M12 9c2 0 4-1.2 4-3a2 2 0 0 0-4 0c0 1.8 2 3 4 3" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+/** Charte cards each get their own brand accent so they read as a
+ *  family of commitments, not a single bullet list. */
+const CHARTE_COLOR = ['#F46FB1', '#7301FF', '#3B7BFF', '#23c55e', '#A34BF5'] as const;
+
+/**
  * Four-step mentor application wizard, redesigned to match the Claude
  * Design handoff:
  *
@@ -1038,50 +1112,69 @@ export default function MentorApplicationWizard({ skills }: Props) {
         sub={tStep4('subtitle')}
       />
       <div style={{ display: 'grid', gap: 12 }}>
-        {charteIndices.map((i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              gap: 14,
-              padding: 18,
-              borderRadius: 14,
-              background: cardBg,
-              border: cardBd,
-            }}
-          >
-            <div aria-hidden style={{ fontSize: 24 }}>
-              {tStep4(`charteCards.${i}.emoji`)}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: ink }}>
-                {tStep4(`charteCards.${i}.title`)}
-              </div>
-              <div style={{ fontSize: 13, color: sub, marginTop: 4, lineHeight: 1.55 }}>
-                {tStep4(`charteCards.${i}.desc`)}
-              </div>
-            </div>
+        {charteIndices.map((i) => {
+          const accent = CHARTE_COLOR[i];
+          return (
             <div
-              aria-hidden
+              key={i}
               style={{
-                width: 22,
-                height: 22,
-                borderRadius: 6,
-                background: '#A34BF5',
-                color: 'white',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 12,
-                fontWeight: 700,
-                flexShrink: 0,
-                marginTop: 2,
+                gap: 14,
+                padding: 18,
+                borderRadius: 14,
+                background: cardBg,
+                border: cardBd,
               }}
             >
-              ✓
+              {/* Brand SVG icon in a tinted accent box — replaces the
+                  previous emoji-soup with the same line-stroke aesthetic
+                  used in steps 1–2. */}
+              <div
+                aria-hidden
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 11,
+                  background: `${accent}18`,
+                  color: accent,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <CharteIcon index={i} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: ink }}>
+                  {tStep4(`charteCards.${i}.title`)}
+                </div>
+                <div style={{ fontSize: 13, color: sub, marginTop: 4, lineHeight: 1.55 }}>
+                  {tStep4(`charteCards.${i}.desc`)}
+                </div>
+              </div>
+              <div
+                aria-hidden
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: 6,
+                  background: '#A34BF5',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              >
+                ✓
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         <label
           style={{
