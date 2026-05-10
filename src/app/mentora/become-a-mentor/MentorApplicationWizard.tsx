@@ -539,9 +539,7 @@ export default function MentorApplicationWizard({ skills }: Props) {
           />
         </div>
         <div>
-          <FieldLabel htmlFor="bio" hint={tStep1('bioHint')}>
-            {tStep1('bioLabel')}
-          </FieldLabel>
+          <FieldLabel htmlFor="bio">{tStep1('bioLabel')}</FieldLabel>
           <textarea
             id="bio"
             rows={5}
