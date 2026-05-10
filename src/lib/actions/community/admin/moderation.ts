@@ -512,3 +512,68 @@ export async function dismissReport(
     return handleError(e);
   }
 }
+
+// ── Editorial moderation (Contenu admin tab) ────────────────────────
+
+const postIdSchema = z.object({ postId: z.string().min(1) });
+
+/**
+ * Editorial "Approuver" action used by `/community/admin/content`.
+ * Restores a REPORTED post to PUBLISHED, clears its denormalised
+ * `reportCount`, and dismisses every PENDING report against it in
+ * the same transaction so the signalements queue stays consistent.
+ *
+ * For PUBLISHED posts (with reportCount > 0 but status unchanged), it
+ * still clears reports & resets the counter — letting the admin
+ * "vouch" for content that's been flagged but is fine.
+ */
+export async function approvePostContent(
+  input: z.input<typeof postIdSchema>,
+): Promise<ActionResult> {
+  try {
+    const ctx = await requireCommunityAdmin();
+    const parsed = postIdSchema.safeParse(input);
+    if (!parsed.success) return err('invalidInput');
+
+    const post = await prisma.post.findUnique({
+      where: { id: parsed.data.postId },
+      select: { id: true, status: true, channelId: true },
+    });
+    if (!post) return err('notFound');
+
+    await prisma.$transaction([
+      prisma.post.update({
+        where: { id: post.id },
+        data: {
+          status: 'PUBLISHED',
+          reportCount: 0,
+          // Clear any previous removal so the post becomes visible again
+          // — admins can choose Approuver after a botched Refuser.
+          removedAt: null,
+          removalReason: null,
+        },
+      }),
+      prisma.report.updateMany({
+        where: { postId: post.id, status: 'PENDING' },
+        data: {
+          status: 'RESOLVED_DISMISSED',
+          resolvedAt: new Date(),
+          resolvedById: ctx.member.id,
+          resolution: 'approved by editorial review',
+        },
+      }),
+    ]);
+
+    await logAdmin(ctx.userId, {
+      action: 'content.approve_post',
+      targetType: 'Post',
+      targetId: post.id,
+      payload: { channelId: post.channelId },
+    });
+    revalidatePath('/community/admin/content');
+    revalidatePath('/community');
+    return ok();
+  } catch (e) {
+    return handleError(e);
+  }
+}

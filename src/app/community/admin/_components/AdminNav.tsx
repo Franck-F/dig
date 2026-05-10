@@ -7,6 +7,10 @@ import { useTranslations } from 'next-intl';
 const SECTIONS = [
   { key: 'dashboard', href: '/community/admin' },
   { key: 'moderation', href: '/community/admin/moderation' },
+  // Editorial moderation — distinct from `moderation` (user reports).
+  // Surfaces the proactive queue: REPORTED posts, escalations, first
+  // posts of new members. Action set: Approuver / À la une / Refuser.
+  { key: 'content', href: '/community/admin/content' },
   { key: 'channels', href: '/community/admin/channels' },
   { key: 'badges', href: '/community/admin/badges' },
   { key: 'users', href: '/community/admin/users' },

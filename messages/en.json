@@ -154,6 +154,7 @@
           "mentees": "Mentees",
           "matching": "Matching",
           "moderation": "Moderation",
+          "communications": "Communications",
           "reports": "Reports"
         },
         "community": {
@@ -792,6 +793,7 @@
       "nav": {
         "dashboard": "Pilot",
         "moderation": "Moderation",
+        "content": "Content",
         "channels": "Channels",
         "badges": "Badges",
         "users": "Members",

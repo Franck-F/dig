@@ -16,6 +16,13 @@ type Props = {
   /** Total recipients pre-counted at render time (mentors + mentees). Used as
    *  a hint while the live audience count loads. */
   initialReachHint: number;
+  /** Trigger style. `hero` (default) is the white pill used on the
+   *  pilotage hero card; `primary` is the compact purple "+ Nouvelle"
+   *  button used in the Communications page header. */
+  triggerVariant?: 'hero' | 'primary';
+  /** Trigger label override. Defaults to "Composer →" for hero, or
+   *  "+ Nouvelle" for primary. */
+  triggerLabel?: string;
 };
 
 const AUDIENCES: Array<{ key: Audience; label: string; sub: string }> = [
@@ -40,7 +47,11 @@ type View = 'compose' | 'confirm' | 'sending' | 'done' | 'error';
  * RESEND_API_KEY is missing the action returns `mocked: true` and the UI
  * surfaces a clear note so the admin knows nothing was actually sent.
  */
-export default function NewsletterCampaignModal({ initialReachHint }: Props) {
+export default function NewsletterCampaignModal({
+  initialReachHint,
+  triggerVariant = 'hero',
+  triggerLabel,
+}: Props) {
   const [open, setOpen] = useState(false);
   // Focus trap on the campaign composer (WCAG 2.4.3).
   const dialogRef = useFocusTrap<HTMLDivElement>(open);
@@ -217,20 +228,33 @@ export default function NewsletterCampaignModal({ initialReachHint }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        style={{
-          flex: 1,
-          padding: '8px 12px',
-          borderRadius: 9,
-          border: 'none',
-          background: '#ffffff',
-          color: '#7301FF',
-          fontSize: 12,
-          fontWeight: 700,
-          cursor: 'pointer',
-          boxShadow: '0 6px 14px rgba(15,18,40,0.18)',
-        }}
+        style={
+          triggerVariant === 'primary'
+            ? {
+                padding: '7px 14px',
+                borderRadius: 9,
+                border: 'none',
+                background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
+                color: 'white',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }
+            : {
+                flex: 1,
+                padding: '8px 12px',
+                borderRadius: 9,
+                border: 'none',
+                background: '#ffffff',
+                color: '#7301FF',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 6px 14px rgba(15,18,40,0.18)',
+              }
+        }
       >
-        Composer →
+        {triggerLabel ?? (triggerVariant === 'primary' ? '+ Nouvelle' : 'Composer →')}
       </button>
 
       {open &&

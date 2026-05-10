@@ -75,6 +75,7 @@ export default async function MentoraAdminLayout({ children }: { children: React
     { href: '/mentora/admin/mentees', label: tShell('nav.admin.mentees'), icon: '✦', matchPrefix: true },
     { href: '/mentora/admin/matching', label: tShell('nav.admin.matching'), icon: '⇋', matchPrefix: true },
     { href: '/mentora/admin/moderation', label: tShell('nav.admin.moderation'), icon: '◈', matchPrefix: true },
+    { href: '/mentora/admin/communications', label: tShell('nav.admin.communications'), icon: '✉', matchPrefix: true },
     { href: '/mentora/admin/reports', label: tShell('nav.admin.reports'), icon: '◌', matchPrefix: true },
     // Account-level settings (profile, RGPD export, danger zone)
     // share a single product-agnostic page at /account/settings — same

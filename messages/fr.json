@@ -3647,6 +3647,7 @@
       "nav": {
         "dashboard": "Pilotage",
         "moderation": "Modération",
+        "content": "Contenu",
         "channels": "Salons",
         "badges": "Badges",
         "users": "Membres",
@@ -4078,6 +4079,7 @@
           "mentees": "Mentorées",
           "matching": "Matching",
           "moderation": "Modération",
+          "communications": "Communications",
           "reports": "Rapports"
         },
         "community": {
