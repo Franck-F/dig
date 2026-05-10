@@ -14,7 +14,24 @@ import { useTheme } from '@/components/ThemeProvider';
 const LEVELS = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'] as const;
 const FORMATS = ['REMOTE', 'IN_PERSON', 'HYBRID'] as const;
 const DISCOVERED_VIA = ['SEARCH', 'SOCIAL', 'FRIEND', 'EVENT', 'PARTNER', 'OTHER'] as const;
-const GOAL_KEYS = ['first-job', 'career-change', 'side-project', 'level-up'] as const;
+const GOAL_KEYS = [
+  'first-job',
+  'career-change',
+  'side-project',
+  'level-up',
+  'other',
+] as const;
+
+/** Brand-aligned accent per goal — drives both the icon-box tint and
+ *  the active-card border. Picked from the 5-color palette so cards
+ *  read as "different but family". */
+const GOAL_COLOR: Record<(typeof GOAL_KEYS)[number], string> = {
+  'first-job': '#7301FF',
+  'career-change': '#A34BF5',
+  'side-project': '#F46FB1',
+  'level-up': '#3B7BFF',
+  other: '#23c55e',
+};
 const FREQUENCY_KEYS = ['weekly', 'biweekly', 'monthly', 'ondemand'] as const;
 const SLOT_ROWS = [
   { key: 'morning', label: '9 h–12 h' },
@@ -52,6 +69,77 @@ type Props = {
    *  `listPopularSkillsForWizard`). */
   skills: WizardSkill[];
 };
+
+/**
+ * Brand-aligned goal icons. Replaces the previous emoji-soup with
+ * line-stroke SVGs that match the platform's design language (see the
+ * geometric glyph set used in the manifesto / newsletter rubriques —
+ * same minimal aesthetic, but recognisable as objects so the user can
+ * scan the cards without reading every label).
+ *
+ * Sized at 22 px to fit the existing card padding and tinted with
+ * `currentColor` so the parent's accent flows through.
+ */
+function GoalIcon({ kind, size = 22 }: { kind: (typeof GOAL_KEYS)[number]; size?: number }) {
+  const common = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.8,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true,
+  };
+  switch (kind) {
+    case 'first-job':
+      // Briefcase
+      return (
+        <svg {...common}>
+          <rect x="3" y="7" width="18" height="13" rx="2.5" />
+          <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+          <path d="M3 13h18" />
+        </svg>
+      );
+    case 'career-change':
+      // Two-arrow refresh loop
+      return (
+        <svg {...common}>
+          <path d="M4 9a8 8 0 0 1 13.5-3.5L20 8" />
+          <path d="M20 3v5h-5" />
+          <path d="M20 15a8 8 0 0 1-13.5 3.5L4 16" />
+          <path d="M4 21v-5h5" />
+        </svg>
+      );
+    case 'side-project':
+      // Rocket
+      return (
+        <svg {...common}>
+          <path d="M14 4s4-1 6 1 1 6 1 6c-3 6-8 9-13 10l-3-3c1-5 4-10 10-13z" />
+          <circle cx="15" cy="9" r="1.6" />
+          <path d="M8 16l-2 4 4-2" />
+        </svg>
+      );
+    case 'level-up':
+      // Ascending bars
+      return (
+        <svg {...common}>
+          <path d="M3 21h18" />
+          <rect x="5" y="14" width="3" height="7" rx="0.5" />
+          <rect x="10.5" y="9" width="3" height="12" rx="0.5" />
+          <rect x="16" y="4" width="3" height="17" rx="0.5" />
+        </svg>
+      );
+    case 'other':
+      // Sparkle — same 4-point star the platform uses as a brand glyph.
+      return (
+        <svg {...common}>
+          <path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8L12 3z" />
+        </svg>
+      );
+  }
+}
 
 /**
  * Three-step mentee onboarding wizard, redesigned to match the Claude
@@ -95,15 +183,41 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(
     new Set(prefill?.goalSkillSlugs ?? []),
   );
+  /** Free-text domains the user typed in — these don't map to existing
+   *  Skill rows in the DB, so we track them separately and surface them
+   *  in the goals string at submit time so the mentor sees them. */
+  const [customSkills, setCustomSkills] = useState<string[]>([]);
+  const [customSkillDraft, setCustomSkillDraft] = useState('');
   const [goals, setGoals] = useState(prefill?.goals ?? '');
 
   const toggleSkill = (slug: string) => {
     setSelectedSkills((prev) => {
       const next = new Set(prev);
       if (next.has(slug)) next.delete(slug);
-      else if (next.size < 6) next.add(slug); // soft cap
+      else next.add(slug);
       return next;
     });
+  };
+
+  const addCustomSkill = () => {
+    const v = customSkillDraft.trim();
+    if (!v) return;
+    // Cap individual entries at 60 chars and dedup case-insensitively
+    // against both the curated chip list and other custom entries.
+    const trimmed = v.slice(0, 60);
+    const lower = trimmed.toLowerCase();
+    const inCurated = skills.some((s) => s.name.toLowerCase() === lower);
+    const inCustom = customSkills.some((c) => c.toLowerCase() === lower);
+    if (inCurated || inCustom) {
+      setCustomSkillDraft('');
+      return;
+    }
+    setCustomSkills((prev) => [...prev, trimmed]);
+    setCustomSkillDraft('');
+  };
+
+  const removeCustomSkill = (idx: number) => {
+    setCustomSkills((prev) => prev.filter((_, i) => i !== idx));
   };
 
   // ──── Step 2 ────────────────────────────────────────────────────────
@@ -160,26 +274,37 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
     startTransition(async () => {
       try {
         // Build a compact preferences blob — primary goal + frequency +
-        // slot grid — appended to `currentChallenges`. Lets admin and
-        // the matching algorithm read user preferences without a schema
-        // migration. Format is a small JSON snippet at the end of the
-        // text, separated by a fenced marker so it can be stripped on
-        // display.
+        // slot grid + custom domains — appended to `currentChallenges`.
+        // Lets admin and the matching algorithm read user preferences
+        // without a schema migration. Format is a small JSON snippet at
+        // the end of the text, separated by a fenced marker so it can
+        // be stripped on display.
         const prefsBlob = JSON.stringify({
           v: 1,
           primaryGoal,
           frequency,
           slots: [...slots],
+          customSkills,
         });
         const challengesWithPrefs = challenges.trim()
           ? `${challenges.trim()}\n\n<!--mentora-prefs:${prefsBlob}-->`
           : `<!--mentora-prefs:${prefsBlob}-->`;
 
-        // Tag the goals string with the primary goal label for quick scan.
+        // Tag the goals string with the primary goal label for quick scan,
+        // and surface custom-typed domains right after the user's text so
+        // they show up plainly in the mentor's first impression — no
+        // hidden behaviour. Curated chip skills land on dedicated
+        // MenteeGoalSkill rows (see `addMenteeGoalSkill` below) so
+        // we don't duplicate them here.
         const goalLabel = tStep1(`goalCards.${primaryGoal}.title`);
-        const taggedGoals = goals.trim().startsWith(`[${goalLabel}]`)
-          ? goals.trim()
-          : `[${goalLabel}] ${goals.trim()}`;
+        const customSuffix = customSkills.length > 0
+          ? `\n\nDomaines complémentaires : ${customSkills.join(', ')}`
+          : '';
+        const userGoals = goals.trim();
+        const baseGoals = userGoals.startsWith(`[${goalLabel}]`)
+          ? userGoals
+          : `[${goalLabel}] ${userGoals}`;
+        const taggedGoals = `${baseGoals}${customSuffix}`;
 
         const profileRes = await upsertMenteeProfile({
           goals: taggedGoals,
@@ -351,6 +476,7 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
             {GOAL_KEYS.map((k) => {
               const active = primaryGoal === k;
+              const accent = GOAL_COLOR[k];
               return (
                 <button
                   key={k}
@@ -359,8 +485,10 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
                   style={{
                     padding: 16,
                     borderRadius: 14,
-                    border: active ? '2px solid #7301FF' : cardBd,
-                    background: active ? 'rgba(115,1,255,0.05)' : cardBg,
+                    border: active ? `2px solid ${accent}` : cardBd,
+                    background: active
+                      ? `linear-gradient(135deg, ${accent}10, ${accent}06)`
+                      : cardBg,
                     cursor: 'pointer',
                     textAlign: 'left',
                     color: ink,
@@ -378,7 +506,7 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
                         width: 22,
                         height: 22,
                         borderRadius: '50%',
-                        background: '#7301FF',
+                        background: accent,
                         color: 'white',
                         display: 'flex',
                         alignItems: 'center',
@@ -390,8 +518,23 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
                       ✓
                     </span>
                   )}
-                  <div aria-hidden style={{ fontSize: 22, marginBottom: 6 }}>
-                    {tStep1(`goalCards.${k}.emoji`)}
+                  {/* Brand-aligned icon box — tinted background +
+                      accent-stroked SVG. Replaces the previous emoji. */}
+                  <div
+                    aria-hidden
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 11,
+                      background: `${accent}18`,
+                      color: accent,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 10,
+                    }}
+                  >
+                    <GoalIcon kind={k} />
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>
                     {tStep1(`goalCards.${k}.title`)}
@@ -418,10 +561,78 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
                 title={s.slug}
               />
             ))}
+            {/* User-added domains — rendered as removable chips so they
+                visually live alongside the curated ones. */}
+            {customSkills.map((c, i) => (
+              <button
+                key={`custom-${c}-${i}`}
+                type="button"
+                onClick={() => removeCustomSkill(i)}
+                title={tStep1('customSkillRemove')}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: 999,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: '1px dashed #7301FF',
+                  background: 'rgba(115,1,255,0.10)',
+                  color: '#7301FF',
+                  fontFamily: 'inherit',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <span>{c}</span>
+                <span aria-hidden style={{ opacity: 0.7, fontSize: 14, lineHeight: 1 }}>
+                  ×
+                </span>
+              </button>
+            ))}
+          </div>
+          {/* Custom domain input — type + Enter (or click Ajouter) to
+              push a new chip into the list above. */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <input
+              type="text"
+              value={customSkillDraft}
+              onChange={(e) => setCustomSkillDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addCustomSkill();
+                }
+              }}
+              placeholder={tStep1('customSkillPlaceholder')}
+              aria-label={tStep1('customSkillLabel')}
+              maxLength={60}
+              style={{ ...inputStyle, flex: 1 }}
+            />
+            <button
+              type="button"
+              onClick={addCustomSkill}
+              disabled={customSkillDraft.trim().length === 0}
+              style={{
+                padding: '12px 18px',
+                borderRadius: 11,
+                border: 'none',
+                background: 'linear-gradient(135deg, #7301FF, #A34BF5)',
+                color: 'white',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: customSkillDraft.trim().length === 0 ? 'not-allowed' : 'pointer',
+                opacity: customSkillDraft.trim().length === 0 ? 0.45 : 1,
+                fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              + {tStep1('customSkillAdd')}
+            </button>
           </div>
         </div>
 
-        {/* One-sentence goal */}
+        {/* Goal description */}
         <div>
           <FieldLabel htmlFor="goals" hint={tStep1('goalsHint')}>
             {tStep1('goalsLabel')}
