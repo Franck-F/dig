@@ -102,6 +102,11 @@ export default async function MembersDirectoryPage({
     isModerator: m.isModerator,
     postCount: m.postCount,
     commentCount: m.commentCount,
+    // Pass the reaction counters too — MemberCard derives a synthetic
+    // XP / level from the full set, so the directory shows the real
+    // engagement signal rather than just post + comment volume.
+    reactionsReceivedCount: m.reactionsReceivedCount,
+    reactionsGivenCount: m.reactionsGivenCount,
     user: m.user ? { role: m.user.role } : null,
   }));
 
@@ -138,47 +143,61 @@ export default async function MembersDirectoryPage({
       </section>
 
       <section className="dz-section" style={{ paddingTop: 0 }}>
-        {/* Filters live on top in a compact bar so the member grid uses
-            the full page width — important on tablet/desktop where the
-            old left rail used to crowd the cards. The MemberFilters
-            component carries its own internal layout (search input +
-            select), see component for inline-flex wrapping. */}
-        <div style={{ marginBottom: 24 }}>
-          <MemberFilters channels={channels} />
-        </div>
-
-        <div className="dz-small" style={{ marginBottom: 14 }}>
-          {t('memberCount', { count: total })}
-        </div>
-
-        {cards.length === 0 ? (
-          <div className="dz-card" style={{ padding: 40, textAlign: 'center' }}>
-            <p className="dz-body">{t('empty')}</p>
+        {/* Wrap grid + filters + count inside a single dz-card to match
+            the handoff design ("Membres · 1 248" header above a 4-col
+            centred grid). Filters stay at the top of the card; the
+            grid below auto-fills 4 columns on desktop. */}
+        <div className="dz-card" style={{ padding: 22 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: 12,
+              flexWrap: 'wrap',
+              marginBottom: 16,
+            }}
+          >
+            <div>
+              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>
+                {t('directoryTitle', { count: total })}
+              </h2>
+              <p className="dz-small" style={{ margin: '2px 0 0', fontSize: 12 }}>
+                {t('directorySubtitle')}
+              </p>
+            </div>
+            <MemberFilters channels={channels} />
           </div>
-        ) : (
-          <>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: 16,
-              }}
-            >
-              {cards.map((m) => (
-                <MemberCard key={m.id} member={m} />
-              ))}
-            </div>
 
-            <div style={{ marginTop: 32 }}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                total={total}
-                buildHref={pageHref}
-              />
-            </div>
-          </>
-        )}
+          {cards.length === 0 ? (
+            <p className="dz-body" style={{ margin: 0 }}>
+              {t('empty')}
+            </p>
+          ) : (
+            <>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: 14,
+                }}
+              >
+                {cards.map((m) => (
+                  <MemberCard key={m.id} member={m} />
+                ))}
+              </div>
+
+              <div style={{ marginTop: 24 }}>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  total={total}
+                  buildHref={pageHref}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </section>
     </>
   );

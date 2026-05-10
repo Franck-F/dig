@@ -397,14 +397,18 @@
       },
       "membersCount": "{count, plural, =0 {0 members} =1 {1 member} other {# members}}",
       "postsCount": "{count, plural, =0 {0 posts} =1 {1 post} other {# posts}}",
-      "viewCta": "Open channel →",
+      "viewCta": "Open",
       "joinCta": "Join",
       "leaveCta": "Leave",
       "requestJoinCta": "Request to join",
       "joinPendingLabel": "Pending",
       "inviteOnlyLabel": "Invite only",
       "memberLabel": "Member",
-      "joinCommunityCta": "Join →"
+      "joinCommunityCta": "Join →",
+      "myGroupsTitle": "My groups",
+      "myGroupsEmpty": "You haven't joined any channel yet. Discover a few below.",
+      "createGroupCta": "+ Create a group",
+      "discoverTitle": "Discover"
     },
     "channel": {
       "metaTitle": "{channel} — Digizelle Community",
@@ -553,7 +557,9 @@
       "coreTeamBadge": "Core team",
       "moderatorBadge": "Moderator",
       "profileCta": "View profile",
-      "memberCount": "{count, plural, =0 {0 members} =1 {1 member} other {# members}}"
+      "memberCount": "{count, plural, =0 {0 members} =1 {1 member} other {# members}}",
+      "directoryTitle": "Members · {count, number}",
+      "directorySubtitle": "Mentors · Mentees · Past cohorts"
     },
     "member": {
       "metaTitle": "@{handle} — Digizelle Community",

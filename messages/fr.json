@@ -3252,14 +3252,18 @@
       },
       "membersCount": "{count, plural, =0 {0 membre} =1 {1 membre} other {# membres}}",
       "postsCount": "{count, plural, =0 {0 post} =1 {1 post} other {# posts}}",
-      "viewCta": "Ouvrir le salon →",
+      "viewCta": "Ouvrir",
       "joinCta": "Rejoindre",
       "leaveCta": "Quitter",
       "requestJoinCta": "Demander à rejoindre",
       "joinPendingLabel": "En attente",
       "inviteOnlyLabel": "Sur invitation",
       "memberLabel": "Membre",
-      "joinCommunityCta": "Rejoindre →"
+      "joinCommunityCta": "Rejoindre →",
+      "myGroupsTitle": "Mes groupes",
+      "myGroupsEmpty": "Tu n'as pas encore rejoint de salon. Découvre-en quelques-uns ci-dessous.",
+      "createGroupCta": "+ Créer un groupe",
+      "discoverTitle": "À découvrir"
     },
     "channel": {
       "metaTitle": "{channel} — Communauté Digizelle",
@@ -3408,7 +3412,9 @@
       "coreTeamBadge": "Équipe core",
       "moderatorBadge": "Modérateur·rice",
       "profileCta": "Voir le profil",
-      "memberCount": "{count, plural, =0 {0 membre} =1 {1 membre} other {# membres}}"
+      "memberCount": "{count, plural, =0 {0 membre} =1 {1 membre} other {# membres}}",
+      "directoryTitle": "Membres · {count, number}",
+      "directorySubtitle": "Mentors · Mentorées · Anciennes promos"
     },
     "member": {
       "metaTitle": "@{handle} — Communauté Digizelle",
