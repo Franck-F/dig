@@ -2414,6 +2414,31 @@
         "cta_pending": "Activating…",
         "seeCommunity": "View community"
       },
+      "goalsPage": {
+        "kicker": "Journey tracking",
+        "title": "My goals",
+        "subtitle": "Your mentorship goals, tracked with your mentor.",
+        "empty": "No goals yet. During a session, your mentor will set some with you.",
+        "kpis": {
+          "active": "Active goals",
+          "completed": "Steps completed",
+          "avgTime": "Avg time / step",
+          "nextDeadline": "Next deadline"
+        },
+        "kpiAvgDays": "{days} d",
+        "kpiAvgEmpty": "—",
+        "kpiNextEmpty": "—",
+        "listTitle": "{count, plural, =0 {No goals in progress} =1 {My goal in progress} other {My # goals in progress}}",
+        "card": {
+          "onTrack": "✓ On track",
+          "achieved": "✓ Achieved",
+          "newGoal": "+ New goal",
+          "withMentor": "With {name}",
+          "completedAt": "Completed on {date}",
+          "createdAt": "Created on {date}",
+          "completedSuffix": "complete"
+        }
+      },
       "nav": {
         "overview": "Overview",
         "requests": "Requests",
@@ -2422,6 +2447,7 @@
         "mentorships": "My mentorships",
         "sessions": "My sessions",
         "messages": "Messages",
+        "goals": "Goals",
         "notifications": "Notifications",
         "availability": "Availability",
         "profileEdit": "Profile settings",
@@ -2664,8 +2690,11 @@
       "subtitle": "All your upcoming and past mentorship sessions.",
       "tabs": {
         "upcoming": "Upcoming",
-        "past": "Past"
+        "past": "Past",
+        "cancelled": "Cancelled"
       },
+      "tabsCount": "{label} · {count}",
+      "newSessionCta": "+ New session",
       "statusLabels": {
         "scheduled": "Scheduled",
         "inProgress": "In progress",
@@ -2681,8 +2710,10 @@
       "card": {
         "with": "With {name}",
         "duration": "{minutes} min",
-        "joinCta": "Join →",
-        "openCta": "Details →"
+        "joinCta": "Join",
+        "rescheduleCta": "Reschedule",
+        "openCta": "Details →",
+        "untitled": "Mentorship session"
       },
       "empty": {
         "upcoming": "No upcoming sessions.",

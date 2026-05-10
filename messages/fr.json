@@ -715,6 +715,31 @@
         "cta_pending": "Activation…",
         "seeCommunity": "Voir la communauté"
       },
+      "goalsPage": {
+        "kicker": "Suivi de parcours",
+        "title": "Mes objectifs",
+        "subtitle": "Tes objectifs de mentorat, suivis avec ton·ta mentor·e.",
+        "empty": "Tu n'as pas encore d'objectifs. Lors d'une session, ton·ta mentor·e en ajoutera avec toi.",
+        "kpis": {
+          "active": "Objectifs actifs",
+          "completed": "Étapes terminées",
+          "avgTime": "Temps moyen / étape",
+          "nextDeadline": "Échéance la plus proche"
+        },
+        "kpiAvgDays": "{days} j",
+        "kpiAvgEmpty": "—",
+        "kpiNextEmpty": "—",
+        "listTitle": "{count, plural, =0 {Aucun objectif en cours} =1 {Mon objectif en cours} other {Mes # objectifs en cours}}",
+        "card": {
+          "onTrack": "✓ Sur la bonne voie",
+          "achieved": "✓ Atteint",
+          "newGoal": "+ Nouvel objectif",
+          "withMentor": "Avec {name}",
+          "completedAt": "Atteint le {date}",
+          "createdAt": "Créé le {date}",
+          "completedSuffix": "complété"
+        }
+      },
       "nav": {
         "overview": "Vue d'ensemble",
         "requests": "Demandes",
@@ -723,6 +748,7 @@
         "mentorships": "Mes mentorats",
         "sessions": "Mes sessions",
         "messages": "Messages",
+        "goals": "Objectifs",
         "notifications": "Notifications",
         "availability": "Disponibilités",
         "profileEdit": "Paramètres profil",
@@ -965,8 +991,11 @@
       "subtitle": "Toutes vos sessions de mentorat à venir et passées.",
       "tabs": {
         "upcoming": "À venir",
-        "past": "Passées"
+        "past": "Passées",
+        "cancelled": "Annulées"
       },
+      "tabsCount": "{label} · {count}",
+      "newSessionCta": "+ Nouvelle session",
       "statusLabels": {
         "scheduled": "Planifiée",
         "inProgress": "En cours",
@@ -982,8 +1011,10 @@
       "card": {
         "with": "Avec {name}",
         "duration": "{minutes} min",
-        "joinCta": "Rejoindre →",
-        "openCta": "Détails →"
+        "joinCta": "Rejoindre",
+        "rescheduleCta": "Reporter",
+        "openCta": "Détails →",
+        "untitled": "Session de mentorat"
       },
       "empty": {
         "upcoming": "Aucune session à venir.",

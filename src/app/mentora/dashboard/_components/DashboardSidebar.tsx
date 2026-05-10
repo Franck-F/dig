@@ -15,6 +15,10 @@ const ITEMS: Item[] = [
   { href: '/mentora/dashboard/mentorships', key: 'mentorships', show: (r) => r !== 'none' },
   { href: '/mentora/dashboard/sessions', key: 'sessions', show: (r) => r !== 'none' },
   { href: '/mentora/dashboard/messages', key: 'messages', show: (r) => r !== 'none' },
+  // Mentee-only: personal goal-tracker. Mentors see goal progress per
+  // mentorship from the mentorship detail view, so they don't need a
+  // dedicated cross-mentee goals tab.
+  { href: '/mentora/dashboard/goals', key: 'goals', show: (r) => r === 'mentee' },
   { href: '/mentora/dashboard/notifications', key: 'notifications', show: () => true },
   { href: '/mentora/dashboard/availability', key: 'availability', show: (r) => r === 'mentor' },
   { href: '/mentora/dashboard/profile/edit', key: 'profileEdit', show: () => true },
