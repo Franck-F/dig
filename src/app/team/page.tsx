@@ -27,15 +27,15 @@ const teamColors = [
   '#24325F',
   '#7301FF',
   '#A34BF5',
-  '#F46FB1',
-  '#24325F',
 ];
 
 export default async function TeamPage() {
   const t = await getTranslations('team');
 
-  // Person schema for the named team members (skip volunteer placeholder).
-  const realMemberIndices = [0, 1, 2, 3, 4, 5, 6, 7] as const;
+  // Person schema for the named team members (skip volunteer placeholder
+  // at index 6, which is the generic "20+ volunteers & mentors" card and
+  // not a real Person).
+  const realMemberIndices = [0, 1, 2, 3, 4, 5] as const;
   const personLdItems = realMemberIndices.map((i) =>
     personJsonLd({
       name: t(`members.${i}.name`),
@@ -97,6 +97,14 @@ export default async function TeamPage() {
                   }}
                 />
                 <div
+                  // `title` + `aria-label` give the full name to assistive
+                  // tech and to any browser tooltip, which prevents AI
+                  // browsers (Comet, Edge Copilot, …) from "helpfully"
+                  // expanding 2-letter initials like BC, QC, MF into
+                  // geographic abbreviations.
+                  title={name}
+                  aria-label={name}
+                  translate="no"
                   style={{
                     width: 96,
                     height: 96,
@@ -114,11 +122,13 @@ export default async function TeamPage() {
                     boxShadow: '0 8px 20px rgba(115,1,255,0.20)',
                   }}
                 >
-                  {name
-                    .split(' ')
-                    .map((w) => w[0])
-                    .join('')
-                    .slice(0, 2)}
+                  <span aria-hidden translate="no">
+                    {name
+                      .split(' ')
+                      .map((w) => w[0])
+                      .join('')
+                      .slice(0, 2)}
+                  </span>
                 </div>
                 <div style={{ fontWeight: 700, marginTop: 14, fontSize: 16 }}>{name}</div>
                 <div className="dz-grad-text" style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>

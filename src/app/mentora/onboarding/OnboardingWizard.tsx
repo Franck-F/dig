@@ -4,7 +4,6 @@ import { useState, useTransition, type CSSProperties, type ReactNode } from 'rea
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-// Provided by Agent 2B-2.
 import { upsertMenteeProfile } from '@/lib/actions/mentora/mentee-profile';
 import { addMenteeGoalSkill } from '@/lib/actions/mentora/mentee-profile';
 import { getSkillIdsBySlugs } from '@/lib/mentora/skills';
@@ -15,10 +14,21 @@ import { useTheme } from '@/components/ThemeProvider';
 const LEVELS = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'] as const;
 const FORMATS = ['REMOTE', 'IN_PERSON', 'HYBRID'] as const;
 const DISCOVERED_VIA = ['SEARCH', 'SOCIAL', 'FRIEND', 'EVENT', 'PARTNER', 'OTHER'] as const;
+const GOAL_KEYS = ['first-job', 'career-change', 'side-project', 'level-up'] as const;
+const FREQUENCY_KEYS = ['weekly', 'biweekly', 'monthly', 'ondemand'] as const;
+const SLOT_ROWS = [
+  { key: 'morning', label: '9 h–12 h' },
+  { key: 'noon', label: '12 h–14 h' },
+  { key: 'afternoon', label: '14 h–18 h' },
+  { key: 'evening', label: '18 h–22 h' },
+] as const;
 
 type Level = (typeof LEVELS)[number];
 type Format = (typeof FORMATS)[number];
 type DiscoveredVia = (typeof DISCOVERED_VIA)[number];
+type GoalKey = (typeof GOAL_KEYS)[number];
+type FrequencyKey = (typeof FREQUENCY_KEYS)[number];
+type SlotRowKey = (typeof SLOT_ROWS)[number]['key'];
 
 export type OnboardingPrefill = {
   goals: string;
@@ -32,23 +42,45 @@ export type OnboardingPrefill = {
   goalSkillSlugs: string[];
 } | null;
 
+type WizardSkill = { slug: string; name: string };
+
 type Props = {
   prefill: OnboardingPrefill;
   /** When set, redirect target after success (preserves `?next=` from query). */
   redirectAfter: string;
+  /** Pre-fetched curated skill list (server component fetches via
+   *  `listPopularSkillsForWizard`). */
+  skills: WizardSkill[];
 };
 
 /**
- * Three-step mentee onboarding wizard. Persists on the final step:
- *   1. upsertMenteeProfile (goals, level, format, languages, timezone, …)
- *   2. addMenteeGoalSkill for each picked skill (best-effort)
- * Then redirects the viewer to /mentora/discover (or to ?next=… if set).
+ * Three-step mentee onboarding wizard, redesigned to match the Claude
+ * Design handoff:
+ *
+ *   1. Objectifs — main goal cards (4 picks) + domain chip selector +
+ *                  one-sentence goal description
+ *   2. Parcours — current level + format preference + challenges textarea
+ *   3. Disponibilités — frequency cards + slot grid (4 ranges × 7 days,
+ *                        purely informational on the mentee side, used
+ *                        as a matching hint) + languages + timezone +
+ *                        AI compatibility banner
+ *
+ * Persistence:
+ *   - upsertMenteeProfile (goals, level, format, languages, timezone, …)
+ *   - addMenteeGoalSkill for each picked chip (best-effort)
+ *
+ * The slot grid is a UX preference (not a structured availability rule —
+ * mentees don't have an availability table). We append a compact
+ * representation to `currentChallenges` when ticked, so admin and the
+ * matching algorithm can read it without a schema migration.
  */
-export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
+export default function OnboardingWizard({ prefill, redirectAfter, skills }: Props) {
   const t = useTranslations('mentora.onboarding');
   const tStep1 = useTranslations('mentora.onboarding.step1');
   const tStep2 = useTranslations('mentora.onboarding.step2');
   const tStep3 = useTranslations('mentora.onboarding.step3');
+  const tSlots = useTranslations('mentora.onboarding.slots');
+  const tBanner = useTranslations('mentora.onboarding.matchBanner');
   const tActions = useTranslations('mentora.onboarding.actions');
   const router = useRouter();
   const { theme } = useTheme();
@@ -58,13 +90,35 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
 
+  // ──── Step 1 ────────────────────────────────────────────────────────
+  const [primaryGoal, setPrimaryGoal] = useState<GoalKey>('first-job');
+  const [selectedSkills, setSelectedSkills] = useState<Set<string>>(
+    new Set(prefill?.goalSkillSlugs ?? []),
+  );
   const [goals, setGoals] = useState(prefill?.goals ?? '');
+
+  const toggleSkill = (slug: string) => {
+    setSelectedSkills((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else if (next.size < 6) next.add(slug); // soft cap
+      return next;
+    });
+  };
+
+  // ──── Step 2 ────────────────────────────────────────────────────────
   const [level, setLevel] = useState<Level>(prefill?.level ?? 'BEGINNER');
   const [preferredFormat, setPreferredFormat] = useState<Format>(
     prefill?.preferredFormat ?? 'REMOTE',
   );
-  const [skillsRaw, setSkillsRaw] = useState((prefill?.goalSkillSlugs ?? []).join(', '));
   const [challenges, setChallenges] = useState(prefill?.currentChallenges ?? '');
+  const [discoveredVia, setDiscoveredVia] = useState<DiscoveredVia>(
+    prefill?.discoveredVia ?? 'SEARCH',
+  );
+
+  // ──── Step 3 ────────────────────────────────────────────────────────
+  const [frequency, setFrequency] = useState<FrequencyKey>('weekly');
+  const [slots, setSlots] = useState<Set<string>>(new Set());
   const [languagesRaw, setLanguagesRaw] = useState(
     (prefill?.languages ?? ['fr']).join(', '),
   );
@@ -73,10 +127,18 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
       (typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'Europe/Paris'),
   );
   const [location, setLocation] = useState(prefill?.location ?? '');
-  const [discoveredVia, setDiscoveredVia] = useState<DiscoveredVia>(
-    prefill?.discoveredVia ?? 'SEARCH',
-  );
 
+  const toggleSlot = (rowKey: SlotRowKey, day: number) => {
+    const k = `${rowKey}:${day}`;
+    setSlots((prev) => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      return next;
+    });
+  };
+
+  // ──── Submit ────────────────────────────────────────────────────────
   const submit = () => {
     setError(null);
 
@@ -95,21 +157,37 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
       return;
     }
 
-    const skillSlugs = skillsRaw
-      .split(',')
-      .map((s) => s.trim().toLowerCase())
-      .filter(Boolean);
-
     startTransition(async () => {
       try {
-        // 1. Upsert profile.
+        // Build a compact preferences blob — primary goal + frequency +
+        // slot grid — appended to `currentChallenges`. Lets admin and
+        // the matching algorithm read user preferences without a schema
+        // migration. Format is a small JSON snippet at the end of the
+        // text, separated by a fenced marker so it can be stripped on
+        // display.
+        const prefsBlob = JSON.stringify({
+          v: 1,
+          primaryGoal,
+          frequency,
+          slots: [...slots],
+        });
+        const challengesWithPrefs = challenges.trim()
+          ? `${challenges.trim()}\n\n<!--mentora-prefs:${prefsBlob}-->`
+          : `<!--mentora-prefs:${prefsBlob}-->`;
+
+        // Tag the goals string with the primary goal label for quick scan.
+        const goalLabel = tStep1(`goalCards.${primaryGoal}.title`);
+        const taggedGoals = goals.trim().startsWith(`[${goalLabel}]`)
+          ? goals.trim()
+          : `[${goalLabel}] ${goals.trim()}`;
+
         const profileRes = await upsertMenteeProfile({
-          goals: goals.trim(),
+          goals: taggedGoals,
           level,
           languages,
           timezone,
           location: location.trim() || undefined,
-          currentChallenges: challenges.trim() || undefined,
+          currentChallenges: challengesWithPrefs,
           preferredFormat,
           discoveredVia,
         });
@@ -118,19 +196,18 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
           return;
         }
 
-        // 2. Resolve goal-skill slugs to ids and persist (best-effort).
-        if (skillSlugs.length > 0) {
+        if (selectedSkills.size > 0) {
           try {
-            const skillIds = await getSkillIdsBySlugs(skillSlugs);
+            const skillIds = await getSkillIdsBySlugs([...selectedSkills]);
             for (const skillId of skillIds) {
               try {
                 await addMenteeGoalSkill({ skillId });
               } catch {
-                // Ignore individual skill errors — partial success acceptable.
+                /* partial success acceptable */
               }
             }
           } catch {
-            // Slug resolution is best-effort.
+            /* slug resolution best-effort */
           }
         }
 
@@ -149,7 +226,7 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
   const isUpdate = prefill !== null;
   const isFinal = step === totalSteps - 1;
 
-  // Visual tokens — light/dark aware.
+  // ──── Tokens ────────────────────────────────────────────────────────
   const ink = isDark ? 'white' : '#1a1f3a';
   const sub = isDark ? 'rgba(255,255,255,0.65)' : '#545b7a';
   const cardBg = isDark ? 'rgba(255,255,255,0.04)' : '#faf7ff';
@@ -222,16 +299,21 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
     </div>
   );
 
-  const renderChip = (
-    label: string,
-    active: boolean,
-    onClick: () => void,
-    key?: string | number,
-  ) => (
+  const Chip = ({
+    label,
+    active,
+    onClick,
+    title,
+  }: {
+    label: string;
+    active: boolean;
+    onClick: () => void;
+    title?: string;
+  }) => (
     <button
-      key={key}
       type="button"
       onClick={onClick}
+      title={title}
       style={{
         padding: '8px 14px',
         borderRadius: 999,
@@ -248,13 +330,13 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
     </button>
   );
 
-  // Step labels for the shell sidebar.
   const stepLabels = [
     { t: tStep1('title'), s: tStep1('subtitle') },
     { t: tStep2('title'), s: tStep2('subtitle') },
     { t: tStep3('title'), s: tStep3('subtitle') },
   ];
 
+  // ──── Step 1 — Objectifs ───────────────────────────────────────────
   const renderStep1 = () => (
     <>
       <Title
@@ -263,43 +345,101 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
         sub={tStep1('subtitle')}
       />
       <div style={fieldGap}>
+        {/* Goal cards (radio-like selection) */}
         <div>
-          <FieldLabel htmlFor="goals" hint={tStep1('goalsHint')}>{tStep1('goalsLabel')}</FieldLabel>
+          <FieldLabel>{tStep1('goalCardsLabel')}</FieldLabel>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+            {GOAL_KEYS.map((k) => {
+              const active = primaryGoal === k;
+              return (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => setPrimaryGoal(k)}
+                  style={{
+                    padding: 16,
+                    borderRadius: 14,
+                    border: active ? '2px solid #7301FF' : cardBd,
+                    background: active ? 'rgba(115,1,255,0.05)' : cardBg,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    color: ink,
+                    position: 'relative',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {active && (
+                    <span
+                      aria-hidden
+                      style={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                        width: 22,
+                        height: 22,
+                        borderRadius: '50%',
+                        background: '#7301FF',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      ✓
+                    </span>
+                  )}
+                  <div aria-hidden style={{ fontSize: 22, marginBottom: 6 }}>
+                    {tStep1(`goalCards.${k}.emoji`)}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700 }}>
+                    {tStep1(`goalCards.${k}.title`)}
+                  </div>
+                  <div style={{ fontSize: 12, color: sub, marginTop: 4 }}>
+                    {tStep1(`goalCards.${k}.desc`)}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Domain chips (skills) */}
+        <div>
+          <FieldLabel hint={tStep1('skillsHint')}>{tStep1('skillsLabel')}</FieldLabel>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {skills.map((s) => (
+              <Chip
+                key={s.slug}
+                label={s.name}
+                active={selectedSkills.has(s.slug)}
+                onClick={() => toggleSkill(s.slug)}
+                title={s.slug}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* One-sentence goal */}
+        <div>
+          <FieldLabel htmlFor="goals" hint={tStep1('goalsHint')}>
+            {tStep1('goalsLabel')}
+          </FieldLabel>
           <textarea
             id="goals"
-            rows={5}
+            rows={3}
             value={goals}
             onChange={(e) => setGoals(e.target.value)}
             placeholder={tStep1('goalsPlaceholder')}
-            maxLength={2000}
             style={{ ...inputStyle, resize: 'vertical' }}
           />
-        </div>
-        <div>
-          <FieldLabel>{tStep1('levelLabel')}</FieldLabel>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {LEVELS.map((l) =>
-              renderChip(tStep1(`level.${l}`), level === l, () => setLevel(l), l),
-            )}
-          </div>
-        </div>
-        <div>
-          <FieldLabel>{tStep1('formatLabel')}</FieldLabel>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {FORMATS.map((f) =>
-              renderChip(
-                tStep1(`format.${f}`),
-                preferredFormat === f,
-                () => setPreferredFormat(f),
-                f,
-              ),
-            )}
-          </div>
         </div>
       </div>
     </>
   );
 
+  // ──── Step 2 — Parcours ────────────────────────────────────────────
   const renderStep2 = () => (
     <>
       <Title
@@ -309,16 +449,61 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
       />
       <div style={fieldGap}>
         <div>
-          <FieldLabel htmlFor="goalSkills" hint={tStep2('skillsHint')}>{tStep2('skillsLabel')}</FieldLabel>
-          <input
-            id="goalSkills"
-            type="text"
-            value={skillsRaw}
-            onChange={(e) => setSkillsRaw(e.target.value)}
-            placeholder={tStep2('skillsPlaceholder')}
-            style={inputStyle}
-          />
+          <FieldLabel>{tStep1('levelLabel')}</FieldLabel>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+            {LEVELS.map((l) => {
+              const active = level === l;
+              return (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setLevel(l)}
+                  style={{
+                    padding: 14,
+                    borderRadius: 12,
+                    border: active ? '2px solid #7301FF' : cardBd,
+                    background: active ? 'rgba(115,1,255,0.05)' : cardBg,
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    color: ink,
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>{tStep1(`level.${l}`)}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        <div>
+          <FieldLabel>{tStep1('formatLabel')}</FieldLabel>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+            {FORMATS.map((f) => {
+              const active = preferredFormat === f;
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setPreferredFormat(f)}
+                  style={{
+                    padding: 14,
+                    borderRadius: 12,
+                    border: active ? '2px solid #7301FF' : cardBd,
+                    background: active ? 'rgba(115,1,255,0.05)' : cardBg,
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    color: ink,
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>{tStep1(`format.${f}`)}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div>
           <FieldLabel htmlFor="challenges">{tStep2('challengesLabel')}</FieldLabel>
           <textarea
@@ -327,14 +512,28 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
             value={challenges}
             onChange={(e) => setChallenges(e.target.value)}
             placeholder={tStep2('challengesPlaceholder')}
-            maxLength={2000}
             style={{ ...inputStyle, resize: 'vertical' }}
           />
+        </div>
+
+        <div>
+          <FieldLabel>{tStep3('discoveredViaLabel')}</FieldLabel>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {DISCOVERED_VIA.map((d) => (
+              <Chip
+                key={d}
+                label={tStep3(`discoveredVia.${d}`)}
+                active={discoveredVia === d}
+                onClick={() => setDiscoveredVia(d)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </>
   );
 
+  // ──── Step 3 — Disponibilités ──────────────────────────────────────
   const renderStep3 = () => (
     <>
       <Title
@@ -343,30 +542,67 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
         sub={tStep3('subtitle')}
       />
       <div style={fieldGap}>
+        {/* Frequency */}
         <div>
-          <FieldLabel htmlFor="languages" hint={tStep3('languagesHint')}>{tStep3('languagesLabel')}</FieldLabel>
-          <input
-            id="languages"
-            type="text"
-            value={languagesRaw}
-            onChange={(e) => setLanguagesRaw(e.target.value)}
-            placeholder={tStep3('languagesPlaceholder')}
-            maxLength={64}
-            style={inputStyle}
+          <FieldLabel>{tStep3('frequencyLabel')}</FieldLabel>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {FREQUENCY_KEYS.map((f) => (
+              <Chip
+                key={f}
+                label={tStep3(`frequency.${f}`)}
+                active={frequency === f}
+                onClick={() => setFrequency(f)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Slot grid */}
+        <div>
+          <FieldLabel hint={tSlots('hint')}>{tSlots('header')}</FieldLabel>
+          <SlotGrid
+            slots={slots}
+            onToggle={toggleSlot}
+            cardBg={cardBg}
+            cardBd={cardBd}
+            ink={ink}
+            sub={sub}
+            isDark={isDark}
+            tSlots={tSlots}
           />
         </div>
-        <div>
-          <FieldLabel htmlFor="timezone" hint={tStep3('timezoneAutodetect')}>{tStep3('timezoneLabel')}</FieldLabel>
-          <input
-            id="timezone"
-            type="text"
-            value={timezone}
-            onChange={(e) => setTimezone(e.target.value)}
-            maxLength={64}
-            aria-label={tStep3('timezoneLabel')}
-            placeholder="Europe/Paris"
-            style={inputStyle}
-          />
+
+        {/* Languages + timezone + city */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div>
+            <FieldLabel htmlFor="languages" hint={tStep3('languagesHint')}>
+              {tStep3('languagesLabel')}
+            </FieldLabel>
+            <input
+              id="languages"
+              type="text"
+              value={languagesRaw}
+              onChange={(e) => setLanguagesRaw(e.target.value)}
+              placeholder={tStep3('languagesPlaceholder')}
+              maxLength={64}
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <FieldLabel htmlFor="timezone" hint={tStep3('timezoneAutodetect')}>
+              {tStep3('timezoneLabel')}
+            </FieldLabel>
+            <input
+              id="timezone"
+              type="text"
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              maxLength={64}
+              aria-label={tStep3('timezoneLabel')}
+              placeholder="Europe/Paris"
+              style={inputStyle}
+            />
+          </div>
         </div>
         <div>
           <FieldLabel htmlFor="location">{tStep3('locationLabel')}</FieldLabel>
@@ -381,17 +617,40 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
             style={inputStyle}
           />
         </div>
-        <div>
-          <FieldLabel>{tStep3('discoveredViaLabel')}</FieldLabel>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {DISCOVERED_VIA.map((d) =>
-              renderChip(
-                tStep3(`discoveredVia.${d}`),
-                discoveredVia === d,
-                () => setDiscoveredVia(d),
-                d,
-              ),
-            )}
+
+        {/* AI compatibility banner */}
+        <div
+          style={{
+            marginTop: 8,
+            padding: 18,
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, rgba(115,1,255,0.08), rgba(244,111,177,0.06))',
+            border: '1px solid rgba(115,1,255,0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+          }}
+        >
+          <div
+            aria-hidden
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              background: 'linear-gradient(135deg, #7301FF, #F46FB1)',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 18,
+              flexShrink: 0,
+            }}
+          >
+            ✦
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: ink }}>{tBanner('title')}</div>
+            <div style={{ fontSize: 12, color: sub }}>{tBanner('body')}</div>
           </div>
         </div>
       </div>
@@ -462,6 +721,8 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
           marginTop: 36,
           paddingTop: 24,
           borderTop: cardBd,
+          flexWrap: 'wrap',
+          gap: 12,
         }}
       >
         <button
@@ -500,7 +761,7 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
               opacity: pending ? 0.7 : 1,
               boxShadow: '0 10px 24px rgba(115,1,255,0.30)',
               fontFamily: 'inherit',
-              minWidth: 160,
+              minWidth: 200,
             }}
           >
             {ctaLabel} {!pending && '→'}
@@ -508,5 +769,140 @@ export default function OnboardingWizard({ prefill, redirectAfter }: Props) {
         </div>
       </div>
     </OnboardingShell>
+  );
+}
+
+// ──── SlotGrid (mentee variant — 4 ranges × 7 days) ──────────────────
+function SlotGrid({
+  slots,
+  onToggle,
+  cardBg,
+  cardBd,
+  ink,
+  sub,
+  isDark,
+  tSlots,
+}: {
+  slots: Set<string>;
+  onToggle: (rowKey: SlotRowKey, day: number) => void;
+  cardBg: string;
+  cardBd: string;
+  ink: string;
+  sub: string;
+  isDark: boolean;
+  tSlots: (key: string) => string;
+}) {
+  const days = (() => {
+    try {
+      const raw = (tSlots as unknown as { raw: (k: string) => string[] }).raw('days');
+      if (Array.isArray(raw) && raw.length === 7) return raw;
+    } catch {
+      /* fall through */
+    }
+    return ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  })();
+
+  return (
+    <div
+      style={{
+        borderRadius: 14,
+        border: cardBd,
+        overflow: 'hidden',
+        background: isDark ? 'rgba(255,255,255,0.03)' : 'white',
+      }}
+    >
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(8, 1fr)',
+          borderBottom: cardBd,
+        }}
+      >
+        {['', ...days].map((d, i) => (
+          <div
+            key={i}
+            style={{
+              padding: '10px 0',
+              textAlign: 'center',
+              fontSize: 11,
+              fontWeight: 700,
+              color: i === 0 ? sub : ink,
+              borderRight: i < 7 ? cardBd : 'none',
+            }}
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+      {SLOT_ROWS.map((row, rowIdx) => (
+        <div
+          key={row.key}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(8, 1fr)',
+            borderBottom: rowIdx < SLOT_ROWS.length - 1 ? cardBd : 'none',
+          }}
+        >
+          <div
+            style={{
+              padding: '10px 8px',
+              borderRight: cardBd,
+              fontSize: 11,
+              fontWeight: 700,
+              color: ink,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {tSlots(`rows.${row.key}`)}
+          </div>
+          {[0, 1, 2, 3, 4, 5, 6].map((day) => {
+            const k = `${row.key}:${day}`;
+            const on = slots.has(k);
+            return (
+              <button
+                key={day}
+                type="button"
+                aria-pressed={on}
+                onClick={() => onToggle(row.key, day)}
+                style={{
+                  padding: 6,
+                  borderRight: day < 6 ? cardBd : 'none',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    height: 32,
+                    borderRadius: 8,
+                    background: on
+                      ? 'linear-gradient(135deg, #7301FF, #A34BF5)'
+                      : isDark
+                        ? 'rgba(255,255,255,0.04)'
+                        : cardBg,
+                    border: on
+                      ? 'none'
+                      : isDark
+                        ? '1px dashed rgba(255,255,255,0.10)'
+                        : '1px dashed rgba(115,1,255,0.15)',
+                    color: on ? 'white' : sub,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {on ? '✓' : ''}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      ))}
+    </div>
   );
 }

@@ -24,6 +24,20 @@ const STATUS_COLOR: Record<CycleStatus, string> = {
   ARCHIVED: '#8b91ad',
 };
 
+/**
+ * Phase → progress mapping. Used to render the cycle progress bar.
+ * Onboarding starts the cycle (20 %), Matching is the recruitment
+ * peak (50 %), Sessions is the longest stretch (75 %), Recap is
+ * end-of-life (100 %). Numbers are deliberately not even spreads —
+ * they reflect the actual time mentors / mentees spend in each phase.
+ */
+const PHASE_PROGRESS: Record<CyclePhase, number> = {
+  ONBOARDING: 20,
+  MATCHING: 50,
+  SESSIONS: 75,
+  RECAP: 100,
+};
+
 export default function CycleRow({
   cycleId,
   name,
@@ -34,6 +48,8 @@ export default function CycleRow({
   endsAt,
   description,
   createdByName,
+  mentorCount,
+  menteeCount,
 }: {
   cycleId: string;
   name: string;
@@ -44,7 +60,14 @@ export default function CycleRow({
   endsAt: string;
   description: string | null;
   createdByName: string;
+  /** Distinct mentors who had at least one mentorship started inside
+   *  this cycle's date window. 0 when DRAFT. */
+  mentorCount: number;
+  /** Distinct mentees, same approximation as mentorCount. */
+  menteeCount: number;
 }) {
+  const progress = PHASE_PROGRESS[phase];
+  const accentColor = STATUS_COLOR[status];
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -151,6 +174,55 @@ export default function CycleRow({
           )}
         </div>
       </header>
+
+      {/* Stats + progress bar — visual cycle health at a glance. */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 18,
+          marginBottom: 10,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)' }}>{mentorCount}</div>
+          <div style={{ fontSize: 10, color: '#8b91ad', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
+            Mentors
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)' }}>{menteeCount}</div>
+          <div style={{ fontSize: 10, color: '#8b91ad', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
+            Mentorées
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)' }}>{progress}%</div>
+          <div style={{ fontSize: 10, color: '#8b91ad', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 700 }}>
+            Avancement
+          </div>
+        </div>
+      </div>
+      <div
+        aria-hidden
+        style={{
+          height: 5,
+          borderRadius: 3,
+          background: 'rgba(115,1,255,0.08)',
+          overflow: 'hidden',
+          marginBottom: 14,
+        }}
+      >
+        <div
+          style={{
+            width: `${progress}%`,
+            height: '100%',
+            borderRadius: 3,
+            background: `linear-gradient(90deg, ${accentColor}, ${accentColor}99)`,
+            transition: 'width 250ms ease',
+          }}
+        />
+      </div>
 
       {/* Phase picker — disabled when archived. */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>

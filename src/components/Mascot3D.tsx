@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Mascot3DProps = {
   src: string;
@@ -19,6 +19,12 @@ type Mascot3DProps = {
    */
   sizes?: string;
   style?: React.CSSProperties;
+  /**
+   * If provided, hovering (or tapping) the mascot pops up speech
+   * bubbles — multiple at a time, drawn at fixed cardinal slots
+   * around the mascot so they don't overlap. Bubbles fade out
+   * automatically after a few seconds.
+   */
   phrases?: string[];
 };
 
@@ -37,6 +43,44 @@ const MASCOT_BLUR_DATA_URLS: Record<string, string> = {
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAOVBMVEVMaXFDO4eKZcG1qbl7UL91VLiKXcokMWVIO4uDVMaddNSRbdrBjPCSYdKNeLHSnfqzl8nKtNqkisHaSsO0AAAAEHRSTlMAVfz4lOyrHzJZ/g74ytz+iRuQKQAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAENJREFUeJw1jFkOACEMQhntprNV73/YidPKB7wQAgBAj+W/VDc1kZY0x+jB96zVJZaPe7FYUC95YfxeWcKY99tJtPIDTQwBbHygSHMAAAAASUVORK5CYII=',
 };
 
+/** Fixed slots so bubbles stack cleanly around the mascot rather
+ *  than piling on top of each other. Each call cycles through them
+ *  in order, then loops.
+ *
+ *  Coordinates are deliberately INSIDE the wrap (positive offsets)
+ *  so the bubbles don't clip into the sticky navbar above or the
+ *  hero text on the left. They sit near the mascot's head area
+ *  (vertical 8–35 % is where the faces actually are in the PNG). */
+const BUBBLE_SLOTS: Array<{
+  top?: string;
+  right?: string;
+  bottom?: string;
+  left?: string;
+  /** Translate applied so the slot anchor lines up nicely. */
+  translate?: string;
+  tail: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
+}> = [
+  // Just above the mascots' heads, centred.
+  { top: '6%', left: '50%', translate: 'translateX(-50%)', tail: 'bottom-left' },
+  // Right of the right mascot's head — bubble points down-left toward it.
+  { top: '22%', right: '4%', tail: 'bottom-left' },
+  // Left of the left mascot's head — bubble points down-right toward it.
+  { top: '22%', left: '4%', tail: 'bottom-right' },
+  // Top-left, slightly higher — for a 4th concurrent bubble.
+  { top: '8%', left: '12%', tail: 'bottom-right' },
+];
+
+type ActiveBubble = {
+  id: number;
+  text: string;
+  slot: number;
+  visible: boolean;
+};
+
+const MAX_VISIBLE_BUBBLES = 3;
+const BUBBLE_LIFETIME_MS = 3500;
+const BUBBLE_FADE_MS = 220;
+
 export default function Mascot3D({
   src,
   // Empty default ⇒ decorative; callers should pass a translated alt
@@ -54,9 +98,11 @@ export default function Mascot3D({
 }: Mascot3DProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [phrase, setPhrase] = useState<string | null>(null);
-  const [phraseVisible, setPhraseVisible] = useState(false);
+  const idRef = useRef(0);
+  const slotIdxRef = useRef(0);
+  const lastSpawnRef = useRef(0);
+  const timeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+  const [bubbles, setBubbles] = useState<ActiveBubble[]>([]);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -83,29 +129,52 @@ export default function Mascot3D({
   }, [intensity]);
 
   useEffect(() => {
+    const timeouts = timeoutsRef.current;
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeouts.forEach((t) => clearTimeout(t));
+      timeouts.clear();
     };
   }, []);
 
-  const handleClick = () => {
+  /** Spawn a new bubble. Throttled so a single hover doesn't fire a
+   *  swarm — at most one bubble every 350ms. */
+  const spawnBubble = useCallback(() => {
     if (!phrases || phrases.length === 0) return;
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    const next = phrases[Math.floor(Math.random() * phrases.length)];
-    setPhrase(next);
-    // Trigger fade-in on next frame
-    requestAnimationFrame(() => setPhraseVisible(true));
-    timeoutRef.current = setTimeout(() => {
-      setPhraseVisible(false);
-      timeoutRef.current = setTimeout(() => {
-        setPhrase(null);
-        timeoutRef.current = null;
-      }, 220);
-    }, 3000);
-  };
+    const now = Date.now();
+    if (now - lastSpawnRef.current < 350) return;
+    lastSpawnRef.current = now;
+
+    const id = ++idRef.current;
+    const text = phrases[Math.floor(Math.random() * phrases.length)];
+    const slot = slotIdxRef.current % BUBBLE_SLOTS.length;
+    slotIdxRef.current += 1;
+
+    setBubbles((prev) => {
+      // Cap concurrent bubbles. When at the cap, evict the oldest
+      // (FIFO) — its slot is freed for the new one.
+      const next = prev.length >= MAX_VISIBLE_BUBBLES ? prev.slice(1) : prev;
+      return [...next, { id, text, slot, visible: false }];
+    });
+
+    // Fade in on the next frame so the CSS transition runs.
+    const showT = setTimeout(() => {
+      setBubbles((prev) => prev.map((b) => (b.id === id ? { ...b, visible: true } : b)));
+      timeoutsRef.current.delete(showT);
+    }, 16);
+    timeoutsRef.current.add(showT);
+
+    // Schedule fade-out + removal.
+    const hideT = setTimeout(() => {
+      setBubbles((prev) => prev.map((b) => (b.id === id ? { ...b, visible: false } : b)));
+      timeoutsRef.current.delete(hideT);
+      const removeT = setTimeout(() => {
+        setBubbles((prev) => prev.filter((b) => b.id !== id));
+        timeoutsRef.current.delete(removeT);
+      }, BUBBLE_FADE_MS);
+      timeoutsRef.current.add(removeT);
+    }, BUBBLE_LIFETIME_MS);
+    timeoutsRef.current.add(hideT);
+  }, [phrases]);
 
   const finalHeight = height ?? width;
   const interactive = Boolean(phrases && phrases.length > 0);
@@ -115,7 +184,10 @@ export default function Mascot3D({
       ref={wrapRef}
       className={`dz-mascot-wrap${glow ? ' dz-mascot-glow' : ''}`}
       style={{ width, position: 'relative', cursor: interactive ? 'pointer' : undefined, ...style }}
-      onClick={interactive ? handleClick : undefined}
+      onMouseEnter={interactive ? spawnBubble : undefined}
+      onMouseMove={interactive ? spawnBubble : undefined}
+      onTouchStart={interactive ? spawnBubble : undefined}
+      onFocus={interactive ? spawnBubble : undefined}
       role={interactive ? 'button' : undefined}
       tabIndex={interactive ? 0 : undefined}
       onKeyDown={
@@ -123,7 +195,7 @@ export default function Mascot3D({
           ? (e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                handleClick();
+                spawnBubble();
               }
             }
           : undefined
@@ -153,46 +225,72 @@ export default function Mascot3D({
           style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }}
         />
       </div>
-      {phrase !== null && (
-        <div
-          aria-live="polite"
-          style={{
-            position: 'absolute',
-            top: '-10%',
-            right: '-8%',
-            background: 'white',
-            borderRadius: 18,
-            padding: '12px 18px',
-            boxShadow: '0 12px 32px rgba(36,18,80,0.18)',
-            border: '1px solid rgba(115,1,255,0.12)',
-            fontWeight: 600,
-            fontSize: 15,
-            color: '#1a1f3a',
-            whiteSpace: 'nowrap',
-            opacity: phraseVisible ? 1 : 0,
-            transform: phraseVisible ? 'translateY(0)' : 'translateY(-4px)',
-            transition: 'opacity 220ms ease, transform 220ms ease',
-            pointerEvents: 'none',
-            zIndex: 5,
-          }}
-        >
-          {phrase}
-          <span
-            aria-hidden
+      {bubbles.map((b) => {
+        const slot = BUBBLE_SLOTS[b.slot];
+        const tail = slot.tail;
+        const baseTranslate = slot.translate ?? '';
+        const restTransform = b.visible
+          ? 'translateY(0) scale(1)'
+          : 'translateY(-6px) scale(0.92)';
+        const combinedTransform = `${baseTranslate} ${restTransform}`.trim();
+        return (
+          <div
+            key={b.id}
+            aria-live="polite"
+            className="dz-mascot-bubble"
             style={{
               position: 'absolute',
-              bottom: -6,
-              left: 22,
-              width: 12,
-              height: 12,
+              top: slot.top,
+              right: slot.right,
+              bottom: slot.bottom,
+              left: slot.left,
               background: 'white',
-              borderRight: '1px solid rgba(115,1,255,0.12)',
-              borderBottom: '1px solid rgba(115,1,255,0.12)',
-              transform: 'rotate(45deg)',
+              borderRadius: 18,
+              padding: '10px 16px',
+              boxShadow: '0 12px 32px rgba(36,18,80,0.18)',
+              border: '1px solid rgba(115,1,255,0.14)',
+              fontWeight: 600,
+              fontSize: 14,
+              color: '#1a1f3a',
+              maxWidth: 240,
+              lineHeight: 1.35,
+              opacity: b.visible ? 1 : 0,
+              transform: combinedTransform,
+              transition: `opacity ${BUBBLE_FADE_MS}ms ease, transform ${BUBBLE_FADE_MS}ms ease`,
+              pointerEvents: 'none',
+              zIndex: 5,
             }}
-          />
-        </div>
-      )}
+          >
+            {b.text}
+            <span
+              aria-hidden
+              style={{
+                position: 'absolute',
+                bottom: tail.startsWith('bottom') ? -6 : undefined,
+                top: tail.startsWith('top') ? -6 : undefined,
+                left: tail.endsWith('left') ? 22 : undefined,
+                right: tail.endsWith('right') ? 22 : undefined,
+                width: 12,
+                height: 12,
+                background: 'white',
+                borderRight:
+                  tail === 'bottom-left' || tail === 'top-right'
+                    ? '1px solid rgba(115,1,255,0.14)'
+                    : 'none',
+                borderBottom: tail.startsWith('bottom')
+                  ? '1px solid rgba(115,1,255,0.14)'
+                  : 'none',
+                borderLeft:
+                  tail === 'bottom-right' || tail === 'top-left'
+                    ? '1px solid rgba(115,1,255,0.14)'
+                    : 'none',
+                borderTop: tail.startsWith('top') ? '1px solid rgba(115,1,255,0.14)' : 'none',
+                transform: 'rotate(45deg)',
+              }}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

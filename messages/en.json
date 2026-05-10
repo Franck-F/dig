@@ -763,21 +763,80 @@
       "deniedTitle": "Access denied",
       "deniedBody": "This section is reserved for community administrators and moderators.",
       "backToCommunity": "← Back to community",
+      "dashboard": {
+        "title": "Community Pilot",
+        "subtitle": "Moderation & animation",
+        "alert": {
+          "headline": "{flagCount} reports to review · {pendingPosts} pending publications",
+          "subline": "Average moderation time: {avgTime} · Target: < 4h",
+          "cta": "Open the queue →"
+        },
+        "kpis": {
+          "members": { "label": "Active members", "hint": "Last 7 days" },
+          "posts": { "label": "Posts published", "hint": "this week" },
+          "flags": { "label": "Reports", "hint": "to handle" },
+          "engagement": { "label": "Engagement", "hint": "7d rate" },
+          "events": { "label": "Upcoming events", "hint": "{registered} registered" }
+        },
+        "chart": {
+          "title": "Activity — last 14 days",
+          "viewAnalytics": "View analytics →"
+        }
+      },
       "nav": {
+        "dashboard": "Pilot",
         "moderation": "Moderation",
         "channels": "Channels",
         "badges": "Badges",
         "users": "Members",
         "challenges": "Challenges",
         "flags": "Abuse signals",
+        "analytics": "Analytics",
         "auditLog": "Admin log",
         "rgpd": "GDPR register",
         "settings": "Settings"
+      },
+      "analytics": {
+        "metaTitle": "Analytics — Digizelle Community",
+        "title": "Community analytics",
+        "subtitle": "Activity, engagement and sentiment.",
+        "kpis": {
+          "weeklyActive": { "label": "Weekly active members", "trendVsLast": "vs W-1" },
+          "postsPerDay": { "label": "Posts / day", "trendLabel": "7d average" },
+          "reactionsPerPost": { "label": "Reactions / post", "trendLabel": "30d average" },
+          "retention30": { "label": "30d retention", "trendLabel": "d-60 cohort" }
+        },
+        "weeklyActiveTitle": "Weekly active members · 12 weeks",
+        "sentimentTitle": "Community sentiment",
+        "sentimentSub": "Auto-computed from the last 30 days of reactions.",
+        "sentiment": {
+          "positive": "Positive",
+          "neutral": "Neutral",
+          "negative": "Negative",
+          "score": "Mood score · 30 d",
+          "noData": "Not enough reactions yet to compute a reliable sentiment."
+        }
       },
       "moderation": {
         "title": "Moderation queue",
         "subtitle": "Pending reports and history.",
         "queueEmpty": "The queue is empty. Good work!",
+        "kpis": {
+          "pending": "Pending",
+          "resolvedThisWeek": "Resolved this week",
+          "bannedThisMonth": "Banned this month",
+          "avgTime": "Average time"
+        },
+        "severity": {
+          "label": "Severity",
+          "all": "All",
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low"
+        },
+        "evidenceCount": "{count} evidence",
+        "reportedBy": "{reporter} → against {target}",
+        "motif": "Reason: {reason}",
         "tabs": {
           "pending": "Pending",
           "resolved": "Resolved"
@@ -1601,7 +1660,7 @@
           },
           {
             "label": "Manifesto",
-            "href": "/about#manifeste"
+            "href": "/manifesto"
           }
         ]
       },
@@ -1640,6 +1699,10 @@
           {
             "label": "Community",
             "href": "/community"
+          },
+          {
+            "label": "Newsletter",
+            "href": "/newsletter"
           },
           {
             "label": "FAQ",
@@ -1892,6 +1955,149 @@
           "a": "Create your account or write to us via the contact form. We get back to you within 48 hours to direct you to the right program."
         }
       ]
+    }
+  },
+  "manifestoPage": {
+    "metaTitle": "Our manifesto",
+    "metaDescription": "Six convictions that guide every decision we make. Not slogans — commitments we stand by, and that we invite you to challenge.",
+    "eyebrow": "Our manifesto",
+    "titleLine1": "The digital world",
+    "titleHighlight": "must mirror the real one.",
+    "intro": "Six convictions that guide every decision we make. Not slogans — commitments we stand by, and that we invite you to challenge.",
+    "quote": {
+      "body": "We don't train digital users. We train the people who will rewrite the digital world.",
+      "authorName": "Bleuenn Cloteaux",
+      "authorRole": "Co-founder · Digizelle",
+      "authorInitials": "BC"
+    },
+    "principles": {
+      "sectionTitle": "Six",
+      "sectionTitleHighlight": "principles,",
+      "sectionTitleSuffix": "zero compromise.",
+      "sectionIntro": "These principles guide our editorial choices, our partnerships, our budget arbitrations. When we hesitate, we come back here.",
+      "items": {
+        "0": {
+          "title": "Diversity is not optional.",
+          "desc": "Digital is too powerful to reproduce the inequalities of the physical world. We believe in radical inclusion — women, racialised people, people in career change, youth from working-class neighbourhoods: all have a seat at the table."
+        },
+        "1": {
+          "title": "We learn by doing — and by doing together.",
+          "desc": "No one-way lectures. Our programs are workshops, hackathons, concrete projects, where knowledge flows horizontally. The best training is one where everyone teaches as much as they learn."
+        },
+        "2": {
+          "title": "Mentorship is a political act.",
+          "desc": "Giving time means sharing power. Mentora isn't a service: it's a commitment to share the invisible codes, the hidden opportunities, the closed networks — to open them up."
+        },
+        "3": {
+          "title": "Free for beneficiaries. Always.",
+          "desc": "Money must never be a barrier to training. Our programs are entirely free for those who need them. Our model relies on partnerships, philanthropy and volunteers — not on registrations."
+        },
+        "4": {
+          "title": "AI in service of humans.",
+          "desc": "We teach the tools of the future — AI, data, code — without giving up critical thinking. Technology must amplify humanity, not replace it. We equip without alienating."
+        },
+        "5": {
+          "title": "We measure what matters.",
+          "desc": "Not only the numbers. We count the jobs found, the vocations born, the self-esteems rebuilt, the promotions unlocked. Social impact can't be reduced to a dashboard."
+        }
+      }
+    },
+    "always": {
+      "tag": "✓ What we do",
+      "title": "Always",
+      "items": {
+        "0": "Measure our impact, and publish it — even when it's modest.",
+        "1": "Refuse a partnership that contradicts our values, regardless of the budget.",
+        "2": "Pay professional speakers, even symbolically.",
+        "3": "Document what we learn in open source.",
+        "4": "Prioritise the quality of the journey over registration growth."
+      }
+    },
+    "never": {
+      "tag": "✕ What we refuse",
+      "title": "Never",
+      "items": {
+        "0": "Charge the beneficiaries of our programs.",
+        "1": "Sell our members' data, nor use it for advertising.",
+        "2": "Promise a job: we open doors, not shortcuts.",
+        "3": "Work with companies that engage in discriminatory practices.",
+        "4": "Put image before real impact."
+      }
+    },
+    "signatures": {
+      "eyebrow": "Commitment",
+      "titleLine1": "Signed by the entire",
+      "titleHighlight": "team.",
+      "body": "Every new person who joins Digizelle — volunteer, mentor, employee — signs this manifesto. It's our shared compass.",
+      "names": ["Bleuenn C.", "Priscillia M.", "Corto C.", "Franck F.", "Inès R.", "Ellischa B.", "+ 24 more"],
+      "ctaJoin": "Join the adventure →",
+      "ctaAbout": "Our story"
+    }
+  },
+  "newsletterPage": {
+    "metaTitle": "Newsletter — The Monthly Pixel",
+    "metaDescription": "Once a month, 5 minutes of reading to stay on top of the Digizelle community, current opportunities and reflections on inclusive digital.",
+    "eyebrow": "Monthly newsletter",
+    "titleLine1": "The",
+    "titleHighlight": "Monthly",
+    "titleSuffix": "Pixel.",
+    "body": "Once a month, in your inbox: 5 minutes of reading to stay on top of the Digizelle community, current opportunities and reflections on inclusive digital.",
+    "stats": {
+      "subscribers": "4,200",
+      "subscribersLabel": "Subscribers",
+      "openRate": "62%",
+      "openRateLabel": "Open rate",
+      "rating": "4.8/5",
+      "ratingLabel": "Average rating"
+    },
+    "preview": {
+      "inbox": "Inbox",
+      "sender": "Digizelle",
+      "senderEmail": "hello@digizelle.fr",
+      "today": "Today · 09:12",
+      "subject": "✦ Pixel #28 — Hackathon, AI & 4 tech jobs",
+      "excerpt": "Hi ✨, this month: a wrap-up of Hackathon #2 (spoiler: 87 projects), 4 collective opportunities, a generative AI masterclass at Station F…",
+      "tags": ["#community", "#opportunities", "#tech"]
+    },
+    "form": {
+      "title": "Subscribe in",
+      "titleHighlight": "10 seconds.",
+      "subtitle": "No spam, no abusive tracking. One-click unsubscribe.",
+      "firstNameLabel": "First name",
+      "firstNamePlaceholder": "Your first name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "email@example.com",
+      "profilePrefix": "I am:",
+      "profiles": ["Student", "Career changer", "Mentor", "Recruiter", "Curious"],
+      "submit": "Subscribe →",
+      "submitting": "…",
+      "success": "✓ Thank you, you're subscribed — check your inbox.",
+      "errorGeneric": "An error occurred. Please try again.",
+      "consent": "By subscribing, you accept our",
+      "consentLink": "privacy policy"
+    },
+    "rubriques": {
+      "title": "Each month,",
+      "titleHighlight": "5 sections.",
+      "subtitle": "Short, dense format, designed to be read between two metro stops.",
+      "items": {
+        "0": { "n": "1", "icon": "✦", "title": "The replay", "desc": "What happened in the community this month." },
+        "1": { "n": "2", "icon": "◌", "title": "Opportunities", "desc": "Internships, jobs, gigs filtered by our team." },
+        "2": { "n": "3", "icon": "☷", "title": "The portrait", "desc": "A mentee, a mentor, a story." },
+        "3": { "n": "4", "icon": "◧", "title": "The analysis", "desc": "One tech / society question explored deeply." },
+        "4": { "n": "5", "icon": "◇", "title": "The agenda", "desc": "All the events not to miss." }
+      }
+    },
+    "editions": {
+      "title": "Latest",
+      "titleHighlight": "editions.",
+      "viewAll": "View all →",
+      "readEdition": "Read edition →",
+      "items": {
+        "0": { "n": "#28", "date": "March 2026", "title": "Hackathon, AI & 4 tech jobs", "tag": "Community" },
+        "1": { "n": "#27", "date": "February 2026", "title": "Career change: 5 inspiring stories", "tag": "Portrait" },
+        "2": { "n": "#26", "date": "January 2026", "title": "Will AI break the job market?", "tag": "Analysis" }
+      }
     }
   },
   "legal": {
@@ -2387,7 +2593,9 @@
         "endedAt": "Closed on {date}",
         "frequency": "Frequency: {value}",
         "format": "Format: {value}",
-        "openCta": "Open →"
+        "openCta": "Open →",
+        "nextSessionLabel": "Next session",
+        "noUpcomingSession": "No session scheduled"
       },
       "format": {
         "REMOTE": "Remote",
@@ -2999,11 +3207,20 @@
       "prefillNotice": "You already have a mentee profile. Update it if your goals have changed.",
       "stepIndicator": "Step {current} / {total}",
       "step1": {
-        "title": "Your goals",
-        "subtitle": "Tell us what you want to achieve with a mentor.",
-        "goalsLabel": "Your goals",
-        "goalsPlaceholder": "E.g.: land my first developer role, launch my side project, build confidence…",
-        "goalsHint": "Between 30 and 2000 characters.",
+        "title": "Your Mentora goals",
+        "subtitle": "Pick 1 to 3 priority goals. That's the basis for matching you with mentors.",
+        "goalCardsLabel": "Main goal",
+        "goalCards": {
+          "first-job": { "emoji": "💼", "title": "Land my first job", "desc": "Tech, design, data, product" },
+          "career-change": { "emoji": "🔄", "title": "Career change", "desc": "Switch sector or role" },
+          "side-project": { "emoji": "🚀", "title": "Launch my project", "desc": "Side-project or startup" },
+          "level-up": { "emoji": "📚", "title": "Level up", "desc": "Deepen an expertise" }
+        },
+        "skillsLabel": "Domains you care about",
+        "skillsHint": "3 max — you can add more later.",
+        "goalsLabel": "Describe your goal in 1 sentence",
+        "goalsHint": "Your mentor will see this before the first session.",
+        "goalsPlaceholder": "E.g.: land my first junior UX designer role by end of summer.",
         "levelLabel": "Current level",
         "level": {
           "BEGINNER": "Beginner",
@@ -3018,8 +3235,8 @@
         }
       },
       "step2": {
-        "title": "Skills to work on",
-        "subtitle": "Select the skills you want to develop as a priority.",
+        "title": "Your current journey",
+        "subtitle": "A bit of context so your mentors can position themselves right.",
         "skillsLabel": "Target skills",
         "skillsPlaceholder": "E.g.: react, design system, public speaking…",
         "skillsHint": "Slugs separated by commas. The skill hierarchy will be available later.",
@@ -3028,8 +3245,15 @@
         "noSkillsHint": "You can add more later from your profile."
       },
       "step3": {
-        "title": "Languages and timezone",
-        "subtitle": "So we can suggest mentors compatible with your rhythm.",
+        "title": "When are you available?",
+        "subtitle": "We'll use your slots to suggest sessions that match your mentors'.",
+        "frequencyLabel": "Desired frequency",
+        "frequency": {
+          "weekly": "Weekly",
+          "biweekly": "Twice a month",
+          "monthly": "Monthly",
+          "ondemand": "On demand"
+        },
         "languagesLabel": "Languages spoken",
         "languagesPlaceholder": "fr, en",
         "languagesHint": "ISO 639-1 codes separated by commas.",
@@ -3044,6 +3268,21 @@
           "EVENT": "Digizelle event",
           "PARTNER": "Partner",
           "OTHER": "Other"
+        }
+      },
+      "matchBanner": {
+        "title": "Our Mentora AI is pre-selecting compatible mentors",
+        "body": "You'll get to pick from them as soon as you finish signing up."
+      },
+      "slots": {
+        "header": "Your preferred slots",
+        "hint": "Tick the slots when you can be available. You can fine-tune later.",
+        "days": ["M", "T", "W", "T", "F", "S", "S"],
+        "rows": {
+          "morning": "Morning · 9 h–12 h",
+          "noon": "Noon · 12 h–14 h",
+          "afternoon": "Afternoon · 14 h–18 h",
+          "evening": "Evening · 18 h–22 h"
         }
       },
       "actions": {
@@ -3088,7 +3327,7 @@
         "headlineHint": "Maximum 120 characters.",
         "bioLabel": "Bio",
         "bioPlaceholder": "Share your background, your favorite topics, your approach to mentorship…",
-        "bioHint": "Between 120 and 4000 characters.",
+        "bioHint": "Introduce yourself however you'd like — no length requirement.",
         "yearsLabel": "Years of experience",
         "photoLabel": "Profile photo",
         "linkedinLabel": "LinkedIn (optional)",
@@ -3102,7 +3341,7 @@
         "subtitle": "List the skills you can pass on.",
         "skillsLabel": "Skills",
         "skillsPlaceholder": "E.g.: react, typescript, system design…",
-        "skillsHint": "Slugs separated by commas. You'll fine-tune levels after approval.",
+        "skillsHint": "Pick 1 to 5 core skills. You'll fine-tune levels after approval.",
         "levelLabel": "Overall level",
         "level": {
           "BEGINNER": "Beginner",
@@ -3134,8 +3373,8 @@
         }
       },
       "step4": {
-        "title": "Summary",
-        "subtitle": "Review your information before submitting your application.",
+        "title": "Mentor charter",
+        "subtitle": "Read and sign to validate your registration. Short, clear, and key to keeping the program healthy.",
         "reviewHeadline": "Title",
         "reviewBio": "Bio",
         "reviewYears": "Experience",
@@ -3144,8 +3383,47 @@
         "reviewFormat": "Format",
         "reviewResponseTime": "Responsiveness",
         "reviewMaxMentees": "Capacity",
-        "consent": "I confirm that the information is accurate and that I accept the Digizelle mentor charter.",
-        "submitNotice": "Your profile will be reviewed within 5 business days."
+        "consent": "I have read and accept the Digizelle mentor charter.",
+        "consentSub": "Electronically signed. Your profile will be reviewed within 5 business days.",
+        "submitNotice": "Your profile will be reviewed within 5 business days.",
+        "charteCards": {
+          "0": { "emoji": "💛", "title": "Care & active listening", "desc": "I commit to listening without judgment, asking open questions, and respecting my mentee's pace." },
+          "1": { "emoji": "🔒", "title": "Confidentiality", "desc": "Whatever is shared in session stays between us. No information leaves Mentora without explicit consent." },
+          "2": { "emoji": "⏰", "title": "Availability & punctuality", "desc": "I notify 24h ahead if I can't make it, and I always offer a new slot." },
+          "3": { "emoji": "🛡️", "title": "Non-discriminatory stance", "desc": "I commit against any form of discrimination or harassment, in session and in the community." },
+          "4": { "emoji": "🎁", "title": "Volunteer & Digizelle frame", "desc": "Mentorship is free of charge. No commercial transaction within Mentora." }
+        }
+      },
+      "slots": {
+        "header": "Recurring slots",
+        "hint": "Tick the slots when you can take a session. You can fine-tune later.",
+        "days": ["M", "T", "W", "T", "F", "S", "S"],
+        "rows": {
+          "noon": "Noon · 12 h–14 h",
+          "afternoon": "Afternoon · 14 h–18 h",
+          "evening": "Evening · 18 h–22 h"
+        }
+      },
+      "menteeTypes": {
+        "label": "Mentees you can support",
+        "hint": "Tick all the profiles you feel useful for.",
+        "items": {
+          "career-change": { "emoji": "🔄", "title": "Career changers" },
+          "fresh-grad": { "emoji": "🎓", "title": "Fresh graduates" },
+          "first-job": { "emoji": "💼", "title": "First job" },
+          "founder": { "emoji": "🚀", "title": "Founders" },
+          "career-up": { "emoji": "📈", "title": "Career growth" },
+          "all": { "emoji": "✨", "title": "All levels" }
+        }
+      },
+      "seniority": {
+        "label": "Seniority level",
+        "items": {
+          "junior": { "title": "Junior", "sub": "1-3 years" },
+          "confirmed": { "title": "Confirmed", "sub": "3-6 years" },
+          "senior": { "title": "Senior", "sub": "6-10 years" },
+          "expert": { "title": "Expert", "sub": "10+ years" }
+        }
       },
       "actions": {
         "back": "Back",
@@ -3158,6 +3436,7 @@
         "generic": "An error occurred. Please try again in a moment.",
         "headlineRequired": "The title is required.",
         "bioTooShort": "The bio must be at least 120 characters.",
+        "bioRequired": "Bio is required.",
         "languagesRequired": "Please indicate at least one language.",
         "skillsRequired": "Please indicate at least one skill.",
         "consentRequired": "You must accept the mentor charter.",
@@ -3490,27 +3769,13 @@
         "github": ""
       },
       "5": {
-        "name": "Rajeeva Ravichandiran",
-        "role": "Development",
-        "bio": "Active member of the tech team. Finalist at the Women in GenAI 2025 hackathon.",
-        "linkedin": "",
-        "github": ""
-      },
-      "6": {
-        "name": "Marine Fruitier",
-        "role": "Development",
-        "bio": "Contributes to internal tools and AI projects. Finalist at the Women in GenAI 2025 hackathon.",
-        "linkedin": "",
-        "github": ""
-      },
-      "7": {
         "name": "Ellischa Balourd",
         "role": "Field Product Manager",
         "bio": "Field Product Manager at Microsoft — Sales Enablement. Product strategy, support for Microsoft partnerships and market expertise.",
         "linkedin": "",
         "github": ""
       },
-      "8": {
+      "6": {
         "name": "20+ volunteers & mentors",
         "role": "Digizelle Community",
         "bio": "A multidisciplinary team committed to digital inclusion for young people — especially young women.",

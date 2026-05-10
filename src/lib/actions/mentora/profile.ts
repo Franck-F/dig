@@ -36,7 +36,11 @@ const photoUrlSchema = z
 
 const createMentorProfileSchema = z.object({
   headline: z.string().min(5).max(120),
-  bio: z.string().min(120).max(4000),
+  // No user-facing minimum / maximum on the bio — mentors and mentees
+  // should be free to write as much (or as little) as they want. The
+  // 50_000-char ceiling is purely a DB-safety guard against accidental
+  // megabyte pastes; nothing in the UI advertises it.
+  bio: z.string().min(1).max(50_000),
   yearsExperience: z.number().int().min(0).max(60),
   // hourlyRate is no longer surfaced in the UI (Digizelle mentors are all
   // volunteers — the user explicitly asked for the field to be removed).
@@ -133,14 +137,16 @@ export async function submitMentorForReview(): Promise<ActionResult<{ id: string
     const { mentorProfile } = await requireMentorOwner();
     if (mentorProfile.status !== 'DRAFT') return errorResult('invalidStatus');
 
-    // Completion guard: spec §2.1 — bio>=120, >=3 skills, >=1 availability rule
+    // Completion guard: a headline, at least one bio character, >=3 skills,
+    // >=1 availability rule. The previous 120-char bio minimum was dropped
+    // — mentors are free to write a one-liner if that's their style.
     const [skillCount, ruleCount] = await Promise.all([
       prisma.mentorSkill.count({ where: { mentorProfileId: mentorProfile.id } }),
       prisma.availabilityRule.count({ where: { mentorProfileId: mentorProfile.id } }),
     ]);
     if (
       !mentorProfile.headline ||
-      mentorProfile.bio.length < 120 ||
+      mentorProfile.bio.trim().length < 1 ||
       skillCount < 3 ||
       ruleCount < 1
     ) {
@@ -244,12 +250,14 @@ export async function removeMentorSkill(
 // ─────────────── Mentee profile ───────────────────────────────────────────
 
 const upsertMenteeProfileSchema = z.object({
-  goals: z.string().min(1).max(2000),
+  // No user-facing maximum on free-text fields — mentees can write as
+  // much as they want. 50_000-char ceilings are pure DB-safety guards.
+  goals: z.string().min(1).max(50_000),
   level: z.nativeEnum(MenteeLevel).optional(),
   languages: z.array(z.string().min(2).max(5)).min(1),
   timezone: z.string().min(1),
   location: z.string().max(200).optional().nullable(),
-  currentChallenges: z.string().max(2000).optional().nullable(),
+  currentChallenges: z.string().max(50_000).optional().nullable(),
   preferredFormat: z.nativeEnum(PreferredFormat).optional(),
   discoveredVia: z.nativeEnum(DiscoveredVia).optional(),
 });

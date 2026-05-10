@@ -29,6 +29,7 @@ const STATIC_ROUTES: StaticRoute[] = [
 
   // Hero pages — flagship content
   { path: '/about', priority: 0.9, changeFrequency: 'monthly' },
+  { path: '/manifesto', priority: 0.9, changeFrequency: 'yearly' },
   { path: '/mentora', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/programs', priority: 0.9, changeFrequency: 'monthly' },
 
@@ -40,6 +41,7 @@ const STATIC_ROUTES: StaticRoute[] = [
   // generator because it has its own bespoke page with stats lockup.
   { path: '/events/digizelle-impact-1', priority: 0.6, changeFrequency: 'yearly' },
   { path: '/blog', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/newsletter', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/contact', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/faq', priority: 0.7, changeFrequency: 'monthly' },
 

@@ -44,6 +44,35 @@ export default async function CyclesAdminPage() {
   };
   for (const c of cycles) grouped[c.status].push(c);
 
+  // Derive mentor / mentee counts per cycle from `Mentorship.startedAt`
+  // falling inside the cycle's date window. Mentorships have no
+  // `cycleId` FK (they pre-date the Cycle model), so this is the
+  // closest approximation. DRAFT cycles get 0/0 — they have no
+  // mentorships yet by definition.
+  // We run the queries in parallel and key the results by cycle.id.
+  const cycleCounts = await Promise.all(
+    cycles.map(async (c) => {
+      if (c.status === 'DRAFT') {
+        return { id: c.id, mentors: 0, mentees: 0 };
+      }
+      try {
+        const mentorships = await prisma.mentorship.findMany({
+          where: {
+            startedAt: { gte: c.startsAt, lte: c.endsAt },
+          },
+          select: { mentorProfileId: true, menteeProfileId: true },
+          take: 5000,
+        });
+        const mentorIds = new Set(mentorships.map((m) => m.mentorProfileId));
+        const menteeIds = new Set(mentorships.map((m) => m.menteeProfileId));
+        return { id: c.id, mentors: mentorIds.size, mentees: menteeIds.size };
+      } catch {
+        return { id: c.id, mentors: 0, mentees: 0 };
+      }
+    }),
+  );
+  const countsById = new Map(cycleCounts.map((row) => [row.id, row]));
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <header
@@ -98,21 +127,39 @@ export default async function CyclesAdminPage() {
                     : 'Archivés'}{' '}
                 · {grouped[groupKey].length}
               </h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {grouped[groupKey].map((c) => (
-                  <CycleRow
-                    key={c.id}
-                    cycleId={c.id}
-                    name={c.name}
-                    slug={c.slug}
-                    phase={c.phase}
-                    status={c.status}
-                    startsAt={dateFmt.format(c.startsAt)}
-                    endsAt={dateFmt.format(c.endsAt)}
-                    description={c.description}
-                    createdByName={c.createdBy.name ?? c.createdBy.email}
-                  />
-                ))}
+              {/* Group ACTIVE / DRAFT in a 2-col responsive grid (denser
+                  visual scan); keep ARCHIVED stacked since they're rarely
+                  consulted and the extra width is wasted. */}
+              <div
+                style={
+                  groupKey === 'ARCHIVED'
+                    ? { display: 'flex', flexDirection: 'column', gap: 12 }
+                    : {
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+                        gap: 12,
+                      }
+                }
+              >
+                {grouped[groupKey].map((c) => {
+                  const counts = countsById.get(c.id) ?? { mentors: 0, mentees: 0 };
+                  return (
+                    <CycleRow
+                      key={c.id}
+                      cycleId={c.id}
+                      name={c.name}
+                      slug={c.slug}
+                      phase={c.phase}
+                      status={c.status}
+                      startsAt={dateFmt.format(c.startsAt)}
+                      endsAt={dateFmt.format(c.endsAt)}
+                      description={c.description}
+                      createdByName={c.createdBy.name ?? c.createdBy.email}
+                      mentorCount={counts.mentors}
+                      menteeCount={counts.mentees}
+                    />
+                  );
+                })}
               </div>
             </section>
           ),

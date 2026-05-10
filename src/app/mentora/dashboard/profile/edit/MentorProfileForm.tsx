@@ -349,8 +349,6 @@ export default function MentorProfileForm({ initial, skills: initialSkills, skil
               id="prof-bio"
               className="dz-input"
               value={bio}
-              minLength={120}
-              maxLength={4000}
               rows={6}
               onChange={(e) => setBio(e.target.value)}
               placeholder={t('fields.bioPlaceholder')}

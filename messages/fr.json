@@ -104,7 +104,7 @@
           },
           {
             "label": "Manifeste",
-            "href": "/about#manifeste"
+            "href": "/manifesto"
           }
         ]
       },
@@ -143,6 +143,10 @@
           {
             "label": "Communauté",
             "href": "/community"
+          },
+          {
+            "label": "Newsletter",
+            "href": "/newsletter"
           },
           {
             "label": "FAQ",
@@ -890,7 +894,9 @@
         "endedAt": "Clôturé le {date}",
         "frequency": "Fréquence : {value}",
         "format": "Format : {value}",
-        "openCta": "Ouvrir →"
+        "openCta": "Ouvrir →",
+        "nextSessionLabel": "Prochaine session",
+        "noUpcomingSession": "Aucune session planifiée"
       },
       "format": {
         "REMOTE": "Distanciel",
@@ -1502,11 +1508,20 @@
       "prefillNotice": "Vous avez déjà un profil mentoré. Mettez-le à jour si vos objectifs ont changé.",
       "stepIndicator": "Étape {current} / {total}",
       "step1": {
-        "title": "Vos objectifs",
-        "subtitle": "Dites-nous ce que vous voulez accomplir avec un mentor.",
-        "goalsLabel": "Vos objectifs",
-        "goalsPlaceholder": "Ex : décrocher mon premier poste de développeur, lancer mon side-project, gagner en confiance…",
-        "goalsHint": "Entre 30 et 2000 caractères.",
+        "title": "Tes objectifs sur Mentora",
+        "subtitle": "Choisis 1 à 3 objectifs prioritaires. C'est la base du matching avec tes futurs mentors.",
+        "goalCardsLabel": "Objectif principal",
+        "goalCards": {
+          "first-job": { "emoji": "💼", "title": "Décrocher mon premier job", "desc": "Tech, design, data, produit" },
+          "career-change": { "emoji": "🔄", "title": "Reconversion professionnelle", "desc": "Changer de secteur ou métier" },
+          "side-project": { "emoji": "🚀", "title": "Lancer mon projet", "desc": "Side-project ou startup" },
+          "level-up": { "emoji": "📚", "title": "Monter en compétences", "desc": "Approfondir une expertise" }
+        },
+        "skillsLabel": "Domaines qui te tiennent à cœur",
+        "skillsHint": "3 max — tu pourras en ajouter plus tard.",
+        "goalsLabel": "Décris ton objectif en 1 phrase",
+        "goalsHint": "Ton mentor le verra avant la première session.",
+        "goalsPlaceholder": "Ex : décrocher mon premier poste de UX designer junior d'ici la fin de l'été.",
         "levelLabel": "Niveau actuel",
         "level": {
           "BEGINNER": "Débutant",
@@ -1521,8 +1536,8 @@
         }
       },
       "step2": {
-        "title": "Compétences à travailler",
-        "subtitle": "Sélectionnez les compétences que vous voulez développer en priorité.",
+        "title": "Ton parcours actuel",
+        "subtitle": "Quelques infos pour aider tes mentors à se positionner correctement.",
         "skillsLabel": "Compétences cibles",
         "skillsPlaceholder": "Ex : react, design system, public speaking…",
         "skillsHint": "Slugs séparés par des virgules. La hiérarchie de compétences sera proposée plus tard.",
@@ -1531,8 +1546,15 @@
         "noSkillsHint": "Vous pourrez en ajouter plus tard depuis votre profil."
       },
       "step3": {
-        "title": "Langues et fuseau",
-        "subtitle": "Pour vous proposer des mentors compatibles avec votre rythme.",
+        "title": "Quand es-tu disponible ?",
+        "subtitle": "On utilisera tes créneaux pour proposer des sessions compatibles avec celles de tes mentors.",
+        "frequencyLabel": "Fréquence souhaitée",
+        "frequency": {
+          "weekly": "1× / semaine",
+          "biweekly": "2× / mois",
+          "monthly": "1× / mois",
+          "ondemand": "À la carte"
+        },
         "languagesLabel": "Langues parlées",
         "languagesPlaceholder": "fr, en",
         "languagesHint": "Codes ISO 639-1 séparés par des virgules.",
@@ -1547,6 +1569,21 @@
           "EVENT": "Événement Digizelle",
           "PARTNER": "Partenaire",
           "OTHER": "Autre"
+        }
+      },
+      "matchBanner": {
+        "title": "Notre IA Mentora pré-sélectionne tes mentors compatibles",
+        "body": "Tu pourras choisir parmi eux dès la fin de cette inscription."
+      },
+      "slots": {
+        "header": "Tes créneaux préférés",
+        "hint": "Coche les créneaux où tu peux être dispo. Tu pourras affiner après.",
+        "days": ["L", "M", "M", "J", "V", "S", "D"],
+        "rows": {
+          "morning": "Matin · 9 h–12 h",
+          "noon": "Midi · 12 h–14 h",
+          "afternoon": "Après-midi · 14 h–18 h",
+          "evening": "Soir · 18 h–22 h"
         }
       },
       "actions": {
@@ -1591,7 +1628,7 @@
         "headlineHint": "120 caractères maximum.",
         "bioLabel": "Bio",
         "bioPlaceholder": "Présentez votre parcours, vos sujets de prédilection, votre approche du mentorat…",
-        "bioHint": "Entre 120 et 4000 caractères.",
+        "bioHint": "Présentez-vous comme vous le souhaitez — pas de longueur imposée.",
         "yearsLabel": "Années d'expérience",
         "photoLabel": "Photo de profil",
         "linkedinLabel": "LinkedIn (facultatif)",
@@ -1605,7 +1642,7 @@
         "subtitle": "Renseignez les compétences que vous pouvez transmettre.",
         "skillsLabel": "Compétences",
         "skillsPlaceholder": "Ex : react, typescript, system design…",
-        "skillsHint": "Slugs séparés par des virgules. Vous affinerez les niveaux après validation.",
+        "skillsHint": "Sélectionne 1 à 5 compétences principales. Tu affineras les niveaux après validation.",
         "levelLabel": "Niveau global",
         "level": {
           "BEGINNER": "Débutant",
@@ -1637,8 +1674,8 @@
         }
       },
       "step4": {
-        "title": "Récapitulatif",
-        "subtitle": "Vérifiez vos informations avant de soumettre votre candidature.",
+        "title": "Charte du mentor",
+        "subtitle": "Lis et signe pour valider ton inscription. C'est court, ça pose le cadre, et ça garantit la qualité du programme.",
         "reviewHeadline": "Titre",
         "reviewBio": "Bio",
         "reviewYears": "Expérience",
@@ -1647,8 +1684,47 @@
         "reviewFormat": "Format",
         "reviewResponseTime": "Réactivité",
         "reviewMaxMentees": "Capacité",
-        "consent": "Je confirme que les informations sont exactes et que j'accepte la charte mentor Digizelle.",
-        "submitNotice": "Votre profil sera examiné sous 5 jours ouvrés."
+        "consent": "J'ai lu et j'accepte la charte mentor Digizelle.",
+        "consentSub": "Signé électroniquement. Votre profil sera examiné sous 5 jours ouvrés.",
+        "submitNotice": "Votre profil sera examiné sous 5 jours ouvrés.",
+        "charteCards": {
+          "0": { "emoji": "💛", "title": "Bienveillance & écoute active", "desc": "Je m'engage à écouter sans juger, à poser des questions ouvertes, à respecter le rythme de ma mentorée." },
+          "1": { "emoji": "🔒", "title": "Confidentialité", "desc": "Tout ce qui est partagé en session reste entre nous. Aucune info ne quitte Mentora sans accord explicite." },
+          "2": { "emoji": "⏰", "title": "Disponibilité & ponctualité", "desc": "Je préviens 24h à l'avance en cas d'empêchement. Je propose toujours un nouveau créneau." },
+          "3": { "emoji": "🛡️", "title": "Posture non-discriminatoire", "desc": "Je m'engage contre toute forme de discrimination ou de harcèlement, en session comme dans la communauté." },
+          "4": { "emoji": "🎁", "title": "Bénévolat & cadre Digizelle", "desc": "Le mentorat est gratuit. Aucune transaction commerciale dans le cadre de Mentora." }
+        }
+      },
+      "slots": {
+        "header": "Créneaux récurrents",
+        "hint": "Coche les créneaux où tu peux assurer une session. Tu pourras affiner après.",
+        "days": ["L", "M", "M", "J", "V", "S", "D"],
+        "rows": {
+          "noon": "Midi · 12 h–14 h",
+          "afternoon": "Après-midi · 14 h–18 h",
+          "evening": "Soir · 18 h–22 h"
+        }
+      },
+      "menteeTypes": {
+        "label": "Mentorées que tu peux accompagner",
+        "hint": "Coche tous les profils auxquels tu te sens utile.",
+        "items": {
+          "career-change": { "emoji": "🔄", "title": "Étudiantes en reconversion" },
+          "fresh-grad": { "emoji": "🎓", "title": "Jeunes diplômées" },
+          "first-job": { "emoji": "💼", "title": "Premier job" },
+          "founder": { "emoji": "🚀", "title": "Entrepreneuses" },
+          "career-up": { "emoji": "📈", "title": "Évolution de carrière" },
+          "all": { "emoji": "✨", "title": "Tous niveaux" }
+        }
+      },
+      "seniority": {
+        "label": "Niveau de séniorité",
+        "items": {
+          "junior": { "title": "Junior", "sub": "1-3 ans" },
+          "confirmed": { "title": "Confirmé·e", "sub": "3-6 ans" },
+          "senior": { "title": "Senior", "sub": "6-10 ans" },
+          "expert": { "title": "Expert", "sub": "10+ ans" }
+        }
       },
       "actions": {
         "back": "Retour",
@@ -1661,6 +1737,7 @@
         "generic": "Une erreur est survenue. Réessayez dans un instant.",
         "headlineRequired": "Le titre est obligatoire.",
         "bioTooShort": "La bio doit faire au moins 120 caractères.",
+        "bioRequired": "La bio est obligatoire.",
         "languagesRequired": "Indiquez au moins une langue.",
         "skillsRequired": "Indiquez au moins une compétence.",
         "consentRequired": "Vous devez accepter la charte mentor.",
@@ -1721,27 +1798,13 @@
         "github": ""
       },
       "5": {
-        "name": "Rajeeva Ravichandiran",
-        "role": "Développement",
-        "bio": "Membre active de l'équipe tech. Finaliste hackathon Women in GenAI 2025.",
-        "linkedin": "",
-        "github": ""
-      },
-      "6": {
-        "name": "Marine Fruitier",
-        "role": "Développement",
-        "bio": "Contribue aux outils internes et aux projets IA. Finaliste hackathon Women in GenAI 2025.",
-        "linkedin": "",
-        "github": ""
-      },
-      "7": {
         "name": "Ellischa Balourd",
         "role": "Field Product Manager",
         "bio": "Field Product Manager chez Microsoft — Sales Enablement. Stratégie produit, accompagnement des partenariats Microsoft et expertise marché.",
         "linkedin": "",
         "github": ""
       },
-      "8": {
+      "6": {
         "name": "20+ bénévoles & mentors",
         "role": "Communauté Digizelle",
         "bio": "Une équipe pluridisciplinaire engagée pour l'inclusion numérique des jeunes — en particulier des jeunes femmes.",
@@ -2136,6 +2199,149 @@
           "q": "Comment proposer un partenariat ?",
           "a": "Sélectionnez « Partenariat » dans le formulaire et décrivez votre structure. Nous vous proposons un échange visio sous 5 jours."
         }
+      }
+    }
+  },
+  "manifestoPage": {
+    "metaTitle": "Notre manifeste",
+    "metaDescription": "Six convictions qui guident chacune de nos décisions. Pas des slogans : des engagements que nous tenons, et qu'on vous invite à challenger.",
+    "eyebrow": "Notre manifeste",
+    "titleLine1": "Le numérique",
+    "titleHighlight": "doit ressembler au monde réel.",
+    "intro": "Six convictions qui guident chacune de nos décisions. Pas des slogans : des engagements que nous tenons, et qu'on vous invite à challenger.",
+    "quote": {
+      "body": "Nous ne formons pas des utilisateur·ices du numérique. Nous formons celles et ceux qui vont le réécrire.",
+      "authorName": "Bleuenn Cloteaux",
+      "authorRole": "Co-fondatrice · Digizelle",
+      "authorInitials": "BC"
+    },
+    "principles": {
+      "sectionTitle": "Six",
+      "sectionTitleHighlight": "principes,",
+      "sectionTitleSuffix": "zéro compromis.",
+      "sectionIntro": "Ces principes guident nos choix éditoriaux, nos partenariats, nos arbitrages budgétaires. Quand on doute, on revient ici.",
+      "items": {
+        "0": {
+          "title": "La diversité n'est pas une option.",
+          "desc": "Le numérique est trop puissant pour reproduire les inégalités du monde physique. Nous croyons à la mixité radicale — femmes, personnes racisées, personnes en reconversion, jeunes des quartiers populaires : toutes ont leur place à la table."
+        },
+        "1": {
+          "title": "On apprend en faisant — et en faisant ensemble.",
+          "desc": "Pas de cours magistraux à sens unique. Nos programmes sont des ateliers, des hackathons, des projets concrets, où le savoir circule horizontalement. La meilleure formation, c'est celle où chacun·e enseigne autant qu'iel apprend."
+        },
+        "2": {
+          "title": "Le mentorat est un acte politique.",
+          "desc": "Donner du temps, c'est partager du pouvoir. Mentora n'est pas un service : c'est un engagement à transmettre les codes invisibles, les opportunités cachées, les réseaux fermés — pour les ouvrir."
+        },
+        "3": {
+          "title": "Gratuit pour les bénéficiaires. Toujours.",
+          "desc": "L'argent ne doit jamais être un obstacle à la formation. Nos programmes sont entièrement gratuits pour celles et ceux qui en ont besoin. Notre modèle repose sur les partenariats, le mécénat et le bénévolat — pas sur les inscrits."
+        },
+        "4": {
+          "title": "L'IA au service des humains.",
+          "desc": "Nous formons aux outils du futur — IA, data, code — sans renoncer à l'esprit critique. La technologie doit amplifier l'humanité, pas la remplacer. Nous outillons sans aliéner."
+        },
+        "5": {
+          "title": "On mesure ce qui compte.",
+          "desc": "Pas seulement les chiffres. Nous comptons les emplois trouvés, les vocations nées, les estimes de soi reconstruites, les promotions débloquées. L'impact social ne se réduit pas à un dashboard."
+        }
+      }
+    },
+    "always": {
+      "tag": "✓ Ce qu'on fait",
+      "title": "Toujours",
+      "items": {
+        "0": "Mesurer notre impact, et le publier — même quand il est faible.",
+        "1": "Refuser un partenariat qui contredit nos valeurs, peu importe le budget.",
+        "2": "Rémunérer les intervenant·es professionnel·les, même symboliquement.",
+        "3": "Documenter en open source ce qu'on apprend.",
+        "4": "Privilégier la qualité du parcours à la croissance des inscriptions."
+      }
+    },
+    "never": {
+      "tag": "✕ Ce qu'on refuse",
+      "title": "Jamais",
+      "items": {
+        "0": "Faire payer les bénéficiaires de nos programmes.",
+        "1": "Vendre les données de nos membres, ni les utiliser pour de la pub.",
+        "2": "Promettre un emploi : nous ouvrons des portes, pas des passe-droits.",
+        "3": "Travailler avec des entreprises aux pratiques discriminatoires.",
+        "4": "Mettre l'image avant l'impact réel."
+      }
+    },
+    "signatures": {
+      "eyebrow": "Engagement",
+      "titleLine1": "Signé par toute",
+      "titleHighlight": "l'équipe.",
+      "body": "Chaque nouvelle personne qui rejoint Digizelle — bénévole, mentor, salarié·e — signe ce manifeste. C'est notre boussole partagée.",
+      "names": ["Bleuenn C.", "Priscillia M.", "Corto C.", "Franck F.", "Inès R.", "Ellischa B.", "+ 24 autres"],
+      "ctaJoin": "Rejoindre l'aventure →",
+      "ctaAbout": "Notre histoire"
+    }
+  },
+  "newsletterPage": {
+    "metaTitle": "Newsletter — Le Pixel Mensuel",
+    "metaDescription": "Une fois par mois, 5 minutes de lecture pour ne rien manquer de la communauté Digizelle, des opportunités du moment et des réflexions sur le numérique inclusif.",
+    "eyebrow": "Newsletter mensuelle",
+    "titleLine1": "Le",
+    "titleHighlight": "Pixel",
+    "titleSuffix": "Mensuel.",
+    "body": "Une fois par mois, dans votre boîte mail : 5 minutes de lecture pour ne rien manquer de la communauté Digizelle, des opportunités du moment et des réflexions sur le numérique inclusif.",
+    "stats": {
+      "subscribers": "4 200",
+      "subscribersLabel": "Abonné·es",
+      "openRate": "62%",
+      "openRateLabel": "Taux d'ouverture",
+      "rating": "4.8/5",
+      "ratingLabel": "Note moyenne"
+    },
+    "preview": {
+      "inbox": "Boîte de réception",
+      "sender": "Digizelle",
+      "senderEmail": "hello@digizelle.fr",
+      "today": "Aujourd'hui · 09:12",
+      "subject": "✦ Pixel #28 — Hackathon, IA & 4 offres tech",
+      "excerpt": "Bonjour ✨, ce mois-ci : retour sur le Hackathon #2 (spoiler : 87 projets), 4 offres du collectif, une masterclass IA générative à Station F…",
+      "tags": ["#community", "#opportunities", "#tech"]
+    },
+    "form": {
+      "title": "Inscrivez-vous en",
+      "titleHighlight": "10 secondes.",
+      "subtitle": "Pas de spam, pas de tracking abusif. Désinscription en un clic.",
+      "firstNameLabel": "Prénom",
+      "firstNamePlaceholder": "Votre prénom",
+      "emailLabel": "Email",
+      "emailPlaceholder": "email@exemple.fr",
+      "profilePrefix": "Je suis :",
+      "profiles": ["Étudiant·e", "En reconversion", "Mentor·e", "Recruteur·euse", "Curieux·se"],
+      "submit": "S'abonner →",
+      "submitting": "…",
+      "success": "✓ Merci, vous êtes inscrit·e — surveillez votre boîte.",
+      "errorGeneric": "Une erreur est survenue. Réessayez dans un instant.",
+      "consent": "En vous inscrivant, vous acceptez notre",
+      "consentLink": "politique de confidentialité"
+    },
+    "rubriques": {
+      "title": "Chaque mois,",
+      "titleHighlight": "5 rubriques.",
+      "subtitle": "Format court, dense, pensé pour être lu dans le métro entre deux stations.",
+      "items": {
+        "0": { "n": "1", "icon": "✦", "title": "Le replay", "desc": "Ce qui s'est passé dans la communauté ce mois." },
+        "1": { "n": "2", "icon": "◌", "title": "Les opportunités", "desc": "Stages, alternances, jobs filtrés par notre équipe." },
+        "2": { "n": "3", "icon": "☷", "title": "Le portrait", "desc": "Une mentorée, un mentor, une histoire." },
+        "3": { "n": "4", "icon": "◧", "title": "L'analyse", "desc": "Une question tech / société creusée à fond." },
+        "4": { "n": "5", "icon": "◇", "title": "L'agenda", "desc": "Tous les events à ne pas manquer." }
+      }
+    },
+    "editions": {
+      "title": "Dernières",
+      "titleHighlight": "éditions.",
+      "viewAll": "Tout voir →",
+      "readEdition": "Lire l'édition →",
+      "items": {
+        "0": { "n": "#28", "date": "Mars 2026", "title": "Hackathon, IA & 4 offres tech", "tag": "Communauté" },
+        "1": { "n": "#27", "date": "Février 2026", "title": "Reconversion : 5 parcours qui inspirent", "tag": "Portrait" },
+        "2": { "n": "#26", "date": "Janvier 2026", "title": "L'IA va-t-elle casser le marché de l'emploi ?", "tag": "Analyse" }
       }
     }
   },
@@ -3142,21 +3348,80 @@
       "deniedTitle": "Accès refusé",
       "deniedBody": "Cette section est réservée aux administrateurs et modérateurs de la communauté.",
       "backToCommunity": "← Retour à la communauté",
+      "dashboard": {
+        "title": "Pilotage Communauté",
+        "subtitle": "Modération & animation",
+        "alert": {
+          "headline": "{flagCount} signalements à examiner · {pendingPosts} publications en attente",
+          "subline": "Temps moyen de modération : {avgTime} · Objectif : < 4 h",
+          "cta": "Ouvrir la file →"
+        },
+        "kpis": {
+          "members": { "label": "Membres actifs", "hint": "7 derniers jours" },
+          "posts": { "label": "Posts publiés", "hint": "cette semaine" },
+          "flags": { "label": "Signalements", "hint": "à traiter" },
+          "engagement": { "label": "Engagement", "hint": "taux 7 j" },
+          "events": { "label": "Évents à venir", "hint": "{registered} inscrits" }
+        },
+        "chart": {
+          "title": "Activité 14 derniers jours",
+          "viewAnalytics": "Voir analytics →"
+        }
+      },
       "nav": {
+        "dashboard": "Pilotage",
         "moderation": "Modération",
         "channels": "Salons",
         "badges": "Badges",
         "users": "Membres",
         "challenges": "Défis",
         "flags": "Signaux abus",
+        "analytics": "Analytics",
         "auditLog": "Journal admin",
         "rgpd": "Registre RGPD",
         "settings": "Paramètres"
+      },
+      "analytics": {
+        "metaTitle": "Analytics — Communauté Digizelle",
+        "title": "Analytics communauté",
+        "subtitle": "Activité, engagement et sentiment.",
+        "kpis": {
+          "weeklyActive": { "label": "Membres actifs / sem.", "trendVsLast": "vs S-1" },
+          "postsPerDay": { "label": "Posts / jour", "trendLabel": "Moyenne 7 j" },
+          "reactionsPerPost": { "label": "Réactions / post", "trendLabel": "Moyenne 30 j" },
+          "retention30": { "label": "Rétention 30 j", "trendLabel": "Cohorte j-60" }
+        },
+        "weeklyActiveTitle": "Membres actifs hebdo · 12 sem.",
+        "sentimentTitle": "Sentiment communauté",
+        "sentimentSub": "Auto-calculé sur les réactions des 30 derniers jours.",
+        "sentiment": {
+          "positive": "Positif",
+          "neutral": "Neutre",
+          "negative": "Négatif",
+          "score": "Score d'humeur · 30 j",
+          "noData": "Pas encore assez de réactions pour calculer un sentiment fiable."
+        }
       },
       "moderation": {
         "title": "File de modération",
         "subtitle": "Signalements en attente et historique.",
         "queueEmpty": "La file est vide. Bon travail !",
+        "kpis": {
+          "pending": "En attente",
+          "resolvedThisWeek": "Traités cette semaine",
+          "bannedThisMonth": "Bannis ce mois",
+          "avgTime": "Délai moyen"
+        },
+        "severity": {
+          "label": "Sévérité",
+          "all": "Tous",
+          "high": "Haute",
+          "medium": "Moyenne",
+          "low": "Basse"
+        },
+        "evidenceCount": "{count} preuve(s)",
+        "reportedBy": "{reporter} → contre {target}",
+        "motif": "Motif : {reason}",
         "tabs": {
           "pending": "En attente",
           "resolved": "Traités"

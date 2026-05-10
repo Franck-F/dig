@@ -451,29 +451,31 @@ body.dz-theme-dark .dz-eyebrow::before { background: var(--lg-edge-dark); }
    ambient page wash. */
 .dz-header {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(255,255,255,0.62);
-  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
-  backdrop-filter: blur(28px) saturate(200%) brightness(1.04);
+  /* Solid (non-transparent) header. We keep a hint of the iridescent
+     edge via the bottom gradient line, but the body itself is opaque
+     so content scrolling underneath never bleeds through.
+     Light mode → near-white with a whisper of brand wash so the chrome
+     stays soft; dark mode → solid deep-violet matching the page bg. */
+  background: #ffffff;
   border-bottom: 1px solid transparent;
   background-image:
-    linear-gradient(rgba(255,255,255,0.62), rgba(255,255,255,0.62)),
-    linear-gradient(90deg, transparent 0%, rgba(115,1,255,0.18) 50%, transparent 100%);
+    linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%),
+    linear-gradient(90deg, transparent 0%, rgba(115,1,255,0.28) 50%, transparent 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
   box-shadow:
     0 1px 0 rgba(255,255,255,0.85) inset,
-    0 -1px 0 rgba(255,255,255,0.30) inset,
-    0 12px 32px -16px rgba(36,18,80,0.16);
+    0 8px 24px -16px rgba(36,18,80,0.18),
+    0 1px 0 rgba(115,1,255,0.06);
 }
 body.dz-theme-dark .dz-header {
-  background: rgba(28, 18, 60, 0.55);
+  background: #14102a;
   background-image:
-    linear-gradient(rgba(28,18,60,0.55), rgba(28,18,60,0.55)),
-    linear-gradient(90deg, transparent 0%, rgba(163,75,245,0.45) 50%, transparent 100%);
+    linear-gradient(180deg, #14102a 0%, #1a1340 100%),
+    linear-gradient(90deg, transparent 0%, rgba(163,75,245,0.55) 50%, transparent 100%);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.10) inset,
-    0 -1px 0 rgba(0,0,0,0.30) inset,
-    0 12px 32px -16px rgba(0,0,0,0.45);
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 8px 24px -16px rgba(0,0,0,0.55);
 }
 .dz-header-inner {
   max-width: 1440px;
@@ -1030,6 +1032,19 @@ summary:focus-visible {
   .dz-glass-strong[style*="width: 380px"] { width: 100% !important; max-width: 360px; }
   /* Programmes wave section: hide the absolute robot mascot on mobile */
   section img[alt=""][style*="position: absolute"] { display: none !important; }
+  /* Decorative mascots wrapped in an inline `position:absolute` container
+     (e.g. /mentora/page.tsx, programmes wave) overlap real content once the
+     layout collapses to one column. Hide the entire absolute wrapper —
+     these mascots are pure decoration on desktop, the content next to them
+     reads perfectly fine without them on a phone. */
+  [style*="position: absolute"] > .dz-mascot-wrap,
+  [style*="position:absolute"] > .dz-mascot-wrap {
+    display: none !important;
+  }
+  div[style*="position: absolute"]:has(> .dz-mascot-wrap),
+  div[style*="position:absolute"]:has(> .dz-mascot-wrap) {
+    display: none !important;
+  }
   /* Stats rows wrap nicely */
   .dz-stat { text-align: center; }
 }
@@ -2081,6 +2096,122 @@ body.dz-theme-dark .dz-hub-universe {
   .dz-h1 { font-size: 24px !important; }
   .dz-h2 { font-size: 20px !important; }
   .dz-card { padding: 14px !important; }
+}
+
+/* =========================================================
+   MOBILE FIXES — round 2 (post-feedback "lots of issues on mobile")
+   These rules address the most common breakage patterns we see when
+   inline styles or hardcoded sizes from the desktop comp leak through
+   to a 360–420px viewport: hero text / mascot collisions, speech
+   bubbles that overflow the screen edge, dashboard cards with hidden
+   content, sticky headers piling up, etc.
+   ========================================================= */
+@media (max-width: 768px) {
+  /* Speech bubbles around the mascot are positioned with negative
+     percent values to "hang off" the mascot on desktop. On a phone,
+     a negative offset combined with a wide bubble pushes the bubble
+     off-screen and clips the tail. Re-anchor them inside the wrap
+     and shrink to fit. */
+  .dz-mascot-wrap .dz-mascot-bubble {
+    left: 50% !important;
+    right: auto !important;
+    top: -8% !important;
+    bottom: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
+    max-width: min(80vw, 260px) !important;
+    font-size: 13px !important;
+    padding: 8px 14px !important;
+  }
+  /* Stack subsequent bubbles below the first so they don't collide */
+  .dz-mascot-wrap .dz-mascot-bubble:nth-of-type(2) { top: auto !important; bottom: -10% !important; }
+  .dz-mascot-wrap .dz-mascot-bubble:nth-of-type(3) { top: 40% !important; bottom: auto !important; }
+
+  /* Long unbreakable strings (URLs, slugs, emails) commonly overflow
+     mobile cards. Force them to wrap. */
+  .dz-card,
+  .dz-lg,
+  .dz-section p,
+  .dz-section li,
+  .dz-section a,
+  .dz-section h1,
+  .dz-section h2,
+  .dz-section h3 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Header right-side cluster: brand + burger + theme switcher on a
+     320px viewport can wrap onto a second line. Keep them on one row
+     and let the brand truncate before the action buttons do. */
+  .dz-header-inner > a:first-child,
+  .dz-header-inner > div:first-child {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  .dz-header-inner > a:first-child img,
+  .dz-header-inner > a:first-child span {
+    max-width: 100%;
+  }
+
+  /* AppShell topbar (dashboard) — same fix: prevent the brand block
+     from pushing the burger off-screen on tiny viewports. */
+  .dz-app-topbar { gap: 8px !important; padding: 8px 12px !important; }
+  .dz-app-topbar > * { min-width: 0; }
+
+  /* Hero "lockup" — when the mascot sits next to the headline in a
+     2-col grid, stacking puts it ABOVE the headline which is rarely
+     what the design intended. Push it BELOW so the H1 reads first. */
+  .dz-section [data-dz-hero-mascot] { order: 2; }
+  .dz-section [data-dz-hero-text] { order: 1; }
+
+  /* Tables (admin / dashboard) commonly overflow mobile. Wrap them
+     in horizontal scroll containers, but cap the visible width so
+     they don't push out the page. */
+  table { display: block; overflow-x: auto; max-width: 100%; }
+
+  /* Dashboard sticky sub-headers — when multiple sticky elements
+     stack on the page (main navbar + section header + tab bar), the
+     content disappears under them. Keep ONE sticky at the top. */
+  .dz-app-shell .dz-section [style*="position: sticky"]:not(:first-of-type),
+  .dz-app-shell .dz-section [style*="position:sticky"]:not(:first-of-type) {
+    position: static !important;
+  }
+
+  /* Modal / dialog content commonly hits 100vw with the side padding.
+     Clamp to safe viewport. */
+  [role="dialog"] > div > div { max-width: 100% !important; }
+
+  /* Inline images (avatars, partner logos) that have hardcoded large
+     widths — clamp so they never exceed their container. */
+  .dz-section img[width][height] { max-width: 100%; height: auto; }
+
+  /* Pills / chips rows (filters, skills) — wrap so they don't push
+     the row beyond the viewport */
+  .dz-section [style*="display: flex"][style*="gap"]:not([style*="flex-wrap"]) {
+    flex-wrap: wrap !important;
+  }
+
+  /* Buttons rows that the user is meant to scan top-to-bottom on mobile */
+  .dz-section [style*="display: flex"][style*="justify-content: space-between"] {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+}
+
+/* SMALL MOBILE — extra paddings inherited from inline styles */
+@media (max-width: 420px) {
+  /* Footer tightens further on tiny phones */
+  .dz-footer { padding: 22px 14px 16px !important; }
+  .dz-footer img { max-width: 100% !important; height: auto !important; }
+  /* Login side panel can over-pad; compress */
+  .dz-login-side { padding: 24px 18px !important; }
+  /* Buttons in CTA strips wrap and stretch full-width for thumb reach */
+  .dz-section [style*="display: flex"] > .dz-btn,
+  .dz-section [style*="display: flex"] > a.dz-btn {
+    flex: 1 1 100% !important;
+    text-align: center;
+    justify-content: center;
+  }
 }
 
 /* =========================================================

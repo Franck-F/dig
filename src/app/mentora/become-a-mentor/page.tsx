@@ -7,6 +7,7 @@ import { auth } from '@/auth';
 
 import { getMentorProfileForCurrentUser } from '@/lib/actions/mentora/mentor-profile';
 import { getProductAccess } from '@/lib/access/product-access';
+import { listPopularSkillsForWizard } from '@/lib/mentora/skills';
 
 import MentorApplicationWizard from './MentorApplicationWizard';
 
@@ -152,5 +153,11 @@ export default async function BecomeAMentorPage() {
     );
   }
 
-  return <MentorApplicationWizard />;
+  // Fetch the curated chip list once on the server so the wizard
+  // boots with skills already in hand — no client-side fetch waterfall,
+  // no flash of empty selectors. Falls back to a built-in seed list if
+  // the DB is empty (see `listPopularSkillsForWizard`).
+  const skills = await listPopularSkillsForWizard(18);
+
+  return <MentorApplicationWizard skills={skills} />;
 }

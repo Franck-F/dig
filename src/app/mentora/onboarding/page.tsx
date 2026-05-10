@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { getProductAccess } from '@/lib/access/product-access';
 
 import { getMenteeProfileForCurrentUser } from '@/lib/actions/mentora/mentee-profile';
+import { listPopularSkillsForWizard } from '@/lib/mentora/skills';
 
 import OnboardingWizard, { type OnboardingPrefill } from './OnboardingWizard';
 
@@ -90,5 +91,15 @@ export default async function OnboardingPage({
     redirect(nextParam);
   }
 
-  return <OnboardingWizard prefill={prefill} redirectAfter={nextParam} />;
+  // Pre-fetch the curated chip list (same source as the mentor wizard)
+  // so the chip selector boots populated.
+  const skills = await listPopularSkillsForWizard(15);
+
+  return (
+    <OnboardingWizard
+      prefill={prefill}
+      redirectAfter={nextParam}
+      skills={skills}
+    />
+  );
 }
