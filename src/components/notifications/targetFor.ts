@@ -2,7 +2,7 @@
  * Map a notification type + payload to the deep link that should be
  * opened when the user clicks "Ouvrir" in the detail pane.
  *
- * Shared between the Community and Mentora inboxes — both surfaces
+ * Shared between the Community and Mentorat inboxes — both surfaces
  * see the same Notification rows, just filtered by type. Returning
  * `null` means there's no canonical destination (the notification
  * is purely informational, e.g. a badge award where the user just

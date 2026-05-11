@@ -202,7 +202,7 @@ export function contactPageJsonLd(args: { url: string; name: string }): JsonLd {
 
 /**
  * Service schema — used to describe Digizelle programs (Atelier, Masterclass,
- * Hackathon, Mentora) for the /programs and /mentora pages.
+ * Hackathon, Mentorat) for the /programs and /mentora pages.
  */
 export function serviceJsonLd(args: {
   name: string;

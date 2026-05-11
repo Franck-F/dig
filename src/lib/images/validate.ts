@@ -120,7 +120,7 @@ export function validateImageDataUri(
 
 /**
  * Translate a validator failure reason into the union literal used by
- * the action error helpers (`CommunityActionError` / `MentoraActionError`).
+ * the action error helpers (`CommunityActionError` / `MentoratActionError`).
  * Caller picks `imageMalformed` etc. as the surfaced error code.
  */
 export function imageReasonToErrorCode(

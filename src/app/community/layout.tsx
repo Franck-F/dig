@@ -10,7 +10,7 @@ import { auth, signOut } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
 
-/** Community-section notification types. The bell drops Mentora-only notifs
+/** Community-section notification types. The bell drops Mentorat-only notifs
  *  so the user stays in section context; "Voir tout" still merges both. */
 const COMMUNITY_NOTIF_TYPES: NotificationType[] = [
   NotificationType.POST_REPLY,

@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Digizelle',
     short_name: 'Digizelle',
     description:
-      'Digizelle — association pour l’inclusion numérique des jeunes : mentorat Mentora, programmes tech et événements.',
+      'Digizelle — association pour l’inclusion numérique des jeunes : mentorat Mentorat, programmes tech et événements.',
     start_url: '/',
     scope: '/',
     display: 'standalone',

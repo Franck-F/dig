@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import Pagination from '@/components/admin/Pagination';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Mentorées · Admin Mentora' };
+export const metadata = { title: 'Mentorées · Admin Mentorat' };
 
 /**
  * `/mentora/admin/mentees` — refondu pour matcher le handoff

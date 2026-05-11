@@ -3,12 +3,12 @@ import { prisma } from '@/lib/prisma';
 import ModerationActions from './ModerationActions';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Modération · Admin Mentora' };
+export const metadata = { title: 'Modération · Admin Mentorat' };
 
 /**
- * `/mentora/admin/moderation` — modération côté Mentora.
+ * `/mentora/admin/moderation` — modération côté Mentorat.
  *
- * Pour l'instant, Mentora n'a pas de système de signalement de mentorship
+ * Pour l'instant, Mentorat n'a pas de système de signalement de mentorship
  * indépendant. Cette page agrège les signaux pertinents :
  *  - Mentors inactifs (statut ACTIVE mais updatedAt > 60j) — à relancer
  *  - Mentorships sans session depuis 30j — risque d'abandon
@@ -17,7 +17,7 @@ export const metadata = { title: 'Modération · Admin Mentora' };
  * Pour la modération de la communauté (posts/comments), le bouton renvoie
  * vers `/community/admin/moderation`.
  */
-export default async function MentoraModerationPage() {
+export default async function MentoratModerationPage() {
   const now = new Date();
   const sixtyDaysAgo = new Date(now);
   sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
@@ -110,7 +110,7 @@ export default async function MentoraModerationPage() {
       >
         <div>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#1a1f3a' }}>
-            Modération Mentora
+            Modération Mentorat
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: '#545b7a' }}>
             Signaux de risque sur les mentorships actifs.

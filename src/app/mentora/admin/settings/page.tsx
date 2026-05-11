@@ -3,8 +3,8 @@ import { getTranslations } from 'next-intl/server';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
-import { getMentoraProgrammeSettings } from '@/lib/actions/platform-settings';
-import { MentoraBoolToggle } from './SettingsToggles';
+import { getMentoratProgrammeSettings } from '@/lib/actions/platform-settings';
+import { MentoratBoolToggle } from './SettingsToggles';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +43,7 @@ function initialsFor(name: string): string {
  * for things like "matching weights" or "data retention years"). The
  * affordances are wired but their handlers will land in a future pass.
  */
-export default async function MentoraAdminSettingsPage() {
+export default async function MentoratAdminSettingsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/mentora/admin/settings');
 
@@ -56,7 +56,7 @@ export default async function MentoraAdminSettingsPage() {
   if (me?.role !== 'ADMIN') redirect('/mentora/admin');
 
   const t = await getTranslations('mentora.dashboard.adminSettingsPage');
-  const settings = await getMentoraProgrammeSettings();
+  const settings = await getMentoratProgrammeSettings();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -236,7 +236,7 @@ export default async function MentoraAdminSettingsPage() {
             label={t('security.twoFa')}
             meta={t('security.twoFaMeta')}
             customRight={
-              <MentoraBoolToggle
+              <MentoratBoolToggle
                 field="require2faAdmin"
                 initialOn={settings.require2faAdmin}
               />

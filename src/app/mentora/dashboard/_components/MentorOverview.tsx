@@ -63,7 +63,7 @@ export default async function MentorOverview({ profile }: MentorOverviewProps) {
   const mentorProfileId = mentorProfile.id;
 
   // Read product access so we can offer a "join the community" CTA to
-  // mentors who signed up Mentora-only. Cheap single-row fetch; the
+  // mentors who signed up Mentorat-only. Cheap single-row fetch; the
   // helper is fully defensive against pre-migration environments.
   const access = await getProductAccess();
 

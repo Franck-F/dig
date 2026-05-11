@@ -1047,7 +1047,7 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
       step={step + 1}
       totalSteps={totalSteps}
       stepLabels={stepLabels}
-      eyebrow="✦ Rejoindre Mentora"
+      eyebrow="✦ Rejoindre Mentorat"
       heading={`${t('title')} ${t('titleHighlight')}`}
       intro={t('subtitle')}
       illustration={step >= 2 ? '/images/robot-mascotte-2.png' : '/images/robot-mascotte-1.png'}

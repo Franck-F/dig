@@ -36,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: '%s · Digizelle',
     },
     description: t('metaDescription'),
-    keywords: ['Digizelle', 'association', 'digital', 'inclusion', 'numérique', 'mentorat', 'Mentora', 'jeunes', 'tech', 'Paris'],
+    keywords: ['Digizelle', 'association', 'digital', 'inclusion', 'numérique', 'mentorat', 'Mentorat', 'jeunes', 'tech', 'Paris'],
     authors: [{ name: 'Digizelle', url: 'https://digizelle.fr' }],
     creator: 'Digizelle',
     publisher: 'Digizelle',

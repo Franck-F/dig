@@ -10,7 +10,7 @@ import { logAdmin } from '@/lib/audit/log';
 import { requireSuperAdmin } from '@/lib/auth/super-admin';
 
 /**
- * Mentora cycle (cohort) CRUD. Admin-only — every action checks
+ * Mentorat cycle (cohort) CRUD. Admin-only — every action checks
  * `role === 'ADMIN'` before touching the table. Phase transitions
  * and archive are explicit operations (no implicit auto-progression
  * in v1) so the team always knows what just changed.

@@ -104,7 +104,7 @@ export default async function DiscoverPage({
         {...jsonLdScriptProps(
           breadcrumbJsonLd([
             { name: 'Accueil', url: '/' },
-            { name: 'Mentora', url: '/mentora' },
+            { name: 'Mentorat', url: '/mentora' },
             { name: t('breadcrumb'), url: '/mentora/discover' },
           ]),
         )}

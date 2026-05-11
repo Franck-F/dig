@@ -16,7 +16,7 @@ export const metadata = { title: 'Paramètres · Digizelle' };
 /**
  * Unified settings page.
  *
- * Mentora and Community are independent products, but most of the
+ * Mentorat and Community are independent products, but most of the
  * settings surface (security, data export, danger zone) is account-level
  * and applies to every signed-in user. We render those unconditionally,
  * then conditionally render the product-specific blocks based on the
@@ -24,7 +24,7 @@ export const metadata = { title: 'Paramètres · Digizelle' };
  *
  *   - Community profile (handle / displayName / bio / avatar / banner)
  *     → only when `communityEnabled` AND a CommunityMember row exists.
- *   - Mentora profile entry (link to mentor / mentee profile editor)
+ *   - Mentorat profile entry (link to mentor / mentee profile editor)
  *     → only when `mentoraEnabled`.
  *
  * Lives at /account/settings so the URL doesn't lie about scope. The
@@ -38,7 +38,7 @@ export default async function AccountSettingsPage() {
   if (!access.roleConfirmed && !access.isAdmin) redirect('/welcome/role');
 
   // Single round-trip for everything the page needs: account-level
-  // security state, mentor profile (for the Mentora section), and the
+  // security state, mentor profile (for the Mentorat section), and the
   // CommunityMember row (for the community profile form).
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -140,7 +140,7 @@ export default async function AccountSettingsPage() {
               }
               style={chipLink}
             >
-              ✦ Mon profil Mentora
+              ✦ Mon profil Mentorat
             </Link>
           )}
           {access.community && me.communityMember?.joinedAt && (
@@ -179,13 +179,13 @@ export default async function AccountSettingsPage() {
         </div>
       )}
 
-      {/* Mentora profile entry — link to the right edit page based on the
+      {/* Mentorat profile entry — link to the right edit page based on the
           existing profile (mentor vs mentee). When neither profile exists
-          we send the user back to the Mentora onboarding. */}
+          we send the user back to the Mentorat onboarding. */}
       {access.mentora && (
         <div className="dz-card" style={{ padding: 22 }}>
           <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: '#1a1f3a' }}>
-            Profil Mentora
+            Profil Mentorat
           </h3>
           {me.mentorProfile ? (
             <>
@@ -208,7 +208,7 @@ export default async function AccountSettingsPage() {
           ) : (
             <>
               <p style={{ margin: '0 0 12px', fontSize: 13, color: '#545b7a' }}>
-                Tu as activé Mentora mais ton profil n’est pas encore configuré. Choisis ton parcours pour démarrer.
+                Tu as activé Mentorat mais ton profil n’est pas encore configuré. Choisis ton parcours pour démarrer.
               </p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <Link href="/mentora/onboarding" style={ctaPrimary}>

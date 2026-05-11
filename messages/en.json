@@ -88,7 +88,7 @@
     "hub": {
       "header": {
         "connectedOn": "Signed in · {date}",
-        "adminCta": "✦ Mentora admin"
+        "adminCta": "✦ Mentorat admin"
       },
       "hero": {
         "greeting": "Hi {name},",
@@ -96,13 +96,13 @@
         "body": "Your personal Digizelle space — two worlds, one click away."
       },
       "mentora": {
-        "title": "Mentora",
+        "title": "Mentorat",
         "body": "Find your mentors, prepare your next session, access your resources and track your progress. A real mentorship journey.",
         "tag1": "Sessions",
         "tag2": "My mentors",
         "tag3": "Goals",
         "tag4": "Resources",
-        "cta": "Enter Mentora",
+        "cta": "Enter Mentorat",
         "activeBadge": "{count, plural, =1 {1 active mentorship} other {# active mentorships}}"
       },
       "community": {
@@ -168,7 +168,7 @@
         }
       },
       "switch": {
-        "mentora": "Mentora",
+        "mentora": "Mentorat",
         "community": "Community"
       },
       "topbar": {
@@ -209,7 +209,7 @@
       "tech": "Tech",
       "society": "Society",
       "advice": "Advice",
-      "mentora": "Mentora"
+      "mentora": "Mentorat"
     },
     "featured": {
       "label": "Featured · {category}",
@@ -217,7 +217,7 @@
       "category": "Opinion",
       "read": "8 min",
       "author": "Priscillia Meza",
-      "body": "Three years after the first Mentora matches, we step back to look at what works, what doesn't, and what we'd love to see across the French tech scene.",
+      "body": "Three years after the first Mentorat matches, we step back to look at what works, what doesn't, and what we'd love to see across the French tech scene.",
       "date": "8 min read · May 3, 2026",
       "iso": "2026-05-03",
       "slug": "mentorat-jeunes-developpeurs",
@@ -266,11 +266,11 @@
         "date": "March 15, 2026",
         "slug": "diversite-tech-2026",
         "excerpt": "Three years after the big announcements of 2023, where does diversity in French tech really stand? Data, testimonies, paths forward.",
-        "body": "The official numbers are mixed. While the share of women in tech schools has risen from 18 to 24%, the glass ceiling remains thick as you climb the hierarchy. And some minorities are still invisible in the statistics.\n\nAt Digizelle we're working on three fronts: making role models visible through Mentora, opening workshops to non-traditional audiences, and funding targeted scholarships. Diversity isn't decreed, it's built."
+        "body": "The official numbers are mixed. While the share of women in tech schools has risen from 18 to 24%, the glass ceiling remains thick as you climb the hierarchy. And some minorities are still invisible in the statistics.\n\nAt Digizelle we're working on three fronts: making role models visible through Mentorat, opening workshops to non-traditional audiences, and funding targeted scholarships. Diversity isn't decreed, it's built."
       },
       "4": {
         "title": "Becoming a mentor: a practical guide",
-        "category": "Mentora",
+        "category": "Mentorat",
         "read": "4 min",
         "author": "Marwane O.",
         "iso": "2026-02-28",
@@ -591,7 +591,7 @@
       "empty": "No notifications yet.",
       "markAllRead": "Mark all as read",
       "markRead": "Mark as read",
-      "crossLinkMentora": "See your Mentora notifications too →",
+      "crossLinkMentorat": "See your Mentorat notifications too →",
       "groups": {
         "today": "Today",
         "yesterday": "Yesterday",
@@ -1266,7 +1266,7 @@
       "cookies": {
         "0": {
           "name": "next-auth.session-token",
-          "purpose": "Maintains your signed-in session in the Mentora member area",
+          "purpose": "Maintains your signed-in session in the Mentorat member area",
           "duration": "30 days (rolling)",
           "type": "Essential"
         },
@@ -1477,7 +1477,7 @@
   },
   "faqPage": {
     "metaTitle": "FAQ — Frequently asked questions",
-    "metaDescription": "All the answers about Digizelle, sign-up, programs, Mentora mentorship, the community and the protection of your data.",
+    "metaDescription": "All the answers about Digizelle, sign-up, programs, Mentorat mentorship, the community and the protection of your data.",
     "eyebrow": "Help center",
     "title": "Frequently asked",
     "titleHighlight": "questions.",
@@ -1507,7 +1507,7 @@
           },
           "free": {
             "q": "Is it free?",
-            "a": "Yes for participants: all our programs (workshops, masterclasses, hackathons, Mentora) are free or fairly priced. We are funded by corporate sponsorships (Microsoft, EY, AWS, Allianz, Epitech, HEC Paris, Station F, BECOMTECH…) and by public grants."
+            "a": "Yes for participants: all our programs (workshops, masterclasses, hackathons, Mentorat) are free or fairly priced. We are funded by corporate sponsorships (Microsoft, EY, AWS, Allianz, Epitech, HEC Paris, Station F, BECOMTECH…) and by public grants."
           },
           "associationStatus": {
             "q": "Are you a real association?",
@@ -1553,7 +1553,7 @@
         "items": {
           "list": {
             "q": "What programs do you offer?",
-            "a": "Four complementary formats:\n• Immersive Workshop — 3-day hands-on sessions to discover a skill\n• Masterclass — intensive course with an expert to deepen your knowledge\n• Hackathon — 48 hours in a team to build on a challenge with mentors\n• Mentora — long-term 1-to-1 mentorship program"
+            "a": "Four complementary formats:\n• Immersive Workshop — 3-day hands-on sessions to discover a skill\n• Masterclass — intensive course with an expert to deepen your knowledge\n• Hackathon — 48 hours in a team to build on a challenge with mentors\n• Mentorat — long-term 1-to-1 mentorship program"
           },
           "level": {
             "q": "What level do I need?",
@@ -1574,15 +1574,15 @@
         }
       },
       "mentora": {
-        "label": "Mentora (mentorship)",
+        "label": "Mentorat (mentorship)",
         "items": {
           "what": {
-            "q": "What is Mentora?",
-            "a": "Mentora is our 1-to-1 mentorship program: we connect you with an experienced mentor in the digital field that interests you (dev, design, data, product, AI…). You meet over video at a pace you choose together — typically one hour every two weeks over 3 to 6 months."
+            "q": "What is Mentorat?",
+            "a": "Mentorat is our 1-to-1 mentorship program: we connect you with an experienced mentor in the digital field that interests you (dev, design, data, product, AI…). You meet over video at a pace you choose together — typically one hour every two weeks over 3 to 6 months."
           },
           "findMentor": {
             "q": "How do I find a mentor?",
-            "a": "Once registered with Mentora, you fill out your mentee profile (goals, skills to develop, languages, time zone) and our algorithm suggests compatible mentors. You can also browse the open catalog at /mentora/discover and send a request to anyone you're interested in."
+            "a": "Once registered with Mentorat, you fill out your mentee profile (goals, skills to develop, languages, time zone) and our algorithm suggests compatible mentors. You can also browse the open catalog at /mentora/discover and send a request to anyone you're interested in."
           },
           "becomeMentor": {
             "q": "How do I become a mentor?",
@@ -1686,7 +1686,7 @@
         "atelier": "Immersive Workshop",
         "masterclass": "Masterclass",
         "hackathon": "Hackathon",
-        "mentora": "Mentora"
+        "mentora": "Mentorat"
       },
       "resources": {
         "title": "Resources",
@@ -1707,7 +1707,7 @@
     "wordmark": "DIGIZELLE",
     "heading": "Ready to join?",
     "ctaJoin": "Join us",
-    "ctaMentora": "Discover Mentora",
+    "ctaMentorat": "Discover Mentorat",
     "ctaCommunity": "See the community",
     "navAriaLabel": "Footer navigation",
     "copyright": "© {year} Digizelle — French non-profit (loi 1901)",
@@ -1751,7 +1751,7 @@
             "href": "/programs#hackathon"
           },
           {
-            "label": "Mentora",
+            "label": "Mentorat",
             "href": "/mentora"
           }
         ]
@@ -1816,7 +1816,7 @@
     "links": {
       "about": "About",
       "programs": "Programs",
-      "mentora": "Mentora",
+      "mentora": "Mentorat",
       "community": "Community",
       "team": "Team",
       "projects": "Projects",
@@ -1868,13 +1868,13 @@
       "impactDate": "60+ youths at Epitech",
       "communityLabel": "Community",
       "communityCount": "200+ active",
-      "mentoraStatus": "Mentora — open"
+      "mentoraStatus": "Mentorat — open"
     },
     "manifesto": {
       "eyebrow": "Our manifesto",
       "titleLine1": "Inclusive digital,",
       "titleHighlight": "we are making it real.",
-      "body": "Digizelle works every day so young people — especially young women — across the Paris region and beyond find their place in tech. Workshops, masterclasses, hackathons, the Mentora program and an online community: a portfolio of formats to move from “I would love to” to “I am doing it”.",
+      "body": "Digizelle works every day so young people — especially young women — across the Paris region and beyond find their place in tech. Workshops, masterclasses, hackathons, the Mentorat program and an online community: a portfolio of formats to move from “I would love to” to “I am doing it”.",
       "cards": {
         "inclusion": {
           "tag": "Inclusion",
@@ -1884,7 +1884,7 @@
         "mentorship": {
           "tag": "Mentorship",
           "title": "A human in front of you, not a chatbot.",
-          "body": "Mentora pairs every mentee with a volunteer mentor for 6 months. Algorithmic matching, video sessions, shared calendar, clear goals and unlimited messaging."
+          "body": "Mentorat pairs every mentee with a volunteer mentor for 6 months. Algorithmic matching, video sessions, shared calendar, clear goals and unlimited messaging."
         },
         "community": {
           "tag": "Community",
@@ -1914,7 +1914,7 @@
           "tag": "Creation"
         },
         "mentora": {
-          "title": "Mentora",
+          "title": "Mentorat",
           "desc": "1-to-1 mentorship program for long-term support.",
           "tag": "Long term"
         }
@@ -1922,10 +1922,10 @@
     },
     "mentoraCta": {
       "chip": "✨ New",
-      "title": "Mentora — your digital mentor,",
+      "title": "Mentorat — your digital mentor,",
       "titleHighlight": "within reach.",
       "body": "A mentorship program combining humans and AI. Find your mentor, meet on video, track your progress and unlock resources tailored to your journey.",
-      "discover": "Discover Mentora →"
+      "discover": "Discover Mentorat →"
     },
     "events": {
       "eyebrow": "A few highlights",
@@ -1990,7 +1990,7 @@
         },
         {
           "name": "Salma, 24",
-          "role": "Mentora · season 2",
+          "role": "Mentorat · season 2",
           "quote": "My mentor works at Doctolib. We meet for an hour a month and it has become my best career tool. The format is exactly right.",
           "color": "#F46FB1"
         }
@@ -2057,7 +2057,7 @@
         },
         "2": {
           "title": "Mentorship is a political act.",
-          "desc": "Giving time means sharing power. Mentora isn't a service: it's a commitment to share the invisible codes, the hidden opportunities, the closed networks — to open them up."
+          "desc": "Giving time means sharing power. Mentorat isn't a service: it's a commitment to share the invisible codes, the hidden opportunities, the closed networks — to open them up."
         },
         "3": {
           "title": "Free for beneficiaries. Always.",
@@ -2183,7 +2183,7 @@
     "sections": {
       "publisher": {
         "title": "Site publisher",
-        "body": "Digizelle — French non-profit (association loi 1901), declared at the prefecture in 2023.\nRegistered office: EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\nSingle contact email: contact@digizelle.fr\n\nThe association's purpose is the inclusion and growth of young people in the digital field: workshops, masterclasses, hackathons, the Mentora mentorship program and public events. Editorial responsibility lies with the association's board."
+        "body": "Digizelle — French non-profit (association loi 1901), declared at the prefecture in 2023.\nRegistered office: EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\nSingle contact email: contact@digizelle.fr\n\nThe association's purpose is the inclusion and growth of young people in the digital field: workshops, masterclasses, hackathons, the Mentorat mentorship program and public events. Editorial responsibility lies with the association's board."
       },
       "registration": {
         "title": "Registration & RNA",
@@ -2207,7 +2207,7 @@
       },
       "cgu": {
         "title": "General terms of use",
-        "body": "Access to and use of the digizelle.fr site implies full and complete acceptance of these terms:\n• Use of the site in compliance with applicable laws and public order\n• Prohibition of any intrusion attempt, mass scraping or intentional server overload\n• Account creation reserved for people over 15 years old (parental consent required below)\n• Respect for other members in community spaces (no discriminatory remarks, harassment or illegal content)\n\nDetailed general terms of use apply to the Mentora member area; they are communicated upon registration."
+        "body": "Access to and use of the digizelle.fr site implies full and complete acceptance of these terms:\n• Use of the site in compliance with applicable laws and public order\n• Prohibition of any intrusion attempt, mass scraping or intentional server overload\n• Account creation reserved for people over 15 years old (parental consent required below)\n• Respect for other members in community spaces (no discriminatory remarks, harassment or illegal content)\n\nDetailed general terms of use apply to the Mentorat member area; they are communicated upon registration."
       },
       "credits": {
         "title": "Credits & technologies",
@@ -2231,13 +2231,13 @@
   },
   "login": {
     "metaTitle": "Sign in",
-    "metaDescription": "Sign in to your Digizelle Mentora account or create one in under 2 minutes.",
+    "metaDescription": "Sign in to your Digizelle Mentorat account or create one in under 2 minutes.",
     "title": "Sign in to Digizelle",
     "side": {
       "chip": "Member area",
       "titleLine1": "Welcome to",
       "titleLine2": "the community.",
-      "body": "Access your Mentora workspace, track your sessions, and connect with your mentor and the wider community.",
+      "body": "Access your Mentorat workspace, track your sessions, and connect with your mentor and the wider community.",
       "secure": "Secure",
       "rgpd": "GDPR",
       "noSpam": "No spam"
@@ -2285,7 +2285,7 @@
       "birthYearHelper": "Required to comply with the minimum sign-up age (15, GDPR Art. 8). Year only, never the full date.",
       "access": "I'd like to access",
       "products": {
-        "mentora": "Mentora",
+        "mentora": "Mentorat",
         "community": "Community",
         "atLeastOne": "Activate at least one space to continue."
       }
@@ -2364,12 +2364,12 @@
     }
   },
   "mentora": {
-    "metaTitle": "Mentora — your digital mentor",
+    "metaTitle": "Mentorat — your digital mentor",
     "metaDescription": "Digizelle's 1-to-1 mentorship platform connecting young people with digital professionals.",
-    "eyebrow": "Mentora · new program",
+    "eyebrow": "Mentorat · new program",
     "title": "Find the mentor who",
     "titleHighlight": "will help you grow.",
-    "body": "Mentora is our 1-to-1 mentorship platform that connects Digizelle young people with digital professionals. Smart matching, video calls, progress tracking and personalized resources.",
+    "body": "Mentorat is our 1-to-1 mentorship platform that connects Digizelle young people with digital professionals. Smart matching, video calls, progress tracking and personalized resources.",
     "ctaMatch": "Request my match →",
     "ctaBecomeMentor": "Become a mentor",
     "stats": {
@@ -2608,7 +2608,7 @@
         }
       },
       "agendaPage": {
-        "kicker": "Mentora · Sessions",
+        "kicker": "Mentorat · Sessions",
         "title": "Agenda",
         "rangeLabel": "Week of {start} to {end}",
         "today": "Today",
@@ -2770,7 +2770,7 @@
           }
         },
         "roleBanner": {
-          "noProfileTitle": "Welcome to your Mentora workspace",
+          "noProfileTitle": "Welcome to your Mentorat workspace",
           "noProfileBody": "To get the most out of the program, create your mentee profile or apply to become a mentor.",
           "menteeOnboardingCta": "Create my mentee profile →",
           "becomeMentorCta": "Become a mentor →"
@@ -2789,7 +2789,7 @@
       },
       "overviewMentee": {
         "title": "Hello {name}",
-        "subtitle": "Here is an overview of your Mentora journey.",
+        "subtitle": "Here is an overview of your Mentorat journey.",
         "myMentorsTitle": "My active mentors",
         "myMentorsEmpty": "You don't have a mentor yet. Discover our profiles.",
         "myMentorsCta": "Discover a mentor →",
@@ -3101,7 +3101,7 @@
     },
     "notifications": {
       "title": "Notifications",
-      "subtitle": "Everything that has happened on your Mentora account.",
+      "subtitle": "Everything that has happened on your Mentorat account.",
       "empty": "No notifications yet.",
       "markAllRead": "Mark all as read",
       "markRead": "Mark as read",
@@ -3146,32 +3146,32 @@
       },
       "emails": {
         "requestReceived": {
-          "subject": "[Mentora] New mentorship request",
-          "body": "Hello {recipientName},\n\nYou have received a new mentorship request from {senderName}.\n\nMessage:\n{message}\n\nReview the request on your dashboard:\n{url}\n\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] New mentorship request",
+          "body": "Hello {recipientName},\n\nYou have received a new mentorship request from {senderName}.\n\nMessage:\n{message}\n\nReview the request on your dashboard:\n{url}\n\nThe Digizelle Mentorat team"
         },
         "requestAccepted": {
-          "subject": "[Mentora] Your request has been accepted",
-          "body": "Hello {recipientName},\n\nGood news: {senderName} has accepted your mentorship request. You can now schedule your first session.\n\n{url}\n\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] Your request has been accepted",
+          "body": "Hello {recipientName},\n\nGood news: {senderName} has accepted your mentorship request. You can now schedule your first session.\n\n{url}\n\nThe Digizelle Mentorat team"
         },
         "requestDeclined": {
-          "subject": "[Mentora] Your request could not move forward",
-          "body": "Hello {recipientName},\n\nUnfortunately, {senderName} was unable to accept your mentorship request.\n\nReason: {reason}\n\nDiscover other mentors who might be a good fit:\n{url}\n\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] Your request could not move forward",
+          "body": "Hello {recipientName},\n\nUnfortunately, {senderName} was unable to accept your mentorship request.\n\nReason: {reason}\n\nDiscover other mentors who might be a good fit:\n{url}\n\nThe Digizelle Mentorat team"
         },
         "sessionScheduled": {
-          "subject": "[Mentora] Session scheduled on {date}",
-          "body": "Hello {recipientName},\n\nA new session has been scheduled on {date} ({duration} min) with {otherName}.\n\nSession details:\n{url}\n\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] Session scheduled on {date}",
+          "body": "Hello {recipientName},\n\nA new session has been scheduled on {date} ({duration} min) with {otherName}.\n\nSession details:\n{url}\n\nThe Digizelle Mentorat team"
         },
         "sessionReminder": {
-          "subject": "[Mentora] Reminder: session in 24 hours",
-          "body": "Hello {recipientName},\n\nQuick reminder: your session with {otherName} is scheduled for {date}.\n\nSession link: {meetingUrl}\nDetails: {url}\n\nSee you soon!\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] Reminder: session in 24 hours",
+          "body": "Hello {recipientName},\n\nQuick reminder: your session with {otherName} is scheduled for {date}.\n\nSession link: {meetingUrl}\nDetails: {url}\n\nSee you soon!\nThe Digizelle Mentorat team"
         },
         "sessionCancelled": {
-          "subject": "[Mentora] Session cancelled",
-          "body": "Hello {recipientName},\n\nThe session on {date} with {otherName} has been cancelled.\n\nReason: {reason}\n\nYou can reschedule a session here:\n{url}\n\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] Session cancelled",
+          "body": "Hello {recipientName},\n\nThe session on {date} with {otherName} has been cancelled.\n\nReason: {reason}\n\nYou can reschedule a session here:\n{url}\n\nThe Digizelle Mentorat team"
         },
         "mentorApproved": {
-          "subject": "[Mentora] Your mentor profile is approved 🎉",
-          "body": "Hello {recipientName},\n\nCongratulations, your mentor profile has been approved by our team. It is now publicly visible on Mentora.\n\nManage your availability and requests:\n{url}\n\nThe Digizelle Mentora team"
+          "subject": "[Mentorat] Your mentor profile is approved 🎉",
+          "body": "Hello {recipientName},\n\nCongratulations, your mentor profile has been approved by our team. It is now publicly visible on Mentorat.\n\nManage your availability and requests:\n{url}\n\nThe Digizelle Mentorat team"
         }
       },
       "bodies": {
@@ -3353,7 +3353,7 @@
     "finalCta": {
       "title": "Ready to",
       "titleHighlight": "get started?",
-      "body": "Mentora is free for Digizelle beneficiaries. Sign up — it only takes 5 minutes.",
+      "body": "Mentorat is free for Digizelle beneficiaries. Sign up — it only takes 5 minutes.",
       "createProfile": "Create my profile →"
     },
     "landing": {
@@ -3405,8 +3405,8 @@
       }
     },
     "discover": {
-      "metaTitle": "Find a mentor — Mentora",
-      "metaDescription": "Full directory of Mentora mentors: filter by skill, language, format and rating.",
+      "metaTitle": "Find a mentor — Mentorat",
+      "metaDescription": "Full directory of Mentorat mentors: filter by skill, language, format and rating.",
       "breadcrumb": "Find a mentor",
       "title": "Find",
       "titleHighlight": "your mentor.",
@@ -3480,8 +3480,8 @@
       }
     },
     "profile": {
-      "metaTitleSuffix": "Mentor — Mentora",
-      "metaDescriptionFallback": "Mentor profile on Mentora, Digizelle's 1-to-1 mentorship platform.",
+      "metaTitleSuffix": "Mentor — Mentorat",
+      "metaDescriptionFallback": "Mentor profile on Mentorat, Digizelle's 1-to-1 mentorship platform.",
       "breadcrumb": "Mentor profile",
       "notFoundTitle": "Mentor not found",
       "back": "← Back to directory",
@@ -3536,16 +3536,16 @@
       }
     },
     "onboarding": {
-      "metaTitle": "Get started with Mentora",
+      "metaTitle": "Get started with Mentorat",
       "metaDescription": "Set up your mentee profile to receive personalized suggestions.",
       "breadcrumb": "Onboarding",
       "title": "Welcome to",
-      "titleHighlight": "Mentora.",
+      "titleHighlight": "Mentorat.",
       "subtitle": "Three steps to personalize your mentor suggestions.",
       "prefillNotice": "You already have a mentee profile. Update it if your goals have changed.",
       "stepIndicator": "Step {current} / {total}",
       "step1": {
-        "title": "Your Mentora goals",
+        "title": "Your Mentorat goals",
         "subtitle": "Pick 1 to 3 priority goals. That's the basis for matching you with mentors.",
         "photoLabel": "Profile photo",
         "photoHint": "PNG, JPG, WebP or GIF. Cropped and compressed to 320×320. Optional — you can add a photo later.",
@@ -3607,7 +3607,7 @@
         "timezoneLabel": "Timezone",
         "timezoneAutodetect": "Auto-detected",
         "locationLabel": "City (optional)",
-        "discoveredViaLabel": "How did you hear about Mentora?",
+        "discoveredViaLabel": "How did you hear about Mentorat?",
         "discoveredVia": {
           "SEARCH": "Online search",
           "SOCIAL": "Social media",
@@ -3618,7 +3618,7 @@
         }
       },
       "matchBanner": {
-        "title": "Our Mentora algorithm is pre-selecting compatible mentors",
+        "title": "Our Mentorat algorithm is pre-selecting compatible mentors",
         "body": "You'll get to pick from them as soon as you finish signing up."
       },
       "slots": {
@@ -3651,13 +3651,13 @@
       "successRedirectBody": "Redirecting to recommended mentors…"
     },
     "becomeAMentor": {
-      "metaTitle": "Become a mentor — Mentora",
+      "metaTitle": "Become a mentor — Mentorat",
       "metaDescription": "Share your experience and support the next generation in tech.",
       "breadcrumb": "Become a mentor",
       "title": "Become",
-      "titleHighlight": "a Mentora mentor.",
+      "titleHighlight": "a Mentorat mentor.",
       "subtitle": "Four guided steps. Your application is then reviewed by the Digizelle team.",
-      "eligibilityNotice": "Mentora is free, volunteer-based and open to tech, design, product and career profiles.",
+      "eligibilityNotice": "Mentorat is free, volunteer-based and open to tech, design, product and career profiles.",
       "stepIndicator": "Step {current} / {total}",
       "pendingNotice": {
         "title": "Application under review",
@@ -3742,10 +3742,10 @@
         "submitNotice": "Your profile will be reviewed within 5 business days.",
         "charteCards": {
           "0": { "title": "Care & active listening", "desc": "I commit to listening without judgment, asking open questions, and respecting my mentee's pace." },
-          "1": { "title": "Confidentiality", "desc": "Whatever is shared in session stays between us. No information leaves Mentora without explicit consent." },
+          "1": { "title": "Confidentiality", "desc": "Whatever is shared in session stays between us. No information leaves Mentorat without explicit consent." },
           "2": { "title": "Availability & punctuality", "desc": "I notify 24h ahead if I can't make it, and I always offer a new slot." },
           "3": { "title": "Non-discriminatory stance", "desc": "I commit against any form of discrimination or harassment, in session and in the community." },
-          "4": { "title": "Volunteer & Digizelle frame", "desc": "Mentorship is free of charge. No commercial transaction within Mentora." }
+          "4": { "title": "Volunteer & Digizelle frame", "desc": "Mentorship is free of charge. No commercial transaction within Mentorat." }
         }
       },
       "slots": {
@@ -3834,19 +3834,19 @@
     "sections": {
       "controller": {
         "title": "Data controller",
-        "body": "Digizelle (French non-profit, association loi 1901) acts as the data controller within the meaning of article 4.7 of the GDPR for all personal data collected via this site and the Mentora & Community platform.\n\nContact details:\n• Registered office: EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\n• Single association contact: contact@digizelle.fr (all requests: general, GDPR, communication, press)\n\nThe role of GDPR contact point is held by the association's Tech Lead until an external delegate is appointed. For any request to exercise rights, report a breach, or discuss the compliance of processing, write to contact@digizelle.fr. The contact details for the CNIL (the French supervisory authority) are listed at the end of this document."
+        "body": "Digizelle (French non-profit, association loi 1901) acts as the data controller within the meaning of article 4.7 of the GDPR for all personal data collected via this site and the Mentorat & Community platform.\n\nContact details:\n• Registered office: EPITECH Le Kremlin-Bicêtre Campus, 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France\n• Single association contact: contact@digizelle.fr (all requests: general, GDPR, communication, press)\n\nThe role of GDPR contact point is held by the association's Tech Lead until an external delegate is appointed. For any request to exercise rights, report a breach, or discuss the compliance of processing, write to contact@digizelle.fr. The contact details for the CNIL (the French supervisory authority) are listed at the end of this document."
       },
       "data": {
         "title": "Data collected",
-        "body": "We apply the principle of minimization: only data strictly necessary for each purpose is collected.\n\n— Contact form: first name, last name, email, subject, message. Legal basis: legitimate interest (responding to your request).\n— Mentora sign-up: first name, last name, email, hashed password (bcrypt), role (learner / mentor / partner), sign-up date. Legal basis: performance of the membership contract.\n— Mentor/mentee profile: skills, availability, background, optional photo. Legal basis: explicit consent.\n— Newsletter: email, sign-up source, date. Legal basis: consent (opt-in).\n— Technical data: truncated IP address, user-agent, pages visited (server logs, aggregated statistics).\n— Technical cookies: session, CSRF token, theme preference. See the Cookies page.\n\nNo sensitive data (origin, political opinions, religion, health, sexual orientation) is collected."
+        "body": "We apply the principle of minimization: only data strictly necessary for each purpose is collected.\n\n— Contact form: first name, last name, email, subject, message. Legal basis: legitimate interest (responding to your request).\n— Mentorat sign-up: first name, last name, email, hashed password (bcrypt), role (learner / mentor / partner), sign-up date. Legal basis: performance of the membership contract.\n— Mentor/mentee profile: skills, availability, background, optional photo. Legal basis: explicit consent.\n— Newsletter: email, sign-up source, date. Legal basis: consent (opt-in).\n— Technical data: truncated IP address, user-agent, pages visited (server logs, aggregated statistics).\n— Technical cookies: session, CSRF token, theme preference. See the Cookies page.\n\nNo sensitive data (origin, political opinions, religion, health, sexual orientation) is collected."
       },
       "purpose": {
         "title": "Purposes",
-        "body": "Your data is used exclusively for the following purposes:\n• Responding to your requests (contact, press, partnership)\n• Managing your account in the Mentora area and the mentor/mentee matching\n• Sending you the Digizelle newsletter, which you've freely subscribed to\n• Informing you of events or programs you've registered for\n• Ensuring the security, availability and improvement of the site\n• Responding to legal obligations (judicial requisitions)\n\nYour data is never sold. No advertising profiling is carried out."
+        "body": "Your data is used exclusively for the following purposes:\n• Responding to your requests (contact, press, partnership)\n• Managing your account in the Mentorat area and the mentor/mentee matching\n• Sending you the Digizelle newsletter, which you've freely subscribed to\n• Informing you of events or programs you've registered for\n• Ensuring the security, availability and improvement of the site\n• Responding to legal obligations (judicial requisitions)\n\nYour data is never sold. No advertising profiling is carried out."
       },
       "retention": {
         "title": "Retention period",
-        "body": "In accordance with the principle of storage limitation (article 5.1.e of the GDPR):\n• Contact messages: 2 years after the last exchange, then 1 year of intermediate archiving\n• Mentora user accounts: as long as the account is active; deleted on request within 30 days, or automatically after 24 months of inactivity\n• Newsletter sign-ups: until you unsubscribe (link in every email)\n• Technical logs (security, fraud prevention): 12 months maximum\n• Encrypted backups: kept for 90 days then destroyed\n\nAt the end of these periods, data is anonymized (aggregated statistics) or permanently deleted."
+        "body": "In accordance with the principle of storage limitation (article 5.1.e of the GDPR):\n• Contact messages: 2 years after the last exchange, then 1 year of intermediate archiving\n• Mentorat user accounts: as long as the account is active; deleted on request within 30 days, or automatically after 24 months of inactivity\n• Newsletter sign-ups: until you unsubscribe (link in every email)\n• Technical logs (security, fraud prevention): 12 months maximum\n• Encrypted backups: kept for 90 days then destroyed\n\nAt the end of these periods, data is anonymized (aggregated statistics) or permanently deleted."
       },
       "rights": {
         "title": "Your GDPR rights",
@@ -3880,7 +3880,7 @@
   },
   "programs": {
     "metaTitle": "Programs",
-    "metaDescription": "Immersive Workshop, Masterclass, Hackathon, Mentora — four inclusive Digizelle formats.",
+    "metaDescription": "Immersive Workshop, Masterclass, Hackathon, Mentorat — four inclusive Digizelle formats.",
     "eyebrow": "2026 Programs",
     "title": "Four formats.",
     "titleHighlight": "One shared ambition.",
@@ -3948,7 +3948,7 @@
         }
       },
       "mentora": {
-        "title": "Mentora",
+        "title": "Mentorat",
         "tag": "Long term",
         "duration": "6 months",
         "desc": "1-to-1 mentorship program for sustained, longer-term support.",
@@ -3959,9 +3959,9 @@
           "Unlimited resources"
         ],
         "details": {
-          "intro": "Six months of support with a dedicated mentor. Personal goals, regular video sessions, custom resources and tracking on the Mentora platform. Ideal for those who need clear direction on their career path or entry into the working world.",
+          "intro": "Six months of support with a dedicated mentor. Personal goals, regular video sessions, custom resources and tracking on the Mentorat platform. Ideal for those who need clear direction on their career path or entry into the working world.",
           "audience": "Ages 16-30, students or young professionals looking for direction, a career change or career structuring in digital.",
-          "format": "Algorithmic matching based on your interests and needs, 1 video call per month minimum + unlimited messaging, access to the Mentora platform with goals, sessions and journal.",
+          "format": "Algorithmic matching based on your interests and needs, 1 video call per month minimum + unlimited messaging, access to the Mentorat platform with goals, sessions and journal.",
           "outcomes": "Clarified career plan, broader professional network, end-of-program certificate, opportunity to become a mentor yourself afterwards."
         }
       }
@@ -4004,15 +4004,15 @@
         "3": {
           "month": "June",
           "day": "20",
-          "title": "Mentora — kick-off",
-          "tag": "Mentora"
+          "title": "Mentorat — kick-off",
+          "tag": "Mentorat"
         }
       }
     }
   },
   "projects": {
     "metaTitle": "Projects",
-    "metaDescription": "Digizelle platform, Mentora program, community space and Impact events, hackathons & on-the-ground workshops — all of the association's achievements.",
+    "metaDescription": "Digizelle platform, Mentorat program, community space and Impact events, hackathons & on-the-ground workshops — all of the association's achievements.",
     "eyebrow": "Projects",
     "title": "What we've",
     "titleHighlight": "built together.",
@@ -4028,10 +4028,10 @@
       "0": {
         "title": "Digizelle Platform",
         "category": "Platform",
-        "desc": "The website and the app together: showcase, Mentora program and community space."
+        "desc": "The website and the app together: showcase, Mentorat program and community space."
       },
       "1": {
-        "title": "Mentora",
+        "title": "Mentorat",
         "category": "Program",
         "desc": "Mentor/mentee program with algorithmic matching, scheduled sessions, goals and messaging. Designed for young people far from digital opportunities."
       },

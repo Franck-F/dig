@@ -173,7 +173,7 @@ export default async function CommunityNotificationsPage({
               className="dz-btn dz-btn-ghost dz-btn-sm"
               style={{ fontSize: 12 }}
             >
-              {t('crossLinkMentora')}
+              {t('crossLinkMentorat')}
             </Link>
           </div>
         </header>

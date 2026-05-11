@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 import ResourceForm from './ResourceForm';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Nouvelle ressource · Mentora' };
+export const metadata = { title: 'Nouvelle ressource · Mentorat' };
 
 /**
  * `/mentora/dashboard/resources/new` — formulaire de création.

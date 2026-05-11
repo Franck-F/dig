@@ -14,14 +14,14 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Bienvenue · choisis tes accès · Digizelle',
   description:
-    'Active l’espace qui te ressemble — Mentora pour cheminer avec un·e mentor·e, la Communauté pour grandir avec les autres. Tu peux choisir l’un, l’autre ou les deux.',
+    'Active l’espace qui te ressemble — Mentorat pour cheminer avec un·e mentor·e, la Communauté pour grandir avec les autres. Tu peux choisir l’un, l’autre ou les deux.',
 };
 
 /**
  * One-time chooser for brand-new accounts.
  *
  * The auth `events.signIn` hook sets `roleConfirmed: false` on first
- * OAuth sign-in. Mentora (1-to-1 mentorship) and Community (forum /
+ * OAuth sign-in. Mentorat (1-to-1 mentorship) and Community (forum /
  * channels) are independent products — the user picks any non-empty
  * combination. Users who already confirmed get bounced to /app.
  */
@@ -160,7 +160,7 @@ export default async function WelcomeRolePage() {
             color: 'rgba(255,255,255,0.78)',
           }}
         >
-          Mentora t’accompagne en 1-to-1 avec un·e mentor·e. La Communauté te connecte aux autres digizellien·nes au quotidien.
+          Mentorat t’accompagne en 1-to-1 avec un·e mentor·e. La Communauté te connecte aux autres digizellien·nes au quotidien.
           Active ce qui te parle aujourd’hui — tu pourras toujours ajouter l’autre plus tard.
         </p>
 

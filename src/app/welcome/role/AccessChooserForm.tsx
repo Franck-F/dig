@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 
 import { confirmAccess } from '@/lib/actions/welcome';
 
-type MentoraSub = 'STUDENT' | 'MENTOR';
+type MentoratSub = 'STUDENT' | 'MENTOR';
 
 const ERROR_LABEL: Record<string, string> = {
   unauthorized: 'Ta session a expiré. Reconnecte-toi pour continuer.',
@@ -17,18 +17,18 @@ const ERROR_LABEL: Record<string, string> = {
 };
 
 /**
- * Two big toggle cards — Mentora (with sub-role radio) and Community.
+ * Two big toggle cards — Mentorat (with sub-role radio) and Community.
  * The user can pick any non-empty combination. The "Continuer" button
  * stays disabled until at least one card is on.
  *
  * On submit, `confirmAccess` redirects to the right next step:
- *   - Mentora MENTOR (alone or with community)  → /mentora/become-a-mentor
- *   - Mentora STUDENT (alone or with community) → /mentora/onboarding
+ *   - Mentorat MENTOR (alone or with community)  → /mentora/become-a-mentor
+ *   - Mentorat STUDENT (alone or with community) → /mentora/onboarding
  *   - Community only                            → /community
  */
 export default function AccessChooserForm() {
-  const [mentoraOn, setMentoraOn] = useState(false);
-  const [mentoraSub, setMentoraSub] = useState<MentoraSub>('STUDENT');
+  const [mentoraOn, setMentoratOn] = useState(false);
+  const [mentoraSub, setMentoratSub] = useState<MentoratSub>('STUDENT');
   const [communityOn, setCommunityOn] = useState(false);
 
   const [isPending, startTransition] = useTransition();
@@ -84,11 +84,11 @@ export default function AccessChooserForm() {
       >
         <ProductCard
           on={mentoraOn}
-          onToggle={() => setMentoraOn((v) => !v)}
+          onToggle={() => setMentoratOn((v) => !v)}
           accent="#7301FF"
           accent2="#A34BF5"
           icon="✦"
-          title="Mentora"
+          title="Mentorat"
           subtitle="Mentorat 1-to-1"
           description="Mise en relation algorithmique mentor / mentoré·e, sessions en visio, agenda partagé, messagerie, suivi d'objectifs."
           bullets={[
@@ -100,7 +100,7 @@ export default function AccessChooserForm() {
           {mentoraOn && (
             <div
               role="radiogroup"
-              aria-label="Rôle Mentora"
+              aria-label="Rôle Mentorat"
               style={{
                 marginTop: 14,
                 paddingTop: 14,
@@ -112,13 +112,13 @@ export default function AccessChooserForm() {
             >
               <SubRoleButton
                 checked={mentoraSub === 'STUDENT'}
-                onPick={() => setMentoraSub('STUDENT')}
+                onPick={() => setMentoratSub('STUDENT')}
                 label="Apprenant·e"
                 hint="Je viens apprendre"
               />
               <SubRoleButton
                 checked={mentoraSub === 'MENTOR'}
-                onPick={() => setMentoraSub('MENTOR')}
+                onPick={() => setMentoratSub('MENTOR')}
                 label="Mentor"
                 hint="Je viens transmettre"
               />
@@ -196,7 +196,7 @@ export default function AccessChooserForm() {
   );
 }
 
-function ctaLabel(mentoraOn: boolean, communityOn: boolean, mentoraSub: MentoraSub): string {
+function ctaLabel(mentoraOn: boolean, communityOn: boolean, mentoraSub: MentoratSub): string {
   if (!mentoraOn && !communityOn) return 'Active un espace pour continuer';
   if (mentoraOn && communityOn) {
     return mentoraSub === 'MENTOR'

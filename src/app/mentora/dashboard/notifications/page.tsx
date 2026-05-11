@@ -12,7 +12,7 @@ import { dayBucket } from '../_components/format';
 type Bucket = 'today' | 'yesterday' | 'earlier';
 
 /**
- * Mentora notifications inbox — Gmail-style master / detail layout.
+ * Mentorat notifications inbox — Gmail-style master / detail layout.
  *
  * Identical UX to `/community/notifications`: left rail lists every
  * notification grouped by day with a unread-dot, right pane renders

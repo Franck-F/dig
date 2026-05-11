@@ -9,7 +9,7 @@ import { markAllNotificationsRead } from '@/lib/actions/mentora/notifications';
  * notifications. Fires the bulk-mark action and refreshes the route
  * so the right pane and the bell counter both reset together.
  *
- * Shared between Community and Mentora notification inboxes.
+ * Shared between Community and Mentorat notification inboxes.
  */
 export default function MarkAllReadButton({
   unreadCount,

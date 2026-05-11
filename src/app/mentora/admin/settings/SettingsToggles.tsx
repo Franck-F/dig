@@ -3,14 +3,14 @@
 import { useTransition, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { updateMentoraProgrammeSettings } from '@/lib/actions/platform-settings';
+import { updateMentoratProgrammeSettings } from '@/lib/actions/platform-settings';
 
 /**
- * Single-toggle button bound to a `MentoraProgrammeSettings`
+ * Single-toggle button bound to a `MentoratProgrammeSettings`
  * boolean field. Optimistic flip with rollback on error, same
  * pattern as the community variant.
  */
-export function MentoraBoolToggle({
+export function MentoratBoolToggle({
   field,
   initialOn,
 }: {
@@ -25,7 +25,7 @@ export function MentoraBoolToggle({
     const target = !on;
     setOn(target);
     startTransition(async () => {
-      const res = await updateMentoraProgrammeSettings({ [field]: target });
+      const res = await updateMentoratProgrammeSettings({ [field]: target });
       if (res.status === 'error') {
         setOn(!target);
       } else {

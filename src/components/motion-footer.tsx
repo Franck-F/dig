@@ -235,7 +235,7 @@ export function CinematicFooter() {
                   href="/mentora"
                   className="dz-cinematic-pill"
                 >
-                  <span>{tFooter("ctaMentora")}</span>
+                  <span>{tFooter("ctaMentorat")}</span>
                 </Magnetic>
                 <Magnetic
                   as={Link}

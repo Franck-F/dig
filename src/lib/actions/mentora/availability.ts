@@ -8,7 +8,7 @@ import {
   type ActionResult,
   errorResult,
   handleError,
-  MentoraError,
+  MentoratError,
   requireMentorOwner,
   successResult,
 } from './_helpers';
@@ -62,7 +62,7 @@ export async function updateAvailabilityRule(
 
     const existing = await prisma.availabilityRule.findUnique({ where: { id: parsed.data.id } });
     if (!existing || existing.mentorProfileId !== mentorProfile.id) {
-      throw new MentoraError('notFound');
+      throw new MentoratError('notFound');
     }
     const row = await prisma.availabilityRule.update({
       where: { id: parsed.data.id },
@@ -92,7 +92,7 @@ export async function deleteAvailabilityRule(
 
     const existing = await prisma.availabilityRule.findUnique({ where: { id: parsed.data.id } });
     if (!existing || existing.mentorProfileId !== mentorProfile.id) {
-      throw new MentoraError('notFound');
+      throw new MentoratError('notFound');
     }
     await prisma.availabilityRule.delete({ where: { id: parsed.data.id } });
     revalidatePath('/mentora/dashboard/availability');
@@ -200,7 +200,7 @@ export async function deleteAvailabilityException(
 
     const existing = await prisma.availabilityException.findUnique({ where: { id: parsed.data.id } });
     if (!existing || existing.mentorProfileId !== mentorProfile.id) {
-      throw new MentoraError('notFound');
+      throw new MentoratError('notFound');
     }
     await prisma.availabilityException.delete({ where: { id: parsed.data.id } });
     revalidatePath('/mentora/dashboard/availability');

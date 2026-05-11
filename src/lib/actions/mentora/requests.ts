@@ -9,7 +9,7 @@ import {
   type ActionResult,
   errorResult,
   handleError,
-  MentoraError,
+  MentoratError,
   requireUser,
   successResult,
 } from './_helpers';
@@ -333,8 +333,8 @@ export async function expirePendingRequests(): Promise<{ expired: number }> {
   return { expired: due.length };
 }
 
-// Surface unused import to satisfy strict TS (MentoraError is used in catch)
-void MentoraError;
+// Surface unused import to satisfy strict TS (MentoratError is used in catch)
+void MentoratError;
 
 // Convenience state alias used by useFormState callers (UI dialog component).
 export type SendMentorshipRequestState =

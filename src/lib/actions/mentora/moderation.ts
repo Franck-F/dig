@@ -130,7 +130,7 @@ export async function sendMentorReminder(input: { id: string }): Promise<ActionR
     const name = fullName(mentor.user);
     await sendEmail({
       to: mentor.user.email,
-      subject: 'Digizelle Mentora — pensez à mettre votre profil à jour',
+      subject: 'Digizelle Mentorat — pensez à mettre votre profil à jour',
       text:
         `Bonjour ${name.split(' ')[0] ?? name},\n\n` +
         `Votre profil mentor n'a pas été mis à jour depuis plus de 60 jours. ` +
@@ -185,7 +185,7 @@ export async function pingMentorship(input: { id: string }): Promise<ActionResul
       both.map((u) =>
         sendEmail({
           to: u.email,
-          subject: 'Digizelle Mentora — relance amicale sur votre mentorship',
+          subject: 'Digizelle Mentorat — relance amicale sur votre mentorship',
           text:
             `Bonjour ${(u.firstName ?? u.name ?? '').split(' ')[0] || ''},\n\n` +
             `Aucune session n'a été planifiée dans votre mentorship depuis plus ` +

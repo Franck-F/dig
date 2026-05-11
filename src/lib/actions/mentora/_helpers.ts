@@ -3,7 +3,7 @@ import type { UserRole } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
-export type MentoraActionError =
+export type MentoratActionError =
   | 'unauthorized'
   | 'notFound'
   | 'forbidden'
@@ -29,16 +29,16 @@ export type ActionResult<T = undefined> =
   | { status: 'success'; data?: T }
   | { status: 'error'; error: string; fieldErrors?: Record<string, string> };
 
-export class MentoraError extends Error {
-  code: MentoraActionError;
-  constructor(code: MentoraActionError, message?: string) {
+export class MentoratError extends Error {
+  code: MentoratActionError;
+  constructor(code: MentoratActionError, message?: string) {
     super(message ?? code);
     this.code = code;
-    this.name = 'MentoraError';
+    this.name = 'MentoratError';
   }
 }
 
-export function errorResult(code: MentoraActionError, fieldErrors?: Record<string, string>): ActionResult<never> {
+export function errorResult(code: MentoratActionError, fieldErrors?: Record<string, string>): ActionResult<never> {
   return { status: 'error', error: `mentora.errors.${code}`, fieldErrors };
 }
 
@@ -50,13 +50,13 @@ export function successResult<T>(data?: T): ActionResult<T> {
 export async function requireUser(): Promise<{ userId: string; role: UserRole; email: string | null }> {
   const session = await auth();
   const userId = (session?.user as { id?: string } | undefined)?.id;
-  if (!userId) throw new MentoraError('unauthorized');
+  if (!userId) throw new MentoratError('unauthorized');
   // role is not on JWT yet — fetch from DB
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, role: true, email: true },
   });
-  if (!user) throw new MentoraError('unauthorized');
+  if (!user) throw new MentoratError('unauthorized');
   return { userId: user.id, role: user.role, email: user.email };
 }
 
@@ -66,7 +66,7 @@ export async function requireMentor() {
   const profile = await prisma.mentorProfile.findUnique({
     where: { userId: ctx.userId },
   });
-  if (!profile) throw new MentoraError('forbidden');
+  if (!profile) throw new MentoratError('forbidden');
   return { ...ctx, mentorProfile: profile };
 }
 
@@ -76,7 +76,7 @@ export async function requireMentorOwner() {
   const profile = await prisma.mentorProfile.findUnique({
     where: { userId: ctx.userId },
   });
-  if (!profile) throw new MentoraError('forbidden');
+  if (!profile) throw new MentoratError('forbidden');
   return { ...ctx, mentorProfile: profile };
 }
 
@@ -85,7 +85,7 @@ export async function requireMentee() {
   const profile = await prisma.menteeProfile.findUnique({
     where: { userId: ctx.userId },
   });
-  if (!profile) throw new MentoraError('profileIncomplete');
+  if (!profile) throw new MentoratError('profileIncomplete');
   return { ...ctx, menteeProfile: profile };
 }
 
@@ -98,21 +98,21 @@ export async function requireMentorshipMember(mentorshipId: string) {
       menteeProfile: { select: { userId: true } },
     },
   });
-  if (!m) throw new MentoraError('notFound');
+  if (!m) throw new MentoratError('notFound');
   const isMentor = m.mentorProfile.userId === ctx.userId;
   const isMentee = m.menteeProfile.userId === ctx.userId;
-  if (!isMentor && !isMentee) throw new MentoraError('forbidden');
+  if (!isMentor && !isMentee) throw new MentoratError('forbidden');
   return { ...ctx, mentorship: m, isMentor, isMentee };
 }
 
 export async function requireMentorshipMentor(mentorshipId: string) {
   const member = await requireMentorshipMember(mentorshipId);
-  if (!member.isMentor) throw new MentoraError('forbidden');
+  if (!member.isMentor) throw new MentoratError('forbidden');
   return member;
 }
 
 export function handleError(err: unknown): ActionResult<never> {
-  if (err instanceof MentoraError) return errorResult(err.code);
+  if (err instanceof MentoratError) return errorResult(err.code);
   console.error('[mentora action] unexpected error', err);
   return { status: 'error', error: 'mentora.errors.unauthorized' };
 }

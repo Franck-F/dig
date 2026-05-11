@@ -12,11 +12,11 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Mon espace · Digizelle',
-  description: 'Ton espace personnel Digizelle — Mentora et Communauté.',
+  description: 'Ton espace personnel Digizelle — Mentorat et Communauté.',
 };
 
 const FALLBACK_QUICK = [
-  { title: 'Découvre Mentora', sub: 'Trouve ton mentor', color: '#7301FF', icon: '✦', href: '/mentora/dashboard' },
+  { title: 'Découvre Mentorat', sub: 'Trouve ton mentor', color: '#7301FF', icon: '✦', href: '/mentora/dashboard' },
   { title: 'Le fil communauté', sub: 'Discussions du moment', color: '#F46FB1', icon: '☷', href: '/community' },
   { title: 'Programmes ouverts', sub: 'Inscriptions en cours', color: '#3B7BFF', icon: '⚡', href: '/programs' },
   { title: 'Événements', sub: 'À venir cette semaine', color: '#A34BF5', icon: '◇', href: '/events' },
@@ -138,7 +138,7 @@ export default async function AppHubPage() {
   const hasMentor = Boolean(user?.mentorProfile);
   const hasMentee = Boolean(user?.menteeProfile);
 
-  // Decide where the Mentora card should land the user. A user who picked
+  // Decide where the Mentorat card should land the user. A user who picked
   // MENTOR at signup but hasn't completed the mentor application yet must
   // go to the mentor wizard, not the mentee onboarding (the latter asks
   // for "objectifs / compétences à développer" which is the wrong frame).
@@ -488,7 +488,7 @@ export default async function AppHubPage() {
                   textTransform: 'uppercase',
                 }}
               >
-                ✦ Mentora
+                ✦ Mentorat
               </div>
               {mentorshipCount > 0 && (
                 <div

@@ -132,7 +132,7 @@ export default async function MentorProfilePage({
         {...jsonLdScriptProps(
           breadcrumbJsonLd([
             { name: 'Accueil', url: '/' },
-            { name: 'Mentora', url: '/mentora' },
+            { name: 'Mentorat', url: '/mentora' },
             { name: 'Trouver un mentor', url: '/mentora/discover' },
             { name: displayName, url: `/mentora/${mentor.userId}` },
           ]),

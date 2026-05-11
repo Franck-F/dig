@@ -135,7 +135,7 @@ export default async function MentorProfileLayout({ children }: { children: Reac
   return (
     <AppShell
       title="Profil mentor"
-      subtitle="Mentora · Catalogue"
+      subtitle="Mentorat · Catalogue"
       nav={nav}
       switchItems={buildSwitchItems(access, {
         mentora: tShell('switch.mentora'),

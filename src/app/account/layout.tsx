@@ -11,7 +11,7 @@ import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access'
  * `/account/*` connected shell.
  *
  * The settings page is product-agnostic — it lives outside `/community` and
- * `/mentora` so a Mentora-only user never gets routed to a `/community/...`
+ * `/mentora` so a Mentorat-only user never gets routed to a `/community/...`
  * URL. The shell still wraps the page so the user keeps her navigation
  * context (sidebar, search, notifications, sign-out, brand-coloured
  * topbar). Switch tabs are filtered to the products the user has access

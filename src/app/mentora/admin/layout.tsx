@@ -17,7 +17,7 @@ import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
  *     We re-fetch `role` from the DB rather than trusting the JWT, because the
  *     session token may be stale if an admin was demoted.
  */
-export default async function MentoraAdminLayout({ children }: { children: ReactNode }) {
+export default async function MentoratAdminLayout({ children }: { children: ReactNode }) {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/mentora/admin');
 
@@ -80,7 +80,7 @@ export default async function MentoraAdminLayout({ children }: { children: React
     { href: '/mentora/admin/reports', label: tShell('nav.admin.reports'), icon: '◌', matchPrefix: true },
     // Account-level settings (profile, RGPD export, danger zone)
     // share a single product-agnostic page at /account/settings — same
-    // target from every space (Mentora dashboard, Community, Admin).
+    // target from every space (Mentorat dashboard, Community, Admin).
     {
       href: '/account/settings',
       label: tShell('nav.community.settings'),
@@ -96,7 +96,7 @@ export default async function MentoraAdminLayout({ children }: { children: React
 
   return (
     <AppShell
-      title="Pilotage Mentora"
+      title="Pilotage Mentorat"
       subtitle="Admin · Cycle Printemps 2026"
       nav={nav}
       switchItems={[

@@ -3,7 +3,7 @@ import NewsletterCampaignModal from '../_components/NewsletterCampaignModal';
 import EmailTemplateEditor from './EmailTemplateEditor';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Communications · Admin Mentora' };
+export const metadata = { title: 'Communications · Admin Mentorat' };
 
 /**
  * `/mentora/admin/communications` — campagnes & emails.
@@ -214,7 +214,7 @@ export default async function CommunicationsPage() {
           Communications <span className="dz-grad-text">& campagnes</span>
         </h1>
         <p className="dz-body" style={{ fontSize: 15, marginTop: 10, maxWidth: 640 }}>
-          Pilote les emails sortants Mentora — campagnes ponctuelles, automations
+          Pilote les emails sortants Mentorat — campagnes ponctuelles, automations
           récurrentes et modèle d&rsquo;email. Toutes les actions sont auditées.
         </p>
       </section>

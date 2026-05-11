@@ -24,7 +24,7 @@ const CATEGORIES: Array<{ value: 'UX_UI' | 'CAREER' | 'CAREER_CHANGE' | 'TECH' |
 ];
 
 const AUDIENCES: Array<{ value: 'MENTORA' | 'COMMUNITY' | 'BOTH'; label: string; hint: string }> = [
-  { value: 'MENTORA', label: 'Mentora', hint: 'Visible des mentorées et mentors' },
+  { value: 'MENTORA', label: 'Mentorat', hint: 'Visible des mentorées et mentors' },
   { value: 'COMMUNITY', label: 'Communauté', hint: 'Visible de l’espace communauté' },
   { value: 'BOTH', label: 'Les deux', hint: 'Réservé à l’admin' },
 ];

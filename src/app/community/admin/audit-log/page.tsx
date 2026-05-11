@@ -45,7 +45,7 @@ function paletteFor(action: string): { fg: string; bg: string; border: string; l
   switch (ns) {
     case 'mentor':
     case 'cycle':
-      return { fg: '#7301FF', bg: 'rgba(115,1,255,0.10)', border: 'rgba(115,1,255,0.25)', label: 'Mentora' };
+      return { fg: '#7301FF', bg: 'rgba(115,1,255,0.10)', border: 'rgba(115,1,255,0.25)', label: 'Mentorat' };
     case 'community':
     case 'post':
     case 'comment':

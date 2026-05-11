@@ -26,7 +26,7 @@ const STORAGE_KEY = 'digizelle.admin.email-template.v1';
 const DEFAULT_SUBJECT = '✦ Nouvelle session disponible avec ton mentor';
 const DEFAULT_BODY = `Bonjour {{prenom}},
 
-Ton mentor {{mentor}} a ouvert un créneau pour {{date}}. Réserve-le en 1 clic depuis ton espace Mentora.
+Ton mentor {{mentor}} a ouvert un créneau pour {{date}}. Réserve-le en 1 clic depuis ton espace Mentorat.
 
 — L'équipe Digizelle ✦`;
 

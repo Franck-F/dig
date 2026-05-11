@@ -79,7 +79,7 @@ export async function notify(
     try {
       subject = t(`${baseKey}.subject`, params as never);
     } catch {
-      subject = `[Mentora] ${type}`;
+      subject = `[Mentorat] ${type}`;
     }
     try {
       body = t(`${baseKey}.body`, params as never);
@@ -94,7 +94,7 @@ export async function notify(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Mentora <noreply@digizelle.fr>',
+        from: 'Mentorat <noreply@digizelle.fr>',
         to: user.email,
         replyTo: process.env.CONTACT_TO_EMAIL || 'contact@digizelle.fr',
         subject,

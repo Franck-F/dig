@@ -7,7 +7,7 @@ import {
   type ActionResult,
   errorResult,
   handleError,
-  MentoraError,
+  MentoratError,
   requireUser,
   successResult,
 } from './_helpers';
@@ -26,8 +26,8 @@ export async function markNotificationRead(
       where: { id: parsed.data.notificationId },
       select: { id: true, userId: true, readAt: true },
     });
-    if (!notif) throw new MentoraError('notFound');
-    if (notif.userId !== ctx.userId) throw new MentoraError('forbidden');
+    if (!notif) throw new MentoratError('notFound');
+    if (notif.userId !== ctx.userId) throw new MentoratError('forbidden');
     if (!notif.readAt) {
       await prisma.notification.update({
         where: { id: notif.id },

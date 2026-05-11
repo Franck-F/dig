@@ -11,7 +11,7 @@ import MenteeOverview from './_components/MenteeOverview';
  * - Mentee with profile → MenteeOverview (this agent).
  * - No profile → empty overview (banner is rendered by the layout).
  */
-export default async function MentoraDashboardPage() {
+export default async function MentoratDashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/mentora/dashboard');
 
@@ -26,7 +26,7 @@ export default async function MentoraDashboardPage() {
 
   // Admin without a mentor/mentee profile — send them straight to the
   // pilotage dashboard. The mentee-targeted "Créez votre profil pour
-  // commencer à utiliser Mentora" message was confusing for admins, and the
+  // commencer à utiliser Mentorat" message was confusing for admins, and the
   // AdminNoProfileBanner in the layout duplicated the same shortcuts.
   if (profile.kind === 'none' && profile.role === 'ADMIN') {
     redirect('/mentora/admin');
@@ -36,9 +36,9 @@ export default async function MentoraDashboardPage() {
   // surface a soft secondary card here.
   return (
     <div className="dz-card" style={{ padding: 28 }}>
-      <h1 className="dz-h2" style={{ fontSize: 22 }}>Tableau de bord Mentora</h1>
+      <h1 className="dz-h2" style={{ fontSize: 22 }}>Tableau de bord Mentorat</h1>
       <p className="dz-body" style={{ marginTop: 8 }}>
-        Créez votre profil pour commencer à utiliser Mentora.
+        Créez votre profil pour commencer à utiliser Mentorat.
       </p>
     </div>
   );

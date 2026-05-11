@@ -4,10 +4,10 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
 /**
- * Shared action primitives reused across feature areas (Mentora, Community, …).
+ * Shared action primitives reused across feature areas (Mentorat, Community, …).
  * Extracted from `src/lib/actions/mentora/_helpers.ts` so the Community helpers
  * can re-use the same `ActionResult` shape and the `requireUser()` resolver
- * without depending on the Mentora-specific error type.
+ * without depending on the Mentorat-specific error type.
  */
 
 export type ActionResult<T = undefined> =

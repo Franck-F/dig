@@ -7,15 +7,15 @@ import { notify, type NotifyPayload } from '@/lib/mentora/notifications';
  * Community-side helpers around the shared `Notification` table. Spec §7.
  *
  * - `createCommunityNotification` always tags `payload.surface = 'community'`
- *   so the bell UI can split Mentora vs Community streams client-side.
+ *   so the bell UI can split Mentorat vs Community streams client-side.
  * - `notifyReactionDebounced` enforces the 30-min window from §3.7 to prevent
  *   reaction-notif spam.
- * - `getUnreadCount` is a tiny aggregator the Mentora bell can call alongside
+ * - `getUnreadCount` is a tiny aggregator the Mentorat bell can call alongside
  *   its own counter.
  *
  * Email is **only** sent for MODERATION_ACTION (handled here by passing
- * `email: true`). The Mentora `notify()` defaults to its own EMAIL_ENABLED
- * map for known-Mentora types and otherwise no-ops, so `email: false` is the
+ * `email: true`). The Mentorat `notify()` defaults to its own EMAIL_ENABLED
+ * map for known-Mentorat types and otherwise no-ops, so `email: false` is the
  * safe default for community types.
  */
 
@@ -73,7 +73,7 @@ export async function notifyReactionDebounced(args: {
 }
 
 /**
- * Count unread community-tagged notifications. The Mentora bell already
+ * Count unread community-tagged notifications. The Mentorat bell already
  * counts notifications in the same table; the community badge is layered on
  * top by filtering on `payload.surface = 'community'`.
  */

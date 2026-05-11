@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Rapports · Admin Mentora' };
+export const metadata = { title: 'Rapports · Admin Mentorat' };
 
 /**
  * `/mentora/admin/reports` — refondu pour matcher le handoff

@@ -59,7 +59,7 @@ export default async function MenteeOverview({ profile }: { profile: CurrentMent
   void (await getTranslations('mentora.requests'));
 
   // Read product access so we can offer a "join the community" CTA to
-  // mentees who signed up Mentora-only.
+  // mentees who signed up Mentorat-only.
   const access = await getProductAccess();
 
   const menteeProfileId = profile.profile.id;

@@ -5,6 +5,6 @@ import { SkeletonAdmin } from '@/components/boundary/Skeletons';
  * (stat strip + list of items), so the same shapes minimise layout
  * shift on hydration.
  */
-export default function MentoraDashboardLoading() {
+export default function MentoratDashboardLoading() {
   return <SkeletonAdmin />;
 }

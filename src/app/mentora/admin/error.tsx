@@ -2,7 +2,7 @@
 
 import { SectionErrorPanel } from '@/components/boundary/SectionErrorPanel';
 
-export default function MentoraAdminError({
+export default function MentoratAdminError({
   error,
   reset,
 }: {

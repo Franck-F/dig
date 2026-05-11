@@ -1,5 +1,5 @@
 /**
- * Mentora scheduling algorithm — pure, DST-safe, no DB.
+ * Mentorat scheduling algorithm — pure, DST-safe, no DB.
  *
  * Implements spec §4.
  * Uses `Intl.DateTimeFormat` (no extra deps) for IANA tz math; spec §4.3 explicitly

@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const stepsCount = 4;
 
-export default async function MentoraPage() {
+export default async function MentoratPage() {
   const t = await getTranslations('mentora');
   const session = await auth();
   const isAuthed = Boolean(session?.user);
@@ -41,12 +41,12 @@ export default async function MentoraPage() {
 
   return (
     <Frame active="mentora">
-      {/* JSON-LD: Service schema for the Mentora mentorship program +
+      {/* JSON-LD: Service schema for the Mentorat mentorship program +
           breadcrumb. */}
       <script
         {...jsonLdScriptProps(
           serviceJsonLd({
-            name: 'Mentora — programme de mentorat 1-to-1 Digizelle',
+            name: 'Mentorat — programme de mentorat 1-to-1 Digizelle',
             description: t('metaDescription'),
             url: '/mentora',
             serviceType: 'Programme de mentorat',
@@ -57,7 +57,7 @@ export default async function MentoraPage() {
         {...jsonLdScriptProps(
           breadcrumbJsonLd([
             { name: 'Accueil', url: '/' },
-            { name: 'Mentora', url: '/mentora' },
+            { name: 'Mentorat', url: '/mentora' },
           ]),
         )}
       />
@@ -104,7 +104,7 @@ export default async function MentoraPage() {
                 }}
               >
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#8b91ad', letterSpacing: '0.06em' }}>9:41</div>
-                <div style={{ fontSize: 14, fontWeight: 700 }}>Mentora</div>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>Mentorat</div>
                 <div style={{ fontSize: 11, color: '#8b91ad' }}>● ● ●</div>
               </div>
               <div style={{ padding: '16px 4px 4px' }}>

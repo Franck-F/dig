@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 import RematchButton from './RematchButton';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Matching · Admin Mentora' };
+export const metadata = { title: 'Matching · Admin Mentorat' };
 
 /**
  * `/mentora/admin/matching` — refondu pour matcher le handoff

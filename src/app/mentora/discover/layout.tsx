@@ -11,7 +11,7 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
 import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
 
-/** Mentora-section notification types — community types are filtered out so
+/** Mentorat-section notification types — community types are filtered out so
  *  the bell stays in section context. */
 const MENTORA_NOTIF_TYPES: NotificationType[] = [
   NotificationType.REQUEST_RECEIVED,
@@ -38,7 +38,7 @@ const MENTORA_NOTIF_TYPES: NotificationType[] = [
  * doesn't lose her sidebar / topbar context. Anonymous viewers keep the
  * marketing `<Frame>`.
  */
-export default async function MentoraDiscoverLayout({ children }: { children: ReactNode }) {
+export default async function MentoratDiscoverLayout({ children }: { children: ReactNode }) {
   const session = await auth();
   const userId = session?.user?.id;
 
@@ -141,7 +141,7 @@ export default async function MentoraDiscoverLayout({ children }: { children: Re
   return (
     <AppShell
       title="Trouver un mentor"
-      subtitle="Mentora · Catalogue"
+      subtitle="Mentorat · Catalogue"
       nav={nav}
       switchItems={buildSwitchItems(access, {
         mentora: tShell('switch.mentora'),

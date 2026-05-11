@@ -7,10 +7,10 @@ import CycleCreateForm from './CycleCreateForm';
 import CycleRow from './CycleRow';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Cycles · Admin Mentora' };
+export const metadata = { title: 'Cycles · Admin Mentorat' };
 
 /**
- * Mentora Cycles admin page.
+ * Mentorat Cycles admin page.
  *
  * Lists every cycle in DB with its phase + status badges and the
  * dates window. Inline forms let an admin:
@@ -85,7 +85,7 @@ export default async function CyclesAdminPage() {
       >
         <div>
           <h1 className="dz-h2" style={{ margin: 0, fontSize: 26 }}>
-            Cycles Mentora
+            Cycles Mentorat
           </h1>
           <p className="dz-small" style={{ marginTop: 6 }}>
             {cycles.length} cycle{cycles.length > 1 ? 's' : ''} · gestion des cohortes saisonnières

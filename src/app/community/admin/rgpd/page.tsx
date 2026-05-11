@@ -17,7 +17,7 @@ type Search = { tab?: string };
 const TABS = [
   { key: 'traitements', file: 'registre-traitements.md', label: 'Traitements' },
   { key: 'violations', file: 'registre-violations.md', label: 'Violations' },
-  { key: 'aipd-mentora', file: 'aipd-mentora.md', label: 'AIPD Mentora' },
+  { key: 'aipd-mentora', file: 'aipd-mentora.md', label: 'AIPD Mentorat' },
   { key: 'aipd-community', file: 'aipd-community.md', label: 'AIPD Community' },
 ] as const;
 

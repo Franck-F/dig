@@ -11,7 +11,7 @@ import { prisma } from '@/lib/prisma';
 /**
  * Multi-product access chooser for new accounts.
  *
- * Mentora (1-to-1 mentorship) and Community (forum / channels / défis)
+ * Mentorat (1-to-1 mentorship) and Community (forum / channels / défis)
  * are now treated as two independent products. A user can sign up for
  * one, the other, or both. Brand-new OAuth users land here with
  * `roleConfirmed: false` and both access flags `false`; the UI lets
@@ -30,7 +30,7 @@ import { prisma } from '@/lib/prisma';
 // public surface.
 const ACCESS_INPUT = z
   .object({
-    /** Mentora role when the user wants Mentora access; null = no Mentora. */
+    /** Mentorat role when the user wants Mentorat access; null = no Mentorat. */
     mentora: z.enum([UserRole.STUDENT, UserRole.MENTOR]).nullable(),
     /** Community access toggle. */
     community: z.boolean(),
@@ -79,10 +79,10 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
     return { status: 'error', error: 'already_confirmed' };
   }
 
-  // The User.role enum keeps a single value (it's mostly a Mentora
+  // The User.role enum keeps a single value (it's mostly a Mentorat
   // concept). When the user picks community-only, we leave the role at
   // STUDENT (the schema default) — the access flag is what gates
-  // Mentora visibility now, not the role itself.
+  // Mentorat visibility now, not the role itself.
   const nextRole: UserRole = mentora ?? UserRole.STUDENT;
 
   // Defensive write: primary update sets all four fields; on any
@@ -118,8 +118,8 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
   revalidatePath('/community');
 
   // Route the user to the most relevant next step.
-  // - Mentora MENTOR → application wizard
-  // - Mentora STUDENT → mentee onboarding
+  // - Mentorat MENTOR → application wizard
+  // - Mentorat STUDENT → mentee onboarding
   // - Community-only → the community feed
   if (mentora === UserRole.MENTOR) redirect('/mentora/become-a-mentor');
   if (mentora === UserRole.STUDENT) redirect('/mentora/onboarding');
@@ -130,7 +130,7 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
  * Add community access to an already-confirmed account.
  *
  * Used by the in-product "Accéder à la communauté" CTA we surface on
- * mentor / mentee dashboards when the user signed up Mentora-only.
+ * mentor / mentee dashboards when the user signed up Mentorat-only.
  * Idempotent: a no-op when the flag is already true (no error so the
  * UI doesn't have to special-case the race).
  *

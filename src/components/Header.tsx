@@ -28,7 +28,7 @@ export default function Header() {
   const session = useClientSession();
   const isAuth = session.isAuthenticated;
 
-  // When authenticated, "Mentora" should jump to the dashboard, not the
+  // When authenticated, "Mentorat" should jump to the dashboard, not the
   // public landing — the landing is for prospects, the dashboard is the
   // member's home base.
   const resolveHref = (href: string) => {

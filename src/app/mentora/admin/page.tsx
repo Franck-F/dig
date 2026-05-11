@@ -4,7 +4,7 @@ import PendingMentorsList, { type PendingMentorRow } from './_components/Pending
 import NewsletterCampaignModal from './_components/NewsletterCampaignModal';
 
 /**
- * Mentora admin pilotage dashboard.
+ * Mentorat admin pilotage dashboard.
  *
  * Server component: every metric is queried at request time. Each Prisma call
  * is wrapped in a small helper that returns a fallback on failure so a single
@@ -44,7 +44,7 @@ function monthKey(d: Date): string {
 
 type Range = '12m' | '6m' | '30j';
 
-export default async function MentoraAdminPage({
+export default async function MentoratAdminPage({
   searchParams,
 }: {
   searchParams?: Promise<{ range?: string }>;
@@ -1135,7 +1135,7 @@ export default async function MentoraAdminPage({
               Newsletter Digizelle
             </h4>
             <p style={{ margin: 0, fontSize: 12, opacity: 0.85 }}>
-              Composez et envoyez à un segment ciblé · {formatNumber(menteeTotal + mentorTotal)} comptes Mentora éligibles
+              Composez et envoyez à un segment ciblé · {formatNumber(menteeTotal + mentorTotal)} comptes Mentorat éligibles
             </p>
             <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
               <NewsletterCampaignModal

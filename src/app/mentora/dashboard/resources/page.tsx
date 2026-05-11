@@ -59,7 +59,7 @@ function isFilterKey(value: string | undefined): value is FilterKey {
 }
 
 /**
- * Mentora resources library — backed by the `Resource` table.
+ * Mentorat resources library — backed by the `Resource` table.
  *
  * Two role-driven variants on the same route:
  *   - Mentee: filter chips + featured banner + grid of curated cards

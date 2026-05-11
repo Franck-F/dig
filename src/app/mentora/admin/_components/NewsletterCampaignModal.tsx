@@ -36,7 +36,7 @@ const AUDIENCES: Array<{ key: Audience; label: string; sub: string }> = [
 type View = 'compose' | 'confirm' | 'sending' | 'done' | 'error';
 
 /**
- * Newsletter composer launched from the Mentora admin pilotage.
+ * Newsletter composer launched from the Mentorat admin pilotage.
  *
  * Flow: compose (subject + audience + body) → confirm (shows live count) →
  * server action `sendNewsletterCampaign` → result screen with sent / failed

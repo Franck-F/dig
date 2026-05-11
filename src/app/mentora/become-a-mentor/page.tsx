@@ -43,7 +43,7 @@ export default async function BecomeAMentorPage() {
     redirect('/login?next=/mentora/become-a-mentor');
   }
 
-  // Universe gate: a user without Mentora access can't apply as a mentor.
+  // Universe gate: a user without Mentorat access can't apply as a mentor.
   const access = await getProductAccess();
   if (!access.mentora && !access.isAdmin) {
     if (!access.roleConfirmed) redirect('/welcome/role');

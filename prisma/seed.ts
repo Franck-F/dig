@@ -1,5 +1,5 @@
 /**
- * Combined seed: Mentora skill taxonomy (~30 entries) + Community defaults
+ * Combined seed: Mentorat skill taxonomy (~30 entries) + Community defaults
  * (6 channels, 10 badges).
  *
  * Idempotent: re-running upserts by `slug` / `kind`. Safe to run on prod
@@ -379,7 +379,7 @@ const BADGES: SeedBadge[] = [
     kind: "MENTOR_BADGE",
     name: "Mentor·e",
     description:
-      "Mentor·e actif·ve sur Mentora. Disponible pour accompagner la communauté.",
+      "Mentor·e actif·ve sur Mentorat. Disponible pour accompagner la communauté.",
     iconEmoji: "🧭",
     color: "#24325F",
     isAuto: true,

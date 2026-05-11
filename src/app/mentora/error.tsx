@@ -2,7 +2,7 @@
 
 import { SectionErrorPanel } from '@/components/boundary/SectionErrorPanel';
 
-export default function MentoraError({
+export default function MentoratError({
   error,
   reset,
 }: {
@@ -15,7 +15,7 @@ export default function MentoraError({
       reset={reset}
       scope="mentora"
       homeHref="/mentora"
-      homeLabel="← Retour à Mentora"
+      homeLabel="← Retour à Mentorat"
     />
   );
 }

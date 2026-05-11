@@ -13,7 +13,7 @@ import { logAdmin } from '@/lib/audit/log';
  *   - CommunitySettings: charter version, signup gate, auto-sanctions,
  *     visitor visibility, search-engine indexing, quarantine days,
  *     banned-words list.
- *   - MentoraProgrammeSettings: capacity bounds, matching dimensions,
+ *   - MentoratProgrammeSettings: capacity bounds, matching dimensions,
  *     application window, 2FA gate, mentee retention years.
  *
  * Read helpers always return a row — the migration seeds the singletons,
@@ -21,7 +21,7 @@ import { logAdmin } from '@/lib/audit/log';
  *
  * Update gates:
  *   - Community settings → ADMIN or community moderator.
- *   - Mentora programme settings → ADMIN only.
+ *   - Mentorat programme settings → ADMIN only.
  */
 
 // ── Community settings ──────────────────────────────────────────────
@@ -111,9 +111,9 @@ export async function updateCommunitySettings(
   }
 }
 
-// ── Mentora programme settings ──────────────────────────────────────
+// ── Mentorat programme settings ──────────────────────────────────────
 
-async function ensureMentoraSettings() {
+async function ensureMentoratSettings() {
   return prisma.mentoraProgrammeSettings.upsert({
     where: { id: SINGLETON_ID },
     create: { id: SINGLETON_ID },
@@ -121,8 +121,8 @@ async function ensureMentoraSettings() {
   });
 }
 
-export async function getMentoraProgrammeSettings() {
-  return ensureMentoraSettings();
+export async function getMentoratProgrammeSettings() {
+  return ensureMentoratSettings();
 }
 
 const mentoraUpdateSchema = z.object({
@@ -149,7 +149,7 @@ async function requireAdmin(): Promise<
   return { ok: true, userId };
 }
 
-export async function updateMentoraProgrammeSettings(
+export async function updateMentoratProgrammeSettings(
   input: z.input<typeof mentoraUpdateSchema>,
 ): Promise<{ status: 'success' } | { status: 'error'; error: string }> {
   const guard = await requireAdmin();
@@ -170,7 +170,7 @@ export async function updateMentoraProgrammeSettings(
   }
 
   try {
-    await ensureMentoraSettings();
+    await ensureMentoratSettings();
     await prisma.mentoraProgrammeSettings.update({
       where: { id: SINGLETON_ID },
       data: {
@@ -180,7 +180,7 @@ export async function updateMentoraProgrammeSettings(
     });
     await logAdmin(guard.userId, {
       action: 'mentora.programmeSettings.update',
-      targetType: 'MentoraProgrammeSettings',
+      targetType: 'MentoratProgrammeSettings',
       targetId: SINGLETON_ID,
       // logAdmin payload is typed as Prisma.InputJsonValue; serialise
       // through JSON.stringify/parse to widen unknown values into a

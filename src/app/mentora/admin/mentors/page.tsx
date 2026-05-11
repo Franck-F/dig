@@ -4,7 +4,7 @@ import type { MentorStatus, Prisma } from '@prisma/client';
 import Pagination from '@/components/admin/Pagination';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Mentors · Admin Mentora' };
+export const metadata = { title: 'Mentors · Admin Mentorat' };
 
 type Search = {
   status?: string;

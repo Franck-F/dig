@@ -56,7 +56,7 @@ export default async function OnboardingPage({
   if (access.isAdmin) redirect('/mentora/admin');
   if (!access.mentora) redirect('/app');
   // The mentor flag is still on User.role — we only need a tiny query
-  // to know which Mentora wizard to send them through.
+  // to know which Mentorat wizard to send them through.
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { role: true },

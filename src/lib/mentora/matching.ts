@@ -1,5 +1,5 @@
 /**
- * Mentora matching algorithm — pure, deterministic, no DB.
+ * Mentorat matching algorithm — pure, deterministic, no DB.
  *
  * Implements spec §3:
  *   • 4 hard filters

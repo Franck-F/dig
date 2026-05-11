@@ -8,7 +8,7 @@ import {
   type ActionResult,
   errorResult,
   handleError,
-  MentoraError,
+  MentoratError,
   requireMentorOwner,
   requireUser,
   successResult,
@@ -238,7 +238,7 @@ export async function removeMentorSkill(
         },
       })
       .catch(() => {
-        throw new MentoraError('notFound');
+        throw new MentoratError('notFound');
       });
     revalidatePath('/mentora/dashboard/profile/edit');
     return successResult();
@@ -367,7 +367,7 @@ export async function removeMenteeGoalSkill(
         },
       })
       .catch(() => {
-        throw new MentoraError('notFound');
+        throw new MentoratError('notFound');
       });
     revalidatePath('/mentora/dashboard/profile/edit');
     return successResult();

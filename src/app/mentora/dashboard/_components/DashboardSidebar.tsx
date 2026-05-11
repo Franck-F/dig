@@ -45,7 +45,7 @@ export default function DashboardSidebar({ role }: { role: Role }) {
 
   return (
     <nav
-      aria-label="Mentora dashboard"
+      aria-label="Mentorat dashboard"
       className="dz-card"
       style={{
         padding: 12,

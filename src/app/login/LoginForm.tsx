@@ -678,7 +678,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
   // intentionally start both OFF so signup is an explicit choice — the
   // server validates and the submit button stays disabled until at
   // least one is selected.
-  const [mentoraOn, setMentoraOn] = useState(false);
+  const [mentoraOn, setMentoratOn] = useState(false);
   const [communityOn, setCommunityOn] = useState(false);
   const [role, setRole] = useState<RoleValue>('STUDENT');
 
@@ -863,7 +863,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
                 hideLabel={hidePasswordLabel}
               />
             </div>
-            {/* Product access: Mentora and Community are independent.
+            {/* Product access: Mentorat and Community are independent.
                 The user must pick at least one. The signUp action
                 validates and sets `mentoraEnabled` / `communityEnabled`
                 on the User row from these hidden inputs. */}
@@ -875,7 +875,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 <button
                   type="button"
-                  onClick={() => setMentoraOn((v) => !v)}
+                  onClick={() => setMentoratOn((v) => !v)}
                   aria-pressed={mentoraOn}
                   className={`dz-btn dz-btn-sm ${mentoraOn ? 'dz-btn-primary' : 'dz-btn-ghost'}`}
                   style={{ justifyContent: 'flex-start', gap: 8 }}

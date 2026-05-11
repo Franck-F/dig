@@ -50,7 +50,7 @@ model User {
   /// flips it back to true after an unconfirmed OAuth user picks. Default
   /// is `true` so all pre-existing users are unaffected by this column.
   roleConfirmed          Boolean   @default(true)
-  /// Per-product access flags. Mentora (mentorat 1-to-1) and Community
+  /// Per-product access flags. Mentorat (1-to-1) and Community
   /// (forum / canaux / défis) are now treated as two independent
   /// products — a user can sign up for one, the other, or both. The
   /// signup flow sets these explicitly; the migration backfills both
@@ -102,7 +102,7 @@ model User {
   // ── Auth.js back-relations (OAuth) ─────────────────────────────────────
   accounts Account[]
 
-  // ── Mentora back-relations ─────────────────────────────────────────────
+  // ── Mentorat back-relations ────────────────────────────────────────────
   mentorProfile     MentorProfile?
   menteeProfile     MenteeProfile?
   sessionsCancelled Session[]           @relation("sessionCancelledBy")
@@ -116,7 +116,7 @@ model User {
   // ── Audit log (admin actions) ─────────────────────────────────────────
   auditLogs AuditLog[]
 
-  // ── Mentora cycles (admin-created cohorts) ───────────────────────────
+  // ── Mentorat cycles (admin-created cohorts) ──────────────────────────
   cyclesCreated Cycle[] @relation("CyclesCreated")
 
   // ── Resources, events, rituals (cross-product editorial content) ─────
@@ -229,7 +229,7 @@ model NewsletterSubscriber {
   active    Boolean  @default(true)
 }
 
-// ─── Mentora — Enums ────────────────────────────────────────────────────
+// ─── Mentorat — Enums ───────────────────────────────────────────────────
 
 enum MentorStatus {
   DRAFT
@@ -314,7 +314,7 @@ enum AvailabilityExceptionKind {
   EXTRA
 }
 
-/// Mentora cycle (cohort) phases. Drives the dashboard banner +
+/// Mentorat cycle (cohort) phases. Drives the dashboard banner +
 /// admin filtering. Order is meaningful: ONBOARDING → MATCHING →
 /// SESSIONS → RECAP. Phase transitions are admin-driven (no auto
 /// crontab in v1) so the team can extend a phase if needed.
@@ -334,7 +334,7 @@ enum CycleStatus {
   ARCHIVED
 }
 
-/// Mentora cycle / cohort. Each season (Printemps 2026, Automne 2026)
+/// Mentorat cycle / cohort. Each season (Printemps 2026, Automne 2026)
 /// is a distinct row. Mentorships and sessions are not currently
 /// linked to a cycle (would require a v2 migration to backfill);
 /// cycles serve admin pilotage + reporting for now.
@@ -398,7 +398,7 @@ enum NotificationType {
   REPORT_RECEIVED
 }
 
-// ─── Mentora — Models ───────────────────────────────────────────────────
+// ─── Mentorat — Models ──────────────────────────────────────────────────
 
 model MentorProfile {
   id                   String       @id @default(cuid())
@@ -1258,7 +1258,7 @@ model AuditLog {
   @@index([createdAt(sort: Desc)])
 }
 
-// ─── Resources (shared library — Mentora + Community) ──────────────────
+// ─── Resources (shared library — Mentorat + Community) ─────────────────
 //
 // A Resource is a piece of content (PDF, replay video, Notion template,
 // article, tool link) shared with mentees and/or community members.
@@ -1460,9 +1460,9 @@ model CommunitySettings {
   updatedAt             DateTime  @updatedAt
 }
 
-// ─── Mentora Programme Settings (singleton admin config) ───────────────
+// ─── Mentorat Programme Settings (singleton admin config) ──────────────
 //
-// Same singleton pattern as CommunitySettings but for the Mentora admin
+// Same singleton pattern as CommunitySettings but for the Mentorat admin
 // programme console. Keeps every "tweakable" knob (capacity bounds,
 // matching weights, application window) in one row instead of scattering
 // them across the User / Cycle tables.

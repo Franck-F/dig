@@ -7,7 +7,7 @@ import {
   type ActionResult,
   errorResult,
   handleError,
-  MentoraError,
+  MentoratError,
   requireMentorshipMember,
   requireMentorshipMentor,
   successResult,
@@ -189,7 +189,7 @@ export async function deleteMentorshipGoal(
     await prisma.mentorshipGoal
       .delete({ where: { id: goal.id } })
       .catch(() => {
-        throw new MentoraError('notFound');
+        throw new MentoratError('notFound');
       });
     revalidateMentorship(mentorship.id);
     return successResult();

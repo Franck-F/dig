@@ -9,7 +9,7 @@ import { enableCommunity } from '@/lib/actions/welcome';
 
 /**
  * Inline CTA shown on the mentor / mentee dashboard when the user
- * signed up Mentora-only and hasn't yet enabled the Community space.
+ * signed up Mentorat-only and hasn't yet enabled the Community space.
  *
  * Single click flips `User.communityEnabled = true` server-side
  * (action lives in `lib/actions/welcome.ts`) and routes the user to

@@ -12,7 +12,7 @@ import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
 
 /**
- * Notification types that belong to the Mentora section. The bell shows
+ * Notification types that belong to the Mentorat section. The bell shows
  * only these in the dropdown so the user stays in her section context;
  * the full notifications page (linked via "Voir tout") still mixes both.
  */
@@ -39,7 +39,7 @@ const MENTORA_NOTIF_TYPES: NotificationType[] = [
  * connected experience matches the design system. The "no profile" banner is
  * still rendered above page content when the user has no role profile yet.
  */
-export default async function MentoraDashboardLayout({ children }: { children: ReactNode }) {
+export default async function MentoratDashboardLayout({ children }: { children: ReactNode }) {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/mentora/dashboard');
 
@@ -66,7 +66,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
 
   const access = await getProductAccess();
 
-  // Universe gate: a user who didn't opt into Mentora can't browse it.
+  // Universe gate: a user who didn't opt into Mentorat can't browse it.
   // Brand-new OAuth users go through the chooser; everyone else goes to
   // the hub. Admins bypass.
   if (!access.mentora && !access.isAdmin) {
@@ -79,7 +79,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
     // Section-scoped unread count — matches the bell popover's filter so the
     // badge never says "2" while the dropdown shows "Aucune notification".
     prisma.notification.count({ where: { userId, readAt: null, type: { in: MENTORA_NOTIF_TYPES } } }),
-    // Bell shows the latest 5 *Mentora-related* notifications. Community
+    // Bell shows the latest 5 *Mentorat-related* notifications. Community
     // notifications still live in the same table but are filtered out here so
     // the dropdown stays focused on the section the user is currently in. The
     // full list (mixed) remains accessible via "Voir tout".
@@ -128,7 +128,7 @@ export default async function MentoraDashboardLayout({ children }: { children: R
   // we don't want to push an admin towards "Devenir mentorée / Devenir mentor".
   // Admins get direct shortcuts to the pilotage surfaces instead.
   // Settings entry surfaces account-level controls (profile, RGPD
-  // export, account deletion) from the Mentora sidebar. Same target
+  // export, account deletion) from the Mentorat sidebar. Same target
   // as the Community sidebar — settings are user-level, not
   // space-level, so a single canonical page serves both.
   const settingsItem: AppShellNavItem = {
@@ -198,13 +198,13 @@ export default async function MentoraDashboardLayout({ children }: { children: R
 
   return (
     <AppShell
-      title={kind === 'mentor' ? 'Dashboard mentor' : kind === 'mentee' ? `Bonjour ${displayName} ✦` : 'Mentora'}
+      title={kind === 'mentor' ? 'Dashboard mentor' : kind === 'mentee' ? `Bonjour ${displayName} ✦` : 'Mentorat'}
       subtitle={
         kind === 'mentor'
-          ? 'Mentora · Espace mentor'
+          ? 'Mentorat · Espace mentor'
           : kind === 'mentee'
-            ? 'Mentora · Espace mentorée'
-            : 'Mentora · Démarrage'
+            ? 'Mentorat · Espace mentorée'
+            : 'Mentorat · Démarrage'
       }
       nav={nav}
       switchItems={buildSwitchItems(access, {
@@ -386,7 +386,7 @@ async function AdminNoProfileBanner() {
   ]);
 
   const tiles = [
-    { label: 'Pilotage', href: '/mentora/admin', desc: 'Vue synthèse Mentora.', icon: '◉' },
+    { label: 'Pilotage', href: '/mentora/admin', desc: 'Vue synthèse Mentorat.', icon: '◉' },
     { label: 'Candidatures à valider', href: '/mentora/admin/mentors?status=PENDING_REVIEW', desc: `${pendingMentors} en attente`, icon: '☷', accent: pendingMentors > 0 },
     { label: 'Demandes de matching', href: '/mentora/admin/matching', desc: `${pendingRequests} pending · ${activeMentorships} mentorships actifs`, icon: '⇋' },
     { label: 'Modération communauté', href: '/community/admin/moderation', desc: 'Posts, comments, signalements.', icon: '◇' },
