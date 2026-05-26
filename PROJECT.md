@@ -409,8 +409,12 @@ Pas de seed par défaut pour les utilisateurs. Crée des comptes via `/login` �
 
 ### ✅ Fait
 - Vitrine publique complète (10+ pages)
-- Auth complète (credentials + OAuth × 3 + verif email + reset password)
+- Auth complète (credentials + OAuth Google / Discord / GitHub + verif email + reset password) — **env vars OAuth + Resend posées**
+- **Rate-limit auth** (in-memory + Upstash Redis quand `UPSTASH_REDIS_REST_*` est posé) — 6 buckets (signIn / signUp / verify / resend / reset / confirm)
 - Mentora end-to-end (15 modèles, 30+ server actions, onboardings mentee + mentor, dashboard par rôle, sessions, messages, ressources, notifications)
+  - **Mon profil** + **Activité timeline** (mentor + mentee) + **profil public `/mentora/mentees/[handle]`**
+  - **Onboarding mentor** : soumission atomique en 1 transaction Prisma (profil + skills + dispos) — supprime les ~15 s de « Envoi… » cold-start
+  - **`SlotGrid` responsive** mobile/desktop (hook `useIsNarrow`)
 - Community end-to-end (17 modèles, feed, channels, posts, comments, reactions, bookmarks, hashtags, mentions, badges, modération, challenges)
 - Hub post-login `/app`
 - Espace admin Mentora
@@ -419,24 +423,25 @@ Pas de seed par défaut pour les utilisateurs. Crée des comptes via `/login` �
 - Header public conscient de la session
 - i18n FR complet
 - SEO + JSON-LD
-- TypeScript strict, `tsc --noEmit` clean
+- **Cron quotidien `/api/cron/sessions-reminder`** : reminders session J-1 (idempotent via `Session.reminderSentAt`) + expire les requests stale + draine la queue email + **digest messages non lus 24-48 h**
+- **Cron quotidien `/api/cron/community-digest`** : weekly digest communauté
+- **CI GitHub Actions** : lint + typecheck + prisma validate + tests + coverage + build (sur push main et PR)
+- TypeScript strict, `tsc --noEmit` clean, lint clean
 
 ### 🔄 En cours / à finir
 - `/community/onboarding` à passer dans `<OnboardingShell>` pour cohérence visuelle
-- Configuration des credentials OAuth (Google / Discord / GitHub) en env
-- Tests E2E (rien pour l'instant)
+- Tests E2E (rien pour l'instant — le harnais Playwright dans `demo/` sert au tournage des vidéos pub, pas à des tests)
 - Migration Auth.js verification schema (`Account`, `VerificationToken`, `VerificationCode`)
 - Locale `en` en option
 
 ### 🎯 Roadmap suggérée
-1. **Auth en prod** — créer les apps OAuth, brancher les env vars, tester les 3 providers
-2. **Données de démo** — seed users + mentorships + posts pour les démos investisseurs
-3. **Notifications email** — relance auto sur invitations / sessions / messages (cron)
-4. **Visio intégrée** — Daily.co ou Whereby pour les sessions
-5. **Mobile app** (React Native ou PWA polish)
-6. **Analytics RGPD-friendly** — Plausible ou Umami
-7. **Newsletter** — pipeline Resend Audiences
-8. **Challenges hackathon** — automatisation des votes + remise des prix
+1. **Reminder _avant_ expiration** des MentorshipRequests (en plus du expire déjà fait) — dernière chance à J-5 pour répondre
+2. **Données de démo** — seed users + mentorships + posts pour les démos investisseurs (au-delà des comptes test existants)
+3. **Visio intégrée** — Daily.co ou Whereby pour les sessions (champ `meetingUrl` côté Session)
+4. **Mobile app** (React Native ou PWA polish — service worker, install prompt, icônes retina)
+5. **Analytics RGPD-friendly** — Plausible ou Umami
+6. **Newsletter** — pipeline Resend Audiences (la lib email est déjà branchée)
+7. **Challenges hackathon** — automatisation des votes + remise des prix + attribution badges
 
 ---
 
@@ -476,8 +481,18 @@ Pas de seed par défaut pour les utilisateurs. Crée des comptes via `/login` �
 | Dispatcher /community | [`src/app/community/page.tsx`](src/app/community/page.tsx) |
 | Dashboard mentora | [`src/app/mentora/dashboard/layout.tsx`](src/app/mentora/dashboard/layout.tsx) + `_components/{MentorOverview,MenteeOverview}.tsx` |
 | Admin mentora | [`src/app/mentora/admin/`](src/app/mentora/admin) |
+| Profil mentee (self + public) | [`src/app/mentora/dashboard/profile/page.tsx`](src/app/mentora/dashboard/profile/page.tsx) + [`src/app/mentora/mentees/[handle]/page.tsx`](src/app/mentora/mentees/[handle]/page.tsx) |
+| Activité timeline | [`src/app/mentora/dashboard/activity/page.tsx`](src/app/mentora/dashboard/activity/page.tsx) |
+| Rate-limit auth | [`src/lib/rate-limit/auth-limiter.ts`](src/lib/rate-limit/auth-limiter.ts) + [`./upstash.ts`](src/lib/rate-limit/upstash.ts) |
+| Notifications mentora | [`src/lib/mentora/notifications.ts`](src/lib/mentora/notifications.ts) |
+| Cron mentora (quotidien) | [`src/app/api/cron/sessions-reminder/route.ts`](src/app/api/cron/sessions-reminder/route.ts) |
+| Cron communauté | [`src/app/api/cron/community-digest/route.ts`](src/app/api/cron/community-digest/route.ts) |
+| Digest messages non lus | [`src/lib/mentora/unread-message-digest.ts`](src/lib/mentora/unread-message-digest.ts) |
+| Templates email | [`src/lib/email/templates/`](src/lib/email/templates) + [`src/lib/email/resend.ts`](src/lib/email/resend.ts) |
+| Hook responsive | [`src/hooks/useIsNarrow.ts`](src/hooks/useIsNarrow.ts) |
+| CI | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | i18n FR | [`messages/fr.json`](messages/fr.json) |
 
 ---
 
-*Doc rédigée le 5 mai 2026. Mettre à jour à chaque évolution structurelle (nouveau module, nouvelle coquille, refonte routage).*
+*Doc rédigée le 5 mai 2026, rafraîchie le 26 mai 2026. Mettre à jour à chaque évolution structurelle (nouveau module, nouvelle coquille, refonte routage, nouveau cron, nouveau gate auth).*

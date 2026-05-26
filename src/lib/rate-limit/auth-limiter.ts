@@ -20,10 +20,13 @@ import { incrementWithExpiry, isUpstashConfigured, ttlSeconds } from './upstash'
  *    each Vercel instance has its own state. Effective limit ~= configured
  *    limit × instance count.
  *  - Production: when `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`
- *    are set, the implementation lazily upgrades to a Redis-backed limiter
- *    so all instances share state. The Upstash integration is intentionally
- *    not imported eagerly — adding `@upstash/ratelimit` to the project is a
- *    deliberate next step (see TODO at the bottom).
+ *    are set, the implementation upgrades to a Redis-backed limiter so all
+ *    instances share state. We use a small home-grown REST client
+ *    (`./upstash`) — `INCR` + `EXPIRE NX` in a fixed window — rather than the
+ *    `@upstash/ratelimit` npm package to keep the dep surface minimal and
+ *    avoid an extra runtime layer for what is ultimately a 2-call Redis op.
+ *    On any Redis-side failure we **fail open** (see `checkUpstashWindow`)
+ *    so a transient outage doesn't lock the auth flows entirely.
  */
 
 type CheckResult =
