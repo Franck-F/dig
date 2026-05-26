@@ -58,6 +58,14 @@ export default async function CommunityLayout({ children }: { children: ReactNod
     redirect('/app');
   }
 
+  // `/community/onboarding` renders its own full-bleed <OnboardingShell>
+  // (the same shell mentora uses) — skip AppShell wrapping so the two
+  // chromes don't stack, and also skip the AppShell data fetch below.
+  const onboardingPath = (await headers()).get('x-pathname') ?? '';
+  if (onboardingPath.startsWith('/community/onboarding')) {
+    return <>{children}</>;
+  }
+
   // Connected user — fetch the bits the AppShell needs.
   const [user, unreadCount, latestNotifs, tShell, tNotifTypes, tBellCopy] = await Promise.all([
     prisma.user.findUnique({
