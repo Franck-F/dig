@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Digizelle Mentorat — Onboarding mentorée (16:9)</title>
+<style>
+  @font-face { font-family:'Signika'; font-weight:400; font-style:normal;
+    src:url('fonts/Signika-400.ttf') format('truetype'); }
+  @font-face { font-family:'Signika'; font-weight:500; font-style:normal;
+    src:url('fonts/Signika-500.ttf') format('truetype'); }
+  @font-face { font-family:'Signika'; font-weight:600; font-style:normal;
+    src:url('fonts/Signika-600.ttf') format('truetype'); }
+  @font-face { font-family:'Signika'; font-weight:700; font-style:normal;
+    src:url('fonts/Signika-700.ttf') format('truetype'); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  #root {
+    position:relative; width:1920px; height:1080px; overflow:hidden;
+    font-family:'Signika', system-ui, sans-serif;
+    background:#0f0728; color:#ffffff;
+  }
+
+  /* ---- Background ------------------------------------------------ */
+  .bg { position:absolute; inset:0; z-index:0;
+    background:
+      radial-gradient(1200px 1200px at 90% 10%, rgba(244,111,177,0.30), rgba(244,111,177,0) 60%),
+      radial-gradient(1400px 1400px at 4% 92%, rgba(115,1,255,0.42), rgba(115,1,255,0) 62%),
+      linear-gradient(150deg, #1a0f44 0%, #0f0728 55%, #160a38 100%); }
+  .glow { position:absolute; border-radius:50%; filter:blur(80px); z-index:0; }
+  .glow-a { width:640px; height:640px; top:-200px; right:-160px;
+    background:rgba(163,75,245,0.52); }
+  .glow-b { width:600px; height:600px; bottom:-220px; left:-180px;
+    background:rgba(244,111,177,0.40); }
+  .grain { position:absolute; inset:0; z-index:1; opacity:0.05;
+    background-image:radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px);
+    background-size:5px 5px; }
+  .divider { position:absolute; left:744px; top:170px; width:2px; height:740px;
+    z-index:5;
+    background:linear-gradient(180deg, rgba(199,150,255,0) 0%,
+      rgba(199,150,255,0.4) 50%, rgba(199,150,255,0) 100%); }
+
+  /* ---- Shared --------------------------------------------------- */
+  .kicker { font-size:27px; font-weight:700; letter-spacing:0.22em;
+    text-transform:uppercase; color:#C9B6FF; }
+  .grad { background:linear-gradient(100deg,#C58BFF 0%,#F46FB1 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .logo { background-image:url('assets/logo.png');
+    background-position:left center; background-repeat:no-repeat;
+    background-size:contain; filter:brightness(0) invert(1); }
+
+  /* ---- Intro (centré plein cadre) ------------------------------- */
+  .intro { position:absolute; inset:0; z-index:40;
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:34px; padding:0 240px; text-align:center; }
+  .intro-logo { width:300px; height:66px; background-position:center; }
+  .intro-title { font-size:132px; font-weight:700; line-height:1.04;
+    letter-spacing:-0.02em; }
+  .intro-sub { font-size:44px; font-weight:500; color:#C9B6FF; }
+  .intro-spark { position:absolute; font-size:58px; color:#F46FB1; }
+
+  /* ---- Top brand bar (panneau droit) ---------------------------- */
+  .topbar { position:absolute; top:116px; left:806px; z-index:30;
+    display:flex; align-items:center; }
+  .topbar-logo { width:210px; height:48px; background-position:left center; }
+  .topbar-tag { margin-left:20px; font-size:24px; font-weight:700;
+    letter-spacing:0.16em; text-transform:uppercase; color:#C9B6FF; }
+
+  /* ---- Step chip ------------------------------------------------ */
+  .chip-pos { position:absolute; top:392px; left:806px; z-index:31; }
+  .chip { display:inline-flex; align-items:center; gap:15px;
+    padding:17px 32px; border-radius:999px;
+    background:rgba(115,1,255,0.28);
+    border:2px solid rgba(199,150,255,0.55);
+    font-size:27px; font-weight:700; letter-spacing:0.06em;
+    text-transform:uppercase; white-space:nowrap; }
+  .chip-dot { width:15px; height:15px; border-radius:50%;
+    background:linear-gradient(135deg,#7301FF,#F46FB1); flex-shrink:0; }
+
+  /* ---- Phone mockup (à gauche) ---------------------------------- */
+  .phone { position:absolute; top:62px; left:152px; z-index:20;
+    width:556px; height:956px; padding:18px;
+    background:linear-gradient(160deg,#241344,#0c0720);
+    border-radius:56px;
+    border:1.5px solid rgba(199,150,255,0.30);
+    box-shadow:0 50px 110px rgba(8,3,24,0.75),
+      0 0 90px rgba(115,1,255,0.40),
+      inset 0 2px 3px rgba(255,255,255,0.10); }
+  .phone::before { content:''; position:absolute; top:28px; left:50%;
+    transform:translateX(-50%); width:128px; height:10px; border-radius:99px;
+    background:rgba(0,0,0,0.55); z-index:2; }
+  .screencast { width:520px; height:920px; object-fit:cover;
+    object-position:top center; border-radius:40px; display:block;
+    background:#ffffff; }
+
+  /* ---- Caption (panneau droit) ---------------------------------- */
+  .cap { position:absolute; left:806px; right:140px; top:492px; z-index:32;
+    text-align:left; font-size:54px; font-weight:600; line-height:1.3;
+    color:#ffffff; text-shadow:0 4px 26px rgba(10,4,28,0.9); }
+
+  /* ---- Progress bar --------------------------------------------- */
+  .progress-track { position:absolute; left:806px; width:974px; height:10px;
+    top:930px; z-index:30; border-radius:99px;
+    background:rgba(255,255,255,0.12); overflow:hidden; }
+  .progress-fill { width:100%; height:100%; transform-origin:left center;
+    border-radius:99px; background:linear-gradient(90deg,#7301FF,#F46FB1); }
+
+  /* ---- Outro (centré) ------------------------------------------- */
+  .outro { position:absolute; inset:0; z-index:50;
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:30px; padding:0 240px; text-align:center; }
+  .outro-logo { width:330px; height:74px; background-position:center; }
+  .outro-kicker { font-size:29px; font-weight:700; letter-spacing:0.2em;
+    text-transform:uppercase; color:#C9B6FF; }
+  .outro-title { font-size:158px; font-weight:700; line-height:1.0;
+    letter-spacing:-0.02em; }
+  .outro-cta { margin-top:16px; display:flex; align-items:center; gap:18px;
+    padding:32px 64px; border-radius:999px;
+    background:linear-gradient(100deg,#7301FF,#A34BF5);
+    box-shadow:0 26px 60px rgba(115,1,255,0.55);
+    font-size:46px; font-weight:700; }
+  .outro-foot { font-size:32px; font-weight:500; color:#C9B6FF; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-start="0" data-duration="84"
+     data-width="1920" data-height="1080">
+
+  <!-- ===== Background ===== -->
+  <div class="bg"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="grain"></div>
+  <div class="divider"></div>
+
+  <!-- ===== Intro ===== -->
+  <div class="intro">
+    <span class="intro-spark" style="top:230px;left:300px;">✦</span>
+    <span class="intro-spark" style="bottom:240px;right:320px;font-size:40px;">✦</span>
+    <div class="logo intro-logo"></div>
+    <div class="kicker intro-kicker">Programme de mentorat</div>
+    <h1 class="intro-title">Trouver le bon <span class="grad">mentor</span>,
+      ça change tout.</h1>
+    <div class="intro-sub">Ton profil mentorée en 3 étapes.</div>
+  </div>
+
+  <!-- ===== Top brand bar ===== -->
+  <div class="topbar">
+    <div class="logo topbar-logo"></div>
+    <span class="topbar-tag">Mentorat</span>
+  </div>
+
+  <!-- ===== Step chips ===== -->
+  <div class="chip-pos"><div class="chip" id="chip-0"><span class="chip-dot"></span>Connexion</div></div>
+  <div class="chip-pos"><div class="chip" id="chip-1"><span class="chip-dot"></span>Étape 1 · Tes objectifs</div></div>
+  <div class="chip-pos"><div class="chip" id="chip-2"><span class="chip-dot"></span>Étape 2 · Ton parcours</div></div>
+  <div class="chip-pos"><div class="chip" id="chip-3"><span class="chip-dot"></span>Étape 3 · Tes disponibilités</div></div>
+  <div class="chip-pos"><div class="chip" id="chip-4"><span class="chip-dot"></span>Profil créé ✦</div></div>
+
+  <!-- ===== Phone + screencast ===== -->
+  <div class="phone">
+    <video id="screencast" class="screencast" src="assets/screencast-mentee.mp4"
+           data-start="3.5" data-duration="73.5" data-track-index="0"
+           muted playsinline></video>
+  </div>
+
+  <!-- ===== Progress bar ===== -->
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+
+  <!-- ===== Captions ===== -->
+  <div class="cap" id="cap-1">Voici Mentorat, le programme de mentorat de
+    Digizelle. Crée ton profil en trois étapes.</div>
+  <div class="cap" id="cap-2">Tes objectifs : décrocher ton premier job,
+    te reconvertir ou lancer ton projet.</div>
+  <div class="cap" id="cap-3">Ton parcours : ton niveau, ton format préféré,
+    et les défis à relever.</div>
+  <div class="cap" id="cap-4">Tes disponibilités — et l'algorithme
+    pré-sélectionne déjà tes mentors.</div>
+
+  <!-- ===== Outro ===== -->
+  <div class="outro">
+    <div class="logo outro-logo"></div>
+    <div class="outro-kicker">Ton mentor t'attend</div>
+    <h1 class="outro-title">Rejoins <span class="grad">Mentorat</span>.</h1>
+    <div class="outro-cta">Commence maintenant →</div>
+    <div class="outro-foot">digizelle.fr</div>
+  </div>
+
+  <!-- ===== Voix off ===== -->
+  <audio id="vo-0" class="clip-audio" src="assets/audio/me0.mp3" data-start="0.5"  data-duration="5.8" data-track-index="1"></audio>
+  <audio id="vo-1" class="clip-audio" src="assets/audio/me1.mp3" data-start="6.6"  data-duration="7.6" data-track-index="1"></audio>
+  <audio id="vo-2" class="clip-audio" src="assets/audio/me2.mp3" data-start="20"   data-duration="9.6" data-track-index="1"></audio>
+  <audio id="vo-3" class="clip-audio" src="assets/audio/me3.mp3" data-start="42"   data-duration="7.6" data-track-index="1"></audio>
+  <audio id="vo-4" class="clip-audio" src="assets/audio/me4.mp3" data-start="57.5" data-duration="8.0" data-track-index="1"></audio>
+  <audio id="vo-5" class="clip-audio" src="assets/audio/me5.mp3" data-start="77.3" data-duration="6.3" data-track-index="1"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    /* ---- Ambient -------------------------------------------------- */
+    tl.to('.glow-a', { x:-60, y:70, scale:1.12, duration:14,
+      ease:'sine.inOut', yoyo:true, repeat:5 }, 0);
+    tl.to('.glow-b', { x:70, y:-50, scale:1.15, duration:17,
+      ease:'sine.inOut', yoyo:true, repeat:4 }, 0);
+
+    /* ===== SCENE 1 — Intro (0 → 3.5) ============================= */
+    tl.from('.intro-logo',   { y:-40, opacity:0, duration:0.6, ease:'power3.out' }, 0.2);
+    tl.from('.intro-kicker', { y:26, opacity:0, duration:0.5, ease:'power2.out' }, 0.45);
+    tl.from('.intro-title',  { y:60, opacity:0, duration:0.9, ease:'expo.out' }, 0.6);
+    tl.from('.intro-sub',    { y:30, opacity:0, duration:0.6, ease:'power2.out' }, 1.05);
+    tl.from('.intro-spark',  { scale:0, opacity:0, duration:0.7, ease:'back.out(2)',
+      stagger:0.16 }, 0.8);
+    tl.to('.intro-spark', { rotation:90, duration:6, ease:'sine.inOut',
+      yoyo:true, repeat:1 }, 1.4);
+    tl.to('.intro', { opacity:0, scale:1.06, duration:0.6, ease:'power2.in' }, 3.0);
+
+    /* ===== SCENE 2 — Démo (3.5 → 77) ============================= */
+    tl.from('.topbar', { x:-50, opacity:0, duration:0.6, ease:'power3.out' }, 3.3);
+    tl.from('.divider', { opacity:0, scaleY:0, duration:0.7, ease:'power2.out' }, 3.5);
+    tl.from('.progress-track', { opacity:0, duration:0.6, ease:'power1.out' }, 3.6);
+
+    tl.set('.phone', { transformOrigin:'40% 55%' }, 0);
+    tl.fromTo('.phone',
+      { opacity:0, scale:0.9, x:-60 },
+      { opacity:1, scale:1, x:0, duration:0.9, ease:'back.out(1.4)' }, 3.35);
+    tl.to('.phone', { y:-14, duration:3.6, ease:'sine.inOut',
+      yoyo:true, repeat:18 }, 4.7);
+
+    tl.fromTo('#progress', { scaleX:0 }, { scaleX:1, duration:73.5,
+      ease:'none' }, 3.5);
+
+    const chips = ['#chip-0','#chip-1','#chip-2','#chip-3','#chip-4'];
+    const chipIn = [3.6, 18.5, 40.5, 56.5, 71.5];
+    chips.forEach((c, i) => {
+      tl.fromTo(c, { opacity:0, x:-28, scale:0.88 },
+        { opacity:1, x:0, scale:1, duration:0.5, ease:'back.out(1.8)' }, chipIn[i]);
+      if (i < chips.length - 1) {
+        tl.to(c, { opacity:0, x:20, duration:0.35, ease:'power2.in' },
+          chipIn[i + 1] - 0.35);
+      }
+    });
+    tl.to('#chip-4', { opacity:0, duration:0.4, ease:'power2.in' }, 76.6);
+
+    const caps = ['#cap-1','#cap-2','#cap-3','#cap-4'];
+    const capIn  = [6.6, 20, 42, 57.5];
+    const capOut = [15.0, 30.5, 50.2, 66.0];
+    caps.forEach((c, i) => {
+      tl.fromTo(c, { opacity:0, y:30 },
+        { opacity:1, y:0, duration:0.5, ease:'power3.out' }, capIn[i]);
+      tl.to(c, { opacity:0, y:-18, duration:0.4, ease:'power2.in' }, capOut[i]);
+    });
+
+    tl.to('.topbar', { opacity:0, duration:0.5, ease:'power2.in' }, 76.7);
+    tl.to('.divider', { opacity:0, duration:0.5, ease:'power2.in' }, 76.7);
+    tl.to('.progress-track', { opacity:0, duration:0.5, ease:'power2.in' }, 76.7);
+    tl.to('.phone', { opacity:0, scale:0.93, x:-60, duration:0.7,
+      ease:'power2.in' }, 76.5);
+
+    /* ===== SCENE 3 — Outro (77 → 84) ============================= */
+    tl.from('.outro-logo',   { y:-44, opacity:0, duration:0.6, ease:'power3.out' }, 77.3);
+    tl.from('.outro-kicker', { y:24, opacity:0, duration:0.5, ease:'power2.out' }, 77.5);
+    tl.from('.outro-title',  { y:64, opacity:0, duration:0.9, ease:'expo.out' }, 77.65);
+    tl.from('.outro-cta',    { y:40, opacity:0, scale:0.9, duration:0.7,
+      ease:'back.out(1.7)' }, 78.1);
+    tl.from('.outro-foot',   { y:24, opacity:0, duration:0.5, ease:'power2.out' }, 78.4);
+    tl.to('.outro-cta', { scale:1.05, duration:1.1, ease:'sine.inOut',
+      yoyo:true, repeat:2 }, 79.2);
+    tl.to('.outro', { opacity:0, duration:0.6, ease:'power2.in' }, 83.4);
+
+    window.__timelines['root'] = tl;
+  </script>
+</div>
+</body>
+</html>

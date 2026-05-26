@@ -1,0 +1,15 @@
+{
+  "name": "digizelle-demo-video",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Vidéos publicitaires onboarding Digizelle — projet HyperFrames (HTML → MP4).",
+  "scripts": {
+    "preview": "hyperframes preview",
+    "lint": "hyperframes lint",
+    "validate": "hyperframes validate",
+    "render": "hyperframes render"
+  },
+  "devDependencies": {
+    "hyperframes": "^0.6.30"
+  }
+}

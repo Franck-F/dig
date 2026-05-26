@@ -1,0 +1,95 @@
+{
+ "segments": [
+  {
+   "id": "me0",
+   "file": "assets/audio/me0.mp3",
+   "duration": 5.76,
+   "text": "Trouver un mentor qui te comprend, ça change tout. Et c'est plus simple que tu ne crois.",
+   "words": []
+  },
+  {
+   "id": "me1",
+   "file": "assets/audio/me1.mp3",
+   "duration": 7.512,
+   "text": "Voici Mentorat, le programme de mentorat de Digizelle. Connecte-toi, et crée ton profil en trois étapes.",
+   "words": []
+  },
+  {
+   "id": "me2",
+   "file": "assets/audio/me2.mp3",
+   "duration": 9.528,
+   "text": "D'abord, tes objectifs. Décrocher ton premier job, te reconvertir, ou lancer ton projet. Choisis les domaines qui te passionnent.",
+   "words": []
+  },
+  {
+   "id": "me3",
+   "file": "assets/audio/me3.mp3",
+   "duration": 7.536,
+   "text": "Ensuite, ton parcours. Ton niveau, le format que tu préfères, et les défis sur lesquels tu veux avancer.",
+   "words": []
+  },
+  {
+   "id": "me4",
+   "file": "assets/audio/me4.mp3",
+   "duration": 7.92,
+   "text": "Enfin, tes disponibilités. Et pendant que tu remplis, notre algorithme pré-sélectionne déjà les mentors faits pour toi.",
+   "words": []
+  },
+  {
+   "id": "me5",
+   "file": "assets/audio/me5.mp3",
+   "duration": 6.264,
+   "text": "Et voilà : ton tableau de bord t'attend. Rejoins Mentorat, et avance bien accompagnée.",
+   "words": []
+  },
+  {
+   "id": "mo0",
+   "file": "assets/audio/mo0.mp3",
+   "duration": 5.64,
+   "text": "Tu as une expérience, un métier, un parcours. Et si tu le transmettais ?",
+   "words": []
+  },
+  {
+   "id": "mo1",
+   "file": "assets/audio/mo1.mp3",
+   "duration": 6.288,
+   "text": "Deviens mentor sur Digizelle. Connecte-toi, et dépose ta candidature en quatre étapes guidées.",
+   "words": []
+  },
+  {
+   "id": "mo2",
+   "file": "assets/audio/mo2.mp3",
+   "duration": 6.816,
+   "text": "D'abord, ton profil. Ton titre, ta bio, ton expérience — ce que verront tes futures mentorées.",
+   "words": []
+  },
+  {
+   "id": "mo3",
+   "file": "assets/audio/mo3.mp3",
+   "duration": 6.624,
+   "text": "Ensuite, ton expertise. Les compétences que tu maîtrises, et les profils que tu veux accompagner.",
+   "words": []
+  },
+  {
+   "id": "mo4",
+   "file": "assets/audio/mo4.mp3",
+   "duration": 6.792,
+   "text": "Puis ta disponibilité. Tu fixes ton rythme, ta capacité, tes créneaux — tu gardes le contrôle.",
+   "words": []
+  },
+  {
+   "id": "mo5",
+   "file": "assets/audio/mo5.mp3",
+   "duration": 6.552,
+   "text": "Enfin, la charte du mentor. Cinq engagements simples qui garantissent un mentorat de qualité.",
+   "words": []
+  },
+  {
+   "id": "mo6",
+   "file": "assets/audio/mo6.mp3",
+   "duration": 4.8,
+   "text": "Ta candidature est envoyée. Bienvenue chez les mentors Digizelle.",
+   "words": []
+  }
+ ]
+}
