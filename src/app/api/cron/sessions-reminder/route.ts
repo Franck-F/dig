@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
 import { expirePendingRequests } from '@/lib/actions/mentora/requests';
 import { drainEmailQueueFully } from '@/lib/email/queue';
+import { sendUnreadMessageDigests } from '@/lib/mentora/unread-message-digest';
 
 // Force Node runtime — Prisma + Resend fetch require it.
 export const runtime = 'nodejs';
@@ -105,6 +106,16 @@ export async function GET(request: Request): Promise<Response> {
     console.error('[cron] email queue drain failed', err);
   }
 
+  // Email digest of MentorshipMessage rows still unread 24-48h after
+  // they were sent. The 24h/48h window is the natural idempotency —
+  // each message contributes to exactly one digest, no DB write needed.
+  let unreadDigest = { candidates: 0, recipients: 0, sent: 0, failed: 0 };
+  try {
+    unreadDigest = await sendUnreadMessageDigests();
+  } catch (err) {
+    console.error('[cron] unread message digest failed', err);
+  }
+
   return NextResponse.json({
     ok: true,
     candidates: due.length,
@@ -112,5 +123,6 @@ export async function GET(request: Request): Promise<Response> {
     stampFailures,
     expiredRequests,
     queueDrain,
+    unreadDigest,
   });
 }
