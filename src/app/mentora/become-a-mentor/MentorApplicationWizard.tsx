@@ -4,13 +4,12 @@ import { useRef, useState, useTransition, type CSSProperties, type ReactNode } f
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { createMentorProfile, addMentorSkill } from '@/lib/actions/mentora/mentor-profile';
-import { addAvailabilityRule } from '@/lib/actions/mentora/availability';
-import { getSkillIdsBySlugs } from '@/lib/mentora/skills';
+import { submitMentorApplication } from '@/lib/actions/mentora/mentor-profile';
 import { resizeImageToDataUrl } from '@/lib/images/resize';
 
 import OnboardingShell from '@/components/app-shell/OnboardingShell';
 import { useTheme } from '@/components/ThemeProvider';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
 
 const FORMATS = ['REMOTE', 'IN_PERSON', 'HYBRID'] as const;
 const RESPONSE_TIMES = ['WITHIN_HOUR', 'WITHIN_DAY', 'WITHIN_WEEK', 'WITHIN_MONTH'] as const;
@@ -415,7 +414,30 @@ export default function MentorApplicationWizard({ skills }: Props) {
             ? `\n\nCompétences complémentaires : ${customSkills.join(', ')}`
             : '';
 
-        const res = await createMentorProfile({
+        // Build the availability-rule list from the slot-grid state.
+        const slotRules: Array<{
+          dayOfWeek: number;
+          startMinute: number;
+          endMinute: number;
+        }> = [];
+        for (const slotKey of slots) {
+          const [rowKey, dayStr] = slotKey.split(':') as [SlotRowKey, string];
+          const row = SLOT_ROWS.find((r) => r.key === rowKey);
+          if (!row) continue;
+          const dayOfWeek = Number(dayStr);
+          if (Number.isNaN(dayOfWeek)) continue;
+          slotRules.push({
+            dayOfWeek,
+            startMinute: row.startMinute,
+            endMinute: row.endMinute,
+          });
+        }
+
+        // Atomic submit: one server round-trip, one DB transaction. The
+        // previous flow chained ~10 sequential server actions (profile
+        // create + N skills + M availability rules) which produced
+        // ~15 s of "Envoi…" on cold-start Vercel functions.
+        const res = await submitMentorApplication({
           headline: headline.trim(),
           bio: `${bio.trim()}${menteeTypeTags}${customSkillsTag}`,
           yearsExperience,
@@ -425,48 +447,13 @@ export default function MentorApplicationWizard({ skills }: Props) {
           responseTime,
           photoUrl: photoUrl.trim() || undefined,
           linkedinUrl: linkedinUrl.trim() || undefined,
+          skillSlugs: [...selectedSkills],
+          skillLevel,
+          slots: slotRules,
         });
         if (res.status === 'error') {
           setError(res.error ?? t('errors.generic'));
           return;
-        }
-
-        // Attach skills (best-effort, partial success is fine).
-        try {
-          const skillIds = await getSkillIdsBySlugs([...selectedSkills]);
-          for (const skillId of skillIds) {
-            try {
-              await addMentorSkill({ skillId, level: skillLevel });
-            } catch {
-              // Ignore individual skill errors.
-            }
-          }
-        } catch {
-          // Slug resolution is best-effort.
-        }
-
-        // Persist the time-slot grid as availability rules — one rule
-        // per ticked cell. The action validates start < end and ties
-        // each rule to the new mentor profile via `requireMentorOwner`.
-        try {
-          for (const slotKey of slots) {
-            const [rowKey, dayStr] = slotKey.split(':') as [SlotRowKey, string];
-            const row = SLOT_ROWS.find((r) => r.key === rowKey);
-            if (!row) continue;
-            const dayOfWeek = Number(dayStr);
-            if (Number.isNaN(dayOfWeek)) continue;
-            try {
-              await addAvailabilityRule({
-                dayOfWeek,
-                startMinute: row.startMinute,
-                endMinute: row.endMinute,
-              });
-            } catch {
-              // Best-effort — the user can edit availability from the dashboard.
-            }
-          }
-        } catch {
-          // Same.
         }
 
         router.push('/mentora/dashboard?tab=profile&pending=1');
@@ -1351,6 +1338,96 @@ function SlotGrid({
     }
     return ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
   })();
+
+  // Mobile-first responsive: see comment in OnboardingWizard.tsx SlotGrid.
+  // Below 760 px we render each time-row as its own section with the
+  // label on top and a dedicated 7-col day grid underneath.
+  const isNarrow = useIsNarrow(760);
+
+  if (isNarrow) {
+    return (
+      <div
+        style={{
+          borderRadius: 14,
+          border: cardBd,
+          overflow: 'hidden',
+          background: isDark ? 'rgba(255,255,255,0.03)' : 'white',
+        }}
+      >
+        {SLOT_ROWS.map((row, rowIdx) => (
+          <div
+            key={row.key}
+            style={{
+              padding: '12px 12px 10px',
+              borderBottom: rowIdx < SLOT_ROWS.length - 1 ? cardBd : 'none',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: ink,
+                marginBottom: 8,
+              }}
+            >
+              {tSlots(`rows.${row.key}`)}
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: 5,
+              }}
+            >
+              {[0, 1, 2, 3, 4, 5, 6].map((day) => {
+                const k = `${row.key}:${day}`;
+                const on = slots.has(k);
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => onToggle(row.key, day)}
+                    style={{
+                      padding: 0,
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: 38,
+                        borderRadius: 8,
+                        background: on
+                          ? 'linear-gradient(135deg, #A34BF5, #24325F)'
+                          : isDark
+                            ? 'rgba(255,255,255,0.04)'
+                            : cardBg,
+                        border: on
+                          ? 'none'
+                          : isDark
+                            ? '1px dashed rgba(255,255,255,0.10)'
+                            : '1px dashed rgba(163,75,245,0.20)',
+                        color: on ? 'white' : sub,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {on ? '✓' : days[day]}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div

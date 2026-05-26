@@ -10,6 +10,7 @@ export {
   createMentorProfile,
   updateMentorProfile,
   submitMentorForReview,
+  submitMentorApplication,
   adminApproveMentor,
   adminRejectMentor,
   addMentorSkill,
