@@ -4,6 +4,7 @@ import { notify } from '@/lib/mentora/notifications';
 import { expirePendingRequests } from '@/lib/actions/mentora/requests';
 import { drainEmailQueueFully } from '@/lib/email/queue';
 import { sendUnreadMessageDigests } from '@/lib/mentora/unread-message-digest';
+import { sendRequestExpiryReminders } from '@/lib/mentora/request-expiry-reminder';
 
 // Force Node runtime — Prisma + Resend fetch require it.
 export const runtime = 'nodejs';
@@ -85,6 +86,18 @@ export async function GET(request: Request): Promise<Response> {
     }
   }
 
+  // Last-chance reminder to mentors whose PENDING MentorshipRequest
+  // expires in the next 24-48 h — sent BEFORE expirePendingRequests so
+  // the mentor gets a heads-up rather than just the EXPIRED notif. The
+  // 24-48 h window is the natural dedupe (each request crosses it
+  // exactly once around J+12 of its 14-day lifetime).
+  let requestReminders = { candidates: 0, sent: 0, failed: 0 };
+  try {
+    requestReminders = await sendRequestExpiryReminders();
+  } catch (err) {
+    console.error('[cron] request expiry reminders failed', err);
+  }
+
   // Also expire stale PENDING requests (per spec §8.4)
   let expiredRequests = 0;
   try {
@@ -121,6 +134,7 @@ export async function GET(request: Request): Promise<Response> {
     candidates: due.length,
     remindersSent,
     stampFailures,
+    requestReminders,
     expiredRequests,
     queueDrain,
     unreadDigest,
