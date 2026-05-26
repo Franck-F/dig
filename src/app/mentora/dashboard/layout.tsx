@@ -153,20 +153,28 @@ export default async function MentoratDashboardLayout({ children }: { children: 
     kind === 'mentor'
       ? [
           { href: '/mentora/dashboard', label: tShell('nav.mentor.overview'), icon: '◉' },
+          { href: '/mentora/dashboard/profile', label: 'Mon profil', icon: '✦' },
           { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentor.mentees'), icon: '☷', matchPrefix: true },
           { href: '/mentora/dashboard/sessions', label: tShell('nav.mentor.sessions'), icon: '◌', matchPrefix: true },
           { href: '/mentora/dashboard/messages', label: tShell('nav.mentor.messages'), icon: '✉', matchPrefix: true, badge: null },
-          { href: '/mentora/dashboard/availability', label: tShell('nav.mentor.availability'), icon: '◇', matchPrefix: true },
-          { href: '/mentora/dashboard/notifications', label: tShell('nav.mentor.notifications'), icon: '✦', matchPrefix: true, badge: unreadCount },
+          { href: '/mentora/dashboard/resources', label: 'Ressources', icon: '◇', matchPrefix: true },
+          { href: '/mentora/dashboard/availability', label: tShell('nav.mentor.availability'), icon: '◌' },
+          { href: '/mentora/dashboard/feedbacks', label: 'Feedbacks', icon: '★', matchPrefix: true },
+          { href: '/mentora/dashboard/activity', label: 'Activité', icon: '◈', matchPrefix: true },
+          { href: '/mentora/dashboard/notifications', label: tShell('nav.mentor.notifications'), icon: '☼', matchPrefix: true, badge: unreadCount },
           settingsItem,
         ]
       : kind === 'mentee'
         ? [
             { href: '/mentora/dashboard', label: tShell('nav.mentee.overview'), icon: '◉' },
-            { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentee.mentors'), icon: '✦', matchPrefix: true },
+            { href: '/mentora/dashboard/profile', label: 'Mon profil', icon: '✦' },
+            { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentee.mentors'), icon: '☷', matchPrefix: true },
             { href: '/mentora/dashboard/sessions', label: tShell('nav.mentee.sessions'), icon: '◌', matchPrefix: true },
             { href: '/mentora/dashboard/messages', label: tShell('nav.mentee.messages'), icon: '✉', matchPrefix: true },
-            { href: '/mentora/dashboard/requests', label: tShell('nav.mentee.goals'), icon: '◈', matchPrefix: true },
+            { href: '/mentora/dashboard/resources', label: 'Ressources', icon: '◇', matchPrefix: true },
+            { href: '/mentora/dashboard/goals', label: 'Objectifs', icon: '◈', matchPrefix: true },
+            { href: '/mentora/dashboard/agenda', label: 'Agenda', icon: '☷', matchPrefix: true },
+            { href: '/mentora/dashboard/activity', label: 'Activité', icon: '⟳', matchPrefix: true },
             { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '☼', matchPrefix: true, badge: unreadCount },
             settingsItem,
           ]
