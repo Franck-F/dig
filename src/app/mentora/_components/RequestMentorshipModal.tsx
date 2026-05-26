@@ -67,6 +67,11 @@ export default function RequestMentorshipModal({
     };
   }, [open]);
 
+  // Focus trap on the modal — keyboard focus stays inside while open.
+  // MUST be called before any early return so React sees the same hook
+  // order on every render (react-hooks/rules-of-hooks).
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
+
   if (!isAuthenticated) {
     return (
       <Link
@@ -88,9 +93,6 @@ export default function RequestMentorshipModal({
       </Link>
     );
   }
-
-  // Focus trap on the modal — keyboard focus stays inside while open.
-  const dialogRef = useFocusTrap<HTMLDivElement>(open);
 
   const toggleTopic = (id: string) => {
     setTopics((prev) =>
