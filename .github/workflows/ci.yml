@@ -94,7 +94,10 @@ jobs:
       # source map upload here (no auth token) so the step doesn't fail
       # on missing credentials.
       - name: Build
-        run: npm run build
+        # `build:ci` skips `prisma migrate deploy` — the placeholder
+        # DATABASE_URL points nowhere, and we only need next build to
+        # type-compile against the generated client.
+        run: npm run build:ci
         env:
           AUTH_SECRET: ci-placeholder-do-not-use-in-prod
           DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public

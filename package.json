@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma migrate deploy && next build",
+    "_comment_build_ci": "Same as build but skips migrate deploy — CI never connects to a real DB",
+    "build:ci": "prisma generate && next build",
     "build:analyze": "prisma generate && prisma migrate deploy && ANALYZE=1 next build",
     "start": "next start",
     "postinstall": "prisma generate",
