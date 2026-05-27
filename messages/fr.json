@@ -740,9 +740,18 @@
           "permissions": "Permissions",
           "inviteCta": "+ Inviter un·e admin",
           "members": {
-            "0": { "name": "Naïma B.", "role": "Lead programme" },
-            "1": { "name": "Camille R.", "role": "Coordinatrice" },
-            "2": { "name": "Yacine M.", "role": "Tech & data" }
+            "0": {
+              "name": "Naïma B.",
+              "role": "Lead programme"
+            },
+            "1": {
+              "name": "Camille R.",
+              "role": "Coordinatrice"
+            },
+            "2": {
+              "name": "Yacine M.",
+              "role": "Tech & data"
+            }
           }
         },
         "comms": {
@@ -777,21 +786,66 @@
         "integrations": {
           "title": "Intégrations",
           "items": {
-            "calendar": { "letter": "C", "name": "Calendar", "meta": "Sync agendas mentors", "on": true },
-            "slack": { "letter": "S", "name": "Slack", "meta": "Notifications équipe", "on": true },
-            "zoom": { "letter": "Z", "name": "Zoom", "meta": "Sessions en visio", "on": true },
-            "stripe": { "letter": "S", "name": "Stripe", "meta": "Dons & paiements", "on": false },
-            "notion": { "letter": "N", "name": "Notion", "meta": "Base de ressources", "on": true },
-            "mailjet": { "letter": "M", "name": "Mailjet", "meta": "Newsletter & emailing", "on": true },
-            "hubspot": { "letter": "H", "name": "HubSpot", "meta": "CRM partenaires", "on": true },
-            "looker": { "letter": "L", "name": "Looker", "meta": "Analytics avancées", "on": false }
+            "calendar": {
+              "letter": "C",
+              "name": "Calendar",
+              "meta": "Sync agendas mentors",
+              "on": true
+            },
+            "slack": {
+              "letter": "S",
+              "name": "Slack",
+              "meta": "Notifications équipe",
+              "on": true
+            },
+            "zoom": {
+              "letter": "Z",
+              "name": "Zoom",
+              "meta": "Sessions en visio",
+              "on": true
+            },
+            "stripe": {
+              "letter": "S",
+              "name": "Stripe",
+              "meta": "Dons & paiements",
+              "on": false
+            },
+            "notion": {
+              "letter": "N",
+              "name": "Notion",
+              "meta": "Base de ressources",
+              "on": true
+            },
+            "mailjet": {
+              "letter": "M",
+              "name": "Mailjet",
+              "meta": "Newsletter & emailing",
+              "on": true
+            },
+            "hubspot": {
+              "letter": "H",
+              "name": "HubSpot",
+              "meta": "CRM partenaires",
+              "on": true
+            },
+            "looker": {
+              "letter": "L",
+              "name": "Looker",
+              "meta": "Analytics avancées",
+              "on": false
+            }
           }
         }
       },
       "communityEventsPage": {
         "title": "Événements",
         "kicker": "Communauté",
-        "filters": ["Tous", "Live", "Atelier", "Demo"],
+        "filters": [
+          "Tous",
+          "Live",
+          "Atelier",
+          "Demo"
+        ],
         "upcomingTitle": "Événements à venir",
         "registerCta": "S'inscrire",
         "registeredCta": "✓ Inscrit·e",
@@ -806,35 +860,118 @@
         "organizerBody": "Propose un atelier, un live ou un meetup à la communauté.",
         "organizerCta": "+ Proposer un événement",
         "items": {
-          "0": { "day": "07", "month": "MAI", "title": "Atelier Web3 fondamentaux", "tag": "Atelier", "isLive": false, "host": "Léa Martins · Mentor · Visio · 90 min" },
-          "1": { "day": "12", "month": "MAI", "title": "Talk : Femmes & IA", "tag": "Live", "isLive": true, "host": "Sofia Khelifi · OVHcloud · Live + Q&A en direct" },
-          "2": { "day": "20", "month": "MAI", "title": "Hackathon #4 — Kick-off", "tag": "Hackathon", "isLive": false, "host": "Toute la promo · Présentiel · Paris 11" },
-          "3": { "day": "02", "month": "JUIN", "title": "Demo Day cohorte Tech", "tag": "Demo", "isLive": false, "host": "14 mentorées présenteront · Présentiel · Station F" },
-          "4": { "day": "14", "month": "JUIN", "title": "Critique de portfolios UX", "tag": "Live", "isLive": true, "host": "Karim Belhaj · Live · 8 portfolios revus" }
+          "0": {
+            "day": "07",
+            "month": "MAI",
+            "title": "Atelier Web3 fondamentaux",
+            "tag": "Atelier",
+            "isLive": false,
+            "host": "Léa Martins · Mentor · Visio · 90 min"
+          },
+          "1": {
+            "day": "12",
+            "month": "MAI",
+            "title": "Talk : Femmes & IA",
+            "tag": "Live",
+            "isLive": true,
+            "host": "Sofia Khelifi · OVHcloud · Live + Q&A en direct"
+          },
+          "2": {
+            "day": "20",
+            "month": "MAI",
+            "title": "Hackathon #4 — Kick-off",
+            "tag": "Hackathon",
+            "isLive": false,
+            "host": "Toute la promo · Présentiel · Paris 11"
+          },
+          "3": {
+            "day": "02",
+            "month": "JUIN",
+            "title": "Demo Day cohorte Tech",
+            "tag": "Demo",
+            "isLive": false,
+            "host": "14 mentorées présenteront · Présentiel · Station F"
+          },
+          "4": {
+            "day": "14",
+            "month": "JUIN",
+            "title": "Critique de portfolios UX",
+            "tag": "Live",
+            "isLive": true,
+            "host": "Karim Belhaj · Live · 8 portfolios revus"
+          }
         },
         "myItems": {
-          "0": { "title": "Atelier Web3", "meta": "07 mai · 19h" },
-          "1": { "title": "Demo Day Tech", "meta": "02 juin · 18h" }
+          "0": {
+            "title": "Atelier Web3",
+            "meta": "07 mai · 19h"
+          },
+          "1": {
+            "title": "Demo Day Tech",
+            "meta": "02 juin · 18h"
+          }
         }
       },
       "communityResourcesPage": {
         "title": "Ressources",
         "kicker": "Bibliothèque communauté",
         "categories": {
-          "templates": { "label": "Templates", "count": "48 ressources" },
-          "videos": { "label": "Vidéos", "count": "124 ressources" },
-          "articles": { "label": "Articles", "count": "96 ressources" },
-          "tools": { "label": "Outils", "count": "32 ressources" }
+          "templates": {
+            "label": "Templates",
+            "count": "48 ressources"
+          },
+          "videos": {
+            "label": "Vidéos",
+            "count": "124 ressources"
+          },
+          "articles": {
+            "label": "Articles",
+            "count": "96 ressources"
+          },
+          "tools": {
+            "label": "Outils",
+            "count": "32 ressources"
+          }
         },
         "libraryTitle": "Bibliothèque communauté",
         "shareCta": "+ Partager une ressource",
         "items": {
-          "0": { "title": "Guide UX 2026 (PDF)", "meta": "par Karim B. · 1 240 téléchargements", "tag": "Template", "icon": "templates" },
-          "1": { "title": "Comment passer un entretien Front", "meta": "par Sofia K. · 980 téléchargements", "tag": "Vidéo", "icon": "videos" },
-          "2": { "title": "Plan de carrière Tech (Notion)", "meta": "par Marwane O. · 720 téléchargements", "tag": "Template", "icon": "templates" },
-          "3": { "title": "Boîte à outils Reconversion Data", "meta": "par Lou T. · 540 téléchargements", "tag": "Article", "icon": "articles" },
-          "4": { "title": "12 prompts ChatGPT pour le portfolio", "meta": "par Karim B. · 480 téléchargements", "tag": "Outil", "icon": "tools" },
-          "5": { "title": "Atelier salaire & négo · replay", "meta": "par Sofia K. · 320 téléchargements", "tag": "Vidéo", "icon": "videos" }
+          "0": {
+            "title": "Guide UX 2026 (PDF)",
+            "meta": "par Karim B. · 1 240 téléchargements",
+            "tag": "Template",
+            "icon": "templates"
+          },
+          "1": {
+            "title": "Comment passer un entretien Front",
+            "meta": "par Sofia K. · 980 téléchargements",
+            "tag": "Vidéo",
+            "icon": "videos"
+          },
+          "2": {
+            "title": "Plan de carrière Tech (Notion)",
+            "meta": "par Marwane O. · 720 téléchargements",
+            "tag": "Template",
+            "icon": "templates"
+          },
+          "3": {
+            "title": "Boîte à outils Reconversion Data",
+            "meta": "par Lou T. · 540 téléchargements",
+            "tag": "Article",
+            "icon": "articles"
+          },
+          "4": {
+            "title": "12 prompts ChatGPT pour le portfolio",
+            "meta": "par Karim B. · 480 téléchargements",
+            "tag": "Outil",
+            "icon": "tools"
+          },
+          "5": {
+            "title": "Atelier salaire & négo · replay",
+            "meta": "par Sofia K. · 320 téléchargements",
+            "tag": "Vidéo",
+            "icon": "videos"
+          }
         }
       },
       "agendaPage": {
@@ -852,7 +989,15 @@
           "thisMonth": "Sessions ce mois"
         },
         "kpiHours": "{hours} h{minutes, select, 0 {} other {{minutes}}}",
-        "days": ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"],
+        "days": [
+          "LUN",
+          "MAR",
+          "MER",
+          "JEU",
+          "VEN",
+          "SAM",
+          "DIM"
+        ],
         "noSessions": "Aucune session planifiée pour cette semaine.",
         "untitledSession": "Session de mentorat"
       },
@@ -912,19 +1057,71 @@
         "shareCta": "Partager",
         "editCta": "Modifier",
         "menteeItems": {
-          "0": { "kind": "PDF", "category": "career", "title": "Le guide complet de l'entretien tech", "author": "Karim Belhaj", "meta": "25 pages · M.A.J Mars 2026" },
-          "1": { "kind": "Replay", "category": "ux-ui", "title": "Masterclass : structurer son portfolio UX", "author": "Sofia Khelifi", "meta": "52 min · 1.2k vues" },
-          "2": { "kind": "Template", "category": "career-change", "title": "Plan 90 jours pour reconversion tech", "author": "Équipe Digizelle", "meta": "Notion · Modèle gratuit" },
-          "3": { "kind": "Article", "category": "career", "title": "Négocier son salaire quand on débute", "author": "Sofia Khelifi", "meta": "8 min de lecture" },
-          "4": { "kind": "Replay", "category": "soft-skills", "title": "Hackathon #2 — keynote d'ouverture", "author": "Bleuenn Cloteaux", "meta": "58 min" },
-          "5": { "kind": "PDF", "category": "tech", "title": "Cheatsheet React hooks essentiels", "author": "Nina Bessonneau", "meta": "4 pages" }
+          "0": {
+            "kind": "PDF",
+            "category": "career",
+            "title": "Le guide complet de l'entretien tech",
+            "author": "Karim Belhaj",
+            "meta": "25 pages · M.A.J Mars 2026"
+          },
+          "1": {
+            "kind": "Replay",
+            "category": "ux-ui",
+            "title": "Masterclass : structurer son portfolio UX",
+            "author": "Sofia Khelifi",
+            "meta": "52 min · 1.2k vues"
+          },
+          "2": {
+            "kind": "Template",
+            "category": "career-change",
+            "title": "Plan 90 jours pour reconversion tech",
+            "author": "Équipe Digizelle",
+            "meta": "Notion · Modèle gratuit"
+          },
+          "3": {
+            "kind": "Article",
+            "category": "career",
+            "title": "Négocier son salaire quand on débute",
+            "author": "Sofia Khelifi",
+            "meta": "8 min de lecture"
+          },
+          "4": {
+            "kind": "Replay",
+            "category": "soft-skills",
+            "title": "Hackathon #2 — keynote d'ouverture",
+            "author": "Bleuenn Cloteaux",
+            "meta": "58 min"
+          },
+          "5": {
+            "kind": "PDF",
+            "category": "tech",
+            "title": "Cheatsheet React hooks essentiels",
+            "author": "Nina Bessonneau",
+            "meta": "4 pages"
+          }
         },
         "mentorEmpty": "Tu n'as pas encore partagé de ressource. Crée ton premier document pour démarrer ta bibliothèque.",
         "mentorItems": {
-          "0": { "kind": "PDF", "title": "Guide UX 2026 — édition Karim", "meta": "Partagé avec 8 mentorées · créé en mars 2026" },
-          "1": { "kind": "Notion", "title": "Template plan de carrière", "meta": "Partagé avec 5 mentorées · mis à jour 12 mars" },
-          "2": { "kind": "Replay", "title": "Masterclass : portfolio en 3 semaines", "meta": "Partagé avec 124 vues · replay public" },
-          "3": { "kind": "PDF", "title": "Cheatsheet entretien tech", "meta": "Partagé avec 12 mentorées · créé en janvier" }
+          "0": {
+            "kind": "PDF",
+            "title": "Guide UX 2026 — édition Karim",
+            "meta": "Partagé avec 8 mentorées · créé en mars 2026"
+          },
+          "1": {
+            "kind": "Notion",
+            "title": "Template plan de carrière",
+            "meta": "Partagé avec 5 mentorées · mis à jour 12 mars"
+          },
+          "2": {
+            "kind": "Replay",
+            "title": "Masterclass : portfolio en 3 semaines",
+            "meta": "Partagé avec 124 vues · replay public"
+          },
+          "3": {
+            "kind": "PDF",
+            "title": "Cheatsheet entretien tech",
+            "meta": "Partagé avec 12 mentorées · créé en janvier"
+          }
         }
       },
       "goalsPage": {
@@ -1763,7 +1960,23 @@
         "cancel": "Annuler",
         "loginRequired": "Connectez-vous pour envoyer une demande",
         "loginCta": "Se connecter"
-      }
+      },
+      "pageTitle": "Mon profil",
+      "pageSubtitle": "Tout ce qui te concerne sur Mentora",
+      "edit": "Modifier mon profil",
+      "viewPublic": "Voir le profil public",
+      "completeness": "Profil complété à {pct}%",
+      "missing": "Pour atteindre 100%, il te reste",
+      "badges": "Mes badges",
+      "engagement": "Mon engagement",
+      "expertises": "Mes expertises",
+      "objectives": "Mes objectifs",
+      "availability": "Mes créneaux récurrents",
+      "upcomingSessions": "Prochaines sessions",
+      "quickAccess": "Accès rapide",
+      "noProfile": "Choisis ton parcours pour commencer",
+      "becomeMentee": "Devenir mentorée",
+      "becomeMentor": "Devenir mentor"
     },
     "onboarding": {
       "metaTitle": "Démarrer avec Mentorat",
@@ -1783,11 +1996,26 @@
         "photoRemoveCta": "Retirer la photo",
         "goalCardsLabel": "Objectif principal",
         "goalCards": {
-          "first-job": { "title": "Décrocher mon premier job", "desc": "Tech, design, data, produit" },
-          "career-change": { "title": "Reconversion professionnelle", "desc": "Changer de secteur ou métier" },
-          "side-project": { "title": "Lancer mon projet", "desc": "Side-project ou startup" },
-          "level-up": { "title": "Monter en compétences", "desc": "Approfondir une expertise" },
-          "other": { "title": "Autre", "desc": "Décris ton objectif ci-dessous" }
+          "first-job": {
+            "title": "Décrocher mon premier job",
+            "desc": "Tech, design, data, produit"
+          },
+          "career-change": {
+            "title": "Reconversion professionnelle",
+            "desc": "Changer de secteur ou métier"
+          },
+          "side-project": {
+            "title": "Lancer mon projet",
+            "desc": "Side-project ou startup"
+          },
+          "level-up": {
+            "title": "Monter en compétences",
+            "desc": "Approfondir une expertise"
+          },
+          "other": {
+            "title": "Autre",
+            "desc": "Décris ton objectif ci-dessous"
+          }
         },
         "skillsLabel": "Domaines qui te tiennent à cœur",
         "skillsHint": "Sélectionne ceux qui te parlent — ou ajoute les tiens juste en dessous.",
@@ -1854,7 +2082,15 @@
       "slots": {
         "header": "Tes créneaux préférés",
         "hint": "Coche les créneaux où tu peux être dispo. Tu pourras affiner après.",
-        "days": ["L", "M", "M", "J", "V", "S", "D"],
+        "days": [
+          "L",
+          "M",
+          "M",
+          "J",
+          "V",
+          "S",
+          "D"
+        ],
         "rows": {
           "morning": "Matin · 9 h–12 h",
           "noon": "Midi · 12 h–14 h",
@@ -1971,17 +2207,40 @@
         "consentSub": "Signé électroniquement. Votre profil sera examiné sous 5 jours ouvrés.",
         "submitNotice": "Votre profil sera examiné sous 5 jours ouvrés.",
         "charteCards": {
-          "0": { "title": "Bienveillance & écoute active", "desc": "Je m'engage à écouter sans juger, à poser des questions ouvertes, à respecter le rythme de ma mentorée." },
-          "1": { "title": "Confidentialité", "desc": "Tout ce qui est partagé en session reste entre nous. Aucune info ne quitte Mentorat sans accord explicite." },
-          "2": { "title": "Disponibilité & ponctualité", "desc": "Je préviens 24h à l'avance en cas d'empêchement. Je propose toujours un nouveau créneau." },
-          "3": { "title": "Posture non-discriminatoire", "desc": "Je m'engage contre toute forme de discrimination ou de harcèlement, en session comme dans la communauté." },
-          "4": { "title": "Bénévolat & cadre Digizelle", "desc": "Le mentorat est gratuit. Aucune transaction commerciale dans le cadre de Mentorat." }
+          "0": {
+            "title": "Bienveillance & écoute active",
+            "desc": "Je m'engage à écouter sans juger, à poser des questions ouvertes, à respecter le rythme de ma mentorée."
+          },
+          "1": {
+            "title": "Confidentialité",
+            "desc": "Tout ce qui est partagé en session reste entre nous. Aucune info ne quitte Mentorat sans accord explicite."
+          },
+          "2": {
+            "title": "Disponibilité & ponctualité",
+            "desc": "Je préviens 24h à l'avance en cas d'empêchement. Je propose toujours un nouveau créneau."
+          },
+          "3": {
+            "title": "Posture non-discriminatoire",
+            "desc": "Je m'engage contre toute forme de discrimination ou de harcèlement, en session comme dans la communauté."
+          },
+          "4": {
+            "title": "Bénévolat & cadre Digizelle",
+            "desc": "Le mentorat est gratuit. Aucune transaction commerciale dans le cadre de Mentorat."
+          }
         }
       },
       "slots": {
         "header": "Créneaux récurrents",
         "hint": "Coche les créneaux où tu peux assurer une session. Tu pourras affiner après.",
-        "days": ["L", "M", "M", "J", "V", "S", "D"],
+        "days": [
+          "L",
+          "M",
+          "M",
+          "J",
+          "V",
+          "S",
+          "D"
+        ],
         "rows": {
           "noon": "Midi · 12 h–14 h",
           "afternoon": "Après-midi · 14 h–18 h",
@@ -1992,21 +2251,45 @@
         "label": "Mentorées que tu peux accompagner",
         "hint": "Coche tous les profils auxquels tu te sens utile.",
         "items": {
-          "career-change": { "title": "Étudiantes en reconversion" },
-          "fresh-grad": { "title": "Jeunes diplômées" },
-          "first-job": { "title": "Premier job" },
-          "founder": { "title": "Entrepreneuses" },
-          "career-up": { "title": "Évolution de carrière" },
-          "all": { "title": "Tous niveaux" }
+          "career-change": {
+            "title": "Étudiantes en reconversion"
+          },
+          "fresh-grad": {
+            "title": "Jeunes diplômées"
+          },
+          "first-job": {
+            "title": "Premier job"
+          },
+          "founder": {
+            "title": "Entrepreneuses"
+          },
+          "career-up": {
+            "title": "Évolution de carrière"
+          },
+          "all": {
+            "title": "Tous niveaux"
+          }
         }
       },
       "seniority": {
         "label": "Niveau de séniorité",
         "items": {
-          "junior": { "title": "Junior", "sub": "1-3 ans" },
-          "confirmed": { "title": "Confirmé·e", "sub": "3-6 ans" },
-          "senior": { "title": "Senior", "sub": "6-10 ans" },
-          "expert": { "title": "Expert", "sub": "10+ ans" }
+          "junior": {
+            "title": "Junior",
+            "sub": "1-3 ans"
+          },
+          "confirmed": {
+            "title": "Confirmé·e",
+            "sub": "3-6 ans"
+          },
+          "senior": {
+            "title": "Senior",
+            "sub": "6-10 ans"
+          },
+          "expert": {
+            "title": "Expert",
+            "sub": "10+ ans"
+          }
         }
       },
       "actions": {
@@ -2035,6 +2318,40 @@
       "CAREER": "Carrière",
       "BUSINESS": "Business",
       "CREATIVE": "Créatif"
+    },
+    "activity": {
+      "pageTitle": "Mon activité",
+      "pageSubtitle": "Toute ton historique en un coup d'œil",
+      "filters": {
+        "all": "Tout",
+        "sessions": "Sessions",
+        "messages": "Messages",
+        "reviews": "Avis",
+        "requests": "Demandes",
+        "goals": "Objectifs",
+        "mentorships": "Mentorats"
+      },
+      "range": {
+        "30d": "30 derniers jours",
+        "year": "Cette année",
+        "all": "Tout"
+      },
+      "loadMore": "Charger plus",
+      "empty": "Aucune activité pour l'instant",
+      "export": "Exporter (CSV)"
+    },
+    "menteePublic": {
+      "metaTitle": "Profil mentee · Digizelle",
+      "goals": "Objectifs",
+      "context": "Parcours & contexte",
+      "stats": "Statistiques",
+      "history": "Notre historique",
+      "badges": "Badges",
+      "message": "Envoyer un message",
+      "propose": "Proposer un mentorat",
+      "activeMentorship": "Mentorat actif depuis {months} mois",
+      "noMentorship": "Aucun mentorship en cours",
+      "memberSince": "Membre depuis {date}"
     }
   },
   "team": {
@@ -2557,7 +2874,15 @@
       "titleLine1": "Signé par toute",
       "titleHighlight": "l'équipe.",
       "body": "Chaque nouvelle personne qui rejoint Digizelle — bénévole, mentor, salarié·e — signe ce manifeste. C'est notre boussole partagée.",
-      "names": ["Bleuenn C.", "Priscillia M.", "Corto C.", "Franck F.", "Inès R.", "Ellischa B.", "+ 24 autres"],
+      "names": [
+        "Bleuenn C.",
+        "Priscillia M.",
+        "Corto C.",
+        "Franck F.",
+        "Inès R.",
+        "Ellischa B.",
+        "+ 24 autres"
+      ],
       "ctaJoin": "Rejoindre l'aventure →",
       "ctaAbout": "Notre histoire"
     }
@@ -2585,7 +2910,11 @@
       "today": "Aujourd'hui · 09:12",
       "subject": "✦ Pixel #28 — Hackathon, IA & 4 offres tech",
       "excerpt": "Bonjour ✨, ce mois-ci : retour sur le Hackathon #2 (spoiler : 87 projets), 4 offres du collectif, une masterclass IA générative à Station F…",
-      "tags": ["#community", "#opportunities", "#tech"]
+      "tags": [
+        "#community",
+        "#opportunities",
+        "#tech"
+      ]
     },
     "form": {
       "title": "Inscrivez-vous en",
@@ -2596,7 +2925,13 @@
       "emailLabel": "Email",
       "emailPlaceholder": "email@exemple.fr",
       "profilePrefix": "Je suis :",
-      "profiles": ["Étudiant·e", "En reconversion", "Mentor·e", "Recruteur·euse", "Curieux·se"],
+      "profiles": [
+        "Étudiant·e",
+        "En reconversion",
+        "Mentor·e",
+        "Recruteur·euse",
+        "Curieux·se"
+      ],
       "submit": "S'abonner →",
       "submitting": "…",
       "success": "✓ Merci, vous êtes inscrit·e — surveillez votre boîte.",
@@ -2609,11 +2944,36 @@
       "titleHighlight": "5 rubriques.",
       "subtitle": "Format court, dense, pensé pour être lu dans le métro entre deux stations.",
       "items": {
-        "0": { "n": "1", "icon": "✦", "title": "Le replay", "desc": "Ce qui s'est passé dans la communauté ce mois." },
-        "1": { "n": "2", "icon": "◌", "title": "Les opportunités", "desc": "Stages, alternances, jobs filtrés par notre équipe." },
-        "2": { "n": "3", "icon": "☷", "title": "Le portrait", "desc": "Une mentorée, un mentor, une histoire." },
-        "3": { "n": "4", "icon": "◧", "title": "L'analyse", "desc": "Une question tech / société creusée à fond." },
-        "4": { "n": "5", "icon": "◇", "title": "L'agenda", "desc": "Tous les events à ne pas manquer." }
+        "0": {
+          "n": "1",
+          "icon": "✦",
+          "title": "Le replay",
+          "desc": "Ce qui s'est passé dans la communauté ce mois."
+        },
+        "1": {
+          "n": "2",
+          "icon": "◌",
+          "title": "Les opportunités",
+          "desc": "Stages, alternances, jobs filtrés par notre équipe."
+        },
+        "2": {
+          "n": "3",
+          "icon": "☷",
+          "title": "Le portrait",
+          "desc": "Une mentorée, un mentor, une histoire."
+        },
+        "3": {
+          "n": "4",
+          "icon": "◧",
+          "title": "L'analyse",
+          "desc": "Une question tech / société creusée à fond."
+        },
+        "4": {
+          "n": "5",
+          "icon": "◇",
+          "title": "L'agenda",
+          "desc": "Tous les events à ne pas manquer."
+        }
       }
     },
     "editions": {
@@ -2622,9 +2982,24 @@
       "viewAll": "Tout voir →",
       "readEdition": "Lire l'édition →",
       "items": {
-        "0": { "n": "#28", "date": "Mars 2026", "title": "Hackathon, IA & 4 offres tech", "tag": "Communauté" },
-        "1": { "n": "#27", "date": "Février 2026", "title": "Reconversion : 5 parcours qui inspirent", "tag": "Portrait" },
-        "2": { "n": "#26", "date": "Janvier 2026", "title": "L'IA va-t-elle casser le marché de l'emploi ?", "tag": "Analyse" }
+        "0": {
+          "n": "#28",
+          "date": "Mars 2026",
+          "title": "Hackathon, IA & 4 offres tech",
+          "tag": "Communauté"
+        },
+        "1": {
+          "n": "#27",
+          "date": "Février 2026",
+          "title": "Reconversion : 5 parcours qui inspirent",
+          "tag": "Portrait"
+        },
+        "2": {
+          "n": "#26",
+          "date": "Janvier 2026",
+          "title": "L'IA va-t-elle casser le marché de l'emploi ?",
+          "tag": "Analyse"
+        }
       }
     }
   },
@@ -3646,11 +4021,26 @@
           "cta": "Ouvrir la file →"
         },
         "kpis": {
-          "members": { "label": "Membres actifs", "hint": "7 derniers jours" },
-          "posts": { "label": "Posts publiés", "hint": "cette semaine" },
-          "flags": { "label": "Signalements", "hint": "à traiter" },
-          "engagement": { "label": "Engagement", "hint": "taux 7 j" },
-          "events": { "label": "Évents à venir", "hint": "{registered} inscrits" }
+          "members": {
+            "label": "Membres actifs",
+            "hint": "7 derniers jours"
+          },
+          "posts": {
+            "label": "Posts publiés",
+            "hint": "cette semaine"
+          },
+          "flags": {
+            "label": "Signalements",
+            "hint": "à traiter"
+          },
+          "engagement": {
+            "label": "Engagement",
+            "hint": "taux 7 j"
+          },
+          "events": {
+            "label": "Évents à venir",
+            "hint": "{registered} inscrits"
+          }
         },
         "chart": {
           "title": "Activité 14 derniers jours",
@@ -3680,13 +4070,55 @@
         "weekTitle": "Planning d'animation · sem. {week}",
         "addRitualCta": "+ Ajouter un rituel",
         "days": [
-          { "label": "LUN", "num": "06", "title": "Live UX · Karim", "time": "19h", "color": "#7301FF" },
-          { "label": "MAR", "num": "07", "title": "Atelier Web3", "time": "18h", "color": "#A34BF5" },
-          { "label": "MER", "num": "08", "title": "Office hours", "time": "12h", "color": "#F46FB1" },
-          { "label": "JEU", "num": "09", "title": "Rituel Promo #4", "time": "20h", "color": "#3B7BFF" },
-          { "label": "VEN", "num": "10", "title": "Drink communauté", "time": "19h", "color": "#23c55e" },
-          { "label": "SAM", "num": "11", "title": "—", "time": "", "color": "" },
-          { "label": "DIM", "num": "12", "title": "Talk Femmes & IA", "time": "18h", "color": "#FFB823" }
+          {
+            "label": "LUN",
+            "num": "06",
+            "title": "Live UX · Karim",
+            "time": "19h",
+            "color": "#7301FF"
+          },
+          {
+            "label": "MAR",
+            "num": "07",
+            "title": "Atelier Web3",
+            "time": "18h",
+            "color": "#A34BF5"
+          },
+          {
+            "label": "MER",
+            "num": "08",
+            "title": "Office hours",
+            "time": "12h",
+            "color": "#F46FB1"
+          },
+          {
+            "label": "JEU",
+            "num": "09",
+            "title": "Rituel Promo #4",
+            "time": "20h",
+            "color": "#3B7BFF"
+          },
+          {
+            "label": "VEN",
+            "num": "10",
+            "title": "Drink communauté",
+            "time": "19h",
+            "color": "#23c55e"
+          },
+          {
+            "label": "SAM",
+            "num": "11",
+            "title": "—",
+            "time": "",
+            "color": ""
+          },
+          {
+            "label": "DIM",
+            "num": "12",
+            "title": "Talk Femmes & IA",
+            "time": "18h",
+            "color": "#FFB823"
+          }
         ],
         "broadcast": {
           "title": "Annonce communauté",
@@ -3720,9 +4152,18 @@
           "permissions": "Permissions",
           "addCta": "+ Ajouter un modérateur",
           "items": {
-            "0": { "name": "Karim Belhaj", "meta": "Lead modo · 142 actions ce mois" },
-            "1": { "name": "Sofia Khelifi", "meta": "Modo · Tech · 96 actions ce mois" },
-            "2": { "name": "Naïma Berrada", "meta": "Modo · UX · 64 actions ce mois" }
+            "0": {
+              "name": "Karim Belhaj",
+              "meta": "Lead modo · 142 actions ce mois"
+            },
+            "1": {
+              "name": "Sofia Khelifi",
+              "meta": "Modo · Tech · 96 actions ce mois"
+            },
+            "2": {
+              "name": "Naïma Berrada",
+              "meta": "Modo · UX · 64 actions ce mois"
+            }
           }
         },
         "privacyCard": {
@@ -3739,10 +4180,22 @@
         "title": "Analytics communauté",
         "subtitle": "Activité, engagement et sentiment.",
         "kpis": {
-          "weeklyActive": { "label": "Membres actifs / sem.", "trendVsLast": "vs S-1" },
-          "postsPerDay": { "label": "Posts / jour", "trendLabel": "Moyenne 7 j" },
-          "reactionsPerPost": { "label": "Réactions / post", "trendLabel": "Moyenne 30 j" },
-          "retention30": { "label": "Rétention 30 j", "trendLabel": "Cohorte j-60" }
+          "weeklyActive": {
+            "label": "Membres actifs / sem.",
+            "trendVsLast": "vs S-1"
+          },
+          "postsPerDay": {
+            "label": "Posts / jour",
+            "trendLabel": "Moyenne 7 j"
+          },
+          "reactionsPerPost": {
+            "label": "Réactions / post",
+            "trendLabel": "Moyenne 30 j"
+          },
+          "retention30": {
+            "label": "Rétention 30 j",
+            "trendLabel": "Cohorte j-60"
+          }
         },
         "weeklyActiveTitle": "Membres actifs hebdo · 12 sem.",
         "sentimentTitle": "Sentiment communauté",
