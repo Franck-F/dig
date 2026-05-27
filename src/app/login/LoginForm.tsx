@@ -536,6 +536,7 @@ function ResetModal({
   // disable the rule for this specific line.
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- useActionState handoff (post-action state reactor pattern)
       setStep(1);
       setEmail(initialEmail);
     }
@@ -711,6 +712,7 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
   // useActionState reactor pattern as elsewhere in this file.
   useEffect(() => {
     if (signupState.status === 'pending_verification') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- useActionState handoff (post-action state reactor pattern)
       setVerifyEmail(signupState.email);
       setVerifyOpen(true);
     }

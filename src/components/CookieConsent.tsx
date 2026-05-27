@@ -110,6 +110,7 @@ export default function CookieConsent() {
   // Sync modal toggles with current consent each time it opens
   useEffect(() => {
     if (isPreferencesOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage → state sync
       setPrefPref(consent?.preferences ?? true);
       setPrefAnalytics(consent?.analytics ?? false);
     }

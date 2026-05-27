@@ -46,6 +46,7 @@ export default function ContactForm() {
 
   useEffect(() => {
     const mapped = SUBJECT_FROM_PARAM[subjectParam];
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- useActionState success handoff
     if (mapped) setSubject(mapped);
   }, [subjectParam]);
 

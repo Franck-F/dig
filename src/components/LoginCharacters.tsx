@@ -55,6 +55,7 @@ function Eye({
 
   useEffect(() => {
     if (forceLookX !== undefined && forceLookY !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- animation state synced from external input
       setPupilPos({ x: forceLookX, y: forceLookY });
       return;
     }
@@ -231,6 +232,7 @@ export default function LoginCharacters() {
   /* "Looking at each other" gag — fires when typing starts, lasts 800ms */
   useEffect(() => {
     if (!isTyping) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- animation state synced from external input
       setLookingAtEachOther(false);
       return;
     }
@@ -242,6 +244,7 @@ export default function LoginCharacters() {
   /* Sneaky peek — purple peeks at the visible password every 2-5s */
   useEffect(() => {
     if (!passwordVisible || reduced) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- animation state synced from external input
       setPurplePeek(false);
       return;
     }

@@ -40,6 +40,7 @@ export default function FaqClient() {
       // Reset visibility — show everything.
       items.forEach((el) => el.classList.remove('--faq-hidden'));
       categories.forEach((cat) => cat.classList.remove('--faq-hidden'));
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional URL hash → state sync
       setMatchCount(null);
       return;
     }

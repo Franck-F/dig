@@ -90,6 +90,7 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
           /* noop */
         }
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage → state sync
         setConsent({ essential: true, preferences: stored.preferences, analytics: stored.analytics });
         setHasDecided(true);
       }

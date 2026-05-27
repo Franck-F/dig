@@ -82,6 +82,7 @@ export default function NewsletterCampaignModal({
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- useActionState handoff + reset on open prop
     setCountLoading(true);
     countAudience(audience).then((res) => {
       if (cancelled) return;
