@@ -1,0 +1,10 @@
+# HyperFrames — dépendances et sorties (régénérables)
+node_modules/
+*/renders/
+*/snapshots/
+*/.hyperframes/
+
+# Captures d'écran volumineuses — régénérables via `npm run demo:record`
+# puis ré-encodage (voir README.md)
+*/assets/screencast-*
+assets/screencast-*
