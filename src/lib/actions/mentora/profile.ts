@@ -165,6 +165,129 @@ export async function submitMentorForReview(): Promise<ActionResult<{ id: string
   }
 }
 
+// ─────────────── Atomic onboarding submission ─────────────────────────────
+
+const submitMentorApplicationSchema = z.object({
+  headline: z.string().min(5).max(120),
+  bio: z.string().min(1).max(50_000),
+  yearsExperience: z.number().int().min(0).max(60),
+  timezone: z.string().min(1),
+  languages: z.array(z.string().min(2).max(5)).min(1),
+  photoUrl: photoUrlSchema.optional().nullable(),
+  linkedinUrl: z.string().url().optional().nullable(),
+  maxConcurrentMentees: z.number().int().min(1).max(20).optional(),
+  responseTime: z.nativeEnum(ResponseTime).optional(),
+  skillSlugs: z.array(z.string().min(1).max(64)).max(50),
+  skillLevel: z.nativeEnum(SkillLevel),
+  slots: z
+    .array(
+      z.object({
+        dayOfWeek: z.number().int().min(0).max(6),
+        startMinute: z.number().int().min(0).max(1440),
+        endMinute: z.number().int().min(0).max(1440),
+      }),
+    )
+    .max(40),
+});
+
+/**
+ * Submit the full mentor application in ONE server round-trip / one DB
+ * transaction: create the DRAFT MentorProfile, attach skills, persist
+ * availability rules. Replaces the previous wizard flow that issued
+ * ~10 sequential server actions (profile create + N skills + M
+ * availabilities), which took ~15 s of "Envoi…" on cold-start Vercel
+ * functions because each round-trip paid its own latency.
+ *
+ * Atomicity: if anything fails inside the transaction (e.g. unique
+ * constraint on `[mentorProfileId, skillId]`), the whole submission
+ * rolls back — no orphan MentorProfile in DRAFT with half the skills.
+ */
+export async function submitMentorApplication(
+  input: z.input<typeof submitMentorApplicationSchema>,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const ctx = await requireUser();
+    const parsed = submitMentorApplicationSchema.safeParse(input);
+    if (!parsed.success) return errorResult('invalidInput');
+
+    const existing = await prisma.mentorProfile.findUnique({
+      where: { userId: ctx.userId },
+      select: { id: true },
+    });
+    if (existing) return errorResult('duplicateRequest');
+
+    if (parsed.data.photoUrl?.startsWith('data:')) {
+      const r = validateImageDataUri(parsed.data.photoUrl, IMAGE_CAPS.mentorPhoto);
+      if (!r.ok) return errorResult(imageReasonToErrorCode(r.reason));
+    }
+
+    // Resolve skill slugs → ids BEFORE the transaction (read-only, safe).
+    // Slugs not in DB are silently dropped — the wizard pre-fills curated
+    // chips that map to existing Skill rows, but custom-typed skills are
+    // already surfaced in the bio (see wizard), not as MentorSkill rows.
+    const skillIds: string[] =
+      parsed.data.skillSlugs.length > 0
+        ? (
+            await prisma.skill.findMany({
+              where: { slug: { in: parsed.data.skillSlugs } },
+              select: { id: true },
+            })
+          ).map((s) => s.id)
+        : [];
+
+    const created = await prisma.$transaction(async (tx) => {
+      const profile = await tx.mentorProfile.create({
+        data: {
+          userId: ctx.userId,
+          headline: parsed.data.headline,
+          bio: parsed.data.bio,
+          yearsExperience: parsed.data.yearsExperience,
+          hourlyRate: null,
+          timezone: parsed.data.timezone,
+          location: null,
+          photoUrl: parsed.data.photoUrl ?? null,
+          linkedinUrl: parsed.data.linkedinUrl ?? null,
+          languages: parsed.data.languages,
+          maxConcurrentMentees: parsed.data.maxConcurrentMentees ?? 5,
+          responseTime: parsed.data.responseTime ?? ResponseTime.WITHIN_WEEK,
+          status: 'DRAFT',
+        },
+        select: { id: true },
+      });
+
+      if (skillIds.length > 0) {
+        await tx.mentorSkill.createMany({
+          data: skillIds.map((skillId) => ({
+            mentorProfileId: profile.id,
+            skillId,
+            level: parsed.data.skillLevel,
+          })),
+          skipDuplicates: true,
+        });
+      }
+
+      if (parsed.data.slots.length > 0) {
+        await tx.availabilityRule.createMany({
+          data: parsed.data.slots.map((s) => ({
+            mentorProfileId: profile.id,
+            dayOfWeek: s.dayOfWeek,
+            startMinute: s.startMinute,
+            endMinute: s.endMinute,
+            timezone: parsed.data.timezone,
+          })),
+        });
+      }
+
+      return profile;
+    });
+
+    revalidatePath('/mentora/dashboard');
+    return successResult(created);
+  } catch (err) {
+    return handleError(err);
+  }
+}
+
 // ─────────────── Mentor skills ────────────────────────────────────────────
 
 const addMentorSkillSchema = z.object({

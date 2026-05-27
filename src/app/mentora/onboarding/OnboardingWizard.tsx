@@ -11,6 +11,7 @@ import { resizeImageToDataUrl } from '@/lib/images/resize';
 
 import OnboardingShell from '@/components/app-shell/OnboardingShell';
 import { useTheme } from '@/components/ThemeProvider';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
 
 const LEVELS = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'] as const;
 const FORMATS = ['REMOTE', 'IN_PERSON', 'HYBRID'] as const;
@@ -1179,6 +1180,100 @@ function SlotGrid({
     }
     return ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
   })();
+
+  // Mobile-first responsive: the 8-column grid below collapses badly on
+  // narrow viewports (the day-letter row + per-row 7 day buttons share
+  // a single `repeat(8, 1fr)` track, which folds when 1fr drops under
+  // the button's content width). Below 760 px we render each time-row
+  // as its own section with the label on top and a dedicated 7-col
+  // day grid underneath — thumb-friendly cells with the day letter
+  // baked into the button.
+  const isNarrow = useIsNarrow(760);
+
+  if (isNarrow) {
+    return (
+      <div
+        style={{
+          borderRadius: 14,
+          border: cardBd,
+          overflow: 'hidden',
+          background: isDark ? 'rgba(255,255,255,0.03)' : 'white',
+        }}
+      >
+        {SLOT_ROWS.map((row, rowIdx) => (
+          <div
+            key={row.key}
+            style={{
+              padding: '12px 12px 10px',
+              borderBottom: rowIdx < SLOT_ROWS.length - 1 ? cardBd : 'none',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: ink,
+                marginBottom: 8,
+              }}
+            >
+              {tSlots(`rows.${row.key}`)}
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: 5,
+              }}
+            >
+              {[0, 1, 2, 3, 4, 5, 6].map((day) => {
+                const k = `${row.key}:${day}`;
+                const on = slots.has(k);
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => onToggle(row.key, day)}
+                    style={{
+                      padding: 0,
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: 38,
+                        borderRadius: 8,
+                        background: on
+                          ? 'linear-gradient(135deg, #7301FF, #A34BF5)'
+                          : isDark
+                            ? 'rgba(255,255,255,0.04)'
+                            : cardBg,
+                        border: on
+                          ? 'none'
+                          : isDark
+                            ? '1px dashed rgba(255,255,255,0.10)'
+                            : '1px dashed rgba(115,1,255,0.15)',
+                        color: on ? 'white' : sub,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {on ? '✓' : days[day]}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div
