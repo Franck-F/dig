@@ -63,7 +63,6 @@ export default function WebVitalsReporter() {
     } catch (err) {
       // Never crash a render because of metrics reporting.
       if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
         console.warn('[web-vitals] report failed', err);
       }
     }
