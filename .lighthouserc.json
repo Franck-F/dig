@@ -6,7 +6,6 @@
       "startServerReadyTimeout": 60000,
       "url": [
         "http://localhost:3000/",
-        "http://localhost:3000/login",
         "http://localhost:3000/programs",
         "http://localhost:3000/community/charte"
       ],

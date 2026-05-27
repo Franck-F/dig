@@ -46,7 +46,11 @@ jobs:
         run: npx prisma generate
 
       - name: Build
-        run: npm run build
+        # Use `build:ci` (next build only, no `prisma migrate deploy`)
+        # — same reason as the lint/typecheck/test job in ci.yml. The
+        # Lighthouse surfaces are static / pseudo-static and never
+        # actually query the DB at build time.
+        run: npm run build:ci
         env:
           AUTH_SECRET: ci-placeholder-do-not-use-in-prod
           DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
