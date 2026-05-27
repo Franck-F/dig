@@ -10,6 +10,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
+    // Auth surfaces don't belong in search results. Marking the page
+    // noindex also tells Lighthouse to skip a chunk of SEO audits that
+    // don't apply to a sign-in form (tap targets on form fields, etc.).
+    robots: { index: false, follow: false },
   };
 }
 
