@@ -11,6 +11,7 @@ import {
 } from '@/lib/email/queue';
 import { buildUnsubscribeUrl } from '@/lib/email/unsubscribe-token';
 import { getDpoEmail } from '@/lib/contact';
+import { addContactToAudience } from '@/lib/email/resend-audiences';
 
 export type NewsletterState =
   | { status: 'idle' }
@@ -43,6 +44,12 @@ export async function subscribeNewsletter(_prev: NewsletterState, formData: Form
   } catch {
     return { status: 'error', error: "Erreur d'inscription. Réessayez plus tard." };
   }
+
+  // Fire-and-forget sync to the Resend Audience so the dashboard
+  // reflects the subscription instantly and one-click unsubscribe from
+  // any mail client is handled server-side by Resend. Never blocks the
+  // user response — a Resend outage must not break newsletter signup.
+  void addContactToAudience({ email });
 
   return { status: 'success' };
 }

@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { prisma } from '@/lib/prisma';
 import { verifyUnsubscribeToken } from '@/lib/email/unsubscribe-token';
+import { unsubscribeContactFromAudience } from '@/lib/email/resend-audiences';
 import { getDpoEmail } from '@/lib/contact';
 
 export const dynamic = 'force-dynamic';
@@ -75,6 +76,10 @@ export default async function UnsubscribePage({
       where: { id: user.id },
       data: { marketingEmailsEnabled: false },
     });
+    // Mirror the opt-out into Resend so the dashboard, downstream
+    // campaigns, and any future Audience-targeted send all honour it.
+    // Fire-and-forget — never let a Resend outage block confirmation.
+    if (user.email) void unsubscribeContactFromAudience(user.email);
   }
 
   return (
