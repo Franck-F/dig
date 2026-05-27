@@ -27,6 +27,7 @@ export default function MemberFilters({ channels }: Props) {
   const [channel, setChannel] = useState(sp.get('channel') ?? '');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional URL searchParams → state sync
     setSearch(sp.get('q') ?? '');
     setChannel(sp.get('channel') ?? '');
   }, [sp]);

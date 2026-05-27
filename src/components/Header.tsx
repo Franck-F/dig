@@ -54,6 +54,7 @@ export default function Header() {
 
   // Close on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scroll listener → state sync
     setMenuOpen(false);
   }, [pathname]);
 

@@ -19,6 +19,7 @@ export function useIsNarrow(maxWidthPx = 760): boolean {
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mq = window.matchMedia(`(max-width: ${maxWidthPx}px)`);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- matchMedia → state sync
     setIsNarrow(mq.matches);
     const onChange = (e: MediaQueryListEvent) => setIsNarrow(e.matches);
     mq.addEventListener('change', onChange);

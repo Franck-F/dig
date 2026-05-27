@@ -257,6 +257,7 @@ function LoginPage() {
   // Looking at each other animation when typing starts
   useEffect(() => {
     if (isTyping) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- animation state synced from password/focus props
       setIsLookingAtEachOther(true);
       const timer = setTimeout(() => {
         setIsLookingAtEachOther(false);
@@ -283,6 +284,7 @@ function LoginPage() {
       const firstPeek = schedulePeek();
       return () => clearTimeout(firstPeek);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- animation state synced from password/focus props
       setIsPurplePeeking(false);
     }
   }, [password, showPassword, isPurplePeeking]);
