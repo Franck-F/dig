@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { claimHandle, updateMemberProfile } from '@/lib/actions/community/member';
+import OnboardingShell from '@/components/app-shell/OnboardingShell';
 
 export type DefaultChannel = {
   slug: string;
@@ -183,27 +184,25 @@ export default function OnboardingWizard({ channels, suggestedHandle, defaultDis
   ];
   const cur = stepLabels[step];
 
-  return (
-    <div className="dz-glass-strong" style={{ padding: 32, borderRadius: 24 }}>
-      <div className="dz-small" style={{ marginBottom: 8, color: '#7301FF', fontWeight: 600 }}>
-        {t('stepCounter', { current: step + 1, total: totalSteps })}
-      </div>
-      <div aria-hidden style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
-        {stepLabels.map((s, i) => (
-          <div
-            key={s.id}
-            style={{
-              flex: 1,
-              height: 4,
-              borderRadius: 99,
-              background: i <= step
-                ? 'linear-gradient(90deg,#7301FF,#A34BF5)'
-                : 'rgba(115,1,255,0.12)',
-            }}
-          />
-        ))}
-      </div>
+  // Adapt the wizard's local `stepLabels` shape to OnboardingShell's
+  // `{ t, s }` contract. The shell renders these in its aside (small
+  // stepper); the per-step h2 below echoes the current step's title in
+  // big copy.
+  const shellSteps = stepLabels.map((sl) => ({ t: sl.title, s: sl.subtitle }));
 
+  return (
+    <OnboardingShell
+      role="community"
+      step={step + 1}
+      totalSteps={totalSteps}
+      stepLabels={shellSteps}
+      eyebrow="✦ Rejoindre la Communauté"
+      heading={`${t('title')} ${t('titleHighlight')}`}
+      intro={t('subtitle')}
+      illustration={step >= 1 ? '/images/robot-mascotte-2.png' : '/images/robot-mascotte-1.png'}
+      exitHref="/app"
+      exitLabel="Reprendre plus tard"
+    >
       <h2 className="dz-h2" style={{ fontSize: 28 }}>{cur.title}</h2>
       <p className="dz-small" style={{ marginTop: 8, fontSize: 14 }}>{cur.subtitle}</p>
 
@@ -440,6 +439,6 @@ export default function OnboardingWizard({ channels, suggestedHandle, defaultDis
       <div style={{ marginTop: 14, fontSize: 12 }} className="dz-small">
         <Link href="/community">{t('alreadyMember')} {t('goToFeed')}</Link>
       </div>
-    </div>
+    </OnboardingShell>
   );
 }

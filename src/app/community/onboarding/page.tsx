@@ -25,7 +25,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CommunityOnboardingPage() {
-  const t = await getTranslations('community.onboarding');
   const viewer = await getCommunityViewer();
 
   if (viewer.kind === 'guest') {
@@ -71,24 +70,15 @@ export default async function CommunityOnboardingPage() {
         .slice(0, 30)
     : '';
 
+  // The wizard provides its own full-bleed <OnboardingShell> (sidebar
+  // stepper + main form), so this page is intentionally a thin wrapper —
+  // no <section>, no heading, no AppShell. The community/layout.tsx is
+  // aware of this and skips its AppShell wrapping for /community/onboarding.
   return (
-    <section className="dz-section" style={{ paddingTop: 48, paddingBottom: 80 }}>
-      <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <h1 className="dz-h1">
-          {t('title')} <span className="dz-grad-text">{t('titleHighlight')}</span>
-        </h1>
-        <p className="dz-body" style={{ fontSize: 17, marginTop: 14 }}>
-          {t('subtitle')}
-        </p>
-      </div>
-
-      <div style={{ maxWidth: 720, margin: '32px auto 0' }}>
-        <OnboardingWizard
-          channels={channels}
-          suggestedHandle={suggestedHandle && /^[a-z0-9_]{3,30}$/.test(suggestedHandle) ? suggestedHandle : ''}
-          defaultDisplayName={viewer.user.name ?? ''}
-        />
-      </div>
-    </section>
+    <OnboardingWizard
+      channels={channels}
+      suggestedHandle={suggestedHandle && /^[a-z0-9_]{3,30}$/.test(suggestedHandle) ? suggestedHandle : ''}
+      defaultDisplayName={viewer.user.name ?? ''}
+    />
   );
 }

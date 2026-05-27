@@ -9,7 +9,7 @@ import { useTheme } from '@/components/ThemeProvider';
 export type OnboardingStepLabel = { t: string; s: string };
 
 export type OnboardingShellProps = {
-  role: 'mentee' | 'mentor';
+  role: 'mentee' | 'mentor' | 'community';
   step: number;
   totalSteps: number;
   stepLabels: OnboardingStepLabel[];
@@ -37,8 +37,14 @@ export default function OnboardingShell({
 }: OnboardingShellProps) {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
+  // Per-role gradient: mentee = violet→rose, mentor = purple→navy,
+  // community = violet→purple. Picked from the canonical palette so the
+  // three onboardings read as siblings of the same product family.
   const accent = role === 'mentor' ? '#A34BF5' : '#7301FF';
-  const accent2 = role === 'mentor' ? '#24325F' : '#F46FB1';
+  const accent2 =
+    role === 'mentor' ? '#24325F' :
+    role === 'community' ? '#A34BF5' :
+    '#F46FB1';
 
   return (
     <div
