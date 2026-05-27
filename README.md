@@ -1,5 +1,7 @@
 # Digizelle webapp
 
+[![CI](https://github.com/Franck-F/dig/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Franck-F/dig/actions/workflows/ci.yml)
+
 Plateforme open-source de l'association loi 1901 **Digizelle** —
 inclusion numérique des jeunes (en particulier les jeunes femmes) en
 Île-de-France et au-delà.

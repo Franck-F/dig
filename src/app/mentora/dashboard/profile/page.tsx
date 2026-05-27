@@ -174,7 +174,7 @@ export default async function MentoraOwnProfilePage() {
           </h1>
           <p style={{ margin: '0 0 18px', fontSize: 14, opacity: 0.85 }}>
             Choisissez votre rôle pour rejoindre Mentorat : mentorée pour bénéficier
-            d'un accompagnement, ou mentor pour partager votre expertise.
+            d&apos;un accompagnement, ou mentor pour partager votre expertise.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <Link
@@ -456,7 +456,7 @@ export default async function MentoraOwnProfilePage() {
         <SectionCard title="Mes expertises">
           {mp.skills.length === 0 ? (
             <p style={{ margin: 0, color: SUB, fontSize: 13 }}>
-              Aucune expertise renseignée. Ajoutez-en depuis "Modifier mon profil".
+              Aucune expertise renseignée. Ajoutez-en depuis &quot;Modifier mon profil&quot;.
             </p>
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -822,7 +822,7 @@ export default async function MentoraOwnProfilePage() {
                 marginBottom: 6,
               }}
             >
-              Ma phrase d'objectif
+              Ma phrase d&apos;objectif
             </div>
             <p style={{ margin: 0, color: INK, fontSize: 13, lineHeight: 1.55 }}>{goalSentence}</p>
           </div>
@@ -838,7 +838,7 @@ export default async function MentoraOwnProfilePage() {
               marginBottom: 8,
             }}
           >
-            Domaines d'apprentissage
+            Domaines d&apos;apprentissage
           </div>
           {me.goalSkills.length === 0 ? (
             <p style={{ margin: 0, color: SUB, fontSize: 13 }}>Aucun domaine sélectionné.</p>

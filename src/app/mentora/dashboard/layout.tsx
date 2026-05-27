@@ -368,12 +368,12 @@ async function NoProfileBanner() {
         {t('noProfileBody')}
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        <a href="/mentora/onboarding" className="dz-btn dz-btn-primary dz-btn-sm">
+        <Link href="/mentora/onboarding" className="dz-btn dz-btn-primary dz-btn-sm">
           {t('menteeOnboardingCta')}
-        </a>
-        <a href="/mentora/become-a-mentor" className="dz-btn dz-btn-ghost dz-btn-sm">
+        </Link>
+        <Link href="/mentora/become-a-mentor" className="dz-btn dz-btn-ghost dz-btn-sm">
           {t('becomeMentorCta')}
-        </a>
+        </Link>
       </div>
     </div>
   );

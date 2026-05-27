@@ -339,7 +339,6 @@ function sanitiseRichHtml(raw: string): string {
   // is reachable — falling back to escaped text rather than crashing
   // the whole send.
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const DOMPurify = require('isomorphic-dompurify') as { sanitize: (s: string, c?: object) => string };
     return DOMPurify.sanitize(raw, {
       ALLOWED_TAGS: [

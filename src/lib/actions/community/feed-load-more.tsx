@@ -36,7 +36,6 @@ export async function loadMoreCommunityFeed(args: {
   const node = (
     <>
       {cards.map((card) => (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <PostCard key={card.id} post={card} />
       ))}
     </>
