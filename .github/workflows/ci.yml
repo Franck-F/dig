@@ -50,6 +50,11 @@ jobs:
 
       - name: Validate Prisma schema
         run: npx prisma validate
+        env:
+          # Prisma 6.19+ reads env() values during validate.
+          # CI never connects, so any well-formed URL satisfies it.
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
+          DIRECT_URL: postgresql://user:pass@localhost:5432/db?schema=public
 
       - name: Run unit tests
         run: npm test
