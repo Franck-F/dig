@@ -22,6 +22,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "seed:demo": "tsx prisma/seed-demo-accounts.ts",
     "seed:demo-data": "tsx prisma/seed-demo-data.ts",
+    "sync:resend-audiences": "tsx prisma/sync-resend-audiences.ts",
     "demo:record": "playwright test --config demo/playwright.config.ts",
     "_comment_test": "requires Node 22+ for stable type-stripping; Node 25 needs no flag",
     "test": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts",
