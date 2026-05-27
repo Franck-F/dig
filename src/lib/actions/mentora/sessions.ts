@@ -6,6 +6,7 @@ import { SessionFormat } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
 import { getAvailableSlots } from '@/lib/mentora/scheduling';
+import { buildVisioRoomUrl } from '@/lib/mentora/visio';
 import {
   type ActionResult,
   errorResult,
@@ -83,12 +84,13 @@ export async function scheduleSession(
     const exact = slots.find((s) => s.startUtc.getTime() === scheduledAt.getTime());
     if (!exact) return errorResult('slotTaken');
 
+    const format = parsed.data.format ?? 'REMOTE_VIDEO';
     const created = await prisma.session.create({
       data: {
         mentorshipId: mentorship.id,
         scheduledAt,
         durationMinutes: parsed.data.durationMinutes,
-        format: parsed.data.format ?? 'REMOTE_VIDEO',
+        format,
         location: parsed.data.location ?? null,
         meetingUrl: parsed.data.meetingUrl ?? null,
         agenda: parsed.data.agenda ?? null,
@@ -96,6 +98,19 @@ export async function scheduleSession(
       },
       select: { id: true },
     });
+
+    // Auto-allocate a Jitsi room for video sessions when the caller
+    // didn't supply a custom URL. Deterministic per session-id so the
+    // room link is stable across the lifecycle.
+    if (format === 'REMOTE_VIDEO' && !parsed.data.meetingUrl) {
+      const autoUrl = buildVisioRoomUrl(created.id);
+      if (autoUrl) {
+        await prisma.session.update({
+          where: { id: created.id },
+          data: { meetingUrl: autoUrl },
+        });
+      }
+    }
 
     // Notify the *other* side
     const mentorUserId = (
