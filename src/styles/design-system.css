@@ -516,17 +516,14 @@ body.dz-theme-dark .dz-header {
   50% { transform: translateY(-14px); }
 }
 .dz-mascot-img {
-  filter: drop-shadow(0 30px 40px rgba(115,1,255,0.35));
+  /* Neutral grounding shadow only — no tinted halo. */
+  filter: drop-shadow(0 16px 24px rgba(15,8,32,0.18));
   user-select: none;
   -webkit-user-drag: none;
 }
-.dz-mascot-glow::before {
-  content: ''; position: absolute;
-  inset: 10% 10% -10% 10%;
-  background: radial-gradient(circle, rgba(163,75,245,0.55), transparent 65%);
-  filter: blur(50px);
-  z-index: -1;
-}
+/* Coloured radial halo retired — kept as an empty no-op so the existing
+   `glow` class on Mascot3D stays harmless without a CSS change there. */
+.dz-mascot-glow::before { content: none; }
 
 /* =========================================================
    Sections / cards
