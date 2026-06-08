@@ -84,10 +84,12 @@ export default async function MentoratPage() {
                 {t('landing.ctas.becomeMentor')}
               </Link>
             </div>
-            <div style={{ display: 'flex', gap: 32, marginTop: 36 }}>
-              <div className="dz-stat"><div className="num dz-grad-text">{t('stats.mentors')}</div><div className="lbl">{t('stats.mentorsLabel')}</div></div>
-              <div className="dz-stat"><div className="num dz-grad-text">{t('stats.duration')}</div><div className="lbl">{t('stats.durationLabel')}</div></div>
-              <div className="dz-stat"><div className="num dz-grad-text">{t('stats.rating')}</div><div className="lbl">{t('stats.ratingLabel')}</div></div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px 18px', marginTop: 32, fontSize: 15, color: '#545b7a' }}>
+              <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{t('stats.mentors')}</strong> {t('stats.mentorsLabel')}</span>
+              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{t('stats.duration')}</strong> {t('stats.durationLabel')}</span>
+              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{t('stats.rating')}</strong> {t('stats.ratingLabel')}</span>
             </div>
           </div>
 
@@ -217,10 +219,25 @@ export default async function MentoratPage() {
         >
           {Array.from({ length: stepsCount }).map((_, i) => (
             <div key={i} className="dz-card" style={{ padding: 28, position: 'relative' }}>
-              <div className="dz-grad-text" style={{ fontSize: 48, fontWeight: 700, lineHeight: 1, opacity: 0.85 }}>
+              <div
+                aria-hidden
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(115,1,255,0.08)',
+                  border: '1px solid rgba(115,1,255,0.16)',
+                  color: 'var(--brand-violet)',
+                  fontWeight: 700,
+                  fontSize: 14,
+                }}
+              >
                 {t(`landing.howItWorks.steps.${i}.n`)}
               </div>
-              <h3 className="dz-h3" style={{ marginTop: 14, fontSize: 20 }}>{t(`landing.howItWorks.steps.${i}.title`)}</h3>
+              <h3 className="dz-h3" style={{ marginTop: 16, fontSize: 20 }}>{t(`landing.howItWorks.steps.${i}.title`)}</h3>
               <p className="dz-body" style={{ marginTop: 8 }}>{t(`landing.howItWorks.steps.${i}.desc`)}</p>
             </div>
           ))}
