@@ -64,7 +64,6 @@ export default async function HomePage() {
         style={{
           paddingTop: 40,
           paddingBottom: 60,
-          maxWidth: 1760,
         }}
       >
         <div className="dz-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 40, alignItems: 'center' }}>
@@ -229,7 +228,7 @@ export default async function HomePage() {
               opacity: 0.95,
             }}
           />
-          <div style={{ maxWidth: 1180, margin: '0 auto', textAlign: 'center', padding: '0 40px', position: 'relative', zIndex: 3 }}>
+          <div style={{ width: 'min(80%, 1500px)', margin: '0 auto', textAlign: 'center', padding: 0, position: 'relative', zIndex: 3 }}>
             <div
               style={{
                 display: 'inline-flex',

@@ -2465,3 +2465,80 @@ body.dz-theme-dark .dz-btn-ghost:hover {
 .dz-switch-seg:hover:not(:disabled) { color: #1a1f3a !important; }
 body.dz-theme-dark .dz-switch-seg:hover:not(:disabled) { color: #ffffff !important; }
 
+/* =========================================================
+   LAYOUT HARMONIZE (2026-06) — screen-width occupation
+   ---------------------------------------------------------
+   The shell was a fixed 1440px cap with 64px padding, so on
+   wide screens content shrank to ~68% of the viewport, and
+   ad-hoc inline max-widths (1760, 1180) broke alignment. One
+   fluid shell now governs everything: 80% of the viewport,
+   capped at 1500px, so the header, every section and the
+   footer share the exact same left/right edge — contained and
+   premium, not edge-to-edge. A `--narrow` tier (66%, capped
+   1040) is available for tighter reading-width sections.
+   ========================================================= */
+:root {
+  --dz-shell: min(80%, 1500px);
+  --dz-shell-narrow: min(66%, 1040px);
+}
+
+.dz-section,
+.dz-section-sm {
+  width: var(--dz-shell);
+  max-width: none;
+  margin-inline: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+.dz-section.--narrow,
+.dz-section-sm.--narrow {
+  width: var(--dz-shell-narrow);
+}
+
+/* Header + footer ride the same shell, so the logo and footer columns
+   line up with the section content edge instead of floating wider. */
+.dz-header-inner {
+  width: var(--dz-shell);
+  max-width: none;
+  margin-inline: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+.dz-footer {
+  padding-left: 0;
+  padding-right: 0;
+}
+.dz-footer > div:first-child,
+.dz-footer > div:nth-child(2) {
+  width: var(--dz-shell);
+  max-width: none;
+}
+
+/* Tablet & down: drop the percentage shell for a fixed edge gutter —
+   phones want a real margin, not a 10% one. */
+@media (max-width: 1024px) {
+  .dz-section,
+  .dz-section-sm,
+  .dz-section.--narrow,
+  .dz-section-sm.--narrow {
+    width: 100%;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .dz-header-inner { width: 100%; padding-left: 24px; padding-right: 24px; }
+  .dz-footer { padding-left: 24px; padding-right: 24px; }
+  .dz-footer > div:first-child,
+  .dz-footer > div:nth-child(2) { width: 100%; }
+}
+@media (max-width: 768px) {
+  .dz-section,
+  .dz-section-sm,
+  .dz-section.--narrow,
+  .dz-section-sm.--narrow {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .dz-header-inner { padding-left: 14px; padding-right: 14px; }
+  .dz-footer { padding-left: 14px; padding-right: 14px; }
+}
+
