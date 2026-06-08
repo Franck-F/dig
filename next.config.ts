@@ -89,7 +89,7 @@ const cspDirectives = [
   "default-src 'self'",
   // Scripts: Next.js + RSC inline scripts. `unsafe-eval` only kept in dev
   // for HMR; production strips it.
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com ${VERCEL_LIVE}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval' http://localhost:8400" : ''} https://va.vercel-scripts.com ${VERCEL_LIVE}`,
   // Styles: every page uses `style={{…}}` and styled-jsx → unsafe-inline
   // is required. We compensate by hardening other directives.
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com ${VERCEL_LIVE}`,
@@ -97,7 +97,7 @@ const cspDirectives = [
   `font-src 'self' https://fonts.gstatic.com data: ${VERCEL_LIVE}`,
   // XHR / fetch: same origin + Supabase (REST + Realtime WS) + Resend +
   // Sentry (both EU and US ingestion regions) + Vercel.
-  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://*.ingest.us.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com ${VERCEL_LIVE} ${VERCEL_LIVE_WS}`,
+  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io https://*.ingest.us.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com ${VERCEL_LIVE} ${VERCEL_LIVE_WS}${isDev ? ' http://localhost:8400' : ''}`,
   // Frames: same-origin embedding only, plus Vercel Live's iframe. The
   // legacy `frame-ancestors 'none'` (above) still blocks others from
   // framing US — `frame-src` is about what *we* may embed.

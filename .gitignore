@@ -56,3 +56,6 @@ next-env.d.ts
 # registry stay committed.
 docs/rgpd/dpa/
 docs/rgpd/aipd-*.draft.md
+
+# impeccable design tooling (audit shots, live config, sidecar)
+.impeccable/

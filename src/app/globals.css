@@ -56,31 +56,25 @@
     overflow-x: clip;
   }
   /*
-    Ambient backdrop for the liquid-glass system.
-    The page is still visually white, but a triplet of very low-opacity
-    radial gradients (top-left violet, top-right pink, bottom-centre
-    violet) adds chromatic content for the glass cards to refract via
-    backdrop-filter. Without this, .dz-lg surfaces sit on a flat canvas
-    and read as a thin border with nothing inside — kills the lens
-    illusion. The gradients are fixed to the viewport so they don't
-    scroll past the cards.
+    Calm canvas. The old triple-aurora body wash (top-left violet,
+    top-right pink, bottom-centre violet) gave every glass surface a
+    coloured field to refract — but with glass on every card it turned
+    the whole page into gradient wallpaper. Now glass is rare and the
+    page rests on a near-white ground so brand colour reads as accent.
+    A single, almost-imperceptible top wash keeps it from feeling cold.
   */
   body {
     background:
-      radial-gradient(60% 50% at 12% 8%, rgba(115,1,255,0.10), transparent 65%),
-      radial-gradient(55% 45% at 92% 18%, rgba(244,111,177,0.10), transparent 60%),
-      radial-gradient(70% 60% at 50% 110%, rgba(163,75,245,0.08), transparent 65%),
-      #ffffff;
+      radial-gradient(80% 40% at 50% -5%, rgba(115,1,255,0.035), transparent 70%),
+      #fcfbfe;
     background-attachment: fixed;
     min-height: 100vh;
   }
 
   body.dz-theme-dark {
     background:
-      radial-gradient(60% 50% at 12% 8%, rgba(115,1,255,0.40), transparent 65%),
-      radial-gradient(55% 45% at 92% 18%, rgba(244,111,177,0.28), transparent 60%),
-      radial-gradient(70% 60% at 50% 110%, rgba(163,75,245,0.30), transparent 65%),
-      #0a0820;
+      radial-gradient(90% 45% at 50% -8%, rgba(163,75,245,0.16), transparent 72%),
+      #0c0a1c;
     background-attachment: fixed;
     color: #f5f3ff;
     color-scheme: dark;

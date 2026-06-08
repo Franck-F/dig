@@ -203,19 +203,12 @@ export default async function PublicLanding({
                 {t('feed.exploreFeed')}
               </Link>
             </div>
-            <div style={{ display: 'flex', gap: 40, marginTop: 44, flexWrap: 'wrap' }}>
-              <div className="dz-stat">
-                <div className="num dz-grad-text">{formatCount(memberCount)}</div>
-                <div className="lbl">{t('feed.statsLabels.members')}</div>
-              </div>
-              <div className="dz-stat">
-                <div className="num dz-grad-text">{formatCount(postCount)}</div>
-                <div className="lbl">{t('feed.statsLabels.posts')}</div>
-              </div>
-              <div className="dz-stat">
-                <div className="num dz-grad-text">{formatCount(channelCount)}</div>
-                <div className="lbl">{t('feed.statsLabels.channels')}</div>
-              </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px 18px', marginTop: 40, fontSize: 15, color: '#545b7a' }}>
+              <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{formatCount(memberCount)}</strong> {t('feed.statsLabels.members')}</span>
+              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{formatCount(postCount)}</strong> {t('feed.statsLabels.posts')}</span>
+              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{formatCount(channelCount)}</strong> {t('feed.statsLabels.channels')}</span>
             </div>
           </div>
 

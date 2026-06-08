@@ -18,8 +18,8 @@
   --glass-bg-dark: rgba(36, 50, 95, 0.35);
   --glass-border: rgba(255, 255, 255, 0.6);
   --glass-border-soft: rgba(255, 255, 255, 0.35);
-  --glass-shadow: 0 8px 32px rgba(115, 1, 255, 0.12), 0 1px 0 rgba(255,255,255,0.6) inset;
-  --glass-shadow-strong: 0 20px 60px rgba(115, 1, 255, 0.18), 0 1px 0 rgba(255,255,255,0.7) inset;
+  --glass-shadow: 0 6px 20px -8px rgba(26, 22, 48, 0.14), 0 1px 0 rgba(255,255,255,0.6) inset;
+  --glass-shadow-strong: 0 18px 44px -16px rgba(26, 22, 48, 0.18), 0 1px 0 rgba(255,255,255,0.7) inset;
 
   /* Liquid Glass — iOS 26 inspired, v2: stronger iridescence, brighter
      specular, deeper shadow stack. The conic edge below mimics the
@@ -27,42 +27,37 @@
      at top-left (cool whites) vs bottom-right (warm pinks/violets).
      Body blur is intentionally aggressive (30 px) so the underlying
      content reads as "behind glass", not "behind a white film". */
-  --lg-blur: 30px;
-  --lg-saturate: 200%;
-  --lg-bg-light: rgba(255, 255, 255, 0.36);
-  --lg-bg-strong: rgba(255, 255, 255, 0.58);
-  --lg-bg-ultra: rgba(255, 255, 255, 0.74);
-  --lg-edge-light: conic-gradient(
-    from 215deg at 50% 50%,
-    rgba(255,255,255,0.95) 0deg,
-    rgba(196,205,255,0.55) 50deg,
-    rgba(255,210,235,0.50) 110deg,
-    rgba(255,255,255,0.85) 180deg,
-    rgba(195,155,255,0.55) 240deg,
-    rgba(180,255,235,0.45) 300deg,
-    rgba(255,255,255,0.95) 360deg
+  --lg-blur: 18px;
+  --lg-saturate: 140%;
+  --lg-bg-light: rgba(255, 255, 255, 0.82);
+  --lg-bg-strong: rgba(255, 255, 255, 0.92);
+  --lg-bg-ultra: rgba(255, 255, 255, 0.97);
+  /* Calmed bevel: a soft top highlight + faint bottom hairline. The old
+     rainbow conic edge read as "toy"; this is a quiet glass lip. */
+  --lg-edge-light: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.90) 0%,
+    rgba(255,255,255,0.30) 45%,
+    rgba(20,16,40,0.06) 100%
   );
-  --lg-edge-dark: conic-gradient(
-    from 215deg at 50% 50%,
-    rgba(255,255,255,0.65) 0deg,
-    rgba(120,200,255,0.45) 50deg,
-    rgba(244,111,177,0.45) 110deg,
-    rgba(255,255,255,0.55) 180deg,
-    rgba(163,75,245,0.55) 240deg,
-    rgba(94,255,183,0.35) 300deg,
-    rgba(255,255,255,0.65) 360deg
+  --lg-edge-dark: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.45) 0%,
+    rgba(255,255,255,0.10) 45%,
+    rgba(0,0,0,0.20) 100%
   );
   --lg-specular: radial-gradient(
     140% 100% at 8% -10%,
-    rgba(255,255,255,0.95) 0%,
-    rgba(255,255,255,0.30) 22%,
+    rgba(255,255,255,0.55) 0%,
+    rgba(255,255,255,0.12) 22%,
     rgba(255,255,255,0) 50%
   );
+  /* Pink lens flare retired — kept as a no-op transparent layer so existing
+     references stay valid. */
   --lg-specular-bottom: radial-gradient(
     140% 100% at 100% 110%,
-    rgba(244,111,177,0.45) 0%,
-    rgba(244,111,177,0.12) 30%,
-    rgba(244,111,177,0) 55%
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 55%
   );
   /* Ambient page wash — applied to body so glass surfaces have colour to
      refract. Very low alpha so the page still reads "white" but cards no
@@ -2229,4 +2224,244 @@ body.dz-theme-dark input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1) brightness(1.4);
   opacity: 0.7;
 }
+
+/* =========================================================
+   QUIETER PASS (2026-06) — restraint layer
+   ---------------------------------------------------------
+   The base system above maxes every dial at once: glass on
+   every surface, rainbow edges, triple aurora, violet-glow
+   shadows, gradient text. That reads busy and amateur. This
+   layer keeps the charter (violet/pink/navy, Signika, the
+   components) but makes glass a RARE material and gives the
+   page calm neutral ground so the brand colour lands as an
+   accent rather than a wash. Token-level changes live in
+   :root above; these are the rule-level overrides. Can be
+   folded into the base definitions later.
+   ========================================================= */
+
+/* 1. Default card = clean SOLID surface, not frosted glass. Glass is
+      reserved for chrome (header, modal, popover) and explicit
+      .dz-lg.--strong hero focal points. */
+.dz-card {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid rgba(26, 22, 48, 0.08);
+  box-shadow:
+    0 1px 2px rgba(26, 22, 48, 0.04),
+    0 12px 28px -18px rgba(26, 22, 48, 0.16);
+}
+.dz-card::before,
+.dz-card::after { content: none; }
+.dz-card.--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(26, 22, 48, 0.05),
+    0 20px 40px -20px rgba(26, 22, 48, 0.22);
+}
+body.dz-theme-dark .dz-card {
+  background: rgba(36, 28, 72, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 14px 34px -20px rgba(0, 0, 0, 0.50);
+}
+
+/* 2. .dz-lg / .dz-glass — keep a glass look but calm it: neutral (not
+      violet) shadow, gentler edge + specular. Opacity/blur already
+      reduced via the :root tokens. */
+.dz-lg,
+.dz-glass,
+.dz-glass-strong {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 1px 2px rgba(26, 22, 48, 0.04),
+    0 16px 36px -20px rgba(26, 22, 48, 0.20);
+}
+.dz-glass,
+.dz-glass-strong {
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  background: var(--lg-bg-strong);
+}
+.dz-lg::before,
+.dz-glass::before,
+.dz-glass-strong::before { opacity: 0.5; }
+.dz-lg::after,
+.dz-glass::after,
+.dz-glass-strong::after { opacity: 0.35; }
+.dz-lg.--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 2px 4px rgba(26, 22, 48, 0.05),
+    0 24px 48px -22px rgba(26, 22, 48, 0.26);
+}
+
+/* 3. Gradient text retired — emphasis is solid brand violet. Stops the
+      gradient-on-every-heading tell (and the animated shimmer variant)
+      across the whole site at once. */
+.dz-grad-text,
+.dz-shimmer-text {
+  background: none;
+  -webkit-text-fill-color: var(--brand-violet);
+  color: var(--brand-violet);
+  animation: none;
+}
+
+/* 4. Eyebrow quieted — de-glassed, lower contrast, tighter. Still a
+      label; no longer a competing glass pill shouting above every
+      section. (Per-section frequency is a page-level fix.) */
+.dz-eyebrow {
+  background: rgba(115, 1, 255, 0.06);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid rgba(115, 1, 255, 0.14);
+  box-shadow: none;
+  color: var(--brand-violet);
+  letter-spacing: 0.06em;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.dz-eyebrow::before { content: none; }
+body.dz-theme-dark .dz-eyebrow {
+  background: rgba(163, 75, 245, 0.12);
+  border-color: rgba(163, 75, 245, 0.22);
+}
+
+/* 5. Decorative aurora calmed — section blobs/mesh far fainter so they
+      read as a whisper of brand, not gradient wallpaper. */
+.dz-bg {
+  background:
+    radial-gradient(60% 50% at 12% 18%, rgba(163, 75, 245, 0.10), transparent 70%),
+    radial-gradient(45% 40% at 88% 12%, rgba(115, 1, 255, 0.07), transparent 72%),
+    linear-gradient(180deg, #fcfbff 0%, #ffffff 100%);
+}
+.dz-bg.--dark {
+  background:
+    radial-gradient(60% 50% at 12% 18%, rgba(163, 75, 245, 0.18), transparent 72%),
+    radial-gradient(45% 40% at 88% 12%, rgba(115, 1, 255, 0.16), transparent 74%),
+    linear-gradient(180deg, #131032 0%, #0c0a1c 100%);
+}
+.dz-bg-blob { opacity: 0.16; filter: blur(90px); }
+.dz-bg-grid { opacity: 0.4; }
+
+/* 6. Primary button glow softened (still the clear CTA, just calmer). */
+.dz-btn-primary {
+  box-shadow: 0 6px 18px -6px rgba(115, 1, 255, 0.28), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+}
+.dz-btn-primary:hover {
+  box-shadow: 0 10px 26px -8px rgba(115, 1, 255, 0.36), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+}
+
+/* 7. Modal / popover — near-solid, gentle blur (glass as chrome). */
+.dz-modal,
+.dz-popover {
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+}
+.dz-modal::after,
+.dz-popover::after { opacity: 0.35; }
+
+/* =========================================================
+   POLISH PASS (2026-06) — flat & natural
+   ---------------------------------------------------------
+   User intent: no glass on buttons or cards; flatter, more
+   natural surfaces. The blur + bevel + specular is stripped
+   from .dz-lg / .dz-glass / .dz-glass-strong / .dz-btn-ghost
+   so they become solid surfaces with a hairline border and a
+   soft neutral shadow (matching the already-solid .dz-card).
+   Modals/popovers keep a light glass (true overlay chrome).
+   ========================================================= */
+
+/* Flat cards — solid white, no glass. */
+.dz-lg:not(.--on-color),
+.dz-glass {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid rgba(26, 22, 48, 0.08);
+  box-shadow:
+    0 1px 2px rgba(26, 22, 48, 0.04),
+    0 12px 28px -18px rgba(26, 22, 48, 0.16);
+}
+/* "Strong" surfaces are usually panels that wrap inner cards (the app
+   preview, the dashboard mock). Recess them a touch so the inner white
+   cards read instead of going white-on-white. */
+.dz-glass-strong {
+  background: #f7f6fb;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid rgba(26, 22, 48, 0.08);
+  box-shadow:
+    0 1px 2px rgba(26, 22, 48, 0.04),
+    0 14px 32px -20px rgba(26, 22, 48, 0.16);
+}
+.dz-lg:not(.--on-color)::before,
+.dz-lg:not(.--on-color)::after,
+.dz-glass::before,
+.dz-glass::after,
+.dz-glass-strong::before,
+.dz-glass-strong::after { content: none; }
+.dz-lg.--ultra { background: #ffffff; }
+
+body.dz-theme-dark .dz-lg:not(.--on-color),
+body.dz-theme-dark .dz-glass {
+  background: #171331;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 14px 34px -20px rgba(0, 0, 0, 0.50);
+}
+body.dz-theme-dark .dz-glass-strong {
+  background: #100e24;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 16px 36px -20px rgba(0, 0, 0, 0.55);
+}
+
+/* Tiles on a coloured hero (programmes band): keep them on the colour
+   with white text, but flat — no blur, no rainbow edge. */
+.dz-lg.--on-color {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 28px -16px rgba(0, 0, 0, 0.30);
+}
+.dz-lg.--on-color::before,
+.dz-lg.--on-color::after { content: none; }
+
+/* Flat ghost button — natural, no glass. */
+.dz-btn-ghost {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid rgba(26, 22, 48, 0.12);
+  box-shadow: none;
+  color: var(--ink);
+}
+.dz-btn-ghost::before { content: none; }
+.dz-btn-ghost:hover {
+  background: #f5f3fb;
+  border-color: rgba(26, 22, 48, 0.18);
+  transform: translateY(-1px);
+}
+body.dz-theme-dark .dz-btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.92);
+}
+body.dz-theme-dark .dz-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* Header language / theme segmented switchers — hover lift on the
+   inactive segment (base styling is inline in the components). */
+.dz-switch-seg:hover:not(:disabled) { color: #1a1f3a !important; }
+body.dz-theme-dark .dz-switch-seg:hover:not(:disabled) { color: #ffffff !important; }
 

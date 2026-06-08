@@ -90,25 +90,27 @@ export default async function HomePage() {
                 {t('ctaPrograms')}
               </Link>
             </div>
-            <div className="dz-hero-stats" style={{ display: 'flex', gap: 40, marginTop: 48, flexWrap: 'wrap' }}>
-              <div className="dz-stat">
-                <div className="num dz-grad-text">
-                  <AnimatedNumber value={200} prefix="+ " />
-                </div>
-                <div className="lbl">{t('stats.youthsLabel')}</div>
-              </div>
-              <div className="dz-stat">
-                <div className="num dz-grad-text">
-                  <AnimatedNumber value={5} prefix="+ " />
-                </div>
-                <div className="lbl">{t('stats.eventsLabel')}</div>
-              </div>
-              <div className="dz-stat">
-                <div className="num dz-grad-text">
-                  <AnimatedNumber value={12} prefix="+ " />
-                </div>
-                <div className="lbl">{t('stats.partnersLabel')}</div>
-              </div>
+            <div className="dz-hero-proof" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px 18px', marginTop: 44, fontSize: 15, color: '#545b7a' }}>
+              <span>
+                <strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>
+                  <AnimatedNumber value={200} prefix="+" />
+                </strong>{' '}
+                {t('stats.youthsLabel')}
+              </span>
+              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span>
+                <strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>
+                  <AnimatedNumber value={5} prefix="+" />
+                </strong>{' '}
+                {t('stats.eventsLabel')}
+              </span>
+              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span>
+                <strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>
+                  <AnimatedNumber value={12} prefix="+" />
+                </strong>{' '}
+                {t('stats.partnersLabel')}
+              </span>
             </div>
           </div>
           <HeroParallax>
@@ -250,7 +252,7 @@ export default async function HomePage() {
             <h2 style={{ color: 'white', fontSize: 38, fontWeight: 800, margin: 0, lineHeight: 1.15 }}>
               {t('programs.titleLine1')}
               <br />
-              <span style={{ background: 'linear-gradient(90deg,#FFE5F1,#F46FB1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <span style={{ color: '#FFD4EA' }}>
                 {t('programs.titleLine2')}
               </span>
             </h2>
@@ -259,27 +261,10 @@ export default async function HomePage() {
               {programItems.map((p, i) => (
                 <Reveal key={p.key} delay={i * 110}>
                   <div style={{ position: 'relative', display: 'flex' }}>
-                    {/* Floating colour orb above the card — gives the
-                        glass tile something tinted to refract through
-                        its iridescent edge. */}
-                    <div
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: '50%',
-                        background: `radial-gradient(circle at 32% 28%, rgba(255,255,255,0.55), transparent 55%), ${p.color}`,
-                        position: 'absolute',
-                        top: -22,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: 4,
-                        boxShadow: `0 12px 28px ${p.color}66, 0 0 0 1.5px rgba(255,255,255,0.45) inset`,
-                      }}
-                    />
                     <div
                       className="dz-lg --on-color --interactive"
                       style={{
-                        padding: '40px 24px 24px',
+                        padding: '28px 24px 24px',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
