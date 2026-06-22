@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isAuthorizedCronRequest } from '@/lib/cron/verify-cron-auth';
 import { sendCommunityTemplatedEmail } from '@/lib/community/email';
 import { evaluateBadges } from '@/lib/community/badges';
 import { pickWinnersAndAnnounce } from '@/lib/community/challenge-winners';
@@ -28,9 +29,7 @@ export const dynamic = 'force-dynamic';
 const MAX_NOTIFS_PER_DIGEST = 5;
 
 export async function GET(request: Request): Promise<Response> {
-  const authHeader = request.headers.get('authorization') ?? '';
-  const expected = process.env.CRON_SECRET;
-  if (!expected || authHeader !== `Bearer ${expected}`) {
+  if (!isAuthorizedCronRequest(request.headers.get('authorization'))) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 

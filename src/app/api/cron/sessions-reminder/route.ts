@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isAuthorizedCronRequest } from '@/lib/cron/verify-cron-auth';
 import { notify } from '@/lib/mentora/notifications';
 import { expirePendingRequests } from '@/lib/mentora/expire-requests';
 import { drainEmailQueueFully } from '@/lib/email/queue';
@@ -33,9 +34,7 @@ function addHours(d: Date, h: number): Date {
 }
 
 export async function GET(request: Request): Promise<Response> {
-  const authHeader = request.headers.get('authorization') ?? '';
-  const expected = process.env.CRON_SECRET;
-  if (!expected || authHeader !== `Bearer ${expected}`) {
+  if (!isAuthorizedCronRequest(request.headers.get('authorization'))) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 
