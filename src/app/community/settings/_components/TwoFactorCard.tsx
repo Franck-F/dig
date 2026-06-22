@@ -741,11 +741,13 @@ function DisableInline({ onAfterSuccess }: { onAfterSuccess: () => void }) {
         <div role="alert" style={{ fontSize: 12, color: '#a8235e' }}>
           {errKey === 'invalid_code'
             ? 'Code invalide. Réessaie.'
-            : errKey === 'is_admin'
-              ? 'Les administrateurs ne peuvent pas désactiver la 2FA eux-mêmes.'
-              : errKey === 'not_enabled'
-                ? '2FA déjà désactivée.'
-                : 'Erreur. Réessaie.'}
+            : errKey === 'locked'
+              ? 'Trop de tentatives. Réessaie dans quelques minutes.'
+              : errKey === 'is_admin'
+                ? 'Les administrateurs ne peuvent pas désactiver la 2FA eux-mêmes.'
+                : errKey === 'not_enabled'
+                  ? '2FA déjà désactivée.'
+                  : 'Erreur. Réessaie.'}
         </div>
       )}
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>

@@ -11,6 +11,7 @@ import {
 } from '@/lib/auth/totp';
 import { setAdmin2faCookie, clearAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import { logAdmin } from '@/lib/audit/log';
+import { isTotpLocked, nextTotpFailureState, TOTP_SUCCESS_STATE } from '@/lib/auth/totp-lockout';
 import { requireUser } from './_shared';
 
 /**
@@ -118,7 +119,7 @@ export type TotpChallengeState =
   | { status: 'success' }
   | {
       status: 'error';
-      error: 'unauthenticated' | 'not_enabled' | 'invalid_code' | 'unknown';
+      error: 'unauthenticated' | 'not_enabled' | 'invalid_code' | 'locked' | 'unknown';
     };
 
 /**
@@ -149,10 +150,17 @@ export async function verifyTotpChallenge(
       totpSecret: true,
       totpEnabledAt: true,
       totpBackupCodeHashes: true,
+      failedTotpAttempts: true,
+      totpLockedUntil: true,
     },
   });
   if (!user || !user.totpEnabledAt || !user.totpSecret) {
     return { status: 'error', error: 'not_enabled' };
+  }
+
+  const nowMs = Date.now();
+  if (isTotpLocked(user.totpLockedUntil, nowMs)) {
+    return { status: 'error', error: 'locked' };
   }
 
   if (useBackup) {
@@ -168,12 +176,15 @@ export async function verifyTotpChallenge(
       }
     }
     if (!matchedHash) {
-      return { status: 'error', error: 'invalid_code' };
+      const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
+      await prisma.user.update({ where: { id: me.userId }, data: fail });
+      return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
     }
     await prisma.user.update({
       where: { id: me.userId },
       data: {
         totpBackupCodeHashes: user.totpBackupCodeHashes.filter((h) => h !== matchedHash),
+        ...TOTP_SUCCESS_STATE,
       },
     });
     await setAdmin2faCookie(me.userId);
@@ -187,9 +198,14 @@ export async function verifyTotpChallenge(
   }
 
   if (!verifyTotp(user.totpSecret, code)) {
-    return { status: 'error', error: 'invalid_code' };
+    const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
+    await prisma.user.update({ where: { id: me.userId }, data: fail });
+    return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
   }
 
+  if (user.failedTotpAttempts > 0 || user.totpLockedUntil) {
+    await prisma.user.update({ where: { id: me.userId }, data: TOTP_SUCCESS_STATE });
+  }
   await setAdmin2faCookie(me.userId);
   await logAdmin(me.userId, {
     action: 'account.2fa_challenge_pass',
@@ -202,7 +218,7 @@ export async function verifyTotpChallenge(
 export type TotpDisableState =
   | { status: 'idle' }
   | { status: 'success' }
-  | { status: 'error'; error: 'unauthenticated' | 'not_enabled' | 'invalid_code' | 'is_admin' | 'unknown' };
+  | { status: 'error'; error: 'unauthenticated' | 'not_enabled' | 'invalid_code' | 'is_admin' | 'locked' | 'unknown' };
 
 export type TotpAdminResetState =
   | { status: 'idle' }
@@ -212,7 +228,7 @@ export type TotpAdminResetState =
 export type TotpRegenerateBackupState =
   | { status: 'idle' }
   | { status: 'success'; backupCodes: string[] }
-  | { status: 'error'; error: 'unauthenticated' | 'not_enabled' | 'invalid_code' | 'unknown' };
+  | { status: 'error'; error: 'unauthenticated' | 'not_enabled' | 'invalid_code' | 'locked' | 'unknown' };
 
 /**
  * Disable 2FA. Requires a fresh TOTP code as proof of possession to
@@ -236,6 +252,8 @@ export async function disableTotp(formData: FormData): Promise<TotpDisableState>
     select: {
       totpSecret: true,
       totpEnabledAt: true,
+      failedTotpAttempts: true,
+      totpLockedUntil: true,
       role: true,
       communityMember: { select: { isModerator: true } },
       mentorProfile: { select: { status: true } },
@@ -255,8 +273,14 @@ export async function disableTotp(formData: FormData): Promise<TotpDisableState>
   if (!user?.totpEnabledAt || !user.totpSecret) {
     return { status: 'error', error: 'not_enabled' };
   }
+  const nowMs = Date.now();
+  if (isTotpLocked(user.totpLockedUntil, nowMs)) {
+    return { status: 'error', error: 'locked' };
+  }
   if (!verifyTotp(user.totpSecret, code)) {
-    return { status: 'error', error: 'invalid_code' };
+    const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
+    await prisma.user.update({ where: { id: me.userId }, data: fail });
+    return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
   }
 
   await prisma.user.update({
@@ -265,6 +289,7 @@ export async function disableTotp(formData: FormData): Promise<TotpDisableState>
       totpSecret: null,
       totpEnabledAt: null,
       totpBackupCodeHashes: [],
+      ...TOTP_SUCCESS_STATE,
     },
   });
   await clearAdmin2faCookie();
@@ -300,13 +325,25 @@ export async function regenerateBackupCodes(
   const code = String(formData.get('code') ?? '').trim();
   const user = await prisma.user.findUnique({
     where: { id: me.userId },
-    select: { totpSecret: true, totpEnabledAt: true },
+    select: {
+      totpSecret: true,
+      totpEnabledAt: true,
+      failedTotpAttempts: true,
+      totpLockedUntil: true,
+    },
   });
   if (!user?.totpEnabledAt || !user.totpSecret) {
     return { status: 'error', error: 'not_enabled' };
   }
+
+  const nowMs = Date.now();
+  if (isTotpLocked(user.totpLockedUntil, nowMs)) {
+    return { status: 'error', error: 'locked' };
+  }
   if (!verifyTotp(user.totpSecret, code)) {
-    return { status: 'error', error: 'invalid_code' };
+    const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
+    await prisma.user.update({ where: { id: me.userId }, data: fail });
+    return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
   }
 
   const backupCodes = generateBackupCodes();
@@ -314,7 +351,7 @@ export async function regenerateBackupCodes(
 
   await prisma.user.update({
     where: { id: me.userId },
-    data: { totpBackupCodeHashes: backupCodeHashes },
+    data: { totpBackupCodeHashes: backupCodeHashes, ...TOTP_SUCCESS_STATE },
   });
   await logAdmin(me.userId, {
     action: 'account.2fa_backup_regenerate',

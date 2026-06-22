@@ -72,9 +72,11 @@ export default function ChallengeForm({ next }: { next: string }) {
         >
           {errKey === 'invalid_code'
             ? 'Code incorrect. Vérifie l\'horloge ou utilise un code de secours.'
-            : errKey === 'not_enabled'
-              ? '2FA non configurée. Termine d\'abord la configuration.'
-              : 'Une erreur est survenue. Réessaie.'}
+            : errKey === 'locked'
+              ? 'Trop de tentatives. Réessaie dans quelques minutes.'
+              : errKey === 'not_enabled'
+                ? '2FA non configurée. Termine d\'abord la configuration.'
+                : 'Une erreur est survenue. Réessaie.'}
         </div>
       )}
 
