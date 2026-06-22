@@ -566,8 +566,8 @@ function ResetModal({
         ? confirmState.error
         : null;
   const errText = errKey
-    ? (['invalid', 'expired', 'tooManyAttempts'].includes(errKey)
-        ? tErr(errKey as 'invalid' | 'expired' | 'tooManyAttempts')
+    ? (['invalid', 'expired', 'tooManyAttempts', 'passwordRequired', 'passwordTooShort', 'passwordContainsIdentity', 'passwordBreached'].includes(errKey)
+        ? tErr(errKey as 'invalid' | 'expired' | 'tooManyAttempts' | 'passwordRequired' | 'passwordTooShort' | 'passwordContainsIdentity' | 'passwordBreached')
         : tErr('generic'))
     : null;
 
@@ -727,6 +727,8 @@ export default function LoginForm({ oauthEnabled }: { oauthEnabled: OAuthEnabled
       'emailInvalid',
       'passwordRequired',
       'passwordTooShort',
+      'passwordContainsIdentity',
+      'passwordBreached',
       'firstNameRequired',
       'lastNameRequired',
       'emailSendFailed',
