@@ -2,6 +2,7 @@
 
 import { useReportWebVitals } from 'next/web-vitals';
 import * as Sentry from '@sentry/nextjs';
+import { useCookieConsent } from '@/components/CookieConsentProvider';
 
 /**
  * Reports Core Web Vitals (LCP, INP, CLS, TTFB, FCP) to Sentry as
@@ -35,7 +36,11 @@ const UNITS: Record<string, 'millisecond' | 'none'> = {
 };
 
 export default function WebVitalsReporter() {
+  const { consent } = useCookieConsent();
   useReportWebVitals((metric) => {
+    // Web Vitals → Sentry is analytics; only report with prior consent
+    // (ePrivacy Art. 82). No decision yet / refused → stay silent.
+    if (!consent?.analytics) return;
     try {
       const unit = UNITS[metric.name] ?? 'none';
       // Span-style measurement on the active page-load transaction.

@@ -1300,7 +1300,7 @@
     },
     "thirdParty": {
       "title": "Third-party cookies",
-      "body": "As of the last update, the digizelle.fr site does not place any third-party cookies for advertising, profiling or sharing with external platforms (Meta, Google Ads, TikTok, etc.).\n\nThird-party videos or content (YouTube, Vimeo) that may be embedded in the future will be loaded via \"privacy-enhanced\" modes or a double-click mechanism, so external resources are only loaded with your explicit consent."
+      "body": "As of the last update, the digizelle.fr site does not place any third-party cookies for advertising, profiling or sharing with external platforms (Meta, Google Ads, TikTok, etc.).\n\nWe use Sentry (a third-party processor) for technical error monitoring, under our legitimate interest in keeping the service secure and stable: Sentry sets no cookie, the data is never used for advertising, and Session Replay is disabled. Performance metrics (Web Vitals) are only sent with your \"analytics\" consent.\n\nThird-party videos or content (YouTube, Vimeo) that may be embedded in the future will be loaded via \"privacy-enhanced\" modes or a double-click mechanism, so external resources are only loaded with your explicit consent."
     },
     "consent": {
       "title": "Consent & withdrawal",

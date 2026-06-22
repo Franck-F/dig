@@ -3512,7 +3512,7 @@
     },
     "thirdParty": {
       "title": "Cookies tiers",
-      "body": "À la date de la dernière mise à jour, le site digizelle.fr ne dépose aucun cookie tiers à des fins publicitaires, de profilage ou de partage avec des plateformes externes (Meta, Google Ads, TikTok, etc.).\n\nLes vidéos ou contenus tiers (YouTube, Vimeo) susceptibles d'être intégrés à l'avenir le seront via des modes « privacy-enhanced » ou un mécanisme de double clic afin de ne charger les ressources externes qu'avec votre consentement explicite."
+      "body": "À la date de la dernière mise à jour, le site digizelle.fr ne dépose aucun cookie tiers à des fins publicitaires, de profilage ou de partage avec des plateformes externes (Meta, Google Ads, TikTok, etc.).\n\nNous utilisons Sentry (sous-traitant tiers) pour la supervision des erreurs techniques, au titre de notre intérêt légitime à assurer la sécurité et la stabilité du service : Sentry ne dépose pas de cookie, les données ne servent à aucune publicité, et l'enregistrement de session (Session Replay) est désactivé. Les mesures de performance (Web Vitals) ne sont transmises qu'avec votre consentement « mesure d'audience ».\n\nLes vidéos ou contenus tiers (YouTube, Vimeo) susceptibles d'être intégrés à l'avenir le seront via des modes « privacy-enhanced » ou un mécanisme de double clic afin de ne charger les ressources externes qu'avec votre consentement explicite."
     },
     "consent": {
       "title": "Consentement & révocation",
