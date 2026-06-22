@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { canViewerSeeMenteeProfile } from '@/lib/mentora/mentee-access';
 import Frame from '@/components/Frame';
 
 export const dynamic = 'force-dynamic';
@@ -85,28 +86,13 @@ function sessionStatusLabel(status: string): string {
   }
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<Params>;
-}): Promise<Metadata> {
-  const { handle } = await params;
-  let title = 'Profil mentee — Digizelle';
-  let description = 'Profil mentee accessible aux mentors connectés.';
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: handle },
-      select: { name: true, firstName: true, lastName: true },
-    });
-    if (user) {
-      const name = fullName(user);
-      title = `${name} — Profil mentee — Digizelle`;
-      description = `Consultez le profil mentee de ${name} sur Digizelle.`;
-    }
-  } catch {
-    // Fall through to defaults.
-  }
-  return { title, description };
+export async function generateMetadata(): Promise<Metadata> {
+  // Generic title only — the mentee's name must not leak to unauthorised
+  // viewers via the document title (the page enforces the relationship check).
+  return {
+    title: 'Profil mentee — Digizelle',
+    description: 'Profil mentee accessible aux mentors liés.',
+  };
 }
 
 export default async function MenteeProfilePage({
@@ -153,10 +139,34 @@ export default async function MenteeProfilePage({
   }
   const menteeProfile = targetUser.menteeProfile;
 
-  // Mentorship history with the viewing mentor (only when viewer is a mentor
-  // with their own MentorProfile — admins still see the profile but the
-  // "Historique avec moi" block stays hidden because there's no relationship).
+  // IDOR guard: a MENTOR may only see a mentee profile they have a real link
+  // with — an existing Mentorship (any status) OR an active MentorshipRequest
+  // (PENDING/ACCEPTED). ADMIN sees any profile; any other role is bounced.
+  // viewerMentorProfileId is also reused below for the "Historique avec moi" block.
   const viewerMentorProfileId = viewer.mentorProfile?.id ?? null;
+  let accessAllowed = viewer.role === 'ADMIN';
+  if (!accessAllowed && viewer.role === 'MENTOR' && viewerMentorProfileId) {
+    const [linkMentorship, activeRequest] = await Promise.all([
+      prisma.mentorship.findFirst({
+        where: { mentorProfileId: viewerMentorProfileId, menteeProfileId: menteeProfile.id },
+        select: { id: true },
+      }),
+      prisma.mentorshipRequest.findFirst({
+        where: {
+          toMentorId: viewerMentorProfileId,
+          fromMenteeId: menteeProfile.id,
+          status: { in: ['PENDING', 'ACCEPTED'] },
+        },
+        select: { id: true },
+      }),
+    ]);
+    accessAllowed = canViewerSeeMenteeProfile({
+      viewerRole: viewer.role,
+      hasMentorship: Boolean(linkMentorship),
+      hasActiveRequest: Boolean(activeRequest),
+    });
+  }
+  if (!accessAllowed) notFound();
 
   const [
     sharedMentorships,
