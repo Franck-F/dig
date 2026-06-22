@@ -139,7 +139,7 @@ export default async function CommunityEventsPage() {
                       .filter(Boolean)
                       .join(' ')
                       .trim() ||
-                      hostUser.email);
+                      'Hôte');
                   const hostMeta = `${hostName} · ${fmtTime(ev.startsAt)} · ${
                     FORMAT_LABEL[ev.format] ?? ev.format
                   }${ev.durationMin ? ` · ${ev.durationMin} min` : ''}`;

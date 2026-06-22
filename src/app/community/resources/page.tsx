@@ -194,7 +194,7 @@ export default async function CommunityResourcesPage() {
                     .filter(Boolean)
                     .join(' ')
                     .trim() ||
-                    r.author.email);
+                    'Auteur');
                 return (
                   <div
                     key={r.id}

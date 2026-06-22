@@ -222,7 +222,7 @@ export async function listUpcomingCommunityEvents(opts: { limit?: number } = {})
     take: limit,
     include: {
       host: {
-        select: { name: true, firstName: true, lastName: true, email: true },
+        select: { name: true, firstName: true, lastName: true },
       },
       _count: {
         select: { registrations: { where: { cancelledAt: null } } },

@@ -245,7 +245,7 @@ async function MenteeView({
                 .filter(Boolean)
                 .join(' ')
                 .trim() ||
-                r.author.email);
+                'Auteur');
             // "NEW" pill for resources created in the last 14 days.
             const isNew =
               Date.now() - r.createdAt.getTime() < 14 * 24 * 60 * 60 * 1000;

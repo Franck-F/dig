@@ -197,7 +197,7 @@ export async function listResourcesForAudience(
     take: limit,
     include: {
       author: {
-        select: { name: true, firstName: true, lastName: true, email: true },
+        select: { name: true, firstName: true, lastName: true },
       },
     },
   });
@@ -213,7 +213,7 @@ export async function getFeaturedResource(audience: 'MENTORA' | 'COMMUNITY') {
     orderBy: { createdAt: 'desc' },
     include: {
       author: {
-        select: { name: true, firstName: true, lastName: true, email: true },
+        select: { name: true, firstName: true, lastName: true },
       },
     },
   });
