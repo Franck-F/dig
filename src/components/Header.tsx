@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from '@/hooks/useScrollLock';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { useClientSession } from './SessionContextProvider';
 import LocaleSwitcher from './LocaleSwitcher';
 import ThemeToggle from './ThemeToggle';
@@ -40,6 +41,7 @@ export default function Header() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
   useScrollLock(menuOpen);
+  const menuRef = useFocusTrap<HTMLDivElement>(menuOpen);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -134,6 +136,7 @@ export default function Header() {
             className="dz-burger"
             onClick={() => setMenuOpen(true)}
             aria-label={t('ariaNav')}
+            aria-controls="mobile-nav-panel"
             aria-expanded={menuOpen ? 'true' : 'false'}
           >
             <svg width="20" height="14" viewBox="0 0 20 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
@@ -150,6 +153,8 @@ export default function Header() {
         onClick={() => setMenuOpen(false)}
       >
         <div
+          ref={menuRef}
+          id="mobile-nav-panel"
           className="dz-mobile-nav-panel"
           onClick={(e) => e.stopPropagation()}
           role="dialog"

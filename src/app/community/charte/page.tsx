@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function CharterPage() {
   const dpo = getDpoEmail();
   return (
-    <main style={{ maxWidth: 760, margin: '0 auto', padding: '64px 24px' }}>
+    <div style={{ maxWidth: 760, margin: '0 auto', padding: '64px 24px' }}>
       <Link
         href="/community"
         style={{
@@ -184,7 +184,7 @@ export default function CharterPage() {
         acceptes les termes. Une mise à jour substantielle te sera
         notifiée 14 jours avant son entrée en vigueur.
       </div>
-    </main>
+    </div>
   );
 }
 

@@ -11,7 +11,7 @@ import {
 } from '@/lib/auth/totp';
 import { setAdmin2faCookie, clearAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import { logAdmin } from '@/lib/audit/log';
-import { isTotpLocked, nextTotpFailureState, TOTP_SUCCESS_STATE } from '@/lib/auth/totp-lockout';
+import { isTotpLocked, hasReachedTotpLimit, lockedTotpState, TOTP_SUCCESS_STATE } from '@/lib/auth/totp-lockout';
 import { requireUser } from './_shared';
 
 /**
@@ -176,9 +176,16 @@ export async function verifyTotpChallenge(
       }
     }
     if (!matchedHash) {
-      const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
-      await prisma.user.update({ where: { id: me.userId }, data: fail });
-      return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
+      const updated = await prisma.user.update({
+        where: { id: me.userId },
+        data: { failedTotpAttempts: { increment: 1 } },
+        select: { failedTotpAttempts: true },
+      });
+      if (hasReachedTotpLimit(updated.failedTotpAttempts)) {
+        await prisma.user.update({ where: { id: me.userId }, data: lockedTotpState(nowMs) });
+        return { status: 'error', error: 'locked' };
+      }
+      return { status: 'error', error: 'invalid_code' };
     }
     await prisma.user.update({
       where: { id: me.userId },
@@ -198,9 +205,16 @@ export async function verifyTotpChallenge(
   }
 
   if (!verifyTotp(user.totpSecret, code)) {
-    const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
-    await prisma.user.update({ where: { id: me.userId }, data: fail });
-    return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
+    const updated = await prisma.user.update({
+      where: { id: me.userId },
+      data: { failedTotpAttempts: { increment: 1 } },
+      select: { failedTotpAttempts: true },
+    });
+    if (hasReachedTotpLimit(updated.failedTotpAttempts)) {
+      await prisma.user.update({ where: { id: me.userId }, data: lockedTotpState(nowMs) });
+      return { status: 'error', error: 'locked' };
+    }
+    return { status: 'error', error: 'invalid_code' };
   }
 
   if (user.failedTotpAttempts > 0 || user.totpLockedUntil) {
@@ -278,9 +292,16 @@ export async function disableTotp(formData: FormData): Promise<TotpDisableState>
     return { status: 'error', error: 'locked' };
   }
   if (!verifyTotp(user.totpSecret, code)) {
-    const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
-    await prisma.user.update({ where: { id: me.userId }, data: fail });
-    return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
+    const updated = await prisma.user.update({
+      where: { id: me.userId },
+      data: { failedTotpAttempts: { increment: 1 } },
+      select: { failedTotpAttempts: true },
+    });
+    if (hasReachedTotpLimit(updated.failedTotpAttempts)) {
+      await prisma.user.update({ where: { id: me.userId }, data: lockedTotpState(nowMs) });
+      return { status: 'error', error: 'locked' };
+    }
+    return { status: 'error', error: 'invalid_code' };
   }
 
   await prisma.user.update({
@@ -341,9 +362,16 @@ export async function regenerateBackupCodes(
     return { status: 'error', error: 'locked' };
   }
   if (!verifyTotp(user.totpSecret, code)) {
-    const fail = nextTotpFailureState(user.failedTotpAttempts, nowMs);
-    await prisma.user.update({ where: { id: me.userId }, data: fail });
-    return { status: 'error', error: fail.totpLockedUntil ? 'locked' : 'invalid_code' };
+    const updated = await prisma.user.update({
+      where: { id: me.userId },
+      data: { failedTotpAttempts: { increment: 1 } },
+      select: { failedTotpAttempts: true },
+    });
+    if (hasReachedTotpLimit(updated.failedTotpAttempts)) {
+      await prisma.user.update({ where: { id: me.userId }, data: lockedTotpState(nowMs) });
+      return { status: 'error', error: 'locked' };
+    }
+    return { status: 'error', error: 'invalid_code' };
   }
 
   const backupCodes = generateBackupCodes();

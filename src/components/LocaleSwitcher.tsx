@@ -43,7 +43,7 @@ export default function LocaleSwitcher({ isDark = false }: { isDark?: boolean })
         letterSpacing: '0.04em',
         textTransform: 'uppercase',
         cursor: 'pointer',
-        color: isDark ? 'rgba(255,255,255,0.55)' : '#9aa0b5',
+        color: isDark ? 'rgba(255,255,255,0.55)' : '#5b6178',
         opacity: pending ? 0.5 : 1,
         transition: 'color 200ms ease, opacity 200ms ease',
       }}
