@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
-import { expirePendingRequests } from '@/lib/actions/mentora/requests';
+import { expirePendingRequests } from '@/lib/mentora/expire-requests';
 import { drainEmailQueueFully } from '@/lib/email/queue';
 import { sendUnreadMessageDigests } from '@/lib/mentora/unread-message-digest';
 import { sendRequestExpiryReminders } from '@/lib/mentora/request-expiry-reminder';

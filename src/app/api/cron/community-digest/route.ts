@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendCommunityTemplatedEmail } from '@/lib/community/email';
 import { evaluateBadges } from '@/lib/community/badges';
-import { pickWinnersAndAnnounce } from '@/lib/actions/community/admin/challenges';
+import { pickWinnersAndAnnounce } from '@/lib/community/challenge-winners';
 import { buildAndQueueWeeklyDigest, type WeeklyDigestStats } from '@/lib/community/weekly-digest';
 
 // Force Node runtime — Prisma + Resend fetch require it.
