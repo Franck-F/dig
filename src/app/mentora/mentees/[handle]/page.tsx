@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { canViewerSeeMenteeProfile } from '@/lib/mentora/mentee-access';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import Frame from '@/components/Frame';
 
 export const dynamic = 'force-dynamic';
@@ -113,11 +114,29 @@ export default async function MenteeProfilePage({
   // Role gate (the session JWT doesn't carry `role`, so we read DB).
   const viewer = await prisma.user.findUnique({
     where: { id: viewerId },
-    select: { role: true, mentorProfile: { select: { id: true } } },
+    select: {
+      role: true,
+      totpEnabledAt: true,
+      mentorProfile: { select: { id: true, status: true } },
+    },
   });
   if (!viewer) redirect('/login');
   if (viewer.role !== 'MENTOR' && viewer.role !== 'ADMIN') {
     redirect('/app');
+  }
+
+  // 2FA step-up for ACTIVE mentors — this page renders its own <Frame>, so it
+  // is NOT covered by the /mentora/dashboard layout's 2FA gate; a mentor could
+  // otherwise reach a mentee's PII by direct URL with only a password. Mirrors
+  // the dashboard rule (reuses the dz-admin-2fa cookie → challenge at most once).
+  if (viewer.role === 'MENTOR' && viewer.mentorProfile?.status === 'ACTIVE') {
+    const next = encodeURIComponent(`/mentora/mentees/${handle}`);
+    if (!viewer.totpEnabledAt) {
+      redirect(`/account/2fa/setup?required=1&next=${next}`);
+    }
+    if (!(await hasFreshAdmin2faCookie(viewerId))) {
+      redirect(`/account/2fa/challenge?next=${next}`);
+    }
   }
 
   // Mentee data — `handle` is the userId (mirrors the mentor public profile).
