@@ -34,11 +34,12 @@ export async function scheduleSession(
     const parsed = scheduleSchema.safeParse(input);
     if (!parsed.success) return errorResult('invalidInput');
 
-    const { mentorship, isMentor, isMentee, userId } = await requireMentorshipMember(
+    const { mentorship, isMentor, userId } = await requireMentorshipMember(
       parsed.data.mentorshipId,
     );
-    void isMentor;
-    void isMentee;
+    // Only the mentor may set a custom meeting URL — otherwise a mentee could
+    // inject a phishing link that overrides the auto-allocated Jitsi room.
+    const meetingUrl = isMentor ? (parsed.data.meetingUrl ?? null) : null;
     if (mentorship.status === 'TERMINATED' || mentorship.status === 'COMPLETED') {
       return errorResult('invalidStatus');
     }
@@ -92,7 +93,7 @@ export async function scheduleSession(
         durationMinutes: parsed.data.durationMinutes,
         format,
         location: parsed.data.location ?? null,
-        meetingUrl: parsed.data.meetingUrl ?? null,
+        meetingUrl,
         agenda: parsed.data.agenda ?? null,
         status: 'SCHEDULED',
       },
@@ -102,7 +103,7 @@ export async function scheduleSession(
     // Auto-allocate a Jitsi room for video sessions when the caller
     // didn't supply a custom URL. Deterministic per session-id so the
     // room link is stable across the lifecycle.
-    if (format === 'REMOTE_VIDEO' && !parsed.data.meetingUrl) {
+    if (format === 'REMOTE_VIDEO' && !meetingUrl) {
       const autoUrl = buildVisioRoomUrl(created.id);
       if (autoUrl) {
         await prisma.session.update({
