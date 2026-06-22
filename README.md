@@ -69,8 +69,8 @@ Voir [`.env.example`](./.env.example) — ~15 variables réparties en :
   `NEXT_PUBLIC_SENTRY_DSN`.
 - **Rate-limit** : `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`
   (optionnels — fallback in-memory si absents).
-- **CSP** : `CSP_ENFORCE=1` pour basculer en mode enforced
-  (défaut : Report-Only).
+- **CSP** : enforced par défaut ; `CSP_REPORT_ONLY=1` pour repasser en
+  Report-Only (fenêtre d'observation).
 
 ## Structure rapide
 
