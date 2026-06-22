@@ -8,6 +8,7 @@ import Discord from 'next-auth/providers/discord';
 import { compare } from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { checkAuthRateLimit } from '@/lib/rate-limit/auth-limiter';
 import { authConfig } from '@/auth.config';
 
 const credentialsSchema = z.object({
@@ -31,6 +32,14 @@ const providers: Provider[] = [
     async authorize(creds) {
       const parsed = credentialsSchema.safeParse(creds);
       if (!parsed.success) return null;
+
+      // Rate-limit at the credentials chokepoint itself — `authorize` is also
+      // reachable directly via POST /api/auth/callback/credentials, which would
+      // otherwise bypass the UI signIn action's limiter. Same 'signIn' bucket
+      // (IP + email); failed UI attempts never reach here, so the budget isn't
+      // double-spent on the common path. On limit we deny like any failed try.
+      const rl = await checkAuthRateLimit('signIn', parsed.data.email);
+      if (!rl.ok) return null;
 
       const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
       if (!user || !user.passwordHash) return null;
