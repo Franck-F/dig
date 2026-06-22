@@ -231,7 +231,13 @@ export async function listUpcomingCommunityEvents(opts: { limit?: number } = {})
   });
 }
 
-export async function getMyEventRegistrations(userId: string) {
+export async function getMyEventRegistrations() {
+  // Derive the user from the session — never trust a caller-supplied id
+  // (this is a 'use server' action, i.e. a public endpoint: a client arg
+  // would let anyone enumerate another member's registrations — IDOR).
+  const session = await auth();
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) return [];
   return prisma.communityEventRegistration.findMany({
     where: { userId, cancelledAt: null, event: { cancelledAt: null } },
     orderBy: { event: { startsAt: 'asc' } },
