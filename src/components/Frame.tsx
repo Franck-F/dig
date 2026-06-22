@@ -33,9 +33,12 @@ export default function Frame({ active, children, hideFooter }: FrameProps) {
         Aller au contenu principal
       </a>
       <Header />
-      {/* display:contents keeps the existing visual layout byte-for-byte while
-          exposing a <main> landmark + skip-link target (WCAG 2.4.1 / 1.3.1). */}
-      <main id="main-content" tabIndex={-1} style={{ display: 'contents' }}>
+      {/* Single <main> landmark + skip-link target (WCAG 2.4.1 / 1.3.1). A real
+          block box (NOT display:contents) so the skip link can actually move
+          focus + scroll to it. `.dz-frame` is normal block flow with no
+          direct-child selectors, so wrapping the content here is layout-neutral.
+          Pages wrapped by Frame must NOT render their own <main> (e.g. charte). */}
+      <main id="main-content" tabIndex={-1}>
         {children}
       </main>
       {!hideFooter && <CinematicFooter />}
