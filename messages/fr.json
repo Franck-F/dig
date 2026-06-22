@@ -3074,7 +3074,9 @@
       "invalidCredentials": "Email ou mot de passe incorrect.",
       "emailInvalid": "Email invalide.",
       "passwordRequired": "Mot de passe requis.",
-      "passwordTooShort": "Au moins 8 caractères.",
+      "passwordTooShort": "Au moins 12 caractères.",
+      "passwordContainsIdentity": "Le mot de passe ne doit pas contenir votre email ni votre nom.",
+      "passwordBreached": "Ce mot de passe figure dans une fuite de données connue. Choisissez-en un autre.",
       "firstNameRequired": "Prénom requis.",
       "lastNameRequired": "Nom requis.",
       "emailSendFailed": "Impossible d'envoyer l'email. Réessaie dans un instant.",
@@ -3133,6 +3135,10 @@
         "invalid": "Code invalide.",
         "expired": "Code expiré. Demande-en un nouveau.",
         "tooManyAttempts": "Trop de tentatives. Recommence depuis le début.",
+        "passwordRequired": "Mot de passe requis.",
+        "passwordTooShort": "Au moins 12 caractères.",
+        "passwordContainsIdentity": "Le mot de passe ne doit pas contenir votre email ni votre nom.",
+        "passwordBreached": "Ce mot de passe figure dans une fuite de données connue. Choisissez-en un autre.",
         "generic": "Réinitialisation impossible. Réessaie."
       }
     }

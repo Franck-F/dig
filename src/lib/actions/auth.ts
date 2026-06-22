@@ -13,6 +13,8 @@ import {
   AUTH_RATE_LIMIT_ERROR,
   checkAuthRateLimit,
 } from '@/lib/rate-limit/auth-limiter';
+import { checkPasswordStrength } from '@/lib/auth/password-policy';
+import { isPasswordPwned } from '@/lib/auth/pwned-password';
 
 /**
  * Discriminated state for `useActionState` consumers. The shape is shared by
@@ -64,7 +66,7 @@ const signUpSchema = z
     firstName: z.string().min(1, 'firstNameRequired').max(80),
     lastName: z.string().min(1, 'lastNameRequired').max(80),
     email: z.string().email('emailInvalid').max(200),
-    password: z.string().min(8, 'passwordTooShort').max(200),
+    password: z.string().min(1, 'passwordRequired').max(200),
     role: z.nativeEnum(UserRole),
     /** "1" / "0" string from the hidden form inputs. */
     mentoraEnabled: z.enum(['0', '1']).default('1'),
@@ -105,7 +107,7 @@ const requestResetSchema = z.object({
 const confirmResetSchema = z.object({
   email: z.string().email('emailInvalid'),
   code: codeSchema,
-  newPassword: z.string().min(8, 'passwordTooShort').max(200),
+  newPassword: z.string().min(1, 'passwordRequired').max(200),
 });
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -310,6 +312,12 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
 
   const rl = await checkAuthRateLimit('signUp', email);
   if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
+
+  // Password policy: length floor + no embedded identity (NIST-aligned), then
+  // a Have I Been Pwned breach check. Reject before hashing/creating anything.
+  const strength = checkPasswordStrength(password, { email, firstName, lastName });
+  if (!strength.ok) return { status: 'error', error: strength.code };
+  if (await isPasswordPwned(password)) return { status: 'error', error: 'passwordBreached' };
 
   const passwordHash = await hash(password, 12);
 
@@ -554,6 +562,12 @@ export async function confirmPasswordReset(
 
   const rl = await checkAuthRateLimit('confirmPasswordReset', email);
   if (!rl.ok) return { status: 'error', error: AUTH_RATE_LIMIT_ERROR };
+
+  // Same password policy on reset as on signup — otherwise a weak/breached
+  // password could slip in through the reset flow.
+  const strength = checkPasswordStrength(newPassword, { email });
+  if (!strength.ok) return { status: 'error', error: strength.code };
+  if (await isPasswordPwned(newPassword)) return { status: 'error', error: 'passwordBreached' };
 
   const record = await prisma.verificationCode.findFirst({
     where: {

@@ -2300,7 +2300,9 @@
       "invalidCredentials": "Incorrect email or password.",
       "emailInvalid": "Invalid email.",
       "passwordRequired": "Password required.",
-      "passwordTooShort": "At least 8 characters.",
+      "passwordTooShort": "At least 12 characters.",
+      "passwordContainsIdentity": "Your password must not contain your email or name.",
+      "passwordBreached": "This password appears in a known data breach. Please choose another.",
       "firstNameRequired": "First name required.",
       "lastNameRequired": "Last name required.",
       "emailSendFailed": "Couldn't send the email. Please try again in a moment.",
@@ -2359,6 +2361,10 @@
         "invalid": "Invalid code.",
         "expired": "Code expired. Please request a new one.",
         "tooManyAttempts": "Too many attempts. Start over from the beginning.",
+        "passwordRequired": "Password required.",
+        "passwordTooShort": "At least 12 characters.",
+        "passwordContainsIdentity": "Your password must not contain your email or name.",
+        "passwordBreached": "This password appears in a known data breach. Please choose another.",
         "generic": "Reset failed. Please try again."
       }
     }
