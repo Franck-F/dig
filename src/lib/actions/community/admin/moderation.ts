@@ -14,6 +14,7 @@ import {
 import { createCommunityNotification } from '@/lib/community/notifications';
 import { sendCommunityTemplatedEmail } from '@/lib/community/email';
 import { logAdmin } from '@/lib/audit/log';
+import { canSanction } from '@/lib/community/sanction-policy';
 
 /**
  * Admin moderation queue actions. Spec §5.2 moderation.
@@ -21,6 +22,58 @@ import { logAdmin } from '@/lib/audit/log';
  * Operational emails (warn/mute/suspend/ban/unban) are the ONLY per-event
  * Community emails — see spec §7.2.
  */
+
+const BAN_PROPOSAL_TTL_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Privilege guard: an actor may only sanction a target of STRICTLY lower
+ * privilege (super-admin > admin > moderator > member). Prevents a moderator
+ * (or a phished moderator account) from sanctioning a peer, an admin, or a
+ * super-admin. Returns an error ActionResult to short-circuit, or null when
+ * the sanction is allowed.
+ */
+async function assertCanSanction(
+  actorUserId: string,
+  actorIsModerator: boolean,
+  targetMemberId: string,
+): Promise<ActionResult | null> {
+  const [actorUser, target] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: actorUserId },
+      select: { role: true, isSuperAdmin: true },
+    }),
+    prisma.communityMember.findUnique({
+      where: { id: targetMemberId },
+      select: { isModerator: true, user: { select: { role: true, isSuperAdmin: true } } },
+    }),
+  ]);
+  if (!actorUser) return err('forbidden');
+  if (!target) return err('notFound');
+  const allowed = canSanction(
+    { role: actorUser.role, isSuperAdmin: actorUser.isSuperAdmin, isModerator: actorIsModerator },
+    { role: target.user.role, isSuperAdmin: target.user.isSuperAdmin, isModerator: target.isModerator },
+  );
+  return allowed ? null : err('forbidden');
+}
+
+/**
+ * Dual-moderator ban guard: a DISTINCT moderator must have proposed the ban
+ * within the TTL window. Single source of truth for the invariant — used by
+ * both `banUser` and the report-resolution `ban` path so neither can bypass it.
+ */
+async function findValidBanProposal(
+  targetMemberId: string,
+  actorMemberId: string,
+): Promise<{ error: ActionResult } | { proposal: { actorId: string | null; createdAt: Date } }> {
+  const since = new Date(Date.now() - BAN_PROPOSAL_TTL_MS);
+  const recentProposal = await prisma.moderationAction.findFirst({
+    where: { type: 'BAN_PROPOSAL', targetMemberId, createdAt: { gte: since } },
+    orderBy: { createdAt: 'desc' },
+  });
+  if (!recentProposal) return { error: err('banProposalRequired') };
+  if (recentProposal.actorId === actorMemberId) return { error: err('banProposalSelfApprove') };
+  return { proposal: recentProposal };
+}
 
 const resolveSchema = z.object({
   reportId: z.string().min(1),
@@ -74,9 +127,15 @@ export async function resolveReport(
         actionType = 'WARN_AUTHOR';
         nextStatus = 'RESOLVED_WARNED';
         break;
-      case 'ban':
+      case 'ban': {
         actionType = 'BAN_USER';
         if (report.againstMember) {
+          // Same guards as banUser: privilege hierarchy + dual-mod approval.
+          // Resolving a report must not be a back door around either.
+          const denied = await assertCanSanction(ctx.userId, ctx.isModerator, report.againstMember.id);
+          if (denied) return denied;
+          const approval = await findValidBanProposal(report.againstMember.id, ctx.member.id);
+          if ('error' in approval) return approval.error;
           await prisma.communityMember.update({
             where: { id: report.againstMember.id },
             data: { status: 'BANNED', statusReason: parsed.data.resolutionNote ?? null },
@@ -84,6 +143,7 @@ export async function resolveReport(
         }
         nextStatus = 'RESOLVED_BANNED';
         break;
+      }
       case 'dismiss':
         actionType = 'DISMISS_REPORT';
         nextStatus = 'RESOLVED_DISMISSED';
@@ -238,6 +298,8 @@ export async function warnAuthor(
     const ctx = await requireCommunityAdmin();
     const parsed = memberActionSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
+    const denied = await assertCanSanction(ctx.userId, ctx.isModerator, parsed.data.memberId);
+    if (denied) return denied;
     await applyStatus(
       ctx.member.id,
       parsed.data.memberId,
@@ -268,6 +330,8 @@ export async function muteUser(
     const ctx = await requireCommunityAdmin();
     const parsed = memberActionSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
+    const denied = await assertCanSanction(ctx.userId, ctx.isModerator, parsed.data.memberId);
+    if (denied) return denied;
     await applyStatus(
       ctx.member.id,
       parsed.data.memberId,
@@ -301,6 +365,8 @@ export async function suspendUser(
     const ctx = await requireCommunityAdmin();
     const parsed = memberActionSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
+    const denied = await assertCanSanction(ctx.userId, ctx.isModerator, parsed.data.memberId);
+    if (denied) return denied;
     await applyStatus(
       ctx.member.id,
       parsed.data.memberId,
@@ -345,8 +411,6 @@ export async function suspendUser(
  *  - The actor of `BAN_USER` MUST differ from the actor of the most
  *    recent BAN_PROPOSAL on this target.
  */
-const BAN_PROPOSAL_TTL_MS = 24 * 60 * 60 * 1000;
-
 export async function proposeBan(
   input: z.input<typeof memberActionSchema>,
 ): Promise<ActionResult> {
@@ -354,6 +418,9 @@ export async function proposeBan(
     const ctx = await requireCommunityAdmin();
     const parsed = memberActionSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
+
+    const denied = await assertCanSanction(ctx.userId, ctx.isModerator, parsed.data.memberId);
+    if (denied) return denied;
 
     const target = await prisma.communityMember.findUnique({
       where: { id: parsed.data.memberId },
@@ -391,22 +458,13 @@ export async function banUser(
     const parsed = memberActionSchema.safeParse(input);
     if (!parsed.success) return err('invalidInput');
 
-    // A different moderator must have proposed the ban within the
-    // 24 h window. No proposal → reject; same actor as proposer →
-    // reject (would defeat the purpose).
-    const since = new Date(Date.now() - BAN_PROPOSAL_TTL_MS);
-    const recentProposal = await prisma.moderationAction.findFirst({
-      where: {
-        type: 'BAN_PROPOSAL',
-        targetMemberId: parsed.data.memberId,
-        createdAt: { gte: since },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-    if (!recentProposal) return err('banProposalRequired');
-    if (recentProposal.actorId === ctx.member.id) {
-      return err('banProposalSelfApprove');
-    }
+    const denied = await assertCanSanction(ctx.userId, ctx.isModerator, parsed.data.memberId);
+    if (denied) return denied;
+
+    // A different moderator must have proposed the ban within the 24 h window.
+    const approval = await findValidBanProposal(parsed.data.memberId, ctx.member.id);
+    if ('error' in approval) return approval.error;
+    const recentProposal = approval.proposal;
 
     await applyStatus(
       ctx.member.id,

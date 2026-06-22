@@ -310,28 +310,9 @@ export async function nudgePendingMentorshipRequests(): Promise<
   }
 }
 
-// Used by cron — exported for the cron route. Side-effecting; not a typical user action.
-export async function expirePendingRequests(): Promise<{ expired: number }> {
-  const due = await prisma.mentorshipRequest.findMany({
-    where: { status: 'PENDING', expiresAt: { lt: new Date() } },
-    select: {
-      id: true,
-      fromMentee: { select: { userId: true } },
-      toMentor: { select: { userId: true } },
-    },
-  });
-  if (due.length === 0) return { expired: 0 };
-
-  await prisma.mentorshipRequest.updateMany({
-    where: { id: { in: due.map((d) => d.id) } },
-    data: { status: 'EXPIRED', respondedAt: new Date() },
-  });
-  for (const r of due) {
-    await notify(r.fromMentee.userId, 'REQUEST_EXPIRED', { requestId: r.id });
-    await notify(r.toMentor.userId, 'REQUEST_EXPIRED', { requestId: r.id });
-  }
-  return { expired: due.length };
-}
+// `expirePendingRequests` moved to `@/lib/mentora/expire-requests` (server-only)
+// so it is NOT exposed as a public 'use server' action — it is called only by
+// the authenticated cron route.
 
 // Surface unused import to satisfy strict TS (MentoratError is used in catch)
 void MentoratError;

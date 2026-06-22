@@ -20,6 +20,14 @@ const reportSchema = z.object({
   details: z.string().max(1000).optional(),
 });
 
+/**
+ * Distinct reports needed before a post is auto-flagged for review (status
+ * REPORTED, which removes it from the public feed). Below this, a report only
+ * increments the counter + notifies moderators — so a single (or malicious)
+ * report can never hide another member's post.
+ */
+const REPORT_AUTOFLAG_THRESHOLD = 3;
+
 export async function reportContent(
   input: z.input<typeof reportSchema>,
 ): Promise<ActionResult<{ id: string }>> {
@@ -79,12 +87,22 @@ export async function reportContent(
         },
         select: { id: true },
       });
-      // Counter on post.
+      // Counter on post — always. Only auto-flag for review (status REPORTED,
+      // which removes the post from the public feed) once a THRESHOLD of
+      // distinct reporters is reached, and never overwrite a non-PUBLISHED
+      // status. This stops a single report from hiding any member's post.
       if (isPost && postId) {
-        await tx.post.update({
+        const updated = await tx.post.update({
           where: { id: postId },
-          data: { reportCount: { increment: 1 }, status: 'REPORTED' },
+          data: { reportCount: { increment: 1 } },
+          select: { reportCount: true, status: true },
         });
+        if (updated.status === 'PUBLISHED' && updated.reportCount >= REPORT_AUTOFLAG_THRESHOLD) {
+          await tx.post.update({
+            where: { id: postId },
+            data: { status: 'REPORTED' },
+          });
+        }
       }
       return r;
     });

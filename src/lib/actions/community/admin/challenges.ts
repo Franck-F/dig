@@ -12,7 +12,7 @@ import {
   requireCommunityAdmin,
 } from '../_helpers';
 import { createCommunityNotification } from '@/lib/community/notifications';
-import { evaluateBadges } from '@/lib/community/badges';
+import { pickWinnersAndAnnounce } from '@/lib/community/challenge-winners';
 import { logAdmin } from '@/lib/audit/log';
 import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
@@ -228,51 +228,6 @@ export async function closeChallengeManually(
   }
 }
 
-/**
- * Pure-ish helper exposed for the cron and the manual close path.
- * Picks top-3 submissions by voteCount, sets isWinner, populates challenge,
- * fires CHALLENGE_RESULT notifs and FIRST_CHALLENGE_WIN badge eval.
- */
-export async function pickWinnersAndAnnounce(challengeId: string): Promise<string[]> {
-  const tops = await prisma.challengeSubmission.findMany({
-    where: { challengeId },
-    orderBy: [{ voteCount: 'desc' }, { id: 'asc' }],
-    take: 3,
-    select: { id: true, authorId: true, voteCount: true },
-  });
-  const winnerIds = tops.filter((t) => t.voteCount > 0).map((t) => t.id);
-
-  await prisma.$transaction([
-    prisma.challenge.update({
-      where: { id: challengeId },
-      data: {
-        status: 'CLOSED',
-        resultsAnnouncedAt: new Date(),
-        winnerSubmissionIds: winnerIds,
-      },
-    }),
-    ...winnerIds.map((id) =>
-      prisma.challengeSubmission.update({
-        where: { id },
-        data: { isWinner: true },
-      }),
-    ),
-  ]);
-
-  // Notify all submission authors + winners get the badge.
-  const allSubmissions = await prisma.challengeSubmission.findMany({
-    where: { challengeId },
-    include: { author: { select: { id: true, userId: true } } },
-  });
-  for (const s of allSubmissions) {
-    await createCommunityNotification(s.author.userId, 'CHALLENGE_RESULT', {
-      challengeId,
-      submissionId: s.id,
-      isWinner: winnerIds.includes(s.id),
-    });
-    if (winnerIds.includes(s.id)) {
-      await evaluateBadges(s.author.id, 'CHALLENGE_WON');
-    }
-  }
-  return winnerIds;
-}
+// `pickWinnersAndAnnounce` moved to `@/lib/community/challenge-winners` (server-only)
+// so it is NOT exposed as a public 'use server' action. It is imported above for
+// internal use by `closeChallengeManually`; the cron route imports it directly.

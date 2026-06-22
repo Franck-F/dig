@@ -60,14 +60,13 @@ function fmtTime(d: Date): string {
 export default async function CommunityEventsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/community/events');
-  const userId = session.user.id;
 
   const t = await getTranslations('community.communityEventsPage');
 
   const [events, liveEvent, myRegs] = await Promise.all([
     listUpcomingCommunityEvents({ limit: 20 }),
     getCurrentLiveEvent(),
-    getMyEventRegistrations(userId),
+    getMyEventRegistrations(),
   ]);
 
   const myRegEventIds = new Set(myRegs.map((r) => r.event.id));
@@ -140,7 +139,7 @@ export default async function CommunityEventsPage() {
                       .filter(Boolean)
                       .join(' ')
                       .trim() ||
-                      hostUser.email);
+                      'Hôte');
                   const hostMeta = `${hostName} · ${fmtTime(ev.startsAt)} · ${
                     FORMAT_LABEL[ev.format] ?? ev.format
                   }${ev.durationMin ? ` · ${ev.durationMin} min` : ''}`;
