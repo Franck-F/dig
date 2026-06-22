@@ -19,11 +19,11 @@ const withAnalyzer = withBundleAnalyzer({
 /**
  * Security headers — applied to every route.
  *
- * Content-Security-Policy is shipped in **Report-Only** mode for the first
- * production deploy so we can observe violations in the browser console
- * (and via Sentry's CSP report endpoint when wired) without breaking the
- * site. Once the report stream is clean for ~1 week, flip the directive
- * name from `Content-Security-Policy-Report-Only` to `Content-Security-Policy`.
+ * Content-Security-Policy is **enforced** by default (header
+ * `Content-Security-Policy`); violations are still reported to Sentry via the
+ * `report-uri` directive. Set `CSP_REPORT_ONLY=1` to fall back to
+ * `Content-Security-Policy-Report-Only` (collect violations without blocking)
+ * during the observation window of a future policy change.
  *
  * The codebase relies heavily on inline `style={{…}}` attributes (every
  * component) and on Next.js styled-jsx `<style jsx>{…}</style>`. CSP cannot
@@ -65,14 +65,15 @@ function sentryCspReportUri(): string | null {
 
 const cspReport = sentryCspReportUri();
 
-// CSP enforcement gate. Default: Report-Only — collect violations
-// without breaking the site for the first observation window. Flip
-// to enforced by setting `CSP_ENFORCE=1` once the report stream is
-// quiet for a week. We deliberately read this at build time (not
-// runtime) so a misconfigured env var doesn't suddenly drop traffic
-// in a hot reload — every deploy has a single, observable header
-// state.
-const cspEnforce = process.env.CSP_ENFORCE === '1';
+// CSP enforcement gate. Default: ENFORCED. The policy below keeps
+// `'unsafe-inline'` for script-src + style-src (this app's inline theme
+// script and pervasive `style={{}}` usage), so enforcing blocks only
+// off-allowlist external resources — not first-party inline content. Set
+// `CSP_REPORT_ONLY=1` to fall back to Report-Only (collect violations
+// without blocking) for the observation window of a future policy change.
+// Read at build time (not runtime) so every deploy has a single, observable
+// header state rather than flipping mid-traffic on a hot reload.
+const cspEnforce = process.env.CSP_REPORT_ONLY !== '1';
 const cspHeaderName = cspEnforce
   ? 'Content-Security-Policy'
   : 'Content-Security-Policy-Report-Only';

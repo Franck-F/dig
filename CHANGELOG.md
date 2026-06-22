@@ -12,6 +12,11 @@ posé pour l'instant — un `v0.1.0` sera créé avant la première démo
 publique ; le présent fichier sera scindé en sections versionnées à ce
 moment-là.
 
+### Security
+- CSP passée en **enforced par défaut** (`next.config.ts`) — le navigateur
+  bloque désormais les ressources hors allowlist ; le levier env est inversé
+  en opt-out `CSP_REPORT_ONLY=1`. Voir `docs/ops/csp-enforcement.md`.
+
 ---
 
 ## P6 — Finalisation (2026-05-08)
