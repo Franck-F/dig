@@ -1,4 +1,5 @@
 import 'server-only';
+import * as Sentry from '@sentry/nextjs';
 import type { CommunityMember, MemberStatus, User } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
@@ -133,6 +134,9 @@ export async function requireCommunityAdmin(): Promise<CommunityMemberContext> {
 export function handleError(e: unknown): ActionResult<never> {
   if (e instanceof CommunityError) return err(e.code);
   if (e instanceof UnauthorizedError) return err('unauthorized');
+  // Genuine unexpected error (DB outage, bug, Prisma failure...) — surface it to
+  // Sentry so it is visible in prod; console.error alone never reaches Sentry.
   console.error('[community action] unexpected error', e);
+  Sentry.captureException(e, { tags: { area: 'community-action' } });
   return err('unauthorized');
 }

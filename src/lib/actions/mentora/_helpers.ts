@@ -1,4 +1,5 @@
 import 'server-only';
+import * as Sentry from '@sentry/nextjs';
 import type { UserRole } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
@@ -113,6 +114,10 @@ export async function requireMentorshipMentor(mentorshipId: string) {
 
 export function handleError(err: unknown): ActionResult<never> {
   if (err instanceof MentoratError) return errorResult(err.code);
+  // Genuine unexpected error — surface it to Sentry (console.error is invisible
+  // in prod). The user-facing 'unauthorized' code is kept for now; swapping it
+  // for a dedicated 'unexpected' code is a follow-up (needs FR+EN i18n keys).
   console.error('[mentora action] unexpected error', err);
+  Sentry.captureException(err, { tags: { area: 'mentora-action' } });
   return { status: 'error', error: 'mentora.errors.unauthorized' };
 }
