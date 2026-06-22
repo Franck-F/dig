@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { logAdmin } from '@/lib/audit/log';
 import { toCsv } from '@/lib/mentora/report-csv';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -282,6 +283,13 @@ export async function GET(req: Request) {
   });
   if (me?.role !== 'ADMIN') {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  // Re-check the step-up 2FA cookie: the /mentora/admin/reports page is gated
+  // by the admin layout, but this API route is not. Without this, an ADMIN
+  // with an expired 2FA cookie could exfiltrate PII via a direct GET.
+  if (!(await hasFreshAdmin2faCookie(userId))) {
+    return NextResponse.json({ error: 'forbidden_2fa' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);
