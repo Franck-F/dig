@@ -211,6 +211,7 @@ export default function RegenerateBackupCodesForm({
           }}
         >
           {state.error === 'invalid_code' && 'Code invalide. Vérifie l\'horloge ou réessaie.'}
+          {state.error === 'locked' && 'Trop de tentatives. Réessaie dans quelques minutes.'}
           {state.error === 'not_enabled' && '2FA non activée — rien à régénérer.'}
           {(state.error === 'unauthenticated' || state.error === 'unknown') && "Erreur. Réessaie."}
         </div>

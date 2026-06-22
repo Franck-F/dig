@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { logAdmin } from '@/lib/audit/log';
+import { toCsv } from '@/lib/mentora/report-csv';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -46,22 +48,6 @@ const ALLOWED: ReadonlySet<Kind> = new Set([
 ]);
 
 const MAX_ROWS = 5000;
-
-/** RFC 4180-ish: wrap when the cell contains a comma, quote, or newline. */
-function csvCell(v: unknown): string {
-  if (v === null || v === undefined) return '';
-  let s = v instanceof Date ? v.toISOString() : String(v);
-  if (s.includes('"')) s = s.replace(/"/g, '""');
-  if (/[",\n\r]/.test(s)) s = `"${s}"`;
-  return s;
-}
-
-function toCsv(headers: string[], rows: unknown[][]): string {
-  // BOM so Excel opens the UTF-8 file with the right encoding.
-  const lines: string[] = ['﻿' + headers.map(csvCell).join(',')];
-  for (const r of rows) lines.push(r.map(csvCell).join(','));
-  return lines.join('\r\n') + '\r\n';
-}
 
 function userName(u: { name: string | null; firstName: string | null; lastName: string | null; email: string }): string {
   if (u.name) return u.name;
@@ -297,6 +283,13 @@ export async function GET(req: Request) {
   });
   if (me?.role !== 'ADMIN') {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  // Re-check the step-up 2FA cookie: the /mentora/admin/reports page is gated
+  // by the admin layout, but this API route is not. Without this, an ADMIN
+  // with an expired 2FA cookie could exfiltrate PII via a direct GET.
+  if (!(await hasFreshAdmin2faCookie(userId))) {
+    return NextResponse.json({ error: 'forbidden_2fa' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);

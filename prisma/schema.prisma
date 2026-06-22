@@ -96,6 +96,11 @@ model User {
   /// Bcrypt-hashed single-use backup codes. 10 codes generated at setup
   /// time; consumed individually when used. Empty array = no codes left.
   totpBackupCodeHashes   String[]  @default([])
+  /// Anti-brute-force on 2FA verification: failed attempt counter + temporal
+  /// lock. Reset on success; lock set once attempts reach the threshold
+  /// (see src/lib/auth/totp-lockout.ts).
+  failedTotpAttempts     Int       @default(0)
+  totpLockedUntil        DateTime?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
