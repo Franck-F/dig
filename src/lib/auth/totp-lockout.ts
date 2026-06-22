@@ -14,19 +14,20 @@ export function isTotpLocked(lockedUntil: Date | null, nowMs: number): boolean {
 }
 
 /**
- * Compute the persisted state to write after a FAILED verification. Once the
- * attempt count reaches MAX_TOTP_ATTEMPTS we set a lock window and reset the
- * counter (the lock itself blocks further attempts).
+ * True once the failure count has reached the limit. Callers increment
+ * `failedTotpAttempts` ATOMICALLY in the DB (Prisma `{ increment: 1 }`), then
+ * pass the returned post-increment value here — this avoids the lost-update
+ * race of a read-modify-write under concurrent attempts.
  */
-export function nextTotpFailureState(
-  failedAttempts: number,
+export function hasReachedTotpLimit(failedAttempts: number): boolean {
+  return failedAttempts >= MAX_TOTP_ATTEMPTS;
+}
+
+/** Persisted state to write when locking: reset counter + set the lock window. */
+export function lockedTotpState(
   nowMs: number,
-): { failedTotpAttempts: number; totpLockedUntil: Date | null } {
-  const attempts = failedAttempts + 1;
-  if (attempts >= MAX_TOTP_ATTEMPTS) {
-    return { failedTotpAttempts: 0, totpLockedUntil: new Date(nowMs + TOTP_LOCK_MS) };
-  }
-  return { failedTotpAttempts: attempts, totpLockedUntil: null };
+): { failedTotpAttempts: number; totpLockedUntil: Date } {
+  return { failedTotpAttempts: 0, totpLockedUntil: new Date(nowMs + TOTP_LOCK_MS) };
 }
 
 /** State to write after a SUCCESSFUL verification — clears counter + lock. */
