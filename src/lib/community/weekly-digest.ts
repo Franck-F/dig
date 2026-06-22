@@ -70,6 +70,8 @@ export async function buildAndQueueWeeklyDigest(now: Date = new Date()): Promise
         deletedAt: null,
         marketingEmailsEnabled: true,
         emailBouncedAt: null,
+        // RGPD: exclude declared minors (15-17) from marketing digests.
+        birthYear: { not: { gt: new Date().getFullYear() - 18 } },
       },
     },
     select: {
