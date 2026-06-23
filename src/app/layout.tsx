@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Signika } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
+import { Analytics } from '@vercel/analytics/next';
 import { auth } from '@/auth';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/CookieConsentProvider';
@@ -160,6 +161,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             </CookieConsentProvider>
           </SessionContextProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
