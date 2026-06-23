@@ -34,13 +34,13 @@ export default async function WelcomeRolePage() {
   // defensive fallback. We wrap the entire fetch in try/catch so a
   // transient DB blip doesn't surface as a 500 — the page falls back
   // to a generic greeting and the chooser still works.
-  let me: { firstName: string | null; name: string | null; email: string } | null = null;
+  let me: { firstName: string | null; name: string | null; email: string; birthYear: number | null } | null = null;
   let access;
   try {
     const result = await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { firstName: true, name: true, email: true },
+        select: { firstName: true, name: true, email: true, birthYear: true },
       }),
       getProductAccess(),
     ]);
@@ -51,7 +51,7 @@ export default async function WelcomeRolePage() {
     console.error('[welcome/role] data fetch failed', err);
     // Show the chooser anyway with a generic greeting — the action itself
     // still works (it has its own defensive write path).
-    me = { firstName: null, name: null, email: session.user.email ?? '' };
+    me = { firstName: null, name: null, email: session.user.email ?? '', birthYear: null };
     access = { userId: session.user.id, mentora: false, community: false, isAdmin: false, roleConfirmed: false };
   }
   if (!me) redirect('/login');
@@ -164,7 +164,7 @@ export default async function WelcomeRolePage() {
           Active ce qui te parle aujourd’hui — tu pourras toujours ajouter l’autre plus tard.
         </p>
 
-        <AccessChooserForm />
+        <AccessChooserForm needsBirthYear={me.birthYear == null} />
 
         <p style={{ marginTop: 28, fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
           Tu es partenaire ou entreprise ?{' '}
