@@ -6,6 +6,7 @@ import { evaluateBadges } from '@/lib/community/badges';
 import { pickWinnersAndAnnounce } from '@/lib/community/challenge-winners';
 import { buildAndQueueWeeklyDigest, type WeeklyDigestStats } from '@/lib/community/weekly-digest';
 import { purgeExpiredSoftDeletes } from '@/lib/soft-delete/user';
+import { runRetentionPurge, type RetentionPurgeResult } from '@/lib/rgpd/retention';
 
 // Force Node runtime — Prisma + Resend fetch require it.
 export const runtime = 'nodejs';
@@ -41,6 +42,13 @@ export async function GET(request: Request): Promise<Response> {
   let anniversaryBadges = 0;
   let weeklyDigest: WeeklyDigestStats = { enqueued: 0, skipped: 0, reason: {} };
   let purgedAccounts = 0;
+  let retention: RetentionPurgeResult = {
+    inactiveAccounts: 0,
+    notifications: 0,
+    contactMessages: 0,
+    moderationActions: 0,
+    auditLogs: 0,
+  };
 
   // ─── 1. Digest ─────────────────────────────────────────────────────────
   try {
@@ -181,6 +189,16 @@ export async function GET(request: Request): Promise<Response> {
     console.error('[community digest] step 6 (RGPD purge) failed', e);
   }
 
+  // ─── 7. RGPD retention (Art. 5.1.e) ───────────────────────────────────
+  // Apply documented retention durations: soft-delete accounts inactive >3y,
+  // purge expired notifications / contact messages / moderation actions /
+  // audit log. Best-effort per step (see runRetentionPurge).
+  try {
+    retention = await runRetentionPurge(now);
+  } catch (e) {
+    console.error('[community digest] step 7 (RGPD retention) failed', e);
+  }
+
   return NextResponse.json({
     ok: true,
     sent: digestsSent,
@@ -190,5 +208,6 @@ export async function GET(request: Request): Promise<Response> {
     anniversaryBadges,
     weeklyDigest,
     purgedAccounts,
+    retention,
   });
 }
