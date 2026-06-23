@@ -570,6 +570,8 @@ model Mentorship {
   @@unique([mentorProfileId, menteeProfileId])
   @@index([mentorProfileId, status])
   @@index([menteeProfileId, status])
+  // Admin cycles page counts mentorships by startedAt within a date window.
+  @@index([startedAt])
 }
 
 model MentorshipGoal {
@@ -676,6 +678,10 @@ model MentorshipMessage {
 
   @@index([mentorshipId, sentAt])
   @@index([senderUserId])
+  // Inbox unread groupBy: filter by mentorshipId + readByOtherAt.
+  @@index([mentorshipId, readByOtherAt])
+  // Unread-message-digest cron: unread messages within a sentAt window.
+  @@index([readByOtherAt, sentAt])
 }
 
 model Notification {
