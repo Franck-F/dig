@@ -72,19 +72,25 @@ export default async function MessagesInboxPage({
     },
   });
 
-  // Per-mentorship unread count + sort by most recent activity.
-  const enriched = await Promise.all(
-    mentorships.map(async (m) => {
-      const unread = await prisma.mentorshipMessage.count({
-        where: {
-          mentorshipId: m.id,
-          senderUserId: { not: userId },
-          readByOtherAt: null,
-        },
-      });
-      return { mentorship: m, unread };
-    }),
+  // Per-mentorship unread count in ONE groupBy (was N+1: a count() per
+  // mentorship). Unread = messages the *other* party sent that this user
+  // hasn't read yet.
+  const unreadGroups = await prisma.mentorshipMessage.groupBy({
+    by: ['mentorshipId'],
+    where: {
+      mentorshipId: { in: mentorships.map((m) => m.id) },
+      senderUserId: { not: userId },
+      readByOtherAt: null,
+    },
+    _count: { _all: true },
+  });
+  const unreadByMentorship = new Map(
+    unreadGroups.map((g) => [g.mentorshipId, g._count._all]),
   );
+  const enriched = mentorships.map((m) => ({
+    mentorship: m,
+    unread: unreadByMentorship.get(m.id) ?? 0,
+  }));
   enriched.sort((a, b) => {
     const aT = a.mentorship.messages[0]?.sentAt.getTime() ?? a.mentorship.startedAt.getTime();
     const bT = b.mentorship.messages[0]?.sentAt.getTime() ?? b.mentorship.startedAt.getTime();
