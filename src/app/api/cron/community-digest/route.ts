@@ -5,6 +5,7 @@ import { sendCommunityTemplatedEmail } from '@/lib/community/email';
 import { evaluateBadges } from '@/lib/community/badges';
 import { pickWinnersAndAnnounce } from '@/lib/community/challenge-winners';
 import { buildAndQueueWeeklyDigest, type WeeklyDigestStats } from '@/lib/community/weekly-digest';
+import { purgeExpiredSoftDeletes } from '@/lib/soft-delete/user';
 
 // Force Node runtime — Prisma + Resend fetch require it.
 export const runtime = 'nodejs';
@@ -39,6 +40,7 @@ export async function GET(request: Request): Promise<Response> {
   let suspensionsRestored = 0;
   let anniversaryBadges = 0;
   let weeklyDigest: WeeklyDigestStats = { enqueued: 0, skipped: 0, reason: {} };
+  let purgedAccounts = 0;
 
   // ─── 1. Digest ─────────────────────────────────────────────────────────
   try {
@@ -169,6 +171,16 @@ export async function GET(request: Request): Promise<Response> {
     console.error('[community digest] step 5 (weekly) failed', e);
   }
 
+  // ─── 6. RGPD purge (Art. 17) ──────────────────────────────────────────
+  // Hard-delete accounts soft-deleted > 30 days ago + wipe their Storage
+  // folders. Piggybacked on this daily cron to avoid burning a Hobby cron
+  // slot (like the weekly digest above). Idempotent: re-filters each run.
+  try {
+    purgedAccounts = await purgeExpiredSoftDeletes(30);
+  } catch (e) {
+    console.error('[community digest] step 6 (RGPD purge) failed', e);
+  }
+
   return NextResponse.json({
     ok: true,
     sent: digestsSent,
@@ -177,5 +189,6 @@ export async function GET(request: Request): Promise<Response> {
     suspensionsRestored,
     anniversaryBadges,
     weeklyDigest,
+    purgedAccounts,
   });
 }

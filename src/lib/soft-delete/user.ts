@@ -91,9 +91,14 @@ export async function softDeleteUser(
       await tx.communityMember.updateMany({
         where: { userId, deletedAt: null },
         data: {
-          // Leave handle + status intact (handle uniqueness preserved,
-          // status stays at whatever it was — read paths filter by
-          // deletedAt anyway). The hard purge at J+30 strips it.
+          // Anonymise the public-facing identity IMMEDIATELY (RGPD: the charter
+          // promises "auteur remplacé par « Compte supprimé »"). handle stays
+          // unique via userId; content remains visible until the J+30 purge but
+          // no longer carries the member's identity. Anonymising at the source
+          // covers every read path (feed, search, ranker, profile) at once.
+          handle: `deleted-${userId}`,
+          displayName: 'Compte supprimé',
+          avatarUrl: null,
           deletedAt: now,
         },
       });

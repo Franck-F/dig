@@ -101,6 +101,10 @@ async function resolveAudienceEmails(audience: Audience): Promise<AudienceRecipi
   //  2. Users who explicitly opted out (marketingEmailsEnabled=false)
   //     must not receive marketing — this is the RGPD opt-out honoured
   //     here so an existing unsub stays effective on the next campaign.
+  // RGPD: never send marketing to declared minors (15-17) — the charter
+  // promises no ad profiling for under-18s. Exclude confirmed minors
+  // (birthYear after the cutoff); adults and unknown-age legacy users pass.
+  const adultCutoffYear = new Date().getFullYear() - 18;
   const userQuery = (
     extra: import('@prisma/client').Prisma.UserWhereInput,
   ): import('@prisma/client').Prisma.UserWhereInput => ({
@@ -111,6 +115,7 @@ async function resolveAudienceEmails(audience: Audience): Promise<AudienceRecipi
     // our IP reputation. Cleared by an admin or by an email change.
     emailBouncedAt: null,
     email: { not: '' },
+    NOT: { birthYear: { gt: adultCutoffYear } },
   });
 
   if (wantsAll || audience === 'mentors') {

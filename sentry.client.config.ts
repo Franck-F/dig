@@ -11,18 +11,14 @@ Sentry.init({
   // Sample 10% of transactions in prod, 100% in dev so devs get every span.
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
-  // Session replay — capture 1% of normal sessions, 100% of sessions that
-  // hit an error so we have video-grade context when something blows up.
-  // Bumps bandwidth ~50KB on those sessions; cheap given the value.
-  replaysSessionSampleRate: 0.01,
-  replaysOnErrorSampleRate: 1.0,
+  // Session Replay DISABLED: it records user sessions (incl. minors') and
+  // would require prior cookie consent we don't yet gate on (ePrivacy Art. 82).
+  // Error monitoring stays (legitimate interest, PII scrubbed) but nothing
+  // records the session.
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0,
 
-  integrations: [
-    Sentry.replayIntegration({
-      maskAllText: true,
-      blockAllMedia: true, // never capture user-uploaded images / videos
-    }),
-  ],
+  integrations: [],
 
   // Don't spam Sentry with browser-extension noise or known framework
   // hydration warnings that we can't fix from app code.
