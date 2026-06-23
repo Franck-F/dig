@@ -28,12 +28,22 @@ import { prisma } from '@/lib/prisma';
 // functions, found object"). The schema and the input type stay
 // module-private; the action signature uses an inline shape for the
 // public surface.
+// RGPD Art. 8 — French digital-consent floor is 15. OAuth signups skip the
+// credentials form (which collects birthYear), so we collect it here for users
+// whose birthYear is still null. Mirrors the signup bounds.
+const MIN_AGE = 15;
+const CURRENT_YEAR = new Date().getFullYear();
+const MIN_BIRTH_YEAR = CURRENT_YEAR - 120;
+const MAX_BIRTH_YEAR = CURRENT_YEAR - MIN_AGE;
+
 const ACCESS_INPUT = z
   .object({
     /** Mentorat role when the user wants Mentorat access; null = no Mentorat. */
     mentora: z.enum([UserRole.STUDENT, UserRole.MENTOR]).nullable(),
     /** Community access toggle. */
     community: z.boolean(),
+    /** Year of birth — required only when the account has none yet (OAuth). */
+    birthYear: z.coerce.number().int().optional().nullable(),
   })
   .refine((v) => v.mentora !== null || v.community, {
     message: 'pick_at_least_one',
@@ -65,9 +75,24 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
       roleConfirmed: true,
       mentoraEnabled: true,
       communityEnabled: true,
+      birthYear: true,
     },
   });
   if (!me) return { status: 'error', error: 'unauthorized' };
+
+  // Collect + validate birthYear when the account has none (OAuth signups).
+  // Accounts that already declared it at credentials signup are left untouched.
+  let birthYearToSet: number | undefined;
+  if (me.birthYear == null) {
+    const by = parsed.data.birthYear;
+    if (by == null || by < MIN_BIRTH_YEAR) {
+      return { status: 'error', error: 'invalid_birth_year' };
+    }
+    if (by > MAX_BIRTH_YEAR) {
+      return { status: 'error', error: 'below_min_age' };
+    }
+    birthYearToSet = by;
+  }
 
   // Defence-in-depth: refuse for admins (they're not supposed to re-pick
   // their own product access via this flow). Allow re-confirmation when
@@ -98,6 +123,7 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
         roleConfirmed: true,
         mentoraEnabled: mentora !== null,
         communityEnabled: community,
+        birthYear: birthYearToSet,
       },
     });
   } catch (err) {
@@ -105,7 +131,7 @@ export async function confirmAccess(input: ConfirmAccessInput): Promise<ConfirmA
     try {
       await prisma.user.update({
         where: { id: me.id },
-        data: { role: nextRole, roleConfirmed: true },
+        data: { role: nextRole, roleConfirmed: true, birthYear: birthYearToSet },
       });
     } catch (fallbackErr) {
       console.error('[confirmAccess] fallback update also failed', fallbackErr);

@@ -11,6 +11,8 @@ const ERROR_LABEL: Record<string, string> = {
   invalid_input: 'Choix invalide.',
   invalid_role: 'Choix invalide.',
   pick_at_least_one: 'Active au moins un espace pour continuer.',
+  invalid_birth_year: 'Indique ton année de naissance.',
+  below_min_age: 'Tu dois avoir au moins 15 ans pour rejoindre Digizelle.',
   already_confirmed: 'Tes accès sont déjà définis. Direction le tableau de bord.',
   forbidden: 'Cette action n’est pas disponible pour ton compte.',
   server_error: 'Erreur serveur — réessaie dans un instant.',
@@ -26,15 +28,23 @@ const ERROR_LABEL: Record<string, string> = {
  *   - Mentorat STUDENT (alone or with community) → /mentora/onboarding
  *   - Community only                            → /community
  */
-export default function AccessChooserForm() {
+export default function AccessChooserForm({ needsBirthYear = false }: { needsBirthYear?: boolean }) {
   const [mentoraOn, setMentoratOn] = useState(false);
   const [mentoraSub, setMentoratSub] = useState<MentoratSub>('STUDENT');
   const [communityOn, setCommunityOn] = useState(false);
+  const [birthYear, setBirthYear] = useState('');
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const canSubmit = mentoraOn || communityOn;
+  const currentYear = new Date().getFullYear();
+  const birthYearNum = Number(birthYear);
+  const birthYearValid =
+    !needsBirthYear ||
+    (/^\d{4}$/.test(birthYear) &&
+      birthYearNum <= currentYear - 15 &&
+      birthYearNum >= currentYear - 120);
+  const canSubmit = (mentoraOn || communityOn) && birthYearValid;
 
   const submit = () => {
     if (!canSubmit) {
@@ -47,6 +57,7 @@ export default function AccessChooserForm() {
         const res = await confirmAccess({
           mentora: mentoraOn ? mentoraSub : null,
           community: communityOn,
+          birthYear: needsBirthYear ? birthYearNum : undefined,
         });
         if (res?.status === 'error') {
           setError(ERROR_LABEL[res.error] ?? 'Erreur — réessaie dans un instant.');
@@ -142,6 +153,40 @@ export default function AccessChooserForm() {
           ]}
         />
       </div>
+
+      {needsBirthYear && (
+        <div style={{ marginTop: 28, textAlign: 'left', maxWidth: 320, marginInline: 'auto' }}>
+          <label
+            htmlFor="welcome-birthyear"
+            style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.82)', marginBottom: 6 }}
+          >
+            Ton année de naissance
+          </label>
+          <input
+            id="welcome-birthyear"
+            type="number"
+            inputMode="numeric"
+            placeholder="2008"
+            min={currentYear - 120}
+            max={currentYear - 15}
+            value={birthYear}
+            onChange={(e) => setBirthYear(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px 14px',
+              borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.20)',
+              background: 'rgba(255,255,255,0.06)',
+              color: 'white',
+              fontSize: 15,
+              outline: 'none',
+            }}
+          />
+          <p style={{ margin: '6px 0 0', fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>
+            Requis : Digizelle est réservé aux 15 ans et plus.
+          </p>
+        </div>
+      )}
 
       <div
         style={{
