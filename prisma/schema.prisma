@@ -101,6 +101,11 @@ model User {
   /// (see src/lib/auth/totp-lockout.ts).
   failedTotpAttempts     Int       @default(0)
   totpLockedUntil        DateTime?
+  /// Last successful sign-in (credentials or OAuth), stamped in the auth
+  /// signIn event. Powers the RGPD inactive-account retention (soft-delete
+  /// after 3 years idle). Null for accounts that haven't signed in since this
+  /// column was added — those are NOT purged until they sign in again.
+  lastLoginAt            DateTime?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -138,6 +143,8 @@ model User {
   // Without an index Postgres falls back to a sequential scan; small
   // table today, but the cron is monthly and we want it cheap forever.
   @@index([deletedAt])
+  // Inactive-account retention cron filters by `lastLoginAt < threshold`.
+  @@index([lastLoginAt])
 }
 
 enum UserRole {

@@ -133,6 +133,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
      * already been through the onboarding once.
      */
     async signIn({ user, account, isNewUser }) {
+      // Stamp last sign-in for ALL providers (credentials + OAuth) — powers the
+      // RGPD inactive-account retention policy. Best-effort: never block login
+      // if the write fails.
+      if (user?.id) {
+        await prisma.user
+          .update({ where: { id: user.id }, data: { lastLoginAt: new Date() } })
+          .catch(() => {});
+      }
       if (!user?.id || !account || account.provider === 'credentials') return;
       if (isNewUser) {
         // Defensive write: if 20260509130000_user_product_access isn't
