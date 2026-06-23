@@ -48,6 +48,8 @@ export async function GET(request: Request): Promise<Response> {
     contactMessages: 0,
     moderationActions: 0,
     auditLogs: 0,
+    sessions: 0,
+    mentorshipMessages: 0,
   };
 
   // ─── 1. Digest ─────────────────────────────────────────────────────────

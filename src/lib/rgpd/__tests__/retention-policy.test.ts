@@ -19,6 +19,7 @@ test('retentionCutoffs applique les durées du registre', () => {
   assert.equal(c.inactiveAccounts.getTime(), NOW.getTime() - 3 * 365 * DAY);
   assert.equal(c.moderationActions.getTime(), NOW.getTime() - 3 * 365 * DAY);
   assert.equal(c.auditLogs.getTime(), NOW.getTime() - 5 * 365 * DAY);
+  assert.equal(c.mentorshipContent.getTime(), NOW.getTime() - 3 * 365 * DAY);
 });
 
 test('les durées correspondent au registre des traitements', () => {
@@ -28,4 +29,5 @@ test('les durées correspondent au registre des traitements', () => {
   assert.equal(RETENTION.inactiveAccountYears, 3);
   assert.equal(RETENTION.moderationYears, 3);
   assert.equal(RETENTION.auditLogYears, 5);
+  assert.equal(RETENTION.mentorshipContentYears, 3);
 });

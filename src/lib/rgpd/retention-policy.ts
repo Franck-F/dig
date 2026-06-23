@@ -16,6 +16,8 @@ export const RETENTION = {
   moderationYears: 3,
   /** journal d'audit : 5 ans (preuve en cas de litige). */
   auditLogYears: 5,
+  /** sessions & messages de mentorat : 3 ans après la fin du mentorat. */
+  mentorshipContentYears: 3,
 } as const;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -36,6 +38,7 @@ export type RetentionCutoffs = {
   contactMessages: Date;
   moderationActions: Date;
   auditLogs: Date;
+  mentorshipContent: Date;
 };
 
 /** Compute every retention cutoff date relative to `now`. */
@@ -47,5 +50,6 @@ export function retentionCutoffs(now: Date): RetentionCutoffs {
     contactMessages: daysAgo(now, RETENTION.contactMessageDays),
     moderationActions: yearsAgo(now, RETENTION.moderationYears),
     auditLogs: yearsAgo(now, RETENTION.auditLogYears),
+    mentorshipContent: yearsAgo(now, RETENTION.mentorshipContentYears),
   };
 }

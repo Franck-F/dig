@@ -9,6 +9,8 @@ export type RetentionPurgeResult = {
   contactMessages: number;
   moderationActions: number;
   auditLogs: number;
+  sessions: number;
+  mentorshipMessages: number;
 };
 
 /**
@@ -27,6 +29,8 @@ export async function runRetentionPurge(now: Date = new Date()): Promise<Retenti
     contactMessages: 0,
     moderationActions: 0,
     auditLogs: 0,
+    sessions: 0,
+    mentorshipMessages: 0,
   };
 
   // 1. Accounts inactive > 3 years → soft-delete (anonymise now, hard-purge at
@@ -89,6 +93,31 @@ export async function runRetentionPurge(now: Date = new Date()): Promise<Retenti
     result.auditLogs = r.count;
   } catch (e) {
     console.error('[retention] audit-log purge failed', e);
+  }
+
+  // 6. Mentorat content: sessions + messages 3 years after the mentorat ended
+  //    (Mentorship.endedAt). Reviews are intentionally kept (registre: avis
+  //    conservés tant que le profil mentor existe) — deleting a Session
+  //    SetNulls Review.sessionId, the Review row survives. The Mentorship
+  //    relationship row itself is also kept; only its detailed content goes.
+  try {
+    const ended = await prisma.mentorship.findMany({
+      where: { endedAt: { lt: cut.mentorshipContent } },
+      select: { id: true },
+    });
+    const ids = ended.map((m) => m.id);
+    if (ids.length > 0) {
+      const msgs = await prisma.mentorshipMessage.deleteMany({
+        where: { mentorshipId: { in: ids } },
+      });
+      const sess = await prisma.session.deleteMany({
+        where: { mentorshipId: { in: ids } },
+      });
+      result.mentorshipMessages = msgs.count;
+      result.sessions = sess.count;
+    }
+  } catch (e) {
+    console.error('[retention] mentorat-content purge failed', e);
   }
 
   return result;
