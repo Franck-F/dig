@@ -21,6 +21,9 @@ export async function isPasswordPwned(password: string): Promise<boolean> {
     const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`, {
       headers: { 'Add-Padding': 'true' },
       cache: 'no-store',
+      // Cap latency: a slow HIBP must never hang signup/reset. On timeout the
+      // fetch rejects → we fail-open via the catch below (policy still applies).
+      signal: AbortSignal.timeout(2500),
     });
     if (!res.ok) return false; // fail-open
 
