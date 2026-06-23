@@ -3,6 +3,14 @@ import { prisma } from '@/lib/prisma';
 import { softDeleteUser } from '@/lib/soft-delete/user';
 import { retentionCutoffs } from './retention-policy';
 
+/**
+ * Cap on inactive accounts soft-deleted per run. This purge shares a ~10s
+ * Vercel Hobby cron, so the per-user loop (transaction + audit log + Storage
+ * cleanup) must stay bounded — any backlog drains over subsequent daily runs.
+ * On a Pro plan, move this to a dedicated cron route and raise/remove the cap.
+ */
+const MAX_INACTIVE_ACCOUNTS_PER_RUN = 100;
+
 export type RetentionPurgeResult = {
   inactiveAccounts: number;
   notifications: number;
@@ -41,10 +49,16 @@ export async function runRetentionPurge(now: Date = new Date()): Promise<Retenti
     const stale = await prisma.user.findMany({
       where: { deletedAt: null, lastLoginAt: { lt: cut.inactiveAccounts } },
       select: { id: true },
+      take: MAX_INACTIVE_ACCOUNTS_PER_RUN,
     });
     for (const u of stale) {
       const r = await softDeleteUser(u.id, u.id, 'auto:inactive>3y');
       if (r.ok) result.inactiveAccounts += 1;
+    }
+    if (stale.length === MAX_INACTIVE_ACCOUNTS_PER_RUN) {
+      console.warn(
+        `[retention] inactive-account purge hit the per-run cap (${MAX_INACTIVE_ACCOUNTS_PER_RUN}); backlog remains, continues next run`,
+      );
     }
   } catch (e) {
     console.error('[retention] inactive-account purge failed', e);
@@ -120,5 +134,6 @@ export async function runRetentionPurge(now: Date = new Date()): Promise<Retenti
     console.error('[retention] mentorat-content purge failed', e);
   }
 
+  console.log('[retention] purge complete', result);
   return result;
 }
