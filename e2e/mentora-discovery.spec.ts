@@ -10,10 +10,9 @@ import { test, expect } from '@playwright/test';
 
 test('/mentora landing page advertises mentorship', async ({ page }) => {
   await page.goto('/mentora');
-  // Page should contain at least one CTA pointing to login or onboarding.
-  const cta = page.locator(
-    'a[href*="/login"], a[href*="/mentora/onboarding"], a:has-text("Devenir mentor")',
-  ).first();
+  // The "become a mentor" CTA lives in the page body, so it's visible on
+  // mobile too (the header login link collapses into the burger menu).
+  const cta = page.locator('a[href="/mentora/become-a-mentor"]').first();
   await expect(cta).toBeVisible();
 });
 

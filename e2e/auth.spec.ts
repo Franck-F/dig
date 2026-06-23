@@ -17,11 +17,12 @@ test.describe('/login', () => {
   test('shows an inline error when the form is submitted empty', async ({ page }) => {
     await page.goto('/login');
     await page.locator('button[type="submit"]').first().click();
-    // Either HTML5 validation kicks in (input:invalid) or the server
-    // returns an inline message — at least one must show.
-    const invalid = page.locator('input:invalid').first();
-    const alert = page.locator('[role="alert"], .dz-error, [data-error]').first();
-    await expect(invalid.or(alert)).toBeVisible({ timeout: 5_000 });
+    // The required email/password inputs become :invalid (HTML5 validation) —
+    // that's the inline error. Count them rather than .or() the always-present
+    // route-announcer (role=alert), which would trip strict-mode.
+    await expect
+      .poll(() => page.locator('input:invalid').count(), { timeout: 5_000 })
+      .toBeGreaterThan(0);
   });
 
   test('exposes at least one OAuth provider button', async ({ page }) => {

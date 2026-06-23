@@ -49,17 +49,22 @@ for (const path of PUBLIC_PATHS) {
 
 test('homepage has the expected hero call-to-action', async ({ page }) => {
   await page.goto('/');
-  // Header link to login OR a hero CTA — at least one is always present.
-  const heroOrLogin = page.locator('a[href*="/login"]').first();
-  await expect(heroOrLogin).toBeVisible();
+  // The hero's primary CTA lives in the hero body, so it stays visible on
+  // mobile too (the header login link collapses into the burger menu).
+  const heroCta = page.locator('.dz-hero a[href*="/contact"]').first();
+  await expect(heroCta).toBeVisible();
 });
 
 test('cookie consent banner appears on first visit', async ({ context, page }) => {
+  // Consent is persisted in localStorage (not a cookie); a fresh context is
+  // already empty, but clear both to be explicit about "first visit".
   await context.clearCookies();
   await page.goto('/');
-  // The consent banner is rendered as <CookieConsent>. We don't
-  // assert a fixed copy (i18n + design churn) — only that something
-  // banner-shaped is visible above the fold.
-  const banner = page.locator('[role="dialog"], [aria-label*="cookie" i], [aria-label*="consent" i]').first();
+  await page.evaluate(() => window.localStorage.clear());
+  await page.reload();
+  // Target the cookie banner specifically: it's the only role=dialog that
+  // contains the "/cookies" learn-more link (the mobile-nav panel is also a
+  // role=dialog, so a generic selector would match the wrong, hidden one).
+  const banner = page.locator('div[role="dialog"]:has(a[href="/cookies"])').first();
   await expect(banner).toBeVisible({ timeout: 10_000 });
 });
