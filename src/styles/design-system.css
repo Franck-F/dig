@@ -2259,6 +2259,18 @@ body.dz-theme-dark input[type="time"]::-webkit-calendar-picker-indicator {
     0 2px 4px rgba(26, 22, 48, 0.05),
     0 20px 40px -20px rgba(26, 22, 48, 0.22);
 }
+/* Featured card must keep its branded violet gradient. The solid-white
+   `.dz-card` override above has equal specificity but comes later in the
+   file than `.dz-card-feature` (≈line 605), so without this it clobbers
+   the gradient and the white-on-violet text turns invisible. */
+.dz-card-feature {
+  background: linear-gradient(160deg, var(--brand-violet) 0%, var(--brand-violet-light) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 20px 50px -10px rgba(115, 1, 255, 0.45),
+    0 6px 18px -6px rgba(244, 111, 177, 0.28);
+}
 body.dz-theme-dark .dz-card {
   background: rgba(36, 28, 72, 0.72);
   border-color: rgba(255, 255, 255, 0.08);

@@ -22,8 +22,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // consent later doesn't clobber the user's current in-session theme.
   const [didInit, setDidInit] = useState(false);
 
-  // Initial read: only consult localStorage if preferences consent is granted.
-  // Otherwise fall back to system preference, kept in memory only.
+  // Initial read: only consult localStorage if preferences consent is granted,
+  // and only to restore an explicit user choice. With no saved choice the
+  // default at launch is always light (we deliberately ignore the system's
+  // prefers-color-scheme so the app opens in light mode by default).
   // SSR has no DOM/localStorage; the post-mount effect is the only
   // place we can read them, hence setState-in-effect is intrinsic.
   useEffect(() => {
@@ -39,9 +41,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setDidInit(true);
         return;
       }
-    }
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setThemeState('dark');
     }
     setDidInit(true);
   }, [consent, isHydrated, didInit]);
