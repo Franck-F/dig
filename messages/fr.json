@@ -2256,6 +2256,16 @@
       "activeMentorship": "Mentorat actif depuis {months} mois",
       "noMentorship": "Aucun mentorship en cours",
       "memberSince": "Membre depuis {date}"
+    },
+    "badges": {
+      "reactive": "Très réactif·ve",
+      "reactiveHint": "Répond généralement en moins de 24 h",
+      "engaged": "Super engagé·e",
+      "engagedHint": "Accompagne activement des mentoré·es",
+      "complementary": "Profil complémentaire",
+      "complementaryHint": "Son parcours correspond à votre projet",
+      "available": "Disponible",
+      "full": "Complet"
     }
   },
   "team": {

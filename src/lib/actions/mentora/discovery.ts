@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { PreferredFormat, Prisma } from '@prisma/client';
+import { PreferredFormat, Prisma, type ResponseTime } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
   type MatchResult,
@@ -9,6 +9,7 @@ import {
   type MenteeContext,
   rankMentors,
 } from '@/lib/mentora/matching';
+import { computeMentorBadges, isMentorAvailable, type MentorBadge } from '@/lib/mentora/badges';
 import { normaliseQuery } from '@/lib/search/tsquery';
 import { type ActionResult, errorResult, handleError, requireUser, successResult } from './_helpers';
 
@@ -27,7 +28,31 @@ export type MentorCardData = {
   reviewCount: number;
   topSkills: { id: string; name: string; slug: string }[];
   match?: MatchResult; // present when scoring applied
+  responseTime: ResponseTime;
+  completedSessions: number;
+  activeMentorships: number;
+  isAvailable: boolean;
+  badges: MentorBadge[];
 };
+
+/** Completed-session count per mentor profile, one grouped query. */
+async function completedSessionsByProfile(
+  mentorshipToProfile: Map<string, string>,
+): Promise<Map<string, number>> {
+  const out = new Map<string, number>();
+  if (mentorshipToProfile.size === 0) return out;
+  const rows = await prisma.session.groupBy({
+    by: ['mentorshipId'],
+    where: { status: 'COMPLETED', mentorshipId: { in: [...mentorshipToProfile.keys()] } },
+    _count: { _all: true },
+  });
+  for (const r of rows) {
+    const pid = mentorshipToProfile.get(r.mentorshipId);
+    if (!pid) continue;
+    out.set(pid, (out.get(pid) ?? 0) + r._count._all);
+  }
+  return out;
+}
 
 const filtersSchema = z.object({
   q: z.string().max(200).optional(),
@@ -224,10 +249,13 @@ export async function discoverMentors(
       cur.n += r._count._all;
       aggByProfile.set(pid, cur);
     }
+    const completedByProfile = await completedSessionsByProfile(mentorshipMap);
 
     let items: MentorCardData[] = profiles.map((p) => {
       const agg = aggByProfile.get(p.id);
       const avg = agg && agg.n > 0 ? agg.sum / agg.n : null;
+      const activeMentorships = p._count.mentorships;
+      const completedSessions = completedByProfile.get(p.id) ?? 0;
       return {
         mentorProfileId: p.id,
         userId: p.userId,
@@ -241,6 +269,15 @@ export async function discoverMentors(
         averageRating: avg,
         reviewCount: agg?.n ?? 0,
         topSkills: p.skills.map((ms) => ({ id: ms.skill.id, name: ms.skill.name, slug: ms.skill.slug })),
+        responseTime: p.responseTime,
+        completedSessions,
+        activeMentorships,
+        isAvailable: isMentorAvailable({
+          isAcceptingMentees: p.isAcceptingMentees,
+          activeMentorships,
+          maxConcurrentMentees: p.maxConcurrentMentees,
+        }),
+        badges: computeMentorBadges({ responseTime: p.responseTime, completedSessions, activeMentorships }),
       };
     });
 
@@ -351,11 +388,14 @@ export async function recommendMentorsForMe(): Promise<ActionResult<MentorCardDa
     });
 
     const ranked = rankMentors(menteeCtx, candidateInputs, { limit: 20 });
+    const completedByProfile = await completedSessionsByProfile(mentorshipToProfile);
 
     const profileById = new Map(candidates.map((c) => [c.id, c]));
     const items: MentorCardData[] = ranked.map((r) => {
       const p = profileById.get(r.mentorProfileId)!;
       const ratingAgg = ratingByProfile.get(p.id);
+      const activeMentorships = p.mentorships.filter((m) => m.status === 'ACTIVE').length;
+      const completedSessions = completedByProfile.get(p.id) ?? 0;
       return {
         mentorProfileId: p.id,
         userId: p.userId,
@@ -373,6 +413,20 @@ export async function recommendMentorsForMe(): Promise<ActionResult<MentorCardDa
           .slice(0, 5)
           .map((ms) => ({ id: ms.skill.id, name: ms.skill.name, slug: ms.skill.slug })),
         match: r,
+        responseTime: p.responseTime,
+        completedSessions,
+        activeMentorships,
+        isAvailable: isMentorAvailable({
+          isAcceptingMentees: p.isAcceptingMentees,
+          activeMentorships,
+          maxConcurrentMentees: p.maxConcurrentMentees,
+        }),
+        badges: computeMentorBadges({
+          responseTime: p.responseTime,
+          completedSessions,
+          activeMentorships,
+          matchScore: r.total,
+        }),
       };
     });
     return successResult(items);

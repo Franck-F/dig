@@ -3739,6 +3739,16 @@
       "CAREER": "Career",
       "BUSINESS": "Business",
       "CREATIVE": "Creative"
+    },
+    "badges": {
+      "reactive": "Very responsive",
+      "reactiveHint": "Usually replies within 24 hours",
+      "engaged": "Highly engaged",
+      "engagedHint": "Actively mentoring mentees",
+      "complementary": "Complementary profile",
+      "complementaryHint": "Their background matches your project",
+      "available": "Available",
+      "full": "Full"
     }
   },
   "notFound": {
