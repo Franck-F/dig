@@ -2,6 +2,7 @@ import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import { withSentryConfig } from '@sentry/nextjs';
 import withBundleAnalyzer from '@next/bundle-analyzer';
+import { MENTORA_LEGACY_REDIRECTS } from './src/lib/mentora/legacy-redirects';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -166,6 +167,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Retired Mentorat dashboard pages (Oct 2026 slim-down) keep their URLs alive.
+  async redirects() {
+    return MENTORA_LEGACY_REDIRECTS;
+  },
   async headers() {
     return [
       {

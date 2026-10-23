@@ -112,7 +112,7 @@ export default function SlotPicker({
                   vos mentorées puissent réserver toutes seules.
                 </p>
                 <Link
-                  href="/mentora/dashboard/availability"
+                  href="/mentora/dashboard/profile/edit#disponibilites"
                   style={{
                     fontSize: 12,
                     fontWeight: 700,

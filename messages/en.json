@@ -131,22 +131,6 @@
     },
     "shell": {
       "nav": {
-        "mentee": {
-          "overview": "Dashboard",
-          "mentors": "My mentors",
-          "sessions": "Sessions",
-          "messages": "Messages",
-          "goals": "Goals",
-          "notifications": "Notifications"
-        },
-        "mentor": {
-          "overview": "Dashboard",
-          "mentees": "My mentees",
-          "sessions": "Agenda",
-          "messages": "Messages",
-          "availability": "Availability",
-          "notifications": "Notifications"
-        },
         "admin": {
           "overview": "Pilot",
           "cycles": "Cycles",
@@ -2624,48 +2608,6 @@
           "5": { "title": "Salary & negotiation workshop · replay", "meta": "by Sofia K. · 320 downloads", "tag": "Video", "icon": "videos" }
         }
       },
-      "agendaPage": {
-        "kicker": "Mentorat · Sessions",
-        "title": "Agenda",
-        "rangeLabel": "Week of {start} to {end}",
-        "today": "Today",
-        "viewWeek": "Week",
-        "viewMonth": "Month",
-        "viewList": "List",
-        "kpis": {
-          "thisWeek": "Sessions this week",
-          "hoursPlanned": "Hours planned",
-          "freeSlots": "Free slots",
-          "thisMonth": "Sessions this month"
-        },
-        "kpiHours": "{hours} h{minutes, select, 0 {} other {{minutes}}}",
-        "days": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
-        "noSessions": "No sessions scheduled this week.",
-        "untitledSession": "Mentorship session"
-      },
-      "feedbacksPage": {
-        "kicker": "Mentee feedback",
-        "title": "Feedbacks",
-        "kpis": {
-          "average": "Average rating",
-          "averageMeta": "across {count} reviews",
-          "recommendation": "Recommendation",
-          "recommendationMeta": "{recommended} of {total} mentees",
-          "totalSessions": "Sessions delivered",
-          "totalSessionsMeta": "since {since}",
-          "completion": "Completion rate",
-          "completionMeta": "cycles finished"
-        },
-        "topMentor": {
-          "tag": "★ TOP MENTOR — Q1 2026",
-          "title": "You're in the top 5% best-rated mentors.",
-          "body": "Thank you for your commitment to the Digizelle community."
-        },
-        "listTitle": "Reviews from your mentees",
-        "empty": "No reviews yet. Your first reviews will land here as soon as a mentee wraps up a cycle.",
-        "anonReviewer": "Digizelle mentee",
-        "cycleAndDate": "{cycle} · {date}"
-      },
       "resourcesPage": {
         "kicker": "Library",
         "menteeTitle": "Resources",
@@ -2712,31 +2654,6 @@
           "1": { "kind": "Notion", "title": "Career plan template", "meta": "Shared with 5 mentees · updated March 12" },
           "2": { "kind": "Replay", "title": "Masterclass: portfolio in 3 weeks", "meta": "Shared with 124 views · public replay" },
           "3": { "kind": "PDF", "title": "Tech interview cheatsheet", "meta": "Shared with 12 mentees · created in January" }
-        }
-      },
-      "goalsPage": {
-        "kicker": "Journey tracking",
-        "title": "My goals",
-        "subtitle": "Your mentorship goals, tracked with your mentor.",
-        "empty": "No goals yet. During a session, your mentor will set some with you.",
-        "kpis": {
-          "active": "Active goals",
-          "completed": "Steps completed",
-          "avgTime": "Avg time / step",
-          "nextDeadline": "Next deadline"
-        },
-        "kpiAvgDays": "{days} d",
-        "kpiAvgEmpty": "—",
-        "kpiNextEmpty": "—",
-        "listTitle": "{count, plural, =0 {No goals in progress} =1 {My goal in progress} other {My # goals in progress}}",
-        "card": {
-          "onTrack": "✓ On track",
-          "achieved": "✓ Achieved",
-          "newGoal": "+ New goal",
-          "withMentor": "With {name}",
-          "completedAt": "Completed on {date}",
-          "createdAt": "Created on {date}",
-          "completedSuffix": "complete"
         }
       },
       "nav": {

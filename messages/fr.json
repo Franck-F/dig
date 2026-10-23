@@ -974,56 +974,6 @@
           }
         }
       },
-      "agendaPage": {
-        "kicker": "Mentorat · Sessions",
-        "title": "Agenda",
-        "rangeLabel": "Semaine du {start} au {end}",
-        "today": "Aujourd'hui",
-        "viewWeek": "Semaine",
-        "viewMonth": "Mois",
-        "viewList": "Liste",
-        "kpis": {
-          "thisWeek": "Sessions cette semaine",
-          "hoursPlanned": "Heures planifiées",
-          "freeSlots": "Créneaux libres",
-          "thisMonth": "Sessions ce mois"
-        },
-        "kpiHours": "{hours} h{minutes, select, 0 {} other {{minutes}}}",
-        "days": [
-          "LUN",
-          "MAR",
-          "MER",
-          "JEU",
-          "VEN",
-          "SAM",
-          "DIM"
-        ],
-        "noSessions": "Aucune session planifiée pour cette semaine.",
-        "untitledSession": "Session de mentorat"
-      },
-      "feedbacksPage": {
-        "kicker": "Retours mentorés",
-        "title": "Feedbacks",
-        "kpis": {
-          "average": "Note moyenne",
-          "averageMeta": "sur {count} retours",
-          "recommendation": "Recommandation",
-          "recommendationMeta": "{recommended} mentorées sur {total}",
-          "totalSessions": "Sessions cumulées",
-          "totalSessionsMeta": "depuis {since}",
-          "completion": "Taux de complétion",
-          "completionMeta": "cycles terminés"
-        },
-        "topMentor": {
-          "tag": "★ TOP MENTOR — Q1 2026",
-          "title": "Tu fais partie des 5 % mentors les mieux notés.",
-          "body": "Merci pour ton engagement auprès de la communauté Digizelle."
-        },
-        "listTitle": "Retours de vos mentorées",
-        "empty": "Aucun retour pour le moment. Tes premières reviews apparaîtront ici dès qu'une mentorée terminera un cycle.",
-        "anonReviewer": "Mentorée Digizelle",
-        "cycleAndDate": "{cycle} · {date}"
-      },
       "resourcesPage": {
         "kicker": "Bibliothèque",
         "menteeTitle": "Ressources",
@@ -1122,31 +1072,6 @@
             "title": "Cheatsheet entretien tech",
             "meta": "Partagé avec 12 mentorées · créé en janvier"
           }
-        }
-      },
-      "goalsPage": {
-        "kicker": "Suivi de parcours",
-        "title": "Mes objectifs",
-        "subtitle": "Tes objectifs de mentorat, suivis avec ton·ta mentor·e.",
-        "empty": "Tu n'as pas encore d'objectifs. Lors d'une session, ton·ta mentor·e en ajoutera avec toi.",
-        "kpis": {
-          "active": "Objectifs actifs",
-          "completed": "Étapes terminées",
-          "avgTime": "Temps moyen / étape",
-          "nextDeadline": "Échéance la plus proche"
-        },
-        "kpiAvgDays": "{days} j",
-        "kpiAvgEmpty": "—",
-        "kpiNextEmpty": "—",
-        "listTitle": "{count, plural, =0 {Aucun objectif en cours} =1 {Mon objectif en cours} other {Mes # objectifs en cours}}",
-        "card": {
-          "onTrack": "✓ Sur la bonne voie",
-          "achieved": "✓ Atteint",
-          "newGoal": "+ Nouvel objectif",
-          "withMentor": "Avec {name}",
-          "completedAt": "Atteint le {date}",
-          "createdAt": "Créé le {date}",
-          "completedSuffix": "complété"
         }
       },
       "nav": {
@@ -2318,27 +2243,6 @@
       "CAREER": "Carrière",
       "BUSINESS": "Business",
       "CREATIVE": "Créatif"
-    },
-    "activity": {
-      "pageTitle": "Mon activité",
-      "pageSubtitle": "Toute ton historique en un coup d'œil",
-      "filters": {
-        "all": "Tout",
-        "sessions": "Sessions",
-        "messages": "Messages",
-        "reviews": "Avis",
-        "requests": "Demandes",
-        "goals": "Objectifs",
-        "mentorships": "Mentorats"
-      },
-      "range": {
-        "30d": "30 derniers jours",
-        "year": "Cette année",
-        "all": "Tout"
-      },
-      "loadMore": "Charger plus",
-      "empty": "Aucune activité pour l'instant",
-      "export": "Exporter (CSV)"
     },
     "menteePublic": {
       "metaTitle": "Profil mentee · Digizelle",
@@ -4528,22 +4432,6 @@
     },
     "shell": {
       "nav": {
-        "mentee": {
-          "overview": "Tableau de bord",
-          "mentors": "Mes mentors",
-          "sessions": "Sessions",
-          "messages": "Messages",
-          "goals": "Objectifs",
-          "notifications": "Notifications"
-        },
-        "mentor": {
-          "overview": "Tableau de bord",
-          "mentees": "Mes mentorées",
-          "sessions": "Agenda",
-          "messages": "Messages",
-          "availability": "Disponibilités",
-          "notifications": "Notifications"
-        },
         "admin": {
           "overview": "Pilotage",
           "cycles": "Cycles",

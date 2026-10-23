@@ -141,7 +141,7 @@ Si l'utilisateur a `role === 'ADMIN'` : pill **« ✦ Admin Mentora »** dans le
 #### Sous-routes mentee
 - `/mentora/dashboard/mentorships` — liste de tous les mentorats actifs / passés
 - `/mentora/dashboard/mentorships/[id]` — page mentorat avec onglets : Sessions / Messages / Objectifs / Notes
-- `/mentora/dashboard/sessions` — agenda complet
+- `/mentora/dashboard/sessions` — toutes les sessions (l'ancien Agenda y redirige)
 - `/mentora/dashboard/sessions/new` — proposer un créneau (slot picker)
 - `/mentora/dashboard/sessions/[id]` — détail d'une session avec actions (rejoindre, annuler, replanifier)
 - `/mentora/dashboard/messages` — messagerie type Slack DM
@@ -163,8 +163,7 @@ Si l'utilisateur a `role === 'ADMIN'` : pill **« ✦ Admin Mentora »** dans le
 | Card impact gradient | Heures de mentorat données, nombre de mentorées aidées, embauches, level-ups |
 
 #### Sous-routes mentor (en plus de celles partagées)
-- `/mentora/dashboard/availability` — éditeur de règles récurrentes + exceptions (vacances, blocages)
-- `/mentora/dashboard/profile/edit` — bio, expertises, séniorité, langues, charte
+- `/mentora/dashboard/profile/edit` — bio, expertises, séniorité, langues, charte + section `#disponibilites` (règles récurrentes + exceptions)
 - `/mentora/dashboard/requests` — demandes de mentorat reçues (accepter / refuser)
 
 ---
@@ -412,7 +411,7 @@ Pas de seed par défaut pour les utilisateurs. Crée des comptes via `/login` �
 - Auth complète (credentials + OAuth Google / Discord / GitHub + verif email + reset password) — **env vars OAuth + Resend posées**
 - **Rate-limit auth** (in-memory + Upstash Redis quand `UPSTASH_REDIS_REST_*` est posé) — 6 buckets (signIn / signUp / verify / resend / reset / confirm)
 - Mentora end-to-end (15 modèles, 30+ server actions, onboardings mentee + mentor, dashboard par rôle, sessions, messages, ressources, notifications)
-  - **Mon profil** + **Activité timeline** (mentor + mentee) + **profil public `/mentora/mentees/[handle]`**
+  - **Profil public `/mentora/mentees/[handle]`** ; hub « Mon profil », Agenda, Feedbacks, Activité et Objectifs retirés (allègement oct. 2026, redirections dans `src/lib/mentora/legacy-redirects.ts`)
   - **Onboarding mentor** : soumission atomique en 1 transaction Prisma (profil + skills + dispos) — supprime les ~15 s de « Envoi… » cold-start
   - **`SlotGrid` responsive** mobile/desktop (hook `useIsNarrow`)
 - Community end-to-end (17 modèles, feed, channels, posts, comments, reactions, bookmarks, hashtags, mentions, badges, modération, challenges)
@@ -481,8 +480,8 @@ Pas de seed par défaut pour les utilisateurs. Crée des comptes via `/login` �
 | Dispatcher /community | [`src/app/community/page.tsx`](src/app/community/page.tsx) |
 | Dashboard mentora | [`src/app/mentora/dashboard/layout.tsx`](src/app/mentora/dashboard/layout.tsx) + `_components/{MentorOverview,MenteeOverview}.tsx` |
 | Admin mentora | [`src/app/mentora/admin/`](src/app/mentora/admin) |
-| Profil mentee (self + public) | [`src/app/mentora/dashboard/profile/page.tsx`](src/app/mentora/dashboard/profile/page.tsx) + [`src/app/mentora/mentees/[handle]/page.tsx`](src/app/mentora/mentees/[handle]/page.tsx) |
-| Activité timeline | [`src/app/mentora/dashboard/activity/page.tsx`](src/app/mentora/dashboard/activity/page.tsx) |
+| Profil (édition + public) | [`src/app/mentora/dashboard/profile/edit/page.tsx`](src/app/mentora/dashboard/profile/edit/page.tsx) + [`src/app/mentora/mentees/[handle]/page.tsx`](src/app/mentora/mentees/[handle]/page.tsx) |
+| Navigation mentora | [`src/lib/mentora/nav.ts`](src/lib/mentora/nav.ts) + [`src/lib/mentora/legacy-redirects.ts`](src/lib/mentora/legacy-redirects.ts) |
 | Rate-limit auth | [`src/lib/rate-limit/auth-limiter.ts`](src/lib/rate-limit/auth-limiter.ts) + [`./upstash.ts`](src/lib/rate-limit/upstash.ts) |
 | Notifications mentora | [`src/lib/mentora/notifications.ts`](src/lib/mentora/notifications.ts) |
 | Cron mentora (quotidien) | [`src/app/api/cron/sessions-reminder/route.ts`](src/app/api/cron/sessions-reminder/route.ts) |
