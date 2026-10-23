@@ -42,7 +42,7 @@ export async function addAvailabilityRule(
       },
       select: { id: true },
     });
-    revalidatePath('/mentora/dashboard/availability');
+    revalidatePath('/mentora/dashboard/profile/edit');
     return successResult(row);
   } catch (err) {
     return handleError(err);
@@ -73,7 +73,7 @@ export async function updateAvailabilityRule(
       },
       select: { id: true },
     });
-    revalidatePath('/mentora/dashboard/availability');
+    revalidatePath('/mentora/dashboard/profile/edit');
     return successResult(row);
   } catch (err) {
     return handleError(err);
@@ -95,7 +95,7 @@ export async function deleteAvailabilityRule(
       throw new MentoratError('notFound');
     }
     await prisma.availabilityRule.delete({ where: { id: parsed.data.id } });
-    revalidatePath('/mentora/dashboard/availability');
+    revalidatePath('/mentora/dashboard/profile/edit');
     return successResult();
   } catch (err) {
     return handleError(err);
@@ -137,7 +137,7 @@ export async function addAvailabilityException(
       },
       select: { id: true },
     });
-    revalidatePath('/mentora/dashboard/availability');
+    revalidatePath('/mentora/dashboard/profile/edit');
     return successResult(row);
   } catch (err) {
     return handleError(err);
@@ -181,7 +181,7 @@ export async function setAvailabilityRules(
       });
       return { count: created.count };
     });
-    revalidatePath('/mentora/dashboard/availability');
+    revalidatePath('/mentora/dashboard/profile/edit');
     return successResult(result);
   } catch (err) {
     return handleError(err);
@@ -203,7 +203,7 @@ export async function deleteAvailabilityException(
       throw new MentoratError('notFound');
     }
     await prisma.availabilityException.delete({ where: { id: parsed.data.id } });
-    revalidatePath('/mentora/dashboard/availability');
+    revalidatePath('/mentora/dashboard/profile/edit');
     return successResult();
   } catch (err) {
     return handleError(err);

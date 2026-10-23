@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/getCurrentRoleProfile';
 import MentorProfileForm from './MentorProfileForm';
 import MentorProfilePreview from './MentorProfilePreview';
+import AvailabilityEditor from './AvailabilityEditor';
+import ExceptionsList from './ExceptionsList';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,8 +45,14 @@ export default async function ProfileEditPage() {
     redirect('/mentora/onboarding');
   }
 
-  // Re-fetch profile with skill names + reviews aggregate for preview.
-  const [profile, allSkills, ratingAgg] = await Promise.all([
+  // Upcoming exceptions only — past blackout days are noise in settings.
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  // Re-fetch profile with skill names + reviews aggregate for preview, plus
+  // the availability rules/exceptions (the standalone availability page was
+  // folded into this settings page).
+  const [profile, allSkills, ratingAgg, rules, exceptions, tAvail] = await Promise.all([
     prisma.mentorProfile.findUnique({
       where: { id: role.mentorProfile.id },
       include: {
@@ -57,6 +65,15 @@ export default async function ProfileEditPage() {
       _avg: { rating: true },
       _count: { _all: true },
     }),
+    prisma.availabilityRule.findMany({
+      where: { mentorProfileId: role.mentorProfile.id },
+      orderBy: [{ dayOfWeek: 'asc' }, { startMinute: 'asc' }],
+    }),
+    prisma.availabilityException.findMany({
+      where: { mentorProfileId: role.mentorProfile.id, date: { gte: today } },
+      orderBy: { date: 'asc' },
+    }),
+    getTranslations('mentora.availability'),
   ]);
 
   if (!profile) redirect('/mentora/become-a-mentor');
@@ -105,6 +122,45 @@ export default async function ProfileEditPage() {
           />
         }
       />
+
+      <section
+        id="disponibilites"
+        className="dz-card"
+        style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20, scrollMarginTop: 96 }}
+      >
+        <header>
+          <h2 className="dz-h3" style={{ fontSize: 24 }}>{tAvail('title')}</h2>
+          <p className="dz-small" style={{ marginTop: 6, maxWidth: 720 }}>{tAvail('subtitle')}</p>
+          <p className="dz-small" style={{ marginTop: 4 }}>
+            {tAvail('timezoneLabel', { tz: profile.timezone })}
+          </p>
+        </header>
+        <div>
+          <h3 className="dz-h3" style={{ fontSize: 18, marginBottom: 12 }}>{tAvail('weeklyTitle')}</h3>
+          <AvailabilityEditor
+            initialRules={rules.map((r) => ({
+              id: r.id,
+              dayOfWeek: r.dayOfWeek,
+              startMinute: r.startMinute,
+              endMinute: r.endMinute,
+            }))}
+            mentorTimezone={profile.timezone}
+          />
+        </div>
+        <div>
+          <h3 className="dz-h3" style={{ fontSize: 18, marginBottom: 12 }}>{tAvail('exceptionsTitle')}</h3>
+          <ExceptionsList
+            initialExceptions={exceptions.map((e) => ({
+              id: e.id,
+              date: e.date.toISOString().slice(0, 10),
+              startMinute: e.startMinute,
+              endMinute: e.endMinute,
+              kind: e.kind,
+              note: e.note,
+            }))}
+          />
+        </div>
+      </section>
     </div>
   );
 }

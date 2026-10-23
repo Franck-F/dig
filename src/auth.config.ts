@@ -70,7 +70,7 @@ export const authConfig = {
     /**
      * Route protection — runs in middleware (Edge).
      * Edge constraint: no DB access, so we only check auth presence here.
-     * Role-dependent gates (e.g. mentor-only `/mentora/dashboard/availability`)
+     * Role-dependent gates (e.g. the mentor-only availability section of `/mentora/dashboard/profile/edit`)
      * are enforced at page level via `getCurrentRoleProfile()`.
      */
     authorized({ auth, request: { nextUrl } }) {
