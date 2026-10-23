@@ -3366,7 +3366,7 @@
         "reactive": "Very responsive only",
         "sort": "Sort by",
         "sortRelevance": "Relevance",
-        "sortRecent": "Last login"
+        "sortRecent": "Recent activity"
       },
       "sort": {
         "label": "Sort by",

@@ -123,7 +123,9 @@ export async function discoverMentors(
       return successResult({ items: [], total: 0, page, pageSize });
     }
 
-    if (tsq) {
+    // "Activité récente" also goes through raw SQL: it orders by a coarse
+    // activity bucket computed in Postgres (see `orderBy` below).
+    if (tsq || sortRecent) {
       // Replicate the WHERE filters in SQL — kept narrow so the GIN
       // scan does most of the work. The `languages` filter uses
       // Postgres array overlap (`&&`); `skillSlugs` joins through the
@@ -156,10 +158,25 @@ export async function discoverMentors(
       const reactiveFilter = parsed.data.reactiveOnly
         ? Prisma.sql`AND mp."responseTime" IN ('WITHIN_HOUR', 'WITHIN_DAY')`
         : Prisma.empty;
-      // "Dernière connexion" keeps the text filter but orders by the mentor's
-      // last login instead of FTS rank.
+      const tsFilter = tsq
+        ? Prisma.sql`AND mp."searchTsv" @@ to_tsquery('french', ${tsq})`
+        : Prisma.empty;
+      const rankExpr = tsq
+        ? Prisma.sql`ts_rank(mp."searchTsv", to_tsquery('french', ${tsq}))`
+        : Prisma.sql`0`;
+      // Privacy: never order by the raw `lastLoginAt` — that would let any
+      // member read mentors' exact relative presence. Use three coarse
+      // buckets (≤ 7 days, ≤ 30 days, older/never) and break ties by
+      // publication date, which is already public.
       const orderBy = sortRecent
-        ? Prisma.sql`ORDER BY u."lastLoginAt" DESC NULLS LAST, mp."publishedAt" DESC NULLS LAST`
+        ? Prisma.sql`ORDER BY
+            CASE
+              WHEN u."lastLoginAt" >= NOW() - INTERVAL '7 days' THEN 0
+              WHEN u."lastLoginAt" >= NOW() - INTERVAL '30 days' THEN 1
+              ELSE 2
+            END ASC,
+            rank DESC,
+            mp."publishedAt" DESC NULLS LAST`
         : Prisma.sql`ORDER BY rank DESC, mp."publishedAt" DESC NULLS LAST`;
 
       const offset = (page - 1) * pageSize;
@@ -168,10 +185,10 @@ export async function discoverMentors(
         prisma.$queryRaw<Array<{ total: bigint }>>`
           SELECT COUNT(*)::bigint AS total
           FROM "MentorProfile" mp
-          WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
-            AND mp.status = 'ACTIVE'
+          WHERE mp.status = 'ACTIVE'
             AND mp."isAcceptingMentees" = true
             AND mp."deletedAt" IS NULL
+            ${tsFilter}
             ${langOverlap}
             ${skillJoin}
             ${categoryJoin}
@@ -180,13 +197,13 @@ export async function discoverMentors(
         prisma.$queryRaw<Array<{ id: string; rank: number }>>`
           SELECT
             mp.id,
-            ts_rank(mp."searchTsv", to_tsquery('french', ${tsq})) AS rank
+            ${rankExpr} AS rank
           FROM "MentorProfile" mp
           JOIN "User" u ON u.id = mp."userId"
-          WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
-            AND mp.status = 'ACTIVE'
+          WHERE mp.status = 'ACTIVE'
             AND mp."isAcceptingMentees" = true
             AND mp."deletedAt" IS NULL
+            ${tsFilter}
             ${langOverlap}
             ${skillJoin}
             ${categoryJoin}
@@ -226,9 +243,7 @@ export async function discoverMentors(
           where,
           skip: (page - 1) * pageSize,
           take: pageSize,
-          orderBy: sortRecent
-            ? [{ user: { lastLoginAt: { sort: 'desc', nulls: 'last' } } }, { publishedAt: 'desc' }]
-            : [{ publishedAt: 'desc' }],
+          orderBy: [{ publishedAt: 'desc' }],
           include: profileInclude,
         }),
       ]);
