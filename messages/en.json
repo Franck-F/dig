@@ -3348,9 +3348,6 @@
       "searchPlaceholder": "Search a mentor, a skill...",
       "filters": {
         "title": "Filters",
-        "skills": "Skills",
-        "skillsPlaceholder": "E.g.: react, ux, product",
-        "skillsHint": "Slugs separated by commas.",
         "language": "Language",
         "languageAny": "All",
         "format": "Format",
@@ -3363,7 +3360,13 @@
         "rating4": "4★ and up",
         "rating4_5": "4.5★ and up",
         "apply": "Apply",
-        "reset": "Reset"
+        "reset": "Reset",
+        "category": "Field",
+        "categoryAny": "All fields",
+        "reactive": "Very responsive only",
+        "sort": "Sort by",
+        "sortRelevance": "Relevance",
+        "sortRecent": "Last login"
       },
       "sort": {
         "label": "Sort by",

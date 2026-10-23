@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { PreferredFormat, Prisma, type ResponseTime } from '@prisma/client';
+import { PreferredFormat, Prisma, SkillCategory, type ResponseTime } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
   type MatchResult,
@@ -60,6 +60,9 @@ const filtersSchema = z.object({
   languages: z.array(z.string()).optional(),
   format: z.nativeEnum(PreferredFormat).optional(),
   minRating: z.number().int().min(1).max(5).optional(),
+  category: z.nativeEnum(SkillCategory).optional(),
+  reactiveOnly: z.boolean().optional(),
+  sort: z.enum(['relevance', 'recent']).optional(),
   page: z.number().int().min(1).optional(),
   pageSize: z.number().int().min(1).max(50).optional(),
 });
@@ -84,9 +87,18 @@ export async function discoverMentors(
     if (parsed.data.languages && parsed.data.languages.length > 0) {
       where.languages = { hasSome: parsed.data.languages };
     }
+    const and: Prisma.MentorProfileWhereInput[] = [];
     if (parsed.data.skillSlugs && parsed.data.skillSlugs.length > 0) {
-      where.skills = { some: { skill: { slug: { in: parsed.data.skillSlugs } } } };
+      and.push({ skills: { some: { skill: { slug: { in: parsed.data.skillSlugs } } } } });
     }
+    if (parsed.data.category) {
+      and.push({ skills: { some: { skill: { category: parsed.data.category } } } });
+    }
+    if (and.length > 0) where.AND = and;
+    if (parsed.data.reactiveOnly) {
+      where.responseTime = { in: ['WITHIN_HOUR', 'WITHIN_DAY'] };
+    }
+    const sortRecent = parsed.data.sort === 'recent';
 
     // ── Full-text search branch ─────────────────────────────────────────
     // When `q` is provided, swap the legacy `ILIKE %q%` pair for a real
@@ -130,6 +142,25 @@ export async function discoverMentors(
             )
           `
         : Prisma.empty;
+      const categoryJoin = parsed.data.category
+        ? Prisma.sql`
+            AND EXISTS (
+              SELECT 1
+              FROM "MentorSkill" ms
+              JOIN "Skill" s ON s.id = ms."skillId"
+              WHERE ms."mentorProfileId" = mp.id
+                AND s.category = ${parsed.data.category}::"SkillCategory"
+            )
+          `
+        : Prisma.empty;
+      const reactiveFilter = parsed.data.reactiveOnly
+        ? Prisma.sql`AND mp."responseTime" IN ('WITHIN_HOUR', 'WITHIN_DAY')`
+        : Prisma.empty;
+      // "Dernière connexion" keeps the text filter but orders by the mentor's
+      // last login instead of FTS rank.
+      const orderBy = sortRecent
+        ? Prisma.sql`ORDER BY u."lastLoginAt" DESC NULLS LAST, mp."publishedAt" DESC NULLS LAST`
+        : Prisma.sql`ORDER BY rank DESC, mp."publishedAt" DESC NULLS LAST`;
 
       const offset = (page - 1) * pageSize;
 
@@ -143,19 +174,24 @@ export async function discoverMentors(
             AND mp."deletedAt" IS NULL
             ${langOverlap}
             ${skillJoin}
+            ${categoryJoin}
+            ${reactiveFilter}
         `,
         prisma.$queryRaw<Array<{ id: string; rank: number }>>`
           SELECT
             mp.id,
             ts_rank(mp."searchTsv", to_tsquery('french', ${tsq})) AS rank
           FROM "MentorProfile" mp
+          JOIN "User" u ON u.id = mp."userId"
           WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
             AND mp.status = 'ACTIVE'
             AND mp."isAcceptingMentees" = true
             AND mp."deletedAt" IS NULL
             ${langOverlap}
             ${skillJoin}
-          ORDER BY rank DESC, mp."publishedAt" DESC NULLS LAST
+            ${categoryJoin}
+            ${reactiveFilter}
+          ${orderBy}
           LIMIT ${pageSize}
           OFFSET ${offset}
         `,
@@ -190,7 +226,9 @@ export async function discoverMentors(
           where,
           skip: (page - 1) * pageSize,
           take: pageSize,
-          orderBy: [{ publishedAt: 'desc' }],
+          orderBy: sortRecent
+            ? [{ user: { lastLoginAt: { sort: 'desc', nulls: 'last' } } }, { publishedAt: 'desc' }]
+            : [{ publishedAt: 'desc' }],
           include: profileInclude,
         }),
       ]);

@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { PreferredFormat } from '@prisma/client';
 import { auth } from '@/auth';
 import {
   breadcrumbJsonLd,
@@ -11,6 +10,7 @@ import {
 
 // Provided by Agent 2B-2.
 import { discoverMentors } from '@/lib/actions/mentora/discovery';
+import { buildDiscoverHref, parseDiscoverParams } from '@/lib/mentora/discover-params';
 
 import MentorCard, { type MentorCardData } from '../_components/MentorCard';
 import DiscoverFilters from './DiscoverFilters';
@@ -27,22 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const PAGE_SIZE = 12;
 
-type SearchParams = {
-  q?: string;
-  skills?: string;
-  language?: string;
-  format?: string;
-  minRating?: string;
-  page?: string;
-};
-
-function parseFormat(value: string | undefined): PreferredFormat | undefined {
-  if (!value) return undefined;
-  if ((Object.values(PreferredFormat) as string[]).includes(value)) {
-    return value as PreferredFormat;
-  }
-  return undefined;
-}
+type SearchParams = Record<string, string | undefined>;
 
 export default async function DiscoverPage({
   searchParams,
@@ -55,26 +40,14 @@ export default async function DiscoverPage({
   const t = await getTranslations('mentora.discover');
   const sp = await searchParams;
 
-  const q = sp.q?.trim().slice(0, 200) || undefined;
-  const skillSlugs =
-    sp.skills?.split(',').map((s) => s.trim()).filter(Boolean) ?? [];
-  const languages = sp.language?.trim() ? [sp.language.trim()] : undefined;
-  const format = parseFormat(sp.format);
-  const minRating = sp.minRating ? Math.round(Number(sp.minRating)) : undefined;
-  const page = Math.max(1, Number(sp.page ?? '1') || 1);
+  // Invalid params degrade to defaults (see discover-params.ts).
+  const filters = parseDiscoverParams(sp);
+  const { page } = filters;
 
   let mentors: MentorCardData[] = [];
   let totalCount = 0;
   try {
-    const result = await discoverMentors({
-      q,
-      skillSlugs: skillSlugs.length > 0 ? skillSlugs : undefined,
-      languages,
-      format,
-      minRating,
-      page,
-      pageSize: PAGE_SIZE,
-    });
+    const result = await discoverMentors({ ...filters, pageSize: PAGE_SIZE });
     if (result.status === 'success' && result.data) {
       mentors = result.data.items as unknown as MentorCardData[];
       totalCount = result.data.total;
@@ -86,17 +59,8 @@ export default async function DiscoverPage({
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-  // Build pagination link helpers, preserving filter params.
-  const buildPageHref = (p: number) => {
-    const next = new URLSearchParams();
-    if (sp.q) next.set('q', sp.q);
-    if (sp.skills) next.set('skills', sp.skills);
-    if (sp.language) next.set('language', sp.language);
-    if (sp.format) next.set('format', sp.format);
-    if (sp.minRating) next.set('minRating', sp.minRating);
-    next.set('page', String(p));
-    return `/mentora/discover?${next.toString()}`;
-  };
+  // Pagination links preserve every active filter.
+  const buildPageHref = (p: number) => buildDiscoverHref(filters, { page: p });
 
   return (
     <>

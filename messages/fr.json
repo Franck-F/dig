@@ -1766,9 +1766,6 @@
       "searchPlaceholder": "Rechercher un mentor, une compétence...",
       "filters": {
         "title": "Filtres",
-        "skills": "Compétences",
-        "skillsPlaceholder": "Ex : react, ux, product",
-        "skillsHint": "Slugs séparés par des virgules.",
         "language": "Langue",
         "languageAny": "Toutes",
         "format": "Format",
@@ -1781,7 +1778,13 @@
         "rating4": "4★ et plus",
         "rating4_5": "4,5★ et plus",
         "apply": "Appliquer",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "category": "Domaine",
+        "categoryAny": "Tous les domaines",
+        "reactive": "Très réactif·ve uniquement",
+        "sort": "Trier par",
+        "sortRelevance": "Pertinence",
+        "sortRecent": "Dernière connexion"
       },
       "sort": {
         "label": "Trier par",
