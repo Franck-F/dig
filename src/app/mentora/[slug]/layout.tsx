@@ -10,6 +10,7 @@ import { auth, signOut } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
 import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
+import { buildMentoraNav, mentoraNavLabels } from '@/lib/mentora/nav';
 
 const MENTORA_NOTIF_TYPES: NotificationType[] = [
   NotificationType.REQUEST_RECEIVED,
@@ -92,29 +93,11 @@ export default async function MentorProfileLayout({ children }: { children: Reac
 
   const isAdmin = roleProfile.kind !== 'guest' && roleProfile.role === 'ADMIN';
 
-  const nav: AppShellNavItem[] =
-    kind === 'mentor'
-      ? [
-          { href: '/mentora/dashboard', label: tShell('nav.mentor.overview'), icon: '◉' },
-          { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentor.mentees'), icon: '☷', matchPrefix: true },
-          { href: '/mentora/dashboard/sessions', label: tShell('nav.mentor.sessions'), icon: '◌', matchPrefix: true },
-          { href: '/mentora/dashboard/messages', label: tShell('nav.mentor.messages'), icon: '✉', matchPrefix: true, badge: null },
-          { href: '/mentora/dashboard/availability', label: tShell('nav.mentor.availability'), icon: '◇', matchPrefix: true },
-        ]
-      : kind === 'mentee'
-        ? [
-            { href: '/mentora/dashboard', label: tShell('nav.mentee.overview'), icon: '◉' },
-            { href: '/mentora/discover', label: 'Trouver un mentor', icon: '✦', matchPrefix: true },
-            { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentee.mentors'), icon: '◇', matchPrefix: true },
-            { href: '/mentora/dashboard/sessions', label: tShell('nav.mentee.sessions'), icon: '◌', matchPrefix: true },
-            { href: '/mentora/dashboard/messages', label: tShell('nav.mentee.messages'), icon: '✉', matchPrefix: true },
-          ]
-        : [
-            { href: '/mentora/dashboard', label: tShell('nav.mentee.overview'), icon: '◉' },
-            { href: '/mentora/discover', label: 'Trouver un mentor', icon: '✦', matchPrefix: true },
-            { href: '/mentora/onboarding', label: 'Devenir mentorée', icon: '◇' },
-            { href: '/mentora/become-a-mentor', label: 'Devenir mentor', icon: '☷' },
-          ];
+  // Same slim sidebar as the dashboard (src/lib/mentora/nav.ts).
+  const nav: AppShellNavItem[] = buildMentoraNav(kind, {
+    isAdmin,
+    labels: mentoraNavLabels(tShell),
+  });
 
   const profileColor =
     kind === 'mentor' ? '#A34BF5' : kind === 'mentee' ? '#7301FF' : '#24325F';

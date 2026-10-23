@@ -4562,6 +4562,17 @@
           "bookmarks": "Favoris",
           "notifications": "Notifications",
           "settings": "Paramètres"
+        },
+        "mentora": {
+          "home": "Accueil",
+          "discover": "Trouver un mentor",
+          "mentors": "Mes mentors",
+          "mentees": "Mes mentorées",
+          "sessions": "Sessions",
+          "messages": "Messages",
+          "resources": "Ressources",
+          "becomeMentee": "Devenir mentorée",
+          "becomeMentor": "Devenir mentor"
         }
       },
       "switch": {

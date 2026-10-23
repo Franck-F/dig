@@ -157,6 +157,17 @@
           "communications": "Communications",
           "reports": "Reports"
         },
+        "mentora": {
+          "home": "Home",
+          "discover": "Find a mentor",
+          "mentors": "My mentors",
+          "mentees": "My mentees",
+          "sessions": "Sessions",
+          "messages": "Messages",
+          "resources": "Resources",
+          "becomeMentee": "Become a mentee",
+          "becomeMentor": "Become a mentor"
+        },
         "community": {
           "feed": "Feed",
           "channels": "Channels",
