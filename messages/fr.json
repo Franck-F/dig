@@ -2269,6 +2269,23 @@
       "complementaryHint": "Son parcours correspond à votre projet",
       "available": "Disponible",
       "full": "Complet"
+    },
+    "trainings": {
+      "title": "Formations",
+      "subtitle": "Des modules courts pour bien démarrer et tirer le meilleur du mentorat.",
+      "progressLabel": "Votre progression",
+      "percentDone": "{percent} % complété",
+      "duration": "{minutes} minutes",
+      "start": "Commencer",
+      "review": "Revoir",
+      "done": "Terminé",
+      "markDone": "Marquer comme terminé",
+      "marking": "Enregistrement…",
+      "error": "Impossible d'enregistrer, réessayez.",
+      "back": "Retour aux ressources",
+      "next": "Module suivant",
+      "allDone": "Bravo, tous les modules sont terminés !",
+      "seeAll": "Voir les formations"
     }
   },
   "team": {

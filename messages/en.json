@@ -3752,6 +3752,23 @@
       "complementaryHint": "Their background matches your project",
       "available": "Available",
       "full": "Full"
+    },
+    "trainings": {
+      "title": "Trainings",
+      "subtitle": "Short modules to get started and make the most of mentoring.",
+      "progressLabel": "Your progress",
+      "percentDone": "{percent}% complete",
+      "duration": "{minutes} minutes",
+      "start": "Start",
+      "review": "Review",
+      "done": "Done",
+      "markDone": "Mark as done",
+      "marking": "Saving…",
+      "error": "Could not save, please try again.",
+      "back": "Back to resources",
+      "next": "Next module",
+      "allDone": "Well done, every module is complete!",
+      "seeAll": "See trainings"
     }
   },
   "notFound": {

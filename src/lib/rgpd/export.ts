@@ -40,6 +40,7 @@ export type DataExport = {
   reviewsAuthored: unknown[];
   reviewsReceived: unknown[];
   notifications: unknown[];
+  mentoraTrainingCompletions: unknown[];
   communityMember: unknown;
   channelMemberships: unknown[];
   posts: unknown[];
@@ -106,6 +107,7 @@ export async function buildUserDataExport(userId: string): Promise<DataExport> {
     reviewsAuthored,
     reviewsReceived,
     notifications,
+    mentoraTrainingCompletions,
     communityMember,
     channelMemberships,
     posts,
@@ -174,6 +176,7 @@ export async function buildUserDataExport(userId: string): Promise<DataExport> {
       },
     }),
     prisma.notification.findMany({ where: { userId } }),
+    prisma.mentoraTrainingCompletion.findMany({ where: { userId } }),
     prisma.communityMember.findUnique({ where: { userId } }),
     prisma.channelMembership.findMany({ where: { member: { userId } } }),
     prisma.post.findMany({
@@ -273,6 +276,7 @@ export async function buildUserDataExport(userId: string): Promise<DataExport> {
     reviewsAuthored,
     reviewsReceived,
     notifications,
+    mentoraTrainingCompletions,
     communityMember,
     channelMemberships,
     posts,

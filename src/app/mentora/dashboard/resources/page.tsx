@@ -10,6 +10,7 @@ import {
   listResourcesForAudience,
 } from '@/lib/actions/resources';
 import { fmtDate } from '../_components/format';
+import TrainingsPanel from './formations/TrainingsPanel';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,11 +86,14 @@ export default async function ResourcesPage({
   const profile = await getCurrentRoleProfile(session.user.id);
   const isMentor = profile.kind === 'mentor';
 
-  if (isMentor) {
-    return <MentorView t={t} authorId={session.user.id} />;
-  }
-
-  return <MenteeView t={t} filter={filter} />;
+  // Onboarding trainings sit above the shared library (Entourage-style
+  // "Formations" with progress).
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <TrainingsPanel userId={session.user.id} role={isMentor ? 'mentor' : 'mentee'} />
+      {isMentor ? <MentorView t={t} authorId={session.user.id} /> : <MenteeView t={t} filter={filter} />}
+    </div>
+  );
 }
 
 // ───────────── Mentee variant ─────────────────────────────────────────
