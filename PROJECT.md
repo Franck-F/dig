@@ -128,15 +128,12 @@ Si l'utilisateur a `role === 'ADMIN'` : pill **« ✦ Admin Mentora »** dans le
 
 `/mentora/dashboard` (vue par défaut quand `kind === 'mentee'`)
 
-| Bloc | Contenu |
+Accueil calqué sur le tableau de bord candidat d'Entourage Pro (allègement oct. 2026), grille `.dz-home-grid` :
+
+| Colonne | Blocs |
 |---|---|
-| KPI strip | Sessions cumulées, heures de mentorat, objectifs atteints, complétude profil |
-| Prochaines sessions | Liste des 3 prochaines sessions confirmées avec mentor + bouton « Rejoindre » |
-| Mes mentors | Cards avec avatar, métier, note, nb sessions, bouton « Message » |
-| Parcours | Barres de progression sur les objectifs (4 max) |
-| Recommandations IA | Card gradient « 3 mentors selon tes objectifs » → `/mentora/discover` |
-| Messages récents | 3 derniers fils + badge non lu |
-| Ressources partagées | Documents partagés par les mentors |
+| Gauche | Carte profil (complétion %, présentation, « Compléter mon profil ») · carte « Votre contact Digizelle » (`MENTORA_REFERENT_*`) |
+| Droite | 3 mentors recommandés (badges Disponible / Très réactif·ve / Super engagé·e / Profil complémentaire, « Comment ça marche ? ») · prochaine session · « Pour aller plus loin » · derniers messages · formations (progression) |
 
 #### Sous-routes mentee
 - `/mentora/dashboard/mentorships` — liste de tous les mentorats actifs / passés
@@ -154,13 +151,12 @@ Si l'utilisateur a `role === 'ADMIN'` : pill **« ✦ Admin Mentora »** dans le
 
 `/mentora/dashboard` (vue par défaut quand `kind === 'mentor'`)
 
-| Bloc | Contenu |
+Même grille que l'espace mentorée :
+
+| Colonne | Blocs |
 |---|---|
-| KPI strip | Mentorées actives, sessions à venir, feedbacks à donner, note moyenne |
-| Mes mentorées | Liste avec progression, badge « Réponse attendue » si urgent, filtres tabs (tous/actifs/en attente/terminés) |
-| Activité récente | Timeline des derniers événements (envoi de portfolio, session terminée, ressources ajoutées…) |
-| Cette semaine | Mini-agenda avec date / heure / nom de la mentorée |
-| Card impact gradient | Heures de mentorat données, nombre de mentorées aidées, embauches, level-ups |
+| Gauche | Carte profil (complétion %, pastille Disponible/Complet) · carte « Votre contact Digizelle » |
+| Droite | Demandes en attente (3) · sessions à venir (3) · « Pour aller plus loin » · derniers messages · formations (progression) |
 
 #### Sous-routes mentor (en plus de celles partagées)
 - `/mentora/dashboard/profile/edit` — bio, expertises, séniorité, langues, charte + section `#disponibilites` (règles récurrentes + exceptions)
