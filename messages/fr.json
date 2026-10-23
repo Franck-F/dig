@@ -1184,6 +1184,10 @@
           "editProfile": "Modifier mon profil",
           "editAvailability": "Mes disponibilités"
         }
+      },
+      "referent": {
+        "title": "Votre contact Digizelle",
+        "help": "Une question sur le programme, une difficulté sur la plateforme ? Écrivez-nous !"
       }
     },
     "requests": {

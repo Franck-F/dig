@@ -2766,6 +2766,10 @@
           "editProfile": "Edit my profile",
           "editAvailability": "My availability"
         }
+      },
+      "referent": {
+        "title": "Your Digizelle contact",
+        "help": "A question about the programme or trouble with the platform? Write to us!"
       }
     },
     "requests": {
