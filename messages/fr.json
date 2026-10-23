@@ -1150,7 +1150,17 @@
         "sessionsTitle": "Sessions à venir",
         "sessionsEmpty": "Aucune session prévue.",
         "sessionsCta": "Voir les sessions",
-        "sessionWith": "avec {name}"
+        "sessionWith": "avec {name}",
+        "tileJoinTitle": "Rejoindre la communauté",
+        "tileJoinBody": "Échangez avec toute la communauté Digizelle.",
+        "tileJoinCta": "Rejoindre",
+        "tileJoinPending": "Activation…",
+        "tileJoinError": "Impossible d'activer la communauté, réessayez.",
+        "tileTrainingsTitle": "Se former",
+        "tileTrainingsBody": "Des modules courts pour bien accompagner.",
+        "tileTrainingsCta": "Voir les formations",
+        "sentRequests": "{count, plural, one {# demande envoyée en attente de réponse} other {# demandes envoyées en attente de réponse}}",
+        "sentRequestsCta": "Voir mes demandes"
       }
     },
     "requests": {

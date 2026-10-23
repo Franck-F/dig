@@ -7,6 +7,53 @@ const PREVIEW_MAX = 90;
 const MENTOR_BIO_MIN = 100;
 const MENTEE_GOALS_MIN = 20;
 
+export type GoFurtherTileKey = 'Events' | 'Discover' | 'Community' | 'Charter' | 'Join' | 'Trainings';
+
+export type GoFurtherTile = {
+  key: GoFurtherTileKey;
+  icon: string;
+  /** Plain link; absent for action tiles. */
+  href?: string;
+  action?: 'joinCommunity';
+};
+
+/**
+ * "Pour aller plus loin" shortcuts. `/community/**` redirects members
+ * without community access to `/app`, so Mentorat-only users get the
+ * public events page and a join-community action instead.
+ */
+export function goFurtherTiles(role: 'mentee' | 'mentor', communityEnabled: boolean): GoFurtherTile[] {
+  if (communityEnabled) {
+    return role === 'mentee'
+      ? [
+          { key: 'Events', href: '/community/events', icon: '◎' },
+          { key: 'Discover', href: '/mentora/discover', icon: '✦' },
+          { key: 'Charter', href: '/community/charte', icon: '♡' },
+        ]
+      : [
+          { key: 'Events', href: '/community/events', icon: '◎' },
+          { key: 'Community', href: '/community', icon: '☷' },
+          { key: 'Charter', href: '/community/charte', icon: '♡' },
+        ];
+  }
+  return role === 'mentee'
+    ? [
+        { key: 'Events', href: '/events', icon: '◎' },
+        { key: 'Discover', href: '/mentora/discover', icon: '✦' },
+        { key: 'Join', action: 'joinCommunity', icon: '☷' },
+      ]
+    : [
+        { key: 'Events', href: '/events', icon: '◎' },
+        { key: 'Join', action: 'joinCommunity', icon: '☷' },
+        { key: 'Trainings', href: '/mentora/dashboard/resources', icon: '▸' },
+      ];
+}
+
+/** Home row pointing a mentee at her pending sent requests; hidden at 0. */
+export function sentRequestsSummary(count: number): { count: number; href: string } | null {
+  return count > 0 ? { count, href: '/mentora/dashboard/requests?tab=sent' } : null;
+}
+
 /** Rows must already be sorted newest first; keeps one per mentorship. */
 export function pickLatestThreads<T extends { mentorshipId: string }>(rows: readonly T[], limit: number): T[] {
   const seen = new Set<string>();

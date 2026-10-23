@@ -1,6 +1,46 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { menteeCompletion, mentorCompletion, pickLatestThreads, truncatePreview } from '../home.ts';
+import {
+  goFurtherTiles,
+  menteeCompletion,
+  mentorCompletion,
+  pickLatestThreads,
+  sentRequestsSummary,
+  truncatePreview,
+} from '../home.ts';
+
+test('without community access no tile links into /community (it bounces to /app)', () => {
+  for (const role of ['mentee', 'mentor'] as const) {
+    for (const tile of goFurtherTiles(role, false)) {
+      assert.ok(!tile.href?.startsWith('/community'), `${role} tile ${tile.key} → ${tile.href}`);
+    }
+  }
+});
+
+test('without community access each role is offered a join-community action', () => {
+  for (const role of ['mentee', 'mentor'] as const) {
+    const tiles = goFurtherTiles(role, false);
+    assert.equal(tiles.length, 3);
+    assert.ok(tiles.some((t) => t.action === 'joinCommunity' && t.href === undefined));
+  }
+});
+
+test('members of the community keep the community shortcuts', () => {
+  assert.deepEqual(
+    goFurtherTiles('mentee', true).map((t) => t.href),
+    ['/community/events', '/mentora/discover', '/community/charte'],
+  );
+  assert.deepEqual(
+    goFurtherTiles('mentor', true).map((t) => t.href),
+    ['/community/events', '/community', '/community/charte'],
+  );
+});
+
+test('sent requests summary only appears when the mentee has pending requests', () => {
+  assert.equal(sentRequestsSummary(0), null);
+  assert.equal(sentRequestsSummary(-1), null);
+  assert.deepEqual(sentRequestsSummary(2), { count: 2, href: '/mentora/dashboard/requests?tab=sent' });
+});
 
 test('pickLatestThreads keeps the newest message per mentorship, newest first', () => {
   const rows = [

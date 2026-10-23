@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { prisma } from '@/lib/prisma';
 import { recommendMentorsForMe, type MentorCardData } from '@/lib/actions/mentora/discovery';
 import type { CurrentRoleProfile } from '@/lib/mentora/getCurrentRoleProfile';
-import { menteeCompletion } from '@/lib/mentora/home';
+import { menteeCompletion, sentRequestsSummary } from '@/lib/mentora/home';
 import MentorCard from '../../_components/MentorCard';
 import TrainingsPanel from '../resources/formations/TrainingsPanel';
 import ReferentCard from './ReferentCard';
@@ -28,7 +28,7 @@ export default async function MenteeOverview({
   const mentee = profile.menteeProfile;
   const name = user.name ?? ([user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email);
 
-  const [t, recommendations, nextSession] = await Promise.all([
+  const [t, recommendations, nextSession, pendingSentCount] = await Promise.all([
     getTranslations('mentora.dashboard.home'),
     safeRecommend(),
     prisma.session
@@ -44,7 +44,11 @@ export default async function MenteeOverview({
         },
       })
       .catch(() => null),
+    prisma.mentorshipRequest
+      .count({ where: { fromMenteeId: mentee.id, status: 'PENDING' } })
+      .catch(() => 0),
   ]);
+  const sentRequests = sentRequestsSummary(pendingSentCount);
 
   const completion = menteeCompletion({
     goals: mentee.goals,
@@ -103,6 +107,18 @@ export default async function MenteeOverview({
             {t('seeAllMentors')}
           </Link>
         </section>
+
+        {sentRequests && (
+          <Link
+            href={sentRequests.href}
+            className="dz-card"
+            style={{ padding: '14px 22px', display: 'flex', gap: 10, alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
+          >
+            <span aria-hidden style={{ color: '#7301FF', fontSize: 18 }}>✉</span>
+            <span style={{ fontWeight: 700, flex: 1 }}>{t('sentRequests', { count: sentRequests.count })}</span>
+            <span className="dz-small" style={{ color: '#7301FF', fontWeight: 700 }}>{t('sentRequestsCta')} →</span>
+          </Link>
+        )}
 
         {nextSession && (
           <Link

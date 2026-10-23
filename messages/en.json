@@ -2732,7 +2732,17 @@
         "sessionsTitle": "Upcoming sessions",
         "sessionsEmpty": "No session planned.",
         "sessionsCta": "See sessions",
-        "sessionWith": "with {name}"
+        "sessionWith": "with {name}",
+        "tileJoinTitle": "Join the community",
+        "tileJoinBody": "Talk with the whole Digizelle community.",
+        "tileJoinCta": "Join",
+        "tileJoinPending": "Activating…",
+        "tileJoinError": "Could not enable the community, please try again.",
+        "tileTrainingsTitle": "Get trained",
+        "tileTrainingsBody": "Short modules to mentor well.",
+        "tileTrainingsCta": "See trainings",
+        "sentRequests": "{count, plural, one {# sent request awaiting a reply} other {# sent requests awaiting a reply}}",
+        "sentRequestsCta": "See my requests"
       }
     },
     "requests": {
