@@ -89,15 +89,16 @@ export default async function MentorCard({
         position: 'relative',
       }}
     >
+      {/* In the flow (not absolute) so it never overlaps the name on the
+          narrow 3-up home grid. */}
       {typeof matchScore === 'number' && (
         <div
           style={{
-            position: 'absolute',
-            top: 14,
-            right: 14,
             display: 'flex',
+            justifyContent: 'flex-end',
             alignItems: 'center',
             gap: 4,
+            marginBottom: -6,
           }}
         >
           <span className="dz-chip" style={{ fontSize: 11 }}>

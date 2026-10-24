@@ -7,6 +7,7 @@ import MentorProfileForm from './MentorProfileForm';
 import MentorProfilePreview from './MentorProfilePreview';
 import AvailabilityEditor from './AvailabilityEditor';
 import ExceptionsList from './ExceptionsList';
+import ScrollToHashSection from './ScrollToHashSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -128,6 +129,7 @@ export default async function ProfileEditPage() {
         className="dz-card"
         style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20, scrollMarginTop: 96 }}
       >
+        <ScrollToHashSection id="disponibilites" />
         <header>
           <h2 className="dz-h3" style={{ fontSize: 24 }}>{tAvail('title')}</h2>
           <p className="dz-small" style={{ marginTop: 6, maxWidth: 720 }}>{tAvail('subtitle')}</p>
