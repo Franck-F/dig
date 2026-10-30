@@ -2666,3 +2666,19 @@ body { overflow-wrap: break-word; }
   .dz-page-narrow { padding: 8px 0 40px !important; }
   .dz-manifest-num { font-size: 40px !important; }
 }
+
+/* App surfaces (mobile) — Mentora app, admin, /app hub */
+@media (max-width: 768px) {
+  /* Data tables keep their columns and scroll sideways instead of
+     squeezing headers to one letter per line (admin mentees, reports). */
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  th { white-space: nowrap; }
+  /* /app hub universe cards: the decorative hero band shrinks once the
+     mascot is hidden. */
+  .dz-hub-universe > div[aria-hidden]:first-child { height: 120px !important; }
+}

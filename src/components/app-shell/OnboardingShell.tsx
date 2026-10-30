@@ -162,7 +162,7 @@ export default function OnboardingShell({
           </p>
         </div>
 
-        <div style={{ position: 'relative', marginTop: 36, flex: 1 }}>
+        <div className="dz-onboarding-steps" style={{ position: 'relative', marginTop: 36, flex: 1 }}>
           {stepLabels.map((label, i) => {
             const stepNum = i + 1;
             const done = stepNum < step;
@@ -234,7 +234,7 @@ export default function OnboardingShell({
           })}
         </div>
 
-        <div style={{ position: 'relative', textAlign: 'center', marginTop: 16 }}>
+        <div className="dz-onboarding-illustration" style={{ position: 'relative', textAlign: 'center', marginTop: 16 }}>
           <Image
             src={illustration}
             alt=""
@@ -348,7 +348,14 @@ export default function OnboardingShell({
           }
           .dz-onboarding-aside {
             min-height: auto !important;
-            padding: 24px !important;
+            padding: 20px !important;
+          }
+          /* Phones: the form must start in the first screen. The vertical
+             step list and the mascot pushed it below the fold; the
+             progress bar under the aside already shows where you are. */
+          .dz-onboarding-steps,
+          .dz-onboarding-illustration {
+            display: none !important;
           }
         }
       `}</style>

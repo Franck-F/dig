@@ -61,7 +61,7 @@ export default async function CommunityEventsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/community/events');
 
-  const t = await getTranslations('community.communityEventsPage');
+  const t = await getTranslations('mentora.dashboard.communityEventsPage');
 
   const [events, liveEvent, myRegs] = await Promise.all([
     listUpcomingCommunityEvents({ limit: 20 }),
