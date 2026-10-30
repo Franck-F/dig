@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { PreferredFormat, Prisma } from '@prisma/client';
+import { PreferredFormat, Prisma, SkillCategory, type ResponseTime } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
   type MatchResult,
@@ -9,6 +9,7 @@ import {
   type MenteeContext,
   rankMentors,
 } from '@/lib/mentora/matching';
+import { computeMentorBadges, isMentorAvailable, type MentorBadge } from '@/lib/mentora/badges';
 import { normaliseQuery } from '@/lib/search/tsquery';
 import { type ActionResult, errorResult, handleError, requireUser, successResult } from './_helpers';
 
@@ -27,7 +28,31 @@ export type MentorCardData = {
   reviewCount: number;
   topSkills: { id: string; name: string; slug: string }[];
   match?: MatchResult; // present when scoring applied
+  responseTime: ResponseTime;
+  completedSessions: number;
+  activeMentorships: number;
+  isAvailable: boolean;
+  badges: MentorBadge[];
 };
+
+/** Completed-session count per mentor profile, one grouped query. */
+async function completedSessionsByProfile(
+  mentorshipToProfile: Map<string, string>,
+): Promise<Map<string, number>> {
+  const out = new Map<string, number>();
+  if (mentorshipToProfile.size === 0) return out;
+  const rows = await prisma.session.groupBy({
+    by: ['mentorshipId'],
+    where: { status: 'COMPLETED', mentorshipId: { in: [...mentorshipToProfile.keys()] } },
+    _count: { _all: true },
+  });
+  for (const r of rows) {
+    const pid = mentorshipToProfile.get(r.mentorshipId);
+    if (!pid) continue;
+    out.set(pid, (out.get(pid) ?? 0) + r._count._all);
+  }
+  return out;
+}
 
 const filtersSchema = z.object({
   q: z.string().max(200).optional(),
@@ -35,6 +60,9 @@ const filtersSchema = z.object({
   languages: z.array(z.string()).optional(),
   format: z.nativeEnum(PreferredFormat).optional(),
   minRating: z.number().int().min(1).max(5).optional(),
+  category: z.nativeEnum(SkillCategory).optional(),
+  reactiveOnly: z.boolean().optional(),
+  sort: z.enum(['relevance', 'recent']).optional(),
   page: z.number().int().min(1).optional(),
   pageSize: z.number().int().min(1).max(50).optional(),
 });
@@ -59,9 +87,18 @@ export async function discoverMentors(
     if (parsed.data.languages && parsed.data.languages.length > 0) {
       where.languages = { hasSome: parsed.data.languages };
     }
+    const and: Prisma.MentorProfileWhereInput[] = [];
     if (parsed.data.skillSlugs && parsed.data.skillSlugs.length > 0) {
-      where.skills = { some: { skill: { slug: { in: parsed.data.skillSlugs } } } };
+      and.push({ skills: { some: { skill: { slug: { in: parsed.data.skillSlugs } } } } });
     }
+    if (parsed.data.category) {
+      and.push({ skills: { some: { skill: { category: parsed.data.category } } } });
+    }
+    if (and.length > 0) where.AND = and;
+    if (parsed.data.reactiveOnly) {
+      where.responseTime = { in: ['WITHIN_HOUR', 'WITHIN_DAY'] };
+    }
+    const sortRecent = parsed.data.sort === 'recent';
 
     // ── Full-text search branch ─────────────────────────────────────────
     // When `q` is provided, swap the legacy `ILIKE %q%` pair for a real
@@ -86,7 +123,9 @@ export async function discoverMentors(
       return successResult({ items: [], total: 0, page, pageSize });
     }
 
-    if (tsq) {
+    // "Activité récente" also goes through raw SQL: it orders by a coarse
+    // activity bucket computed in Postgres (see `orderBy` below).
+    if (tsq || sortRecent) {
       // Replicate the WHERE filters in SQL — kept narrow so the GIN
       // scan does most of the work. The `languages` filter uses
       // Postgres array overlap (`&&`); `skillSlugs` joins through the
@@ -105,6 +144,40 @@ export async function discoverMentors(
             )
           `
         : Prisma.empty;
+      const categoryJoin = parsed.data.category
+        ? Prisma.sql`
+            AND EXISTS (
+              SELECT 1
+              FROM "MentorSkill" ms
+              JOIN "Skill" s ON s.id = ms."skillId"
+              WHERE ms."mentorProfileId" = mp.id
+                AND s.category = ${parsed.data.category}::"SkillCategory"
+            )
+          `
+        : Prisma.empty;
+      const reactiveFilter = parsed.data.reactiveOnly
+        ? Prisma.sql`AND mp."responseTime" IN ('WITHIN_HOUR', 'WITHIN_DAY')`
+        : Prisma.empty;
+      const tsFilter = tsq
+        ? Prisma.sql`AND mp."searchTsv" @@ to_tsquery('french', ${tsq})`
+        : Prisma.empty;
+      const rankExpr = tsq
+        ? Prisma.sql`ts_rank(mp."searchTsv", to_tsquery('french', ${tsq}))`
+        : Prisma.sql`0`;
+      // Privacy: never order by the raw `lastLoginAt` — that would let any
+      // member read mentors' exact relative presence. Use three coarse
+      // buckets (≤ 7 days, ≤ 30 days, older/never) and break ties by
+      // publication date, which is already public.
+      const orderBy = sortRecent
+        ? Prisma.sql`ORDER BY
+            CASE
+              WHEN u."lastLoginAt" >= NOW() - INTERVAL '7 days' THEN 0
+              WHEN u."lastLoginAt" >= NOW() - INTERVAL '30 days' THEN 1
+              ELSE 2
+            END ASC,
+            rank DESC,
+            mp."publishedAt" DESC NULLS LAST`
+        : Prisma.sql`ORDER BY rank DESC, mp."publishedAt" DESC NULLS LAST`;
 
       const offset = (page - 1) * pageSize;
 
@@ -112,25 +185,30 @@ export async function discoverMentors(
         prisma.$queryRaw<Array<{ total: bigint }>>`
           SELECT COUNT(*)::bigint AS total
           FROM "MentorProfile" mp
-          WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
-            AND mp.status = 'ACTIVE'
+          WHERE mp.status = 'ACTIVE'
             AND mp."isAcceptingMentees" = true
             AND mp."deletedAt" IS NULL
+            ${tsFilter}
             ${langOverlap}
             ${skillJoin}
+            ${categoryJoin}
+            ${reactiveFilter}
         `,
         prisma.$queryRaw<Array<{ id: string; rank: number }>>`
           SELECT
             mp.id,
-            ts_rank(mp."searchTsv", to_tsquery('french', ${tsq})) AS rank
+            ${rankExpr} AS rank
           FROM "MentorProfile" mp
-          WHERE mp."searchTsv" @@ to_tsquery('french', ${tsq})
-            AND mp.status = 'ACTIVE'
+          JOIN "User" u ON u.id = mp."userId"
+          WHERE mp.status = 'ACTIVE'
             AND mp."isAcceptingMentees" = true
             AND mp."deletedAt" IS NULL
+            ${tsFilter}
             ${langOverlap}
             ${skillJoin}
-          ORDER BY rank DESC, mp."publishedAt" DESC NULLS LAST
+            ${categoryJoin}
+            ${reactiveFilter}
+          ${orderBy}
           LIMIT ${pageSize}
           OFFSET ${offset}
         `,
@@ -224,10 +302,13 @@ export async function discoverMentors(
       cur.n += r._count._all;
       aggByProfile.set(pid, cur);
     }
+    const completedByProfile = await completedSessionsByProfile(mentorshipMap);
 
     let items: MentorCardData[] = profiles.map((p) => {
       const agg = aggByProfile.get(p.id);
       const avg = agg && agg.n > 0 ? agg.sum / agg.n : null;
+      const activeMentorships = p._count.mentorships;
+      const completedSessions = completedByProfile.get(p.id) ?? 0;
       return {
         mentorProfileId: p.id,
         userId: p.userId,
@@ -241,6 +322,15 @@ export async function discoverMentors(
         averageRating: avg,
         reviewCount: agg?.n ?? 0,
         topSkills: p.skills.map((ms) => ({ id: ms.skill.id, name: ms.skill.name, slug: ms.skill.slug })),
+        responseTime: p.responseTime,
+        completedSessions,
+        activeMentorships,
+        isAvailable: isMentorAvailable({
+          isAcceptingMentees: p.isAcceptingMentees,
+          activeMentorships,
+          maxConcurrentMentees: p.maxConcurrentMentees,
+        }),
+        badges: computeMentorBadges({ responseTime: p.responseTime, completedSessions, activeMentorships }),
       };
     });
 
@@ -351,11 +441,14 @@ export async function recommendMentorsForMe(): Promise<ActionResult<MentorCardDa
     });
 
     const ranked = rankMentors(menteeCtx, candidateInputs, { limit: 20 });
+    const completedByProfile = await completedSessionsByProfile(mentorshipToProfile);
 
     const profileById = new Map(candidates.map((c) => [c.id, c]));
     const items: MentorCardData[] = ranked.map((r) => {
       const p = profileById.get(r.mentorProfileId)!;
       const ratingAgg = ratingByProfile.get(p.id);
+      const activeMentorships = p.mentorships.filter((m) => m.status === 'ACTIVE').length;
+      const completedSessions = completedByProfile.get(p.id) ?? 0;
       return {
         mentorProfileId: p.id,
         userId: p.userId,
@@ -373,6 +466,20 @@ export async function recommendMentorsForMe(): Promise<ActionResult<MentorCardDa
           .slice(0, 5)
           .map((ms) => ({ id: ms.skill.id, name: ms.skill.name, slug: ms.skill.slug })),
         match: r,
+        responseTime: p.responseTime,
+        completedSessions,
+        activeMentorships,
+        isAvailable: isMentorAvailable({
+          isAcceptingMentees: p.isAcceptingMentees,
+          activeMentorships,
+          maxConcurrentMentees: p.maxConcurrentMentees,
+        }),
+        badges: computeMentorBadges({
+          responseTime: p.responseTime,
+          completedSessions,
+          activeMentorships,
+          matchScore: r.total,
+        }),
       };
     });
     return successResult(items);

@@ -7,6 +7,9 @@ import { useTranslations } from 'next-intl';
 const FORMATS = ['REMOTE', 'IN_PERSON', 'HYBRID'] as const;
 type Format = (typeof FORMATS)[number];
 
+const CATEGORIES = ['TECHNICAL', 'SOFT', 'CAREER', 'BUSINESS', 'CREATIVE'] as const;
+type Category = (typeof CATEGORIES)[number];
+
 const RATINGS: Array<{ value: string; key: string }> = [
   { value: '', key: 'ratingAny' },
   { value: '4', key: 'rating4' },
@@ -20,11 +23,18 @@ const RATINGS: Array<{ value: string; key: string }> = [
  */
 export default function DiscoverFilters() {
   const t = useTranslations('mentora.discover.filters');
+  const tCat = useTranslations('mentora.skillCategories');
   const router = useRouter();
   const params = useSearchParams();
   const [pending, startTransition] = useTransition();
 
-  const [skills, setSkills] = useState(params.get('skills') ?? '');
+  const [category, setCategory] = useState<Category | ''>(
+    (CATEGORIES as readonly string[]).includes(params.get('category') ?? '')
+      ? (params.get('category') as Category)
+      : '',
+  );
+  const [reactiveOnly, setReactiveOnly] = useState(params.get('reactive') === '1');
+  const [sort, setSort] = useState(params.get('sort') === 'recent' ? 'recent' : 'relevance');
   const [language, setLanguage] = useState(params.get('language') ?? '');
   const [format, setFormat] = useState<Format | ''>(
     (params.get('format') as Format) ?? '',
@@ -33,18 +43,23 @@ export default function DiscoverFilters() {
 
   const apply = () => {
     const next = new URLSearchParams();
-    if (skills.trim()) next.set('skills', skills.trim().toLowerCase());
+    const q = params.get('q');
+    if (q) next.set('q', q);
+    if (category) next.set('category', category);
+    if (reactiveOnly) next.set('reactive', '1');
+    if (sort === 'recent') next.set('sort', 'recent');
     if (language.trim()) next.set('language', language.trim().toLowerCase());
     if (format) next.set('format', format);
     if (minRating) next.set('minRating', minRating);
-    next.set('page', '1');
     startTransition(() => {
       router.push(`/mentora/discover?${next.toString()}`);
     });
   };
 
   const reset = () => {
-    setSkills('');
+    setCategory('');
+    setReactiveOnly(false);
+    setSort('relevance');
     setLanguage('');
     setFormat('');
     setMinRating('');
@@ -71,19 +86,45 @@ export default function DiscoverFilters() {
       </h2>
 
       <div>
-        <label htmlFor="filter-skills" className="dz-label">{t('skills')}</label>
-        <input
-          id="filter-skills"
-          type="text"
+        <label htmlFor="filter-sort" className="dz-label">{t('sort')}</label>
+        <select
+          id="filter-sort"
           className="dz-input"
-          value={skills}
-          onChange={(e) => setSkills(e.target.value)}
-          placeholder={t('skillsPlaceholder')}
-        />
-        <div className="dz-small" style={{ fontSize: 11, marginTop: 4 }}>
-          {t('skillsHint')}
-        </div>
+          value={sort}
+          onChange={(e) => setSort(e.target.value === 'recent' ? 'recent' : 'relevance')}
+        >
+          <option value="relevance">{t('sortRelevance')}</option>
+          <option value="recent">{t('sortRecent')}</option>
+        </select>
       </div>
+
+      <div>
+        <label htmlFor="filter-category" className="dz-label">{t('category')}</label>
+        <select
+          id="filter-category"
+          className="dz-input"
+          value={category}
+          onChange={(e) => setCategory(e.target.value as Category | '')}
+        >
+          <option value="">{t('categoryAny')}</option>
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>{tCat(c)}</option>
+          ))}
+        </select>
+      </div>
+
+      <label
+        htmlFor="filter-reactive"
+        style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}
+      >
+        <input
+          id="filter-reactive"
+          type="checkbox"
+          checked={reactiveOnly}
+          onChange={(e) => setReactiveOnly(e.target.checked)}
+        />
+        {t('reactive')}
+      </label>
 
       <div>
         <label htmlFor="filter-language" className="dz-label">{t('language')}</label>

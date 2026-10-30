@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import type { ResponseTime } from '@prisma/client';
 
+import type { MentorBadge } from '@/lib/mentora/badges';
+
 import WhyMatchTooltip, { type MatchBreakdown } from './WhyMatchTooltip';
 
 /**
@@ -22,6 +24,15 @@ export type MentorCardData = {
   reviewCount: number;
   topSkills: { id: string; name: string; slug?: string }[];
   responseTime?: ResponseTime;
+  /** Absent for providers that don't compute capacity (e.g. landing shapes). */
+  isAvailable?: boolean;
+  badges?: MentorBadge[];
+};
+
+const BADGE_STYLE: Record<MentorBadge, { bg: string; fg: string; icon: string }> = {
+  engaged: { bg: 'rgba(115,1,255,0.10)', fg: '#7301FF', icon: '◆' },
+  reactive: { bg: 'rgba(22,163,74,0.12)', fg: '#15803D', icon: '⚡' },
+  complementary: { bg: 'rgba(163,75,245,0.12)', fg: '#7E22CE', icon: '✦' },
 };
 
 type Props = {
@@ -60,6 +71,8 @@ export default async function MentorCard({
   variant = 'full',
 }: Props) {
   const t = await getTranslations('mentora.discover.card');
+  const tBadges = await getTranslations('mentora.badges');
+  const badges = (mentor.badges ?? []).slice(0, 2);
   const [a, b] = avatarColors(mentor.userId);
   const displayName = mentor.name ?? 'Mentor';
   const responseLabel = mentor.responseTime ? t(`responseTime.${mentor.responseTime}`) : null;
@@ -76,15 +89,16 @@ export default async function MentorCard({
         position: 'relative',
       }}
     >
+      {/* In the flow (not absolute) so it never overlaps the name on the
+          narrow 3-up home grid. */}
       {typeof matchScore === 'number' && (
         <div
           style={{
-            position: 'absolute',
-            top: 14,
-            right: 14,
             display: 'flex',
+            justifyContent: 'flex-end',
             alignItems: 'center',
             gap: 4,
+            marginBottom: -6,
           }}
         >
           <span className="dz-chip" style={{ fontSize: 11 }}>
@@ -139,6 +153,53 @@ export default async function MentorCard({
           </div>
         </div>
       </div>
+
+      {(typeof mentor.isAvailable === 'boolean' || badges.length > 0) && (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+          {typeof mentor.isAvailable === 'boolean' && (
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '3px 10px',
+                borderRadius: 999,
+                fontSize: 11,
+                fontWeight: 700,
+                background: mentor.isAvailable ? 'rgba(22,163,74,0.12)' : 'rgba(100,116,139,0.14)',
+                color: mentor.isAvailable ? '#15803D' : '#475569',
+              }}
+            >
+              <span
+                aria-hidden
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: '50%',
+                  background: mentor.isAvailable ? '#16A34A' : '#94A3B8',
+                }}
+              />
+              {mentor.isAvailable ? tBadges('available') : tBadges('full')}
+            </span>
+          )}
+          {badges.map((b) => (
+            <span
+              key={b}
+              title={tBadges(`${b}Hint`)}
+              style={{
+                padding: '3px 10px',
+                borderRadius: 999,
+                fontSize: 11,
+                fontWeight: 700,
+                background: BADGE_STYLE[b].bg,
+                color: BADGE_STYLE[b].fg,
+              }}
+            >
+              <span aria-hidden>{BADGE_STYLE[b].icon}</span> {tBadges(b)}
+            </span>
+          ))}
+        </div>
+      )}
 
       {variant === 'full' && mentor.topSkills.length > 0 && (
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>

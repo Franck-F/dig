@@ -113,12 +113,13 @@ model User {
   accounts Account[]
 
   // ── Mentorat back-relations ────────────────────────────────────────────
-  mentorProfile     MentorProfile?
-  menteeProfile     MenteeProfile?
-  sessionsCancelled Session[]           @relation("sessionCancelledBy")
-  reviewsAuthored   Review[]            @relation("reviewAuthor")
-  messagesSent      MentorshipMessage[] @relation("messageSender")
-  notifications     Notification[]
+  mentorProfile       MentorProfile?
+  menteeProfile       MenteeProfile?
+  sessionsCancelled   Session[]                   @relation("sessionCancelledBy")
+  reviewsAuthored     Review[]                    @relation("reviewAuthor")
+  messagesSent        MentorshipMessage[]         @relation("messageSender")
+  trainingCompletions MentoraTrainingCompletion[]
+  notifications       Notification[]
 
   // ── Community back-relation (1↔1; all community models hang off CommunityMember) ──
   communityMember CommunityMember?
@@ -1508,4 +1509,18 @@ model MentoraProgrammeSettings {
   updatedById          String?
   updatedBy            User?     @relation("mentoraSettingsUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   updatedAt            DateTime  @updatedAt
+}
+
+/// Completion of a Mentorat onboarding training module (catalogue lives in
+/// src/lib/mentora/trainings.ts — `moduleSlug` is validated against it).
+/// Personal data: cascades with the User.
+model MentoraTrainingCompletion {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleSlug  String
+  completedAt DateTime @default(now())
+
+  @@unique([userId, moduleSlug])
+  @@index([userId])
 }

@@ -10,6 +10,7 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
 import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 import { buildSwitchItems, getProductAccess } from '@/lib/access/product-access';
+import { buildMentoraNav, mentoraNavLabels } from '@/lib/mentora/nav';
 
 /**
  * Notification types that belong to the Mentorat section. The bell shows
@@ -124,69 +125,13 @@ export default async function MentoratDashboardLayout({ children }: { children: 
 
   const isAdmin = roleProfile.kind !== 'guest' && roleProfile.role === 'ADMIN';
 
-  // Admin navigation overrides everything else when there's no role profile —
-  // we don't want to push an admin towards "Devenir mentorée / Devenir mentor".
-  // Admins get direct shortcuts to the pilotage surfaces instead.
-  // Settings entry surfaces account-level controls (profile, RGPD
-  // export, account deletion) from the Mentorat sidebar. Same target
-  // as the Community sidebar — settings are user-level, not
-  // space-level, so a single canonical page serves both.
-  const settingsItem: AppShellNavItem = {
-    href: '/account/settings',
-    label: tShell('nav.community.settings'),
-    icon: '⚙',
-    matchPrefix: true,
-  };
-
-  const adminNoProfileNav: AppShellNavItem[] = [
-    { href: '/mentora/admin', label: 'Pilotage', icon: '◉' },
-    { href: '/mentora/admin/mentors', label: 'Mentors', icon: '☷', matchPrefix: true },
-    { href: '/mentora/admin/mentees', label: 'Mentorées', icon: '✦', matchPrefix: true },
-    { href: '/mentora/admin/matching', label: 'Matching', icon: '⇋', matchPrefix: true },
-    { href: '/mentora/admin/moderation', label: 'Modération', icon: '◇', matchPrefix: true },
-    { href: '/mentora/admin/reports', label: 'Rapports', icon: '◌', matchPrefix: true },
-    { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '✉', matchPrefix: true, badge: unreadCount },
-    settingsItem,
-  ];
-
-  const nav: AppShellNavItem[] =
-    kind === 'mentor'
-      ? [
-          { href: '/mentora/dashboard', label: tShell('nav.mentor.overview'), icon: '◉' },
-          { href: '/mentora/dashboard/profile', label: 'Mon profil', icon: '✦' },
-          { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentor.mentees'), icon: '☷', matchPrefix: true },
-          { href: '/mentora/dashboard/sessions', label: tShell('nav.mentor.sessions'), icon: '◌', matchPrefix: true },
-          { href: '/mentora/dashboard/messages', label: tShell('nav.mentor.messages'), icon: '✉', matchPrefix: true, badge: null },
-          { href: '/mentora/dashboard/resources', label: 'Ressources', icon: '◇', matchPrefix: true },
-          { href: '/mentora/dashboard/availability', label: tShell('nav.mentor.availability'), icon: '◌' },
-          { href: '/mentora/dashboard/feedbacks', label: 'Feedbacks', icon: '★', matchPrefix: true },
-          { href: '/mentora/dashboard/activity', label: 'Activité', icon: '◈', matchPrefix: true },
-          { href: '/mentora/dashboard/notifications', label: tShell('nav.mentor.notifications'), icon: '☼', matchPrefix: true, badge: unreadCount },
-          settingsItem,
-        ]
-      : kind === 'mentee'
-        ? [
-            { href: '/mentora/dashboard', label: tShell('nav.mentee.overview'), icon: '◉' },
-            { href: '/mentora/dashboard/profile', label: 'Mon profil', icon: '✦' },
-            { href: '/mentora/dashboard/mentorships', label: tShell('nav.mentee.mentors'), icon: '☷', matchPrefix: true },
-            { href: '/mentora/dashboard/sessions', label: tShell('nav.mentee.sessions'), icon: '◌', matchPrefix: true },
-            { href: '/mentora/dashboard/messages', label: tShell('nav.mentee.messages'), icon: '✉', matchPrefix: true },
-            { href: '/mentora/dashboard/resources', label: 'Ressources', icon: '◇', matchPrefix: true },
-            { href: '/mentora/dashboard/goals', label: 'Objectifs', icon: '◈', matchPrefix: true },
-            { href: '/mentora/dashboard/agenda', label: 'Agenda', icon: '☷', matchPrefix: true },
-            { href: '/mentora/dashboard/activity', label: 'Activité', icon: '⟳', matchPrefix: true },
-            { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '☼', matchPrefix: true, badge: unreadCount },
-            settingsItem,
-          ]
-        : isAdmin
-          ? adminNoProfileNav
-          : [
-              { href: '/mentora/dashboard', label: tShell('nav.mentee.overview'), icon: '◉' },
-              { href: '/mentora/onboarding', label: 'Devenir mentorée', icon: '✦' },
-              { href: '/mentora/become-a-mentor', label: 'Devenir mentor', icon: '☷' },
-              { href: '/mentora/dashboard/notifications', label: tShell('nav.mentee.notifications'), icon: '✉', matchPrefix: true, badge: unreadCount },
-              settingsItem,
-            ];
+  // Slim Entourage-style sidebar shared with the `[slug]` and discover
+  // layouts. Notifications live in the bell, "Mon profil" in the avatar
+  // menu, availability inside profile settings.
+  const nav: AppShellNavItem[] = buildMentoraNav(kind, {
+    isAdmin,
+    labels: mentoraNavLabels(tShell),
+  });
 
   const profileColor =
     kind === 'mentor' ? '#A34BF5' : kind === 'mentee' ? '#7301FF' : '#24325F';

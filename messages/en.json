@@ -131,22 +131,6 @@
     },
     "shell": {
       "nav": {
-        "mentee": {
-          "overview": "Dashboard",
-          "mentors": "My mentors",
-          "sessions": "Sessions",
-          "messages": "Messages",
-          "goals": "Goals",
-          "notifications": "Notifications"
-        },
-        "mentor": {
-          "overview": "Dashboard",
-          "mentees": "My mentees",
-          "sessions": "Agenda",
-          "messages": "Messages",
-          "availability": "Availability",
-          "notifications": "Notifications"
-        },
         "admin": {
           "overview": "Pilot",
           "cycles": "Cycles",
@@ -156,6 +140,17 @@
           "moderation": "Moderation",
           "communications": "Communications",
           "reports": "Reports"
+        },
+        "mentora": {
+          "home": "Home",
+          "discover": "Find a mentor",
+          "mentors": "My mentors",
+          "mentees": "My mentees",
+          "sessions": "Sessions",
+          "messages": "Messages",
+          "resources": "Resources",
+          "becomeMentee": "Become a mentee",
+          "becomeMentor": "Become a mentor"
         },
         "community": {
           "feed": "Feed",
@@ -2483,14 +2478,6 @@
       "nextStepTitle": "Final presentation",
       "nextStepDesc": "Present your project to the Digizelle jury.",
       "prepare": "Prepare →",
-      "joinCommunity": {
-        "eyebrow": "Digizelle Community",
-        "title": "Join the community whenever you're ready",
-        "body": "Channels, challenges, lives, meetups — a kind space alongside your mentorship. Create your account in one click.",
-        "cta": "Join the community →",
-        "cta_pending": "Activating…",
-        "seeCommunity": "View community"
-      },
       "adminSettingsPage": {
         "kicker": "Programme & team",
         "title": "Settings",
@@ -2613,48 +2600,6 @@
           "5": { "title": "Salary & negotiation workshop · replay", "meta": "by Sofia K. · 320 downloads", "tag": "Video", "icon": "videos" }
         }
       },
-      "agendaPage": {
-        "kicker": "Mentorat · Sessions",
-        "title": "Agenda",
-        "rangeLabel": "Week of {start} to {end}",
-        "today": "Today",
-        "viewWeek": "Week",
-        "viewMonth": "Month",
-        "viewList": "List",
-        "kpis": {
-          "thisWeek": "Sessions this week",
-          "hoursPlanned": "Hours planned",
-          "freeSlots": "Free slots",
-          "thisMonth": "Sessions this month"
-        },
-        "kpiHours": "{hours} h{minutes, select, 0 {} other {{minutes}}}",
-        "days": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
-        "noSessions": "No sessions scheduled this week.",
-        "untitledSession": "Mentorship session"
-      },
-      "feedbacksPage": {
-        "kicker": "Mentee feedback",
-        "title": "Feedbacks",
-        "kpis": {
-          "average": "Average rating",
-          "averageMeta": "across {count} reviews",
-          "recommendation": "Recommendation",
-          "recommendationMeta": "{recommended} of {total} mentees",
-          "totalSessions": "Sessions delivered",
-          "totalSessionsMeta": "since {since}",
-          "completion": "Completion rate",
-          "completionMeta": "cycles finished"
-        },
-        "topMentor": {
-          "tag": "★ TOP MENTOR — Q1 2026",
-          "title": "You're in the top 5% best-rated mentors.",
-          "body": "Thank you for your commitment to the Digizelle community."
-        },
-        "listTitle": "Reviews from your mentees",
-        "empty": "No reviews yet. Your first reviews will land here as soon as a mentee wraps up a cycle.",
-        "anonReviewer": "Digizelle mentee",
-        "cycleAndDate": "{cycle} · {date}"
-      },
       "resourcesPage": {
         "kicker": "Library",
         "menteeTitle": "Resources",
@@ -2703,51 +2648,6 @@
           "3": { "kind": "PDF", "title": "Tech interview cheatsheet", "meta": "Shared with 12 mentees · created in January" }
         }
       },
-      "goalsPage": {
-        "kicker": "Journey tracking",
-        "title": "My goals",
-        "subtitle": "Your mentorship goals, tracked with your mentor.",
-        "empty": "No goals yet. During a session, your mentor will set some with you.",
-        "kpis": {
-          "active": "Active goals",
-          "completed": "Steps completed",
-          "avgTime": "Avg time / step",
-          "nextDeadline": "Next deadline"
-        },
-        "kpiAvgDays": "{days} d",
-        "kpiAvgEmpty": "—",
-        "kpiNextEmpty": "—",
-        "listTitle": "{count, plural, =0 {No goals in progress} =1 {My goal in progress} other {My # goals in progress}}",
-        "card": {
-          "onTrack": "✓ On track",
-          "achieved": "✓ Achieved",
-          "newGoal": "+ New goal",
-          "withMentor": "With {name}",
-          "completedAt": "Completed on {date}",
-          "createdAt": "Created on {date}",
-          "completedSuffix": "complete"
-        }
-      },
-      "nav": {
-        "overview": "Overview",
-        "requests": "Requests",
-        "requestsReceived": "Received requests",
-        "requestsSent": "Sent requests",
-        "mentorships": "My mentorships",
-        "sessions": "My sessions",
-        "messages": "Messages",
-        "agenda": "Agenda",
-        "feedbacks": "Feedbacks",
-        "resources": "Resources",
-        "goals": "Goals",
-        "notifications": "Notifications",
-        "availability": "Availability",
-        "profileEdit": "Profile settings",
-        "logout": "Log out",
-        "groupMain": "Workspace",
-        "groupMentor": "Mentor side",
-        "groupMentee": "Mentee side"
-      },
       "shared": {
         "empty": "Nothing to display yet.",
         "loading": "Loading…",
@@ -2793,51 +2693,56 @@
           "tomorrow": "Tomorrow"
         }
       },
-      "overviewMentee": {
-        "title": "Hello {name}",
-        "subtitle": "Here is an overview of your Mentorat journey.",
-        "myMentorsTitle": "My active mentors",
-        "myMentorsEmpty": "You don't have a mentor yet. Discover our profiles.",
-        "myMentorsCta": "Discover a mentor →",
-        "upcomingSessionsTitle": "Next session",
-        "upcomingSessionsEmpty": "No session scheduled.",
-        "upcomingSessionsCta": "Schedule a session →",
-        "pendingRequestsTitle": "Pending requests",
-        "pendingRequestsEmpty": "No pending requests.",
-        "recommendationsTitle": "Recommendations for me",
-        "recommendationsEmpty": "Complete your profile to receive recommendations.",
-        "recommendationsHint": "Selection based on your goals and language.",
-        "ctaDiscover": "View all mentors →",
-        "profileCompletionTitle": "Mentee profile",
-        "profileCompletionLabel": "{percent}% complete",
-        "profileCompletionCta": "Complete my profile →"
+      "referent": {
+        "title": "Your Digizelle contact",
+        "help": "A question about the programme or trouble with the platform? Write to us!"
       },
-      "mentor": {
-        "eyebrow": "Mentor dashboard",
-        "greeting": "Hello {name}",
-        "subtitle": "Here is an overview of your mentor activity.",
-        "completionBarLabel": "Profile completion",
-        "completionPercent": "{percent}%",
-        "completionHint": "Complete your profile to increase your visibility to mentees.",
-        "pendingRequestsTitle": "Pending requests",
-        "pendingRequestsEmpty": "No pending requests",
-        "pendingRequestsCta": "View requests →",
-        "upcomingSessionsTitle": "Upcoming sessions",
-        "upcomingSessionsEmpty": "No sessions scheduled yet.",
-        "upcomingSessionsViewAll": "View all →",
-        "upcomingSessionOpen": "Open",
-        "unreadMessagesTitle": "Unread messages",
-        "unreadMessagesEmpty": "All messages are read",
-        "unreadMessagesCta": "View messages →",
-        "averageRatingTitle": "Average rating",
-        "averageRatingEmpty": "No reviews yet",
-        "averageRatingCount": "{count, plural, one {# review} other {# reviews}}",
-        "sessionDuration": "{minutes} min",
-        "unknownMentee": "Mentee",
-        "quickActions": {
-          "editProfile": "Edit my profile",
-          "editAvailability": "My availability"
-        }
+      "home": {
+        "profileCompletion": "Profile completion",
+        "presentation": "About",
+        "complete": "Complete my profile",
+        "recommendedTitle": "Mentors recommended for you",
+        "recommendedSubtitle": "Check their profile and send them a request directly.",
+        "howItWorks": "How does it work?",
+        "howItWorksBody": "Recommendations combine your goals, the skills you're after, your languages and mentor availability.",
+        "recommendedEmpty": "No recommendation yet: complete your profile to improve matching.",
+        "seeAllMentors": "See all mentors",
+        "nextSessionTitle": "Next session",
+        "nextSessionWith": "{date} with {name}",
+        "goFurtherTitle": "Go further",
+        "tileEventsTitle": "Join a meetup",
+        "tileEventsBody": "Meet mentors and mentees online or in person.",
+        "tileEventsCta": "See events",
+        "tileDiscoverTitle": "Find a mentor",
+        "tileDiscoverBody": "Browse profiles and send a request.",
+        "tileDiscoverCta": "See mentors",
+        "tileCommunityTitle": "Join the community",
+        "tileCommunityBody": "Talk with the whole Digizelle community.",
+        "tileCommunityCta": "Go to the community",
+        "tileCharterTitle": "Get the right posture",
+        "tileCharterBody": "Read the community charter.",
+        "tileCharterCta": "Read the charter",
+        "messagesTitle": "My latest messages",
+        "messagesEmpty": "No messages yet.",
+        "messagesCta": "Open messages",
+        "unread": "Unread",
+        "requestsTitle": "Pending requests",
+        "requestsEmpty": "No pending request.",
+        "requestsCta": "See requests",
+        "sessionsTitle": "Upcoming sessions",
+        "sessionsEmpty": "No session planned.",
+        "sessionsCta": "See sessions",
+        "sessionWith": "with {name}",
+        "tileJoinTitle": "Join the community",
+        "tileJoinBody": "Talk with the whole Digizelle community.",
+        "tileJoinCta": "Join",
+        "tileJoinPending": "Activating…",
+        "tileJoinError": "Could not enable the community, please try again.",
+        "tileTrainingsTitle": "Get trained",
+        "tileTrainingsBody": "Short modules to mentor well.",
+        "tileTrainingsCta": "See trainings",
+        "sentRequests": "{count, plural, one {# sent request awaiting a reply} other {# sent requests awaiting a reply}}",
+        "sentRequestsCta": "See my requests"
       }
     },
     "requests": {
@@ -3420,9 +3325,6 @@
       "searchPlaceholder": "Search a mentor, a skill...",
       "filters": {
         "title": "Filters",
-        "skills": "Skills",
-        "skillsPlaceholder": "E.g.: react, ux, product",
-        "skillsHint": "Slugs separated by commas.",
         "language": "Language",
         "languageAny": "All",
         "format": "Format",
@@ -3435,7 +3337,13 @@
         "rating4": "4★ and up",
         "rating4_5": "4.5★ and up",
         "apply": "Apply",
-        "reset": "Reset"
+        "reset": "Reset",
+        "category": "Field",
+        "categoryAny": "All fields",
+        "reactive": "Very responsive only",
+        "sort": "Sort by",
+        "sortRelevance": "Relevance",
+        "sortRecent": "Recent activity"
       },
       "sort": {
         "label": "Sort by",
@@ -3811,6 +3719,33 @@
       "CAREER": "Career",
       "BUSINESS": "Business",
       "CREATIVE": "Creative"
+    },
+    "badges": {
+      "reactive": "Very responsive",
+      "reactiveHint": "Usually replies within 24 hours",
+      "engaged": "Highly engaged",
+      "engagedHint": "Actively mentoring mentees",
+      "complementary": "Complementary profile",
+      "complementaryHint": "Their background matches your project",
+      "available": "Available",
+      "full": "Full"
+    },
+    "trainings": {
+      "title": "Trainings",
+      "subtitle": "Short modules to get started and make the most of mentoring.",
+      "progressLabel": "Your progress",
+      "percentDone": "{percent}% complete",
+      "duration": "{minutes} minutes",
+      "start": "Start",
+      "review": "Review",
+      "done": "Done",
+      "markDone": "Mark as done",
+      "marking": "Saving…",
+      "error": "Could not save, please try again.",
+      "back": "Back to resources",
+      "next": "Next module",
+      "allDone": "Well done, every module is complete!",
+      "seeAll": "See trainings"
     }
   },
   "notFound": {
