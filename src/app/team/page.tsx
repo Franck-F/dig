@@ -197,7 +197,7 @@ export default async function TeamPage() {
 
       <section className="dz-section">
         <div
-          className="dz-glass-strong"
+          className="dz-glass-strong dz-stack-mobile dz-pad-mobile"
           style={{
             padding: 48,
             borderRadius: 32,

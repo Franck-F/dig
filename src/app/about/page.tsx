@@ -78,7 +78,7 @@ export default async function AboutPage() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="dz-hide-mobile" style={{ display: 'flex', justifyContent: 'center' }}>
             <Mascot3D src="/images/robot-mascotte.png" alt={tCommon('mascotAlt')} width={380} intensity={18} />
           </div>
         </div>

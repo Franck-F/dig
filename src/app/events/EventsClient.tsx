@@ -68,7 +68,7 @@ export default function EventsClient() {
   return (
     <>
       <section className="dz-section" style={{ paddingTop: 40 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <div className="dz-col-mobile" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20 }}>
           <div>
             <div className="dz-eyebrow"><span className="dot"></span>{t('eyebrow')}</div>
             <h1 className="dz-h1" style={{ marginTop: 18 }}>{t('title')} <span className="dz-grad-text">{t('titleHighlight')}</span></h1>
@@ -94,27 +94,27 @@ export default function EventsClient() {
           since the event is past. */}
       {showHero && (
       <section className="dz-section" style={{ paddingTop: 0 }}>
-        <div className="dz-glass-strong" style={{ padding: 0, borderRadius: 32, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1.2fr 1fr', minHeight: 360 }}>
-          <div style={{ padding: 44, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="dz-glass-strong dz-stack-mobile" style={{ padding: 0, borderRadius: 32, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1.2fr 1fr', minHeight: 360 }}>
+          <div className="dz-events-hero__body" style={{ padding: 44, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <span className="dz-chip --pink">{t('hero.chip')}</span>
               <h2 className="dz-h2" style={{ marginTop: 14 }}>{t('hero.title')} <span className="dz-grad-text">{t('hero.titleHighlight')}</span></h2>
               <p className="dz-body" style={{ marginTop: 14, fontSize: 16 }}>{t('hero.body')}</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 20 }}>
+            <div className="dz-wrap-mobile" style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 20 }}>
               <div className="dz-stat"><div className="num" style={{ fontSize: 32, color: '#7301FF' }}>{t('hero.stat0.num')}</div><div className="lbl">{t('hero.stat0.label')}</div></div>
               <div className="dz-stat"><div className="num" style={{ fontSize: 32, color: '#7301FF' }}>{t('hero.stat1.num')}</div><div className="lbl">{t('hero.stat1.label')}</div></div>
               <div className="dz-stat"><div className="num" style={{ fontSize: 32, color: '#7301FF' }}>{t('hero.stat2.num')}</div><div className="lbl">{t('hero.stat2.label')}</div></div>
               <Link
                 href="/events/digizelle-impact-1"
-                className="dz-btn dz-btn-primary dz-btn-lg"
+                className="dz-btn dz-btn-primary dz-btn-lg dz-events-hero__cta"
                 style={{ marginLeft: 'auto' }}
               >
                 {t('hero.register')}
               </Link>
             </div>
           </div>
-          <div style={{ position: 'relative', background: 'linear-gradient(135deg, #7301FF, #A34BF5 60%, #F46FB1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="dz-hide-mobile" style={{ position: 'relative', background: 'linear-gradient(135deg, #7301FF, #A34BF5 60%, #F46FB1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Mascot3D src="/images/robot-mascotte.png" width={300} intensity={14} />
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function EventsClient() {
               const isPast = Boolean(iso) && iso < today;
               const disabled = e.complet || isPast;
               return (
-                <div key={e.key} className="dz-card" style={{ padding: 20, display: 'grid', gridTemplateColumns: '80px 1fr auto auto', gap: 24, alignItems: 'center', opacity: isPast ? 0.85 : 1 }}>
+                <div key={e.key} className="dz-card dz-event-row" style={{ padding: 20, display: 'grid', gridTemplateColumns: '80px 1fr auto auto', gap: 24, alignItems: 'center', opacity: isPast ? 0.85 : 1 }}>
                   <div style={{ width: 76, height: 84, borderRadius: 16, background: `linear-gradient(180deg, ${e.col}, ${e.col}aa)`, color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.85 }}>{t(`upcoming.${e.key}.month`)}</div>
                     <div style={{ fontSize: 30, fontWeight: 700, lineHeight: 1, marginTop: 2 }}>{t(`upcoming.${e.key}.day`)}</div>

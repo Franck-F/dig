@@ -87,6 +87,7 @@ export default async function MentorCard({
         flexDirection: 'column',
         gap: 14,
         position: 'relative',
+        minWidth: 0,
       }}
     >
       {/* In the flow (not absolute) so it never overlaps the name on the
@@ -144,8 +145,11 @@ export default async function MentorCard({
             style={{
               marginTop: 2,
               overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              // Two lines, then ellipsis. A single nowrap line made the card
+              // as wide as the headline and pushed it off a phone screen.
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
             }}
             title={mentor.headline}
           >
@@ -213,11 +217,13 @@ export default async function MentorCard({
 
       <div
         className="dz-small"
+        // Wrapping row rather than a 2-col grid: the global mobile rule
+        // collapses inline grids to one column with 14px gaps, which turned
+        // four short facts into a tall list.
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 6,
-          rowGap: 4,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '4px 14px',
         }}
       >
         <span>{t('yearsLabel', { years: mentor.yearsExperience })}</span>

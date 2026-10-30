@@ -99,16 +99,16 @@ export default async function BlogPage() {
         {/* Featured "À la une" hero — promoted to the top so the editorial
             spotlight is the first thing readers see, before the searchable
             grid of every other post. */}
-        <div className="dz-card" style={{ padding: 0, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 360, marginBottom: 40 }}>
-          <div style={{ background: 'linear-gradient(135deg, #7301FF, #A34BF5 60%, #F46FB1)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="dz-card dz-stack-mobile" style={{ padding: 0, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 360, marginBottom: 40 }}>
+          <div className="dz-hide-mobile" style={{ background: 'linear-gradient(135deg, #7301FF, #A34BF5 60%, #F46FB1)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Mascot3D src="/images/robot-mascotte-1.png" width={260} intensity={12} />
           </div>
-          <div style={{ padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="dz-pad-mobile" style={{ padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="dz-chip --pink">{t('featured.label', { category: t('featured.category') })}</span>
             <h2 className="dz-h2" style={{ marginTop: 14 }}>{t('featured.title')}</h2>
             <p className="dz-body" style={{ marginTop: 14, fontSize: 16 }}>{t('featured.body')}</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 24 }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#7301FF,#A34BF5)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>PM</div>
+            <div className="dz-wrap-mobile" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 24 }}>
+              <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', background: 'linear-gradient(135deg,#7301FF,#A34BF5)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>PM</div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{t('featured.author')}</div>
                 <div className="dz-small">{t('featured.date')}</div>

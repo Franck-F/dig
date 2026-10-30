@@ -89,7 +89,7 @@ export default async function ContactPage() {
               ))}
             </div>
 
-            <div style={{ marginTop: 40, position: 'relative' }}>
+            <div className="dz-hide-mobile" style={{ marginTop: 40, position: 'relative' }}>
               <Mascot3D src="/images/robot.png" width={200} intensity={20} />
             </div>
           </div>

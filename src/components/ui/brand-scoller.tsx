@@ -175,6 +175,23 @@ export function BrandScroller({
   );
 }
 
+/**
+ * Static logo grid — the phone counterpart of the marquee. Two opposite
+ * marquee rows on a 390px screen read as logos sliding over each other;
+ * a calm 3-up grid shows every partner at a legible size instead.
+ */
+export function BrandGrid({ logos, className }: { logos: BrandLogo[]; className?: string }) {
+  return (
+    <ul className={["dz-brand-grid", className ?? ""].join(" ")}>
+      {logos.map((logo, i) => (
+        <li key={`${logo.name}-${i}`}>
+          <Wordmark {...logo} heightPx={Math.min(logo.heightPx ?? 28, 28)} maxWidthPx={96} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export const BrandScrollerReverse = (props: Omit<BrandScrollerProps, "direction">) => (
   <BrandScroller {...props} direction="right" />
 );

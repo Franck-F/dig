@@ -485,6 +485,11 @@ export default async function MessagesInboxPage({
           .dz-messages-grid {
             grid-template-columns: 1fr !important;
           }
+          /* Stacked, the list no longer needs desktop height: a single
+             conversation was followed by ~400px of empty card. */
+          .dz-messages-grid > aside {
+            min-height: 0 !important;
+          }
         }
       `}</style>
     </div>

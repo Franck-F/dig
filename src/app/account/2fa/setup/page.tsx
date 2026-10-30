@@ -44,6 +44,7 @@ export default async function TotpSetupPage({
 
   return (
     <main
+      className="dz-page-narrow"
       style={{
         maxWidth: 880,
         margin: '0 auto',

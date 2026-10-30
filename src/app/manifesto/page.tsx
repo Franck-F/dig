@@ -197,6 +197,7 @@ export default async function ManifestoPage() {
               >
                 <div
                   aria-hidden
+                  className="dz-manifest-num"
                   style={{
                     fontSize: 64,
                     fontWeight: 800,

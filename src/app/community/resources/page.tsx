@@ -56,7 +56,7 @@ export default async function CommunityResourcesPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/community/resources');
 
-  const t = await getTranslations('community.communityResourcesPage');
+  const t = await getTranslations('mentora.dashboard.communityResourcesPage');
   const items = await listResourcesForAudience('COMMUNITY', { limit: 60 });
 
   // Live category counts — single pass over the rows we already fetched.

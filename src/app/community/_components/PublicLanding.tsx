@@ -212,7 +212,7 @@ export default async function PublicLanding({
             </div>
           </div>
 
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 460 }}>
+          <div className="dz-hide-mobile" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 460 }}>
             <Mascot3D
               src="/images/robot-mascotte-1.png"
               width={460}
