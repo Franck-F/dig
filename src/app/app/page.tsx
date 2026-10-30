@@ -461,6 +461,7 @@ export default async function AppHubPage() {
                 alt=""
                 width={220}
                 height={220}
+                className="dz-hide-mobile"
                 style={{
                   position: 'absolute',
                   bottom: -10,

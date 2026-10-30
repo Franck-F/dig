@@ -86,16 +86,16 @@ export default async function MentoratPage() {
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px 18px', marginTop: 32, fontSize: 15, color: '#545b7a' }}>
               <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{t('stats.mentors')}</strong> {t('stats.mentorsLabel')}</span>
-              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span aria-hidden className="dz-hide-mobile" style={{ opacity: 0.35 }}>·</span>
               <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{t('stats.duration')}</strong> {t('stats.durationLabel')}</span>
-              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span aria-hidden className="dz-hide-mobile" style={{ opacity: 0.35 }}>·</span>
               <span><strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>{t('stats.rating')}</strong> {t('stats.ratingLabel')}</span>
             </div>
           </div>
 
           {/* iOS-style app preview */}
           <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-            <div className="dz-glass-strong" style={{ width: 380, borderRadius: 36, padding: 20, position: 'relative' }}>
+            <div className="dz-glass-strong" style={{ width: 'min(380px, 100%)', borderRadius: 36, padding: 20, position: 'relative' }}>
               <div
                 style={{
                   display: 'flex',

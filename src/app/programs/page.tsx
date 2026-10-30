@@ -90,10 +90,12 @@ export default async function ProgramsPage() {
       </section>
 
       <section className="dz-section">
-        <div className="dz-glass-strong" style={{ padding: 40, borderRadius: 28 }}>
+        <div className="dz-glass-strong dz-pad-mobile" style={{ padding: 40, borderRadius: 28 }}>
           <div
+            className="dz-col-mobile"
             style={{
               display: 'flex',
+              gap: 16,
               justifyContent: 'space-between',
               alignItems: 'center',
               marginBottom: 24,

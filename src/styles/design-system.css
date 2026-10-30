@@ -2554,3 +2554,115 @@ body.dz-theme-dark .dz-switch-seg:hover:not(:disabled) { color: #ffffff !importa
   .dz-footer { padding-left: 14px; padding-right: 14px; }
 }
 
+
+/* =========================================================
+   MOBILE FOUNDATION (Oct 2026 mobile-first pass)
+   ~80% of visits are on a phone. Earlier rounds above patch layouts with
+   `[style*="…"]` attribute selectors, which silently miss because React's
+   SSR writes inline styles without spaces (`position:absolute`). The rules
+   below fix the root causes instead, and expose small utility classes that
+   components opt into explicitly.
+   ========================================================= */
+
+/* All widths — a grid item defaults to `min-width: auto`, so one
+   nowrap/ellipsis line inside a card makes the card as wide as the text
+   and pushes it past the viewport. Let grid items shrink. */
+[style*="grid-template-columns"] > *,
+[style*="display:grid"] > *,
+[style*="display: grid"] > * {
+  min-width: 0;
+}
+/* Long words, emails and URLs wrap instead of overflowing their box. */
+body { overflow-wrap: break-word; }
+
+/* Opt-in utilities. `.dz-only-mobile` keeps the element's own display
+   value on phones and hides it from tablet up. */
+@media (min-width: 769px) {
+  .dz-only-mobile { display: none !important; }
+}
+@media (max-width: 768px) {
+  .dz-hide-mobile { display: none !important; }
+  .dz-stack-mobile { grid-template-columns: minmax(0, 1fr) !important; }
+  .dz-wrap-mobile { flex-wrap: wrap !important; }
+  .dz-col-mobile { flex-direction: column !important; align-items: stretch !important; }
+
+  /* Mascots are desktop delight (DESIGN.md › Mascot 3D). On a phone they
+     only push content down or sit on top of it. */
+  .dz-mascot-wrap { display: none !important; }
+
+  /* Buttons never get clipped: they may wrap onto two lines and never
+     exceed their row. */
+  .dz-btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* Card typography — desktop card titles (22–28px) read as shouting on a
+     390px screen; cap them so cards stay scannable. */
+  .dz-card h2, .dz-card h3,
+  .dz-lg h3, .dz-glass h3 {
+    font-size: clamp(17px, 4.8vw, 20px) !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Touch targets — links/buttons inside lists and footers get a real
+     44px-tall hit area without changing their visual size much. */
+  footer a, .dz-footer a {
+    display: inline-block;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+}
+
+/* Home page (mobile) — class hooks added in src/app/page.tsx */
+.dz-brand-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px 16px;
+  align-items: center;
+  justify-items: center;
+}
+.dz-brand-grid li { display: flex; align-items: center; justify-content: center; min-height: 32px; max-width: 100%; }
+@media (max-width: 768px) {
+  .dz-home-trust { padding: 24px 18px 32px !important; }
+  .dz-home-programs { padding: 28px 0 48px !important; }
+  .dz-home-programs__inner { width: 100% !important; padding: 0 18px !important; }
+  .dz-home-programs__title { font-size: 26px !important; }
+  .dz-home-programs__grid { margin-top: 28px !important; gap: 14px !important; }
+  .dz-home-program-card { min-height: 0 !important; padding: 22px 18px 18px !important; gap: 10px !important; }
+  .dz-home-split { padding: 22px !important; gap: 20px !important; }
+  .dz-home-testimonial { padding: 22px !important; gap: 12px !important; }
+  /* Event tiles are image-filled with absolute captions: once the desktop
+     220px rows collapse they had no intrinsic height and vanished. */
+  .dz-event-card { min-height: 200px; }
+  .dz-home-faq__q { padding: 16px 18px !important; font-size: 16px !important; }
+  .dz-home-faq__a { padding: 0 18px 18px !important; font-size: 15px !important; }
+  .dz-home-cta { padding: 26px 20px !important; border-radius: 24px !important; }
+}
+
+/* Events page (mobile) — hooks in src/app/events/EventsClient.tsx */
+@media (max-width: 768px) {
+  .dz-events-hero__body { padding: 22px !important; }
+  .dz-events-hero__cta { margin-left: 0 !important; width: 100%; }
+  /* Calendar row: date tile beside the title, status + action below. */
+  .dz-event-row {
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+    gap: 12px 14px !important;
+    padding: 16px !important;
+  }
+  .dz-event-row > :first-child { width: 64px !important; height: 70px !important; }
+  .dz-event-row > :nth-child(n + 3) { grid-column: 1 / -1; }
+}
+
+/* Page-level mobile hooks (Oct 2026 pass) */
+@media (max-width: 768px) {
+  /* Big desktop paddings (40–48px) inside full-width panels. */
+  .dz-pad-mobile { padding: 22px !important; }
+  /* Narrow account pages already sit inside the AppShell gutter. */
+  .dz-page-narrow { padding: 8px 0 40px !important; }
+  .dz-manifest-num { font-size: 40px !important; }
+}

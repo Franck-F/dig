@@ -7,7 +7,7 @@ import Frame from '@/components/Frame';
 import HeroParallax from '@/components/HeroParallax';
 import Mascot3D from '@/components/Mascot3D';
 import Reveal from '@/components/Reveal';
-import { BrandScroller, BrandScrollerReverse } from '@/components/ui/brand-scoller';
+import { BrandGrid, BrandScroller, BrandScrollerReverse } from '@/components/ui/brand-scoller';
 import { getPartnerLogos } from '@/lib/partners/logos';
 import { EVENT_PHOTOS } from '@/app/events/_data';
 import {
@@ -96,14 +96,14 @@ export default async function HomePage() {
                 </strong>{' '}
                 {t('stats.youthsLabel')}
               </span>
-              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span aria-hidden className="dz-hide-mobile" style={{ opacity: 0.35 }}>·</span>
               <span>
                 <strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>
                   <AnimatedNumber value={5} prefix="+" />
                 </strong>{' '}
                 {t('stats.eventsLabel')}
               </span>
-              <span aria-hidden style={{ opacity: 0.35 }}>·</span>
+              <span aria-hidden className="dz-hide-mobile" style={{ opacity: 0.35 }}>·</span>
               <span>
                 <strong style={{ color: 'var(--brand-violet)', fontWeight: 700 }}>
                   <AnimatedNumber value={12} prefix="+" />
@@ -129,14 +129,15 @@ export default async function HomePage() {
 
       {/* TRUST BAR — partners marquee with new BrandScroller */}
       <Reveal>
-        <section style={{ padding: '32px 64px 48px', textAlign: 'center', borderTop: '1px solid rgba(115,1,255,0.06)', borderBottom: '1px solid rgba(115,1,255,0.06)' }}>
+        <section className="dz-home-trust" style={{ padding: '32px 64px 48px', textAlign: 'center', borderTop: '1px solid rgba(115,1,255,0.06)', borderBottom: '1px solid rgba(115,1,255,0.06)' }}>
           <p style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: 12, fontWeight: 600, color: '#8b91ad', margin: '0 0 24px' }}>
             {t('trust.label')}
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div className="dz-hide-mobile" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <BrandScroller logos={partnerLogos} durationSeconds={48} gapRem={4.5} />
             <BrandScrollerReverse logos={partnerLogos} durationSeconds={56} gapRem={4.5} />
           </div>
+          <BrandGrid logos={partnerLogos} className="dz-only-mobile" />
         </section>
       </Reveal>
 
@@ -209,13 +210,14 @@ export default async function HomePage() {
         <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: 80, marginBottom: -1 }} aria-hidden>
           <path d="M0,80 C240,0 480,80 720,40 C960,0 1200,80 1440,30 L1440,80 L0,80 Z" fill="#7301FF" />
         </svg>
-        <div style={{ background: 'linear-gradient(180deg, #7301FF 0%, #8B1AFF 100%)', padding: '40px 0 80px', position: 'relative' }}>
+        <div className="dz-home-programs" style={{ background: 'linear-gradient(180deg, #7301FF 0%, #8B1AFF 100%)', padding: '40px 0 80px', position: 'relative' }}>
           <Image
             src="/images/robot.png"
             alt=""
             width={220}
             height={220}
             aria-hidden
+            className="dz-hide-mobile"
             style={{
               position: 'absolute',
               left: '2%',
@@ -228,7 +230,7 @@ export default async function HomePage() {
               opacity: 0.95,
             }}
           />
-          <div style={{ width: 'min(80%, 1500px)', margin: '0 auto', textAlign: 'center', padding: 0, position: 'relative', zIndex: 3 }}>
+          <div className="dz-home-programs__inner" style={{ width: 'min(80%, 1500px)', margin: '0 auto', textAlign: 'center', padding: 0, position: 'relative', zIndex: 3 }}>
             <div
               style={{
                 display: 'inline-flex',
@@ -248,7 +250,7 @@ export default async function HomePage() {
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'white' }} />
               {t('programs.eyebrow')}
             </div>
-            <h2 style={{ color: 'white', fontSize: 38, fontWeight: 800, margin: 0, lineHeight: 1.15 }}>
+            <h2 className="dz-home-programs__title" style={{ color: 'white', fontSize: 38, fontWeight: 800, margin: 0, lineHeight: 1.15 }}>
               {t('programs.titleLine1')}
               <br />
               <span style={{ color: '#FFD4EA' }}>
@@ -261,7 +263,7 @@ export default async function HomePage() {
                 <Reveal key={p.key} delay={i * 110}>
                   <div style={{ position: 'relative', display: 'flex' }}>
                     <div
-                      className="dz-lg --on-color --interactive"
+                      className="dz-lg --on-color --interactive dz-home-program-card"
                       style={{
                         padding: '28px 24px 24px',
                         display: 'flex',
@@ -336,7 +338,7 @@ export default async function HomePage() {
       <Reveal>
       <section className="dz-section">
         <div
-          className="dz-lg --strong"
+          className="dz-lg --strong dz-stack-mobile dz-home-split"
           style={{
             padding: 48,
             display: 'grid',
@@ -357,7 +359,7 @@ export default async function HomePage() {
             <p className="dz-body" style={{ marginTop: 16, maxWidth: 540, fontSize: 17 }}>
               {t('mentoraCta.body')}
             </p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
+            <div className="dz-wrap-mobile" style={{ display: 'flex', gap: 12, marginTop: 28 }}>
               <Link href="/mentora" className="dz-btn dz-btn-primary dz-btn-lg">
                 {t('mentoraCta.discover')}
               </Link>
@@ -366,7 +368,7 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+          <div className="dz-hide-mobile" style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
             <Mascot3D src="/images/robot-mascotte-1.png" width={260} intensity={12} />
           </div>
         </div>
@@ -393,7 +395,7 @@ export default async function HomePage() {
               return (
                 <Reveal key={k} delay={i * 120}>
                   <article
-                    className="dz-lg --interactive"
+                    className="dz-lg --interactive dz-home-testimonial"
                     style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 20, height: '100%' }}
                   >
                     <span aria-hidden style={{ fontSize: 56, lineHeight: 0.7, color, opacity: 0.6, fontFamily: 'Georgia, serif' }}>“</span>
@@ -435,7 +437,7 @@ export default async function HomePage() {
       {/* ÉVÉNEMENTS */}
       <Reveal>
       <section className="dz-section">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+        <div className="dz-wrap-mobile" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, marginBottom: 32 }}>
           <div>
             <div className="dz-eyebrow">
               <span className="dot" />
@@ -565,8 +567,10 @@ export default async function HomePage() {
                   style={{ padding: 0, borderRadius: 'var(--r-lg)', overflow: 'hidden' }}
                 >
                   <summary
+                    className="dz-home-faq__q"
                     style={{
                       padding: '22px 28px',
+                      gap: 12,
                       cursor: 'pointer',
                       fontWeight: 600,
                       fontSize: 17,
@@ -578,11 +582,11 @@ export default async function HomePage() {
                     }}
                   >
                     {t(`faq.items.${i}.q`)}
-                    <span aria-hidden style={{ fontSize: 24, color: '#7301FF', fontWeight: 300, transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)' }}>
+                    <span aria-hidden style={{ fontSize: 24, color: '#7301FF', fontWeight: 300, flexShrink: 0, transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)' }}>
                       +
                     </span>
                   </summary>
-                  <div style={{ padding: '0 28px 24px', color: '#545b7a', fontSize: 16, lineHeight: 1.65 }}>
+                  <div className="dz-home-faq__a" style={{ padding: '0 28px 24px', color: '#545b7a', fontSize: 16, lineHeight: 1.65 }}>
                     {t(`faq.items.${i}.a`)}
                   </div>
                 </details>
@@ -605,6 +609,7 @@ export default async function HomePage() {
       <Reveal>
       <section className="dz-section">
         <div
+          className="dz-home-cta"
           style={{
             position: 'relative',
             borderRadius: 32,
@@ -616,7 +621,7 @@ export default async function HomePage() {
         >
           <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'radial-gradient(60% 80% at 100% 0%, rgba(255,255,255,0.25), transparent 60%)' }} />
           <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 50%, black 35%, transparent 90%)' }} />
-          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 280px', gap: 48, alignItems: 'center' }}>
+          <div className="dz-stack-mobile" style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 280px', gap: 48, alignItems: 'center' }}>
             <div>
               <span className="dz-chip --white">{t('communityCta.chip')}</span>
               <h2 className="dz-h2" style={{ color: 'white', marginTop: 14 }}>
@@ -625,7 +630,7 @@ export default async function HomePage() {
               <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.85)', marginTop: 16, maxWidth: 600 }}>
                 {t('communityCta.body')}
               </p>
-              <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
+              <div className="dz-wrap-mobile" style={{ display: 'flex', gap: 12, marginTop: 28 }}>
                 <Link href="/community" className="dz-btn dz-btn-lg" style={{ background: 'white', color: '#7301FF' }}>
                   {t('communityCta.joinUs')}
                 </Link>
