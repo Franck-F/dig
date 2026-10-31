@@ -616,6 +616,7 @@
       "imageTooLarge": "L'image est trop lourde. Choisissez un fichier plus léger.",
       "imageMagicMismatch": "Le contenu du fichier ne correspond pas à son format.",
       "sessionConflict": "Une autre séance est déjà prévue sur ce créneau pour l'un des participants.",
+      "mentorSuspended": "Ce mentor est suspendu : cette action n'est pas possible pour le moment.",
       "unexpected": "Une erreur inattendue est survenue. Réessayez dans un instant."
     },
     "metaTitle": "Mentorat — votre mentor digital",

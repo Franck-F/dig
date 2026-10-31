@@ -6,6 +6,7 @@ import { MentorshipFrequency } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
 import { isUniqueViolation } from '@/lib/mentora/request-expiry';
+import { mentorCanAct } from '@/lib/mentora/mentor-moderation';
 import {
   type ActionResult,
   errorResult,
@@ -121,6 +122,7 @@ export async function acceptMentorshipRequest(
           select: {
             id: true,
             userId: true,
+            status: true,
             maxConcurrentMentees: true,
             _count: { select: { mentorships: { where: { status: 'ACTIVE' } } } },
           },
@@ -131,6 +133,7 @@ export async function acceptMentorshipRequest(
     if (!req) return errorResult('notFound');
     if (req.toMentor.userId !== ctx.userId) return errorResult('forbidden');
     if (req.status !== 'PENDING') return errorResult('invalidStatus');
+    if (!mentorCanAct(req.toMentor.status)) return errorResult('mentorSuspended');
     if (req.toMentor._count.mentorships >= req.toMentor.maxConcurrentMentees) {
       return errorResult('capacityReached');
     }

@@ -7,14 +7,16 @@ import { MentorStatus, MentorshipStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { logAdmin } from '@/lib/audit/log';
 import { sendEmail } from '@/lib/email/resend';
+import { canReactivateMentor } from '@/lib/mentora/mentor-moderation';
 import { requireUser } from './_helpers';
 
 /**
  * Quick-action server actions exposed on `/mentora/admin/moderation`.
  * Every action is admin-only, audit-logged, and conservatively scoped:
- *   - `suspendMentor` flips a profile to PAUSED (reversible by the admin);
- *     it does NOT touch ACTIVE mentorships, which would also require a
- *     decision about ongoing sessions.
+ *   - `suspendMentor` flips a profile to SUSPENDED; `reactivateMentor` only
+ *     undoes that. A suspended mentor cannot accept requests, message or
+ *     have sessions booked (checked in those actions); ACTIVE mentorships
+ *     and planned sessions are not touched yet (phase 2f).
  *   - `sendMentorReminder` / `pingMentorship` send a transactional email
  *     via Resend (no in-app notification yet — adding a SYSTEM_REMINDER
  *     enum value requires a migration; the email is enough for v1 and
@@ -93,6 +95,9 @@ export async function reactivateMentor(input: { id: string }): Promise<ActionRes
     });
     if (!mentor) return err('not_found');
     if (mentor.status === MentorStatus.ACTIVE) return err('already_active');
+    // B10: only a suspension can be undone here; DRAFT / PENDING_REVIEW
+    // profiles go through the approval flow.
+    if (!canReactivateMentor(mentor.status)) return err('not_suspended');
 
     await prisma.mentorProfile.update({
       where: { id: mentor.id },

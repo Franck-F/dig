@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
+import { mentorCanAct } from '@/lib/mentora/mentor-moderation';
 import {
   type ActionResult,
   errorResult,
@@ -29,6 +30,8 @@ export async function sendMessage(
     if (member.mentorship.status === 'TERMINATED') {
       return errorResult('cannotMessageTerminated');
     }
+    // B10: the thread is read-only while the mentor is suspended.
+    if (!mentorCanAct(member.mentorship.mentorProfile.status)) return errorResult('mentorSuspended');
 
     const created = await prisma.mentorshipMessage.create({
       data: {

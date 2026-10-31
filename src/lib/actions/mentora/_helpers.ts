@@ -77,7 +77,7 @@ export async function requireMentorshipMember(mentorshipId: string) {
   const m = await prisma.mentorship.findUnique({
     where: { id: mentorshipId },
     include: {
-      mentorProfile: { select: { userId: true } },
+      mentorProfile: { select: { userId: true, status: true } },
       menteeProfile: { select: { userId: true } },
     },
   });

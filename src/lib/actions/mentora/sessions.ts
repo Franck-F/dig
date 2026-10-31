@@ -8,6 +8,7 @@ import { notify } from '@/lib/mentora/notifications';
 import { getAvailableSlots } from '@/lib/mentora/scheduling';
 import { buildVisioRoomUrl } from '@/lib/mentora/visio';
 import { canBookInMentorship, hasSessionConflict } from '@/lib/mentora/booking';
+import { mentorCanAct } from '@/lib/mentora/mentor-moderation';
 import {
   type ActionResult,
   errorResult,
@@ -72,9 +73,10 @@ export async function scheduleSession(
 
       const mentor = await tx.mentorProfile.findUnique({
         where: { id: mentorship.mentorProfileId },
-        select: { id: true, timezone: true },
+        select: { id: true, timezone: true, status: true },
       });
       if (!mentor) throw new MentoratError('notFound');
+      if (!mentorCanAct(mentor.status)) throw new MentoratError('mentorSuspended');
       const rules = await tx.availabilityRule.findMany({ where: { mentorProfileId: mentor.id } });
       const exceptions = await tx.availabilityException.findMany({ where: { mentorProfileId: mentor.id } });
       const mentorBooked = await tx.session.findMany({
