@@ -14,6 +14,7 @@ import {
   successResult,
 } from './_helpers';
 import { notify } from '@/lib/mentora/notifications';
+import { ROLES_PROMOTED_ON_MENTOR_APPROVAL } from '@/lib/mentora/roles';
 import { logAdmin } from '@/lib/audit/log';
 import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
@@ -519,7 +520,11 @@ export async function adminApproveMentor(input: { mentorProfileId: string }): Pr
           publishedAt: profile.publishedAt ?? new Date(),
         },
       }),
-      prisma.user.update({ where: { id: profile.userId }, data: { role: 'MENTOR' } }),
+      // Only the default STUDENT role is upgraded; ADMIN / PARTNER keep theirs (B5).
+      prisma.user.updateMany({
+        where: { id: profile.userId, role: { in: [...ROLES_PROMOTED_ON_MENTOR_APPROVAL] } },
+        data: { role: 'MENTOR' },
+      }),
     ]);
     await notify(profile.userId, 'MENTOR_APPROVED', { mentorProfileId: profile.id });
     await logAdmin(ctx.userId, {
