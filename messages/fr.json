@@ -615,6 +615,7 @@
       "imageMimeNotAllowed": "Format d'image non pris en charge.",
       "imageTooLarge": "L'image est trop lourde. Choisissez un fichier plus léger.",
       "imageMagicMismatch": "Le contenu du fichier ne correspond pas à son format.",
+      "sessionConflict": "Une autre séance est déjà prévue sur ce créneau pour l'un des participants.",
       "unexpected": "Une erreur inattendue est survenue. Réessayez dans un instant."
     },
     "metaTitle": "Mentorat — votre mentor digital",

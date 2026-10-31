@@ -24,6 +24,7 @@ export const MENTORA_ERROR_CODES = [
   'imageMimeNotAllowed',
   'imageTooLarge',
   'imageMagicMismatch',
+  'sessionConflict',
   'unexpected',
 ] as const;
 

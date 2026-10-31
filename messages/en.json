@@ -2386,6 +2386,7 @@
       "imageMimeNotAllowed": "Unsupported image format.",
       "imageTooLarge": "The image is too large. Pick a smaller file.",
       "imageMagicMismatch": "The file content does not match its format.",
+      "sessionConflict": "One of the participants already has another session at this time.",
       "unexpected": "Something went wrong. Please try again in a moment."
     },
     "menteePublic": {

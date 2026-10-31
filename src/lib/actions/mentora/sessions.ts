@@ -7,10 +7,12 @@ import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
 import { getAvailableSlots } from '@/lib/mentora/scheduling';
 import { buildVisioRoomUrl } from '@/lib/mentora/visio';
+import { canBookInMentorship, hasSessionConflict } from '@/lib/mentora/booking';
 import {
   type ActionResult,
   errorResult,
   handleError,
+  MentoratError,
   requireMentorshipMember,
   successResult,
 } from './_helpers';
@@ -40,9 +42,7 @@ export async function scheduleSession(
     // Only the mentor may set a custom meeting URL — otherwise a mentee could
     // inject a phishing link that overrides the auto-allocated Jitsi room.
     const meetingUrl = isMentor ? (parsed.data.meetingUrl ?? null) : null;
-    if (mentorship.status === 'TERMINATED' || mentorship.status === 'COMPLETED') {
-      return errorResult('invalidStatus');
-    }
+    if (!canBookInMentorship(mentorship.status)) return errorResult('invalidStatus');
 
     const scheduledAt = new Date(parsed.data.scheduledAtIso);
     if (Number.isNaN(scheduledAt.getTime())) return errorResult('invalidInput');
@@ -52,52 +52,73 @@ export async function scheduleSession(
     const horizonMs = 56 * 86400 * 1000;
     if (scheduledAt.getTime() > Date.now() + horizonMs) return errorResult('invalidWindow');
 
-    // Re-validate that slot is available
-    const mentor = await prisma.mentorProfile.findUnique({
-      where: { id: mentorship.mentorProfileId },
-      select: { id: true, timezone: true },
-    });
-    if (!mentor) return errorResult('notFound');
-    const [rules, exceptions, booked] = await Promise.all([
-      prisma.availabilityRule.findMany({ where: { mentorProfileId: mentor.id } }),
-      prisma.availabilityException.findMany({ where: { mentorProfileId: mentor.id } }),
-      prisma.session.findMany({
-        where: {
-          mentorship: { mentorProfileId: mentor.id },
+    const format = parsed.data.format ?? 'REMOTE_VIDEO';
+    const durationMinutes = parsed.data.durationMinutes;
+
+    // B9: availability, conflicts and insert run in ONE transaction, after
+    // locking the mentor's and the mentee's profile rows (always in that
+    // order, so two bookings cannot deadlock). A concurrent booking of the
+    // same mentor or mentee waits for this commit, then re-reads and sees
+    // the new session.
+    const created = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "MentorProfile" WHERE id = ${mentorship.mentorProfileId} FOR UPDATE`;
+      await tx.$queryRaw`SELECT id FROM "MenteeProfile" WHERE id = ${mentorship.menteeProfileId} FOR UPDATE`;
+
+      const current = await tx.mentorship.findUnique({
+        where: { id: mentorship.id },
+        select: { status: true },
+      });
+      if (!current || !canBookInMentorship(current.status)) throw new MentoratError('invalidStatus');
+
+      const mentor = await tx.mentorProfile.findUnique({
+        where: { id: mentorship.mentorProfileId },
+        select: { id: true, timezone: true },
+      });
+      if (!mentor) throw new MentoratError('notFound');
+      const rules = await tx.availabilityRule.findMany({ where: { mentorProfileId: mentor.id } });
+      const exceptions = await tx.availabilityException.findMany({ where: { mentorProfileId: mentor.id } });
+      const mentorBooked = await tx.session.findMany({
+        where: { mentorship: { mentorProfileId: mentor.id }, status: 'SCHEDULED' },
+        select: { scheduledAt: true, durationMinutes: true },
+      });
+      const menteeBooked = await tx.session.findMany({
+        where: { mentorship: { menteeProfileId: mentorship.menteeProfileId }, status: 'SCHEDULED' },
+        select: { scheduledAt: true, durationMinutes: true },
+      });
+
+      const tightFrom = new Date(scheduledAt.getTime() - 60_000);
+      const tightTo = new Date(scheduledAt.getTime() + (durationMinutes + 1) * 60_000);
+      const slots = getAvailableSlots({
+        mentorTimezone: mentor.timezone,
+        rules,
+        exceptions,
+        bookedSessions: mentorBooked,
+        fromUtc: tightFrom,
+        toUtc: tightTo,
+        durationMinutes,
+        slotStepMinutes: 15,
+        minNoticeHours: 1,
+      });
+      if (!slots.some((s) => s.startUtc.getTime() === scheduledAt.getTime())) {
+        throw new MentoratError('slotTaken');
+      }
+      if (hasSessionConflict({ start: scheduledAt, durationMinutes }, menteeBooked)) {
+        throw new MentoratError('sessionConflict');
+      }
+
+      return tx.session.create({
+        data: {
+          mentorshipId: mentorship.id,
+          scheduledAt,
+          durationMinutes,
+          format,
+          location: parsed.data.location ?? null,
+          meetingUrl,
+          agenda: parsed.data.agenda ?? null,
           status: 'SCHEDULED',
         },
-        select: { scheduledAt: true, durationMinutes: true },
-      }),
-    ]);
-    const tightFrom = new Date(scheduledAt.getTime() - 60_000);
-    const tightTo = new Date(scheduledAt.getTime() + (parsed.data.durationMinutes + 1) * 60_000);
-    const slots = getAvailableSlots({
-      mentorTimezone: mentor.timezone,
-      rules,
-      exceptions,
-      bookedSessions: booked,
-      fromUtc: tightFrom,
-      toUtc: tightTo,
-      durationMinutes: parsed.data.durationMinutes,
-      slotStepMinutes: 15,
-      minNoticeHours: 1,
-    });
-    const exact = slots.find((s) => s.startUtc.getTime() === scheduledAt.getTime());
-    if (!exact) return errorResult('slotTaken');
-
-    const format = parsed.data.format ?? 'REMOTE_VIDEO';
-    const created = await prisma.session.create({
-      data: {
-        mentorshipId: mentorship.id,
-        scheduledAt,
-        durationMinutes: parsed.data.durationMinutes,
-        format,
-        location: parsed.data.location ?? null,
-        meetingUrl,
-        agenda: parsed.data.agenda ?? null,
-        status: 'SCHEDULED',
-      },
-      select: { id: true },
+        select: { id: true },
+      });
     });
 
     // Auto-allocate a Jitsi room for video sessions when the caller
