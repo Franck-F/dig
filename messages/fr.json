@@ -1495,6 +1495,7 @@
         "SESSION_REMINDER": "Rappel : votre session a lieu dans 24 h.",
         "SESSION_CANCELLED": "Une session a été annulée.",
         "SESSION_RESCHEDULED": "Une session a été reprogrammée.",
+        "SESSION_COMPLETED": "Session terminée : laissez votre avis",
         "NEW_MESSAGE": "Nouveau message dans un mentorat.",
         "REVIEW_RECEIVED": "Vous avez reçu un nouvel avis.",
         "MENTOR_APPROVED": "Votre profil mentor a été validé 🎉",
@@ -1538,6 +1539,10 @@
           "subject": "[Mentorat] Session annulée",
           "body": "Bonjour {recipientName},\n\nLa session du {date} avec {otherName} a été annulée.\n\nRaison : {reason}\n\nVous pouvez reprogrammer une session ici :\n{url}\n\nL'équipe Digizelle Mentorat"
         },
+        "sessionCompleted": {
+          "subject": "[Mentorat] Comment s'est passée votre session ?",
+          "body": "Bonjour {recipientName},\n\nVotre session du {date} avec {otherName} est terminée.\n\nVotre avis aide votre mentor à progresser et les autres mentorés à choisir. Laissez-le ici :\n{url}\n\nL'équipe Digizelle Mentorat"
+        },
         "mentorApproved": {
           "subject": "[Mentorat] Votre profil mentor est validé 🎉",
           "body": "Bonjour {recipientName},\n\nFélicitations, votre profil mentor a été validé par notre équipe. Il est désormais visible publiquement sur Mentorat.\n\nGérez vos disponibilités et vos demandes :\n{url}\n\nL'équipe Digizelle Mentorat"
@@ -1553,6 +1558,7 @@
         "SESSION_REMINDER": "Votre session approche. Préparez vos questions et rejoignez le créneau au moment voulu.",
         "SESSION_CANCELLED": "Une session a été annulée. Vous pouvez en planifier une autre depuis votre agenda.",
         "SESSION_RESCHEDULED": "Une session a été replanifiée. Vérifiez le nouveau créneau dans votre agenda.",
+        "SESSION_COMPLETED": "Votre session est terminée. Laissez votre avis : il aide votre mentor et les autres mentorés.",
         "NEW_MESSAGE": "Vous avez reçu un nouveau message.",
         "REVIEW_RECEIVED": "Vous avez reçu un nouvel avis. Consultez-le depuis votre profil.",
         "MENTOR_APPROVED": "Bienvenue dans le programme : votre candidature mentor a été acceptée.",

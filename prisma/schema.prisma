@@ -409,6 +409,8 @@ enum NotificationType {
   CHALLENGE_RESULT
   CHALLENGE_VOTE_RECEIVED
   REPORT_RECEIVED
+  // ── Mentorat additions (appended: Postgres enums only grow at the end) ──
+  SESSION_COMPLETED // mentee invited to review a finished session (B7)
 }
 
 // ─── Mentorat — Models ──────────────────────────────────────────────────

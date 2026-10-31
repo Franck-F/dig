@@ -29,7 +29,8 @@ export function targetFor(type: string, payload: Payload): string | null {
     case 'SESSION_SCHEDULED':
     case 'SESSION_REMINDER':
     case 'SESSION_CANCELLED':
-    case 'SESSION_RESCHEDULED': {
+    case 'SESSION_RESCHEDULED':
+    case 'SESSION_COMPLETED': {
       const sid = get('sessionId');
       return sid ? `/mentora/dashboard/sessions/${sid}` : '/mentora/dashboard/sessions';
     }

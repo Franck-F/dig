@@ -46,7 +46,17 @@ const SAMPLE_PAYLOADS: { [K in EmailNotificationType]: EmailPayloads[K] } = {
     reason: 'Empêchement de dernière minute',
   },
   MENTOR_APPROVED: { mentorProfileId: 'mp1' },
+  SESSION_COMPLETED: {
+    sessionId: 's1',
+    mentorshipId: 'm1',
+    counterpartUserId: 'u2',
+    scheduledAt: '2026-07-01T12:00:00.000Z',
+  },
 };
+
+test('la clôture de séance envoie un email au mentee (invitation à l’avis)', () => {
+  assert.ok((EMAIL_ENABLED as readonly string[]).includes('SESSION_COMPLETED'));
+});
 
 const CTX = {
   recipientName: 'Alice',

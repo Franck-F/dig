@@ -17,6 +17,7 @@ export const EMAIL_ENABLED = [
   'SESSION_SCHEDULED',
   'SESSION_REMINDER',
   'SESSION_CANCELLED',
+  'SESSION_COMPLETED',
   'MENTOR_APPROVED',
 ] as const satisfies readonly NotificationType[];
 
@@ -29,6 +30,7 @@ const TEMPLATE_KEYS: Record<EmailNotificationType, string> = {
   SESSION_SCHEDULED: 'sessionScheduled',
   SESSION_REMINDER: 'sessionReminder',
   SESSION_CANCELLED: 'sessionCancelled',
+  SESSION_COMPLETED: 'sessionCompleted',
   MENTOR_APPROVED: 'mentorApproved',
 };
 
@@ -56,6 +58,12 @@ export type EmailPayloads = {
     mentorshipId: string;
     scheduledAt: string;
     reason: string;
+  };
+  /** Sent to the mentee: the session is over, invite them to review it. */
+  SESSION_COMPLETED: Counterpart & {
+    sessionId: string;
+    mentorshipId: string;
+    scheduledAt: string;
   };
   MENTOR_APPROVED: { mentorProfileId: string };
 };
@@ -97,6 +105,7 @@ function targetPath(type: EmailNotificationType, payload: Record<string, unknown
     case 'SESSION_SCHEDULED':
     case 'SESSION_REMINDER':
     case 'SESSION_CANCELLED':
+    case 'SESSION_COMPLETED':
       return `/mentora/dashboard/sessions/${payload.sessionId}`;
     case 'MENTOR_APPROVED':
       return '/mentora/dashboard';

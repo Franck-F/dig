@@ -3090,6 +3090,7 @@
         "SESSION_REMINDER": "Reminder: your session takes place in 24 hours.",
         "SESSION_CANCELLED": "A session has been cancelled.",
         "SESSION_RESCHEDULED": "A session has been rescheduled.",
+        "SESSION_COMPLETED": "Session completed: leave a review",
         "NEW_MESSAGE": "New message in a mentorship.",
         "REVIEW_RECEIVED": "You received a new review.",
         "MENTOR_APPROVED": "Your mentor profile has been approved 🎉",
@@ -3133,6 +3134,10 @@
           "subject": "[Mentorat] Session cancelled",
           "body": "Hello {recipientName},\n\nThe session on {date} with {otherName} has been cancelled.\n\nReason: {reason}\n\nYou can reschedule a session here:\n{url}\n\nThe Digizelle Mentorat team"
         },
+        "sessionCompleted": {
+          "subject": "[Mentorat] How did your session go?",
+          "body": "Hi {recipientName},\n\nYour session on {date} with {otherName} is over.\n\nYour review helps your mentor improve and helps other mentees choose. Leave it here:\n{url}\n\nThe Digizelle Mentorat team"
+        },
         "mentorApproved": {
           "subject": "[Mentorat] Your mentor profile is approved 🎉",
           "body": "Hello {recipientName},\n\nCongratulations, your mentor profile has been approved by our team. It is now publicly visible on Mentorat.\n\nManage your availability and requests:\n{url}\n\nThe Digizelle Mentorat team"
@@ -3148,6 +3153,7 @@
         "SESSION_REMINDER": "Your session is approaching. Prepare your questions and join at the scheduled time.",
         "SESSION_CANCELLED": "A session has been cancelled. You can schedule another from your agenda.",
         "SESSION_RESCHEDULED": "A session has been rescheduled. Check the new time slot in your agenda.",
+        "SESSION_COMPLETED": "Your session is over. Leave a review: it helps your mentor and other mentees.",
         "NEW_MESSAGE": "You have received a new message.",
         "REVIEW_RECEIVED": "You received a new review. View it from your profile.",
         "MENTOR_APPROVED": "Welcome to the program: your mentor application has been accepted.",

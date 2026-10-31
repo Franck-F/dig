@@ -236,9 +236,12 @@ export async function completeSession(
       where: { id: session.id },
       data: { status: 'COMPLETED' },
     });
-    await notify(session.mentorship.menteeProfile.userId, 'REVIEW_RECEIVED', {
+    // Invite the mentee to review the session (B7: was REVIEW_RECEIVED).
+    await notify(session.mentorship.menteeProfile.userId, 'SESSION_COMPLETED', {
       sessionId: session.id,
       mentorshipId: session.mentorship.id,
+      scheduledAt: session.scheduledAt.toISOString(),
+      counterpartUserId: member.userId,
     });
     revalidatePath(`/mentora/dashboard/sessions/${session.id}`);
     return successResult();
