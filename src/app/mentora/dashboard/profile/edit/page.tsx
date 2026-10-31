@@ -37,11 +37,13 @@ export default async function ProfileEditPage() {
 
   const role = await getCurrentRoleProfile(userId);
 
-  if (role.kind === 'mentee') {
+  // A mentee with a mentor application in progress edits that application
+  // here (the dashboard status card links to this page).
+  if (role.kind === 'mentee' && !role.mentorProfile) {
     redirect('/mentora/onboarding?edit=1');
   }
 
-  if (role.kind !== 'mentor') {
+  if (role.kind === 'guest' || role.kind === 'none' || !role.mentorProfile) {
     // No role profile yet — onboarding entry point.
     redirect('/mentora/onboarding');
   }

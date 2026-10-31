@@ -1138,6 +1138,23 @@
         "title": "Votre contact Digizelle",
         "help": "Une question sur le programme, une difficulté sur la plateforme ? Écrivez-nous !"
       },
+      "application": {
+        "inReview": {
+          "title": "Votre candidature mentor est en cours d'examen",
+          "body": "L'équipe Digizelle relit votre profil. Vous recevrez un email dès qu'il sera validé."
+        },
+        "rejected": {
+          "title": "Votre candidature mentor est à revoir",
+          "body": "L'équipe a laissé un commentaire. Modifiez votre profil puis renvoyez-le pour validation."
+        },
+        "draft": {
+          "title": "Votre profil mentor est à compléter",
+          "body": "Ajoutez au moins 3 compétences et 1 créneau de disponibilité, puis envoyez votre profil pour validation."
+        },
+        "reviewNoteLabel": "Commentaire de l'équipe",
+        "editCta": "Compléter mon profil",
+        "viewCta": "Voir mon profil"
+      },
       "home": {
         "profileCompletion": "Complétion du profil",
         "presentation": "Présentation",

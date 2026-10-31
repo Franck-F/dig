@@ -15,6 +15,7 @@ import {
 } from './_helpers';
 import { notify } from '@/lib/mentora/notifications';
 import { ROLES_PROMOTED_ON_MENTOR_APPROVAL } from '@/lib/mentora/roles';
+import { isMentorApplicationComplete, isValidSlot } from '@/lib/mentora/mentor-application';
 import { logAdmin } from '@/lib/audit/log';
 import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
@@ -146,10 +147,12 @@ export async function submitMentorForReview(): Promise<ActionResult<{ id: string
       prisma.availabilityRule.count({ where: { mentorProfileId: mentorProfile.id } }),
     ]);
     if (
-      !mentorProfile.headline ||
-      mentorProfile.bio.trim().length < 1 ||
-      skillCount < 3 ||
-      ruleCount < 1
+      !isMentorApplicationComplete({
+        headline: mentorProfile.headline,
+        bio: mentorProfile.bio,
+        skillCount,
+        slotCount: ruleCount,
+      })
     ) {
       return errorResult('profileIncomplete');
     }
@@ -182,11 +185,13 @@ const submitMentorApplicationSchema = z.object({
   skillLevel: z.nativeEnum(SkillLevel),
   slots: z
     .array(
-      z.object({
-        dayOfWeek: z.number().int().min(0).max(6),
-        startMinute: z.number().int().min(0).max(1440),
-        endMinute: z.number().int().min(0).max(1440),
-      }),
+      z
+        .object({
+          dayOfWeek: z.number().int().min(0).max(6),
+          startMinute: z.number().int().min(0).max(1440),
+          endMinute: z.number().int().min(0).max(1440),
+        })
+        .refine(isValidSlot),
     )
     .max(40),
 });
@@ -236,6 +241,16 @@ export async function submitMentorApplication(
           ).map((s) => s.id)
         : [];
 
+    // A complete application goes straight to the admin review queue, in
+    // the same transaction as its creation (M15); otherwise it stays a
+    // DRAFT the candidate finishes from the profile page.
+    const readyForReview = isMentorApplicationComplete({
+      headline: parsed.data.headline,
+      bio: parsed.data.bio,
+      skillCount: skillIds.length,
+      slotCount: parsed.data.slots.length,
+    });
+
     const created = await prisma.$transaction(async (tx) => {
       const profile = await tx.mentorProfile.create({
         data: {
@@ -251,7 +266,7 @@ export async function submitMentorApplication(
           languages: parsed.data.languages,
           maxConcurrentMentees: parsed.data.maxConcurrentMentees ?? 5,
           responseTime: parsed.data.responseTime ?? ResponseTime.WITHIN_WEEK,
-          status: 'DRAFT',
+          status: readyForReview ? 'PENDING_REVIEW' : 'DRAFT',
         },
         select: { id: true },
       });

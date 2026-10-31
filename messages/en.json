@@ -2733,6 +2733,23 @@
         "title": "Your Digizelle contact",
         "help": "A question about the programme or trouble with the platform? Write to us!"
       },
+      "application": {
+        "inReview": {
+          "title": "Your mentor application is under review",
+          "body": "The Digizelle team is reviewing your profile. You will get an email as soon as it is approved."
+        },
+        "rejected": {
+          "title": "Your mentor application needs changes",
+          "body": "The team left a comment. Update your profile, then send it again for review."
+        },
+        "draft": {
+          "title": "Your mentor profile is incomplete",
+          "body": "Add at least 3 skills and 1 availability slot, then send your profile for review."
+        },
+        "reviewNoteLabel": "Comment from the team",
+        "editCta": "Complete my profile",
+        "viewCta": "View my profile"
+      },
       "home": {
         "profileCompletion": "Profile completion",
         "presentation": "About",
