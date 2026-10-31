@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import {
   addAvailabilityRule,
   updateAvailabilityRule,
@@ -52,6 +53,7 @@ function newTmpId() {
 
 export default function AvailabilityEditor({ initialRules, mentorTimezone }: Props) {
   const t = useTranslations('mentora.availability');
+  const tError = useActionErrorMessage();
   const tShared = useTranslations('mentora.dashboard.shared');
   const [rules, setRules] = useState<DraftRule[]>(
     initialRules.map((r) => ({ ...r, dirty: false })),
@@ -99,7 +101,7 @@ export default function AvailabilityEditor({ initialRules, mentorTimezone }: Pro
           setRules((prev) => prev.filter((r) => r.id !== rule.id));
           setFeedback({ kind: 'success', message: t('removeRuleSuccess') });
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });
@@ -143,7 +145,7 @@ export default function AvailabilityEditor({ initialRules, mentorTimezone }: Pro
               endMinute: r.endMinute,
             });
             if (result.status !== 'success') {
-              setFeedback({ kind: 'error', message: result.error });
+              setFeedback({ kind: 'error', message: tError(result.error) });
               return;
             }
             const created = result.data;
@@ -160,7 +162,7 @@ export default function AvailabilityEditor({ initialRules, mentorTimezone }: Pro
               endMinute: r.endMinute,
             });
             if (result.status !== 'success') {
-              setFeedback({ kind: 'error', message: result.error });
+              setFeedback({ kind: 'error', message: tError(result.error) });
               return;
             }
             next.push({ ...r, dirty: false });

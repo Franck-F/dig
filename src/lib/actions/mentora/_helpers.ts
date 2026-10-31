@@ -3,28 +3,10 @@ import * as Sentry from '@sentry/nextjs';
 import type { UserRole } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import type { MentoraErrorCode } from '@/lib/mentora/errors';
 
-export type MentoratActionError =
-  | 'unauthorized'
-  | 'notFound'
-  | 'forbidden'
-  | 'profileIncomplete'
-  | 'duplicateRequest'
-  | 'capacityReached'
-  | 'slotTaken'
-  | 'invalidWindow'
-  | 'cannotMessageTerminated'
-  | 'selfReview'
-  | 'alreadyReviewed'
-  | 'languageRequired'
-  | 'skillRequired'
-  | 'invalidInput'
-  | 'mentorNotAccepting'
-  | 'invalidStatus'
-  | 'imageMalformed'
-  | 'imageMimeNotAllowed'
-  | 'imageTooLarge'
-  | 'imageMagicMismatch';
+/** Codes live in `@/lib/mentora/errors`, each with a fr and en label. */
+export type MentoratActionError = MentoraErrorCode;
 
 export type ActionResult<T = undefined> =
   | { status: 'success'; data?: T }
@@ -115,9 +97,8 @@ export async function requireMentorshipMentor(mentorshipId: string) {
 export function handleError(err: unknown): ActionResult<never> {
   if (err instanceof MentoratError) return errorResult(err.code);
   // Genuine unexpected error — surface it to Sentry (console.error is invisible
-  // in prod). The user-facing 'unauthorized' code is kept for now; swapping it
-  // for a dedicated 'unexpected' code is a follow-up (needs FR+EN i18n keys).
+  // in prod) and show a neutral message, never a fake rights problem.
   console.error('[mentora action] unexpected error', err);
   Sentry.captureException(err, { tags: { area: 'mentora-action' } });
-  return { status: 'error', error: 'mentora.errors.unauthorized' };
+  return errorResult('unexpected');
 }

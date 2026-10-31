@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition, type CSSProperties, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 
 import { submitMentorApplication } from '@/lib/actions/mentora/mentor-profile';
 import { resizeImageToDataUrl } from '@/lib/images/resize';
@@ -233,6 +234,7 @@ const CHARTE_COLOR = ['#F46FB1', '#7301FF', '#3B7BFF', '#23c55e', '#A34BF5'] as 
  */
 export default function MentorApplicationWizard({ skills }: Props) {
   const t = useTranslations('mentora.becomeAMentor');
+  const tError = useActionErrorMessage();
   const tStep1 = useTranslations('mentora.becomeAMentor.step1');
   const tStep2 = useTranslations('mentora.becomeAMentor.step2');
   const tStep3 = useTranslations('mentora.becomeAMentor.step3');
@@ -1245,7 +1247,7 @@ export default function MentorApplicationWizard({ skills }: Props) {
             border: '1px solid rgba(217,78,146,0.20)',
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
 

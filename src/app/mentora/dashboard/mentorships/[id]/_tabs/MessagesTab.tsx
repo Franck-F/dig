@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import { sendMessage, markThreadRead } from '@/lib/actions/mentora/messages';
 
 type Msg = {
@@ -36,6 +37,7 @@ export default function MessagesTab({
   isLocked: boolean;
 }) {
   const t = useTranslations('mentora.mentorships.detail');
+  const tError = useActionErrorMessage();
   const tMsg = useTranslations('mentora.messages');
   const [messages, setMessages] = useState<Msg[]>([]);
   const [draft, setDraft] = useState('');
@@ -212,7 +214,7 @@ export default function MessagesTab({
             fontSize: 13,
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
     </div>

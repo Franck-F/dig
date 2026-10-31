@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import { addMentorshipGoal, toggleMentorshipGoalAchieved } from '@/lib/actions/mentora/mentorships';
 
 type Goal = {
@@ -28,6 +29,7 @@ export default function GoalsClient({
   isLocked: boolean;
 }) {
   const t = useTranslations('mentora.mentorships.detail');
+  const tError = useActionErrorMessage();
   const router = useRouter();
   const [draft, setDraft] = useState('');
   const [pending, startTransition] = useTransition();
@@ -144,7 +146,7 @@ export default function GoalsClient({
             fontSize: 13,
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
     </div>

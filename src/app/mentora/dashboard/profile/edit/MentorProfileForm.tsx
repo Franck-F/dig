@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState, useTransition, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import {
   updateMentorProfile,
   submitMentorForReview,
@@ -71,6 +72,7 @@ function eurosToCents(value: string): number | null {
 
 export default function MentorProfileForm({ initial, skills: initialSkills, skillCatalog, preview }: Props) {
   const t = useTranslations('mentora.profileEdit');
+  const tError = useActionErrorMessage();
   const tShared = useTranslations('mentora.dashboard.shared');
 
   const [headline, setHeadline] = useState(initial.headline);
@@ -156,7 +158,7 @@ export default function MentorProfileForm({ initial, skills: initialSkills, skil
         if (result.status === 'success') {
           setFeedback({ kind: 'success', message: t('saveSuccess') });
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });
@@ -173,7 +175,7 @@ export default function MentorProfileForm({ initial, skills: initialSkills, skil
           setStatus('PENDING_REVIEW');
           setFeedback({ kind: 'success', message: t('submitForReviewSuccess') });
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });
@@ -205,7 +207,7 @@ export default function MentorProfileForm({ initial, skills: initialSkills, skil
           ]);
           setSkillSearch('');
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });
@@ -221,7 +223,7 @@ export default function MentorProfileForm({ initial, skills: initialSkills, skil
         if (result.status === 'success') {
           setSkills((prev) => prev.filter((s) => s.skillId !== skillId));
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });
@@ -244,7 +246,7 @@ export default function MentorProfileForm({ initial, skills: initialSkills, skil
           isFeatured: patch.isFeatured ?? target.isFeatured,
         });
         if (result.status === 'error') {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });

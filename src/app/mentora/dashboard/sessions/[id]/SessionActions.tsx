@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import {
   cancelSession,
   completeSession,
@@ -56,6 +57,7 @@ export default function SessionActions({
   meetingUrl: string | null;
 }) {
   const t = useTranslations('mentora.sessions.detail');
+  const tError = useActionErrorMessage();
   const tReviews = useTranslations('mentora.reviews');
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -385,7 +387,7 @@ export default function SessionActions({
             fontSize: 13,
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
     </div>
