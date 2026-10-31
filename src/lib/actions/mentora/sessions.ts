@@ -132,6 +132,8 @@ export async function scheduleSession(
         sessionId: created.id,
         mentorshipId: mentorship.id,
         scheduledAt: scheduledAt.toISOString(),
+        durationMinutes: parsed.data.durationMinutes,
+        counterpartUserId: userId,
       });
     }
     revalidatePath(`/mentora/dashboard/mentorships/${mentorship.id}`);
@@ -188,6 +190,8 @@ export async function cancelSession(
       sessionId: session.id,
       mentorshipId: mentorship.id,
       reason: parsed.data.reason,
+      scheduledAt: session.scheduledAt.toISOString(),
+      counterpartUserId: member.userId,
     });
     revalidatePath(`/mentora/dashboard/mentorships/${mentorship.id}`);
     revalidatePath(`/mentora/dashboard/sessions/${session.id}`);

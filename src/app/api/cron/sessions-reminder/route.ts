@@ -65,11 +65,15 @@ export async function GET(request: Request): Promise<Response> {
         sessionId: s.id,
         mentorshipId: s.mentorshipId,
         scheduledAt: s.scheduledAt.toISOString(),
+        meetingUrl: s.meetingUrl,
+        counterpartUserId: menteeUserId,
       });
       await notify(menteeUserId, 'SESSION_REMINDER', {
         sessionId: s.id,
         mentorshipId: s.mentorshipId,
         scheduledAt: s.scheduledAt.toISOString(),
+        meetingUrl: s.meetingUrl,
+        counterpartUserId: mentorUserId,
       });
       // Stamp only on full success — if either notify() throws we'll
       // retry on the next run rather than leave a half-notified session

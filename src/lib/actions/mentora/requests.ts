@@ -87,6 +87,8 @@ export async function sendMentorshipRequest(
     await notify(mentor.userId, 'REQUEST_RECEIVED', {
       requestId: created.id,
       fromMenteeId: menteeProfile.id,
+      counterpartUserId: ctx.userId,
+      message: parsed.data.message,
     });
     revalidatePath('/mentora/dashboard/requests');
     return successResult(created);
@@ -179,6 +181,7 @@ export async function acceptMentorshipRequest(
     await notify(req.fromMentee.userId, 'REQUEST_ACCEPTED', {
       requestId: req.id,
       mentorshipId: result.mentorshipId,
+      counterpartUserId: ctx.userId,
     });
     revalidatePath('/mentora/dashboard/requests');
     revalidatePath('/mentora/dashboard/mentorships');
@@ -221,6 +224,7 @@ export async function declineMentorshipRequest(
     await notify(req.fromMentee.userId, 'REQUEST_DECLINED', {
       requestId: req.id,
       reason: parsed.data.reason,
+      counterpartUserId: ctx.userId,
     });
     revalidatePath('/mentora/dashboard/requests');
     return successResult();
@@ -286,6 +290,8 @@ export async function nudgePendingMentorshipRequests(): Promise<
       take: 200,
       select: {
         id: true,
+        message: true,
+        fromMentee: { select: { userId: true } },
         toMentor: { select: { userId: true } },
       },
     });
@@ -301,7 +307,11 @@ export async function nudgePendingMentorshipRequests(): Promise<
         continue;
       }
       seen.add(r.toMentor.userId);
-      await notify(r.toMentor.userId, 'REQUEST_RECEIVED', { requestId: r.id });
+      await notify(r.toMentor.userId, 'REQUEST_RECEIVED', {
+        requestId: r.id,
+        counterpartUserId: r.fromMentee.userId,
+        message: r.message,
+      });
       nudged++;
     }
     return { status: 'success', nudged, skipped };
