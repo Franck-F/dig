@@ -541,7 +541,10 @@ model MentorshipRequest {
   respondedAt       DateTime?
   expiresAt         DateTime // createdAt + 14d, set in action
 
-  @@unique([fromMenteeId, toMentorId, status]) // prevents duplicate PENDING
+  // At most one PENDING request per (mentee, mentor) pair: partial unique
+  // index "MentorshipRequest_pending_pair_key" (... WHERE status = 'PENDING'),
+  // raw SQL in migration 20261031000000_request_pending_partial_unique because
+  // Prisma cannot express it. Do not let `migrate dev` drop it.
   @@index([toMentorId, status])
   @@index([fromMenteeId, status])
   @@index([expiresAt])

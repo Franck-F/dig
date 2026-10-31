@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { MentorshipFrequency } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
+import { isUniqueViolation } from '@/lib/mentora/request-expiry';
 import {
   type ActionResult,
   errorResult,
@@ -93,6 +94,9 @@ export async function sendMentorshipRequest(
     revalidatePath('/mentora/dashboard/requests');
     return successResult(created);
   } catch (err) {
+    // Concurrent double-submit: the partial unique index on PENDING pairs
+    // rejects the second insert.
+    if (isUniqueViolation(err)) return errorResult('duplicateRequest');
     return handleError(err);
   }
 }
