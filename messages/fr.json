@@ -617,6 +617,10 @@
       "imageMagicMismatch": "Le contenu du fichier ne correspond pas à son format.",
       "sessionConflict": "Une autre séance est déjà prévue sur ce créneau pour l'un des participants.",
       "mentorSuspended": "Ce mentor est suspendu : cette action n'est pas possible pour le moment.",
+      "selfRequest": "Vous ne pouvez pas vous envoyer une demande de mentorat.",
+      "alreadyMentored": "Un mentorat est déjà en cours avec cette personne.",
+      "requestExpired": "Cette demande a expiré et ne peut plus être acceptée.",
+      "twoFactorRequired": "Confirmez votre double authentification pour continuer, puis réessayez.",
       "unexpected": "Une erreur inattendue est survenue. Réessayez dans un instant."
     },
     "metaTitle": "Mentorat — votre mentor digital",

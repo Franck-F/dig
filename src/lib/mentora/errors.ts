@@ -26,6 +26,10 @@ export const MENTORA_ERROR_CODES = [
   'imageMagicMismatch',
   'sessionConflict',
   'mentorSuspended',
+  'selfRequest',
+  'alreadyMentored',
+  'requestExpired',
+  'twoFactorRequired',
   'unexpected',
 ] as const;
 

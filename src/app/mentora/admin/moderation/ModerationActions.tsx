@@ -20,6 +20,7 @@ type FlashState =
 
 const ERROR_LABEL: Record<string, string> = {
   forbidden: 'Action réservée aux administrateurs.',
+  two_factor_required: 'Session 2FA expirée : rechargez la page pour confirmer votre code.',
   not_found: 'Cible introuvable (peut-être déjà supprimée).',
   invalid_input: 'Paramètres invalides.',
   already_suspended: 'Le mentor est déjà suspendu.',

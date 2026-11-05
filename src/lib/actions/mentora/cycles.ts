@@ -5,13 +5,13 @@ import { revalidatePath } from 'next/cache';
 import { CyclePhase, CycleStatus } from '@prisma/client';
 
 import { prisma } from '@/lib/prisma';
-import { requireUser } from './_helpers';
+import { MentoratError, requireAdmin } from './_helpers';
 import { logAdmin } from '@/lib/audit/log';
 import { requireSuperAdmin } from '@/lib/auth/super-admin';
 
 /**
- * Mentorat cycle (cohort) CRUD. Admin-only — every action checks
- * `role === 'ADMIN'` before touching the table. Phase transitions
+ * Mentorat cycle (cohort) CRUD. Admin-only — every action goes through
+ * `requireAdmin()` (role + fresh 2FA) before touching the table. Phase transitions
  * and archive are explicit operations (no implicit auto-progression
  * in v1) so the team always knows what just changed.
  *
@@ -34,12 +34,19 @@ function ok<T>(data?: T): ActionResult<T> {
   return data === undefined ? { status: 'success' } : { status: 'success', data };
 }
 
+const ADMIN_GUARD_CODES = new Set(['forbidden', 'two_factor_required']);
+
+/** Role + fresh 2FA (M6); failures surface as the 'forbidden' /
+ *  'two_factor_required' codes this module's callers already map. */
 async function ensureAdmin() {
-  const me = await requireUser();
-  if (me.role !== 'ADMIN') {
-    throw new Error('forbidden');
+  try {
+    return await requireAdmin();
+  } catch (e) {
+    if (e instanceof MentoratError) {
+      throw new Error(e.code === 'twoFactorRequired' ? 'two_factor_required' : 'forbidden');
+    }
+    throw e;
   }
-  return me;
 }
 
 function slugify(input: string): string {
@@ -109,7 +116,7 @@ export async function createCycle(input: z.input<typeof createSchema>): Promise<
     revalidatePath('/mentora/admin/cycles');
     return ok(cycle);
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[cycles.create]', e);
     return err('server_error');
   }
@@ -146,7 +153,7 @@ export async function updateCyclePhase(input: z.input<typeof updatePhaseSchema>)
     revalidatePath('/mentora/admin/cycles');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     return err('server_error');
   }
 }
@@ -198,7 +205,7 @@ export async function updateCycleStatus(input: z.input<typeof updateStatusSchema
     revalidatePath('/mentora/admin/cycles');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     return err('server_error');
   }
 }
@@ -238,7 +245,7 @@ export async function deleteCycle(input: z.input<typeof deleteSchema>): Promise<
     revalidatePath('/mentora/admin/cycles');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     return err('server_error');
   }
 }

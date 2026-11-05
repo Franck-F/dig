@@ -9,6 +9,7 @@ import { getAvailableSlots } from '@/lib/mentora/scheduling';
 import { buildVisioRoomUrl } from '@/lib/mentora/visio';
 import { canBookInMentorship, hasSessionConflict } from '@/lib/mentora/booking';
 import { mentorCanAct } from '@/lib/mentora/mentor-moderation';
+import { httpUrlSchema } from '@/lib/mentora/safe-url';
 import {
   type ActionResult,
   errorResult,
@@ -26,7 +27,7 @@ const scheduleSchema = z.object({
   durationMinutes: z.number().int().min(15).max(240),
   format: z.nativeEnum(SessionFormat).optional(),
   location: z.string().max(500).optional().nullable(),
-  meetingUrl: z.string().url().optional().nullable(),
+  meetingUrl: httpUrlSchema.optional().nullable(),
   agenda: z.string().max(2000).optional().nullable(),
 });
 

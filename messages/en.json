@@ -2388,6 +2388,10 @@
       "imageMagicMismatch": "The file content does not match its format.",
       "sessionConflict": "One of the participants already has another session at this time.",
       "mentorSuspended": "This mentor is suspended: this action is not available for now.",
+      "selfRequest": "You cannot send a mentorship request to yourself.",
+      "alreadyMentored": "A mentorship with this person is already in progress.",
+      "requestExpired": "This request has expired and can no longer be accepted.",
+      "twoFactorRequired": "Confirm your two-factor authentication to continue, then try again.",
       "unexpected": "Something went wrong. Please try again in a moment."
     },
     "menteePublic": {

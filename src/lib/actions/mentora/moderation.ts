@@ -8,7 +8,7 @@ import { prisma } from '@/lib/prisma';
 import { logAdmin } from '@/lib/audit/log';
 import { sendEmail } from '@/lib/email/resend';
 import { canReactivateMentor } from '@/lib/mentora/mentor-moderation';
-import { requireUser } from './_helpers';
+import { MentoratError, requireAdmin } from './_helpers';
 
 /**
  * Quick-action server actions exposed on `/mentora/admin/moderation`.
@@ -38,10 +38,18 @@ function ok(): ActionResult {
   return { status: 'success' };
 }
 
+const ADMIN_GUARD_CODES = new Set(['forbidden', 'two_factor_required']);
+
+/** Role + fresh 2FA (M6); failures surface as 'forbidden' / 'two_factor_required'. */
 async function ensureAdmin() {
-  const me = await requireUser();
-  if (me.role !== 'ADMIN') throw new Error('forbidden');
-  return me;
+  try {
+    return await requireAdmin();
+  } catch (e) {
+    if (e instanceof MentoratError) {
+      throw new Error(e.code === 'twoFactorRequired' ? 'two_factor_required' : 'forbidden');
+    }
+    throw e;
+  }
 }
 
 function fullName(u: { name: string | null; firstName: string | null; lastName: string | null; email: string }) {
@@ -77,7 +85,7 @@ export async function suspendMentor(input: { id: string }): Promise<ActionResult
     revalidatePath('/mentora/admin');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.suspendMentor]', e);
     return err('server_error');
   }
@@ -112,7 +120,7 @@ export async function reactivateMentor(input: { id: string }): Promise<ActionRes
     revalidatePath('/mentora/admin/moderation');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     return err('server_error');
   }
 }
@@ -159,7 +167,7 @@ export async function sendMentorReminder(input: { id: string }): Promise<ActionR
     });
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.sendMentorReminder]', e);
     return err('server_error');
   }
@@ -216,7 +224,7 @@ export async function pingMentorship(input: { id: string }): Promise<ActionResul
     });
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.pingMentorship]', e);
     return err('server_error');
   }
@@ -260,7 +268,7 @@ export async function closeMentorship(input: z.input<typeof closeSchema>): Promi
     revalidatePath('/mentora/admin');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.closeMentorship]', e);
     return err('server_error');
   }
@@ -290,7 +298,7 @@ export async function markReviewHandled(input: { id: string }): Promise<ActionRe
     revalidatePath('/mentora/admin/moderation');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.markReviewHandled]', e);
     return err('server_error');
   }

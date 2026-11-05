@@ -4,6 +4,8 @@ import type { UserRole } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import type { MentoraErrorCode } from '@/lib/mentora/errors';
+import { adminAccessDecision } from '@/lib/mentora/admin-access';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 
 /** Codes live in `@/lib/mentora/errors`, each with a fr and en label. */
 export type MentoratActionError = MentoraErrorCode;
@@ -41,6 +43,21 @@ export async function requireUser(): Promise<{ userId: string; role: UserRole; e
   });
   if (!user) throw new MentoratError('unauthorized');
   return { userId: user.id, role: user.role, email: user.email };
+}
+
+/**
+ * Every admin action: ADMIN role AND a fresh 2FA step-up cookie (M6). The
+ * admin layout's TOTP gate does not cover a server action invoked directly.
+ * Throws MentoratError('forbidden' | 'twoFactorRequired').
+ */
+export async function requireAdmin(): Promise<{ userId: string; role: UserRole; email: string | null }> {
+  const ctx = await requireUser();
+  const decision = adminAccessDecision({
+    role: ctx.role,
+    hasFresh2fa: ctx.role === 'ADMIN' && (await hasFreshAdmin2faCookie(ctx.userId)),
+  });
+  if (decision !== 'ok') throw new MentoratError(decision);
+  return ctx;
 }
 
 /** Require an active mentor (MentorProfile present + ACTIVE). */

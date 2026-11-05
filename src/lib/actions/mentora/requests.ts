@@ -6,12 +6,13 @@ import { MentorshipFrequency } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { notify } from '@/lib/mentora/notifications';
 import { isUniqueViolation } from '@/lib/mentora/request-expiry';
-import { mentorCanAct } from '@/lib/mentora/mentor-moderation';
+import { acceptRefusal, hasCapacity, sendRefusal } from '@/lib/mentora/request-rules';
 import {
   type ActionResult,
   errorResult,
   handleError,
   MentoratError,
+  requireAdmin,
   requireUser,
   successResult,
 } from './_helpers';
@@ -51,10 +52,23 @@ export async function sendMentorshipRequest(
       },
     });
     if (!mentor) return errorResult('notFound');
+    const existingMentorship = await prisma.mentorship.findUnique({
+      where: {
+        mentorProfileId_menteeProfileId: { mentorProfileId: mentor.id, menteeProfileId: menteeProfile.id },
+      },
+      select: { status: true },
+    });
+    // M3: no request to oneself, none while a mentorship is ACTIVE / PAUSED.
+    const refusal = sendRefusal({
+      mentorUserId: mentor.userId,
+      menteeUserId: ctx.userId,
+      openMentorshipStatus: existingMentorship?.status ?? null,
+    });
+    if (refusal) return errorResult(refusal);
     if (mentor.status !== 'ACTIVE' || !mentor.isAcceptingMentees) {
       return errorResult('mentorNotAccepting');
     }
-    if (mentor._count.mentorships >= mentor.maxConcurrentMentees) {
+    if (!hasCapacity(mentor._count.mentorships, mentor.maxConcurrentMentees)) {
       return errorResult('capacityReached');
     }
 
@@ -118,27 +132,33 @@ export async function acceptMentorshipRequest(
       where: { id: parsed.data.requestId },
       include: {
         fromMentee: { select: { id: true, userId: true } },
-        toMentor: {
-          select: {
-            id: true,
-            userId: true,
-            status: true,
-            maxConcurrentMentees: true,
-            _count: { select: { mentorships: { where: { status: 'ACTIVE' } } } },
-          },
-        },
+        toMentor: { select: { id: true, userId: true } },
         topics: { select: { skillId: true } },
       },
     });
     if (!req) return errorResult('notFound');
     if (req.toMentor.userId !== ctx.userId) return errorResult('forbidden');
-    if (req.status !== 'PENDING') return errorResult('invalidStatus');
-    if (!mentorCanAct(req.toMentor.status)) return errorResult('mentorSuspended');
-    if (req.toMentor._count.mentorships >= req.toMentor.maxConcurrentMentees) {
-      return errorResult('capacityReached');
-    }
 
     const result = await prisma.$transaction(async (tx) => {
+      // M1: lock the mentor row so two concurrent acceptances count and
+      // write capacity one after the other; every guard re-reads fresh
+      // state after the lock.
+      await tx.$queryRaw`SELECT id FROM "MentorProfile" WHERE id = ${req.toMentor.id} FOR UPDATE`;
+
+      const fresh = await tx.mentorshipRequest.findUnique({
+        where: { id: req.id },
+        select: { status: true, expiresAt: true },
+      });
+      if (!fresh || fresh.status !== 'PENDING') throw new MentoratError('invalidStatus');
+      const mentor = await tx.mentorProfile.findUnique({
+        where: { id: req.toMentor.id },
+        select: {
+          status: true,
+          maxConcurrentMentees: true,
+          _count: { select: { mentorships: { where: { status: 'ACTIVE' } } } },
+        },
+      });
+      if (!mentor) throw new MentoratError('notFound');
       // Mentorship may already exist (e.g. previous COMPLETED) — upsert pattern
       const existing = await tx.mentorship.findUnique({
         where: {
@@ -148,6 +168,18 @@ export async function acceptMentorshipRequest(
           },
         },
       });
+      // M2: deadline, mentor status, open mentorship.
+      const refusal = acceptRefusal({
+        expiresAt: fresh.expiresAt,
+        now: new Date(),
+        mentorStatus: mentor.status,
+        openMentorshipStatus: existing?.status ?? null,
+      });
+      if (refusal) throw new MentoratError(refusal);
+      if (!hasCapacity(mentor._count.mentorships, mentor.maxConcurrentMentees)) {
+        throw new MentoratError('capacityReached');
+      }
+
       let mentorshipId: string;
       if (existing) {
         const updated = await tx.mentorship.update({
@@ -283,12 +315,12 @@ export async function nudgePendingMentorshipRequests(): Promise<
   | { status: 'error'; error: string }
 > {
   try {
-    const ctx = await requireUser();
-    const me = await prisma.user.findUnique({
-      where: { id: ctx.userId },
-      select: { role: true },
-    });
-    if (me?.role !== 'ADMIN') return { status: 'error', error: 'unauthorized' };
+    try {
+      await requireAdmin();
+    } catch (e) {
+      if (!(e instanceof MentoratError)) throw e;
+      return { status: 'error', error: e.code === 'twoFactorRequired' ? 'two_factor_required' : 'unauthorized' };
+    }
 
     const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000);
     const stale = await prisma.mentorshipRequest.findMany({
@@ -330,9 +362,6 @@ export async function nudgePendingMentorshipRequests(): Promise<
 // `expirePendingRequests` moved to `@/lib/mentora/expire-requests` (server-only)
 // so it is NOT exposed as a public 'use server' action — it is called only by
 // the authenticated cron route.
-
-// Surface unused import to satisfy strict TS (MentoratError is used in catch)
-void MentoratError;
 
 // Convenience state alias used by useFormState callers (UI dialog component).
 export type SendMentorshipRequestState =
