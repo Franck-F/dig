@@ -1,0 +1,21 @@
+# Local PostgreSQL for `npm run test:integration` — never the production DB.
+# Start: npm run test:db:up   Stop: npm run test:db:down
+# The database name must end in `_test`: the integration setup refuses
+# any other URL (src/test-setup/test-db-url.mjs).
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: digizelle-test-db
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: digizelle_test
+    ports:
+      - '54329:5432'
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test -d digizelle_test']
+      interval: 2s
+      timeout: 3s
+      retries: 30
