@@ -8,6 +8,8 @@
  *   after re-checking that the connected database is a `_test` one.
  * - factories for the Mentora aggregates.
  */
+// Must stay the first import: refuses to load outside the integration run.
+import './db-guard';
 import { prisma } from '@/lib/prisma';
 
 export { prisma };
