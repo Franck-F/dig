@@ -3,6 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { isAuthorizedCronRequest } from '@/lib/cron/verify-cron-auth';
 import { notify } from '@/lib/mentora/notifications';
 import { expirePendingRequests } from '@/lib/mentora/expire-requests';
+import {
+  autoCompleteCandidatesBefore,
+  isDueForAutoCompletion,
+  runSessionAutoCompletion,
+} from '@/lib/mentora/session-auto-complete';
 import { drainEmailQueueFully } from '@/lib/email/queue';
 import { sendUnreadMessageDigests } from '@/lib/mentora/unread-message-digest';
 import { sendRequestExpiryReminders } from '@/lib/mentora/request-expiry-reminder';
@@ -89,6 +94,61 @@ export async function GET(request: Request): Promise<Response> {
     }
   }
 
+  // B8: close the sessions nobody marked done, 48 h after their end, and
+  // invite the mentee to review them (reviews require COMPLETED). Each row
+  // is guarded on SCHEDULED, so a manual close or cancel meanwhile wins.
+  let autoCompleted = { completed: 0, failed: 0 };
+  try {
+    const candidates = await prisma.session.findMany({
+      where: { status: 'SCHEDULED', scheduledAt: { lt: autoCompleteCandidatesBefore(now) } },
+      orderBy: { scheduledAt: 'asc' },
+      take: 200,
+      select: {
+        id: true,
+        mentorshipId: true,
+        scheduledAt: true,
+        durationMinutes: true,
+        mentorship: {
+          select: {
+            mentorProfile: { select: { userId: true } },
+            menteeProfile: { select: { userId: true } },
+          },
+        },
+      },
+    });
+    const due = candidates.filter((s) => isDueForAutoCompletion(s, now));
+    const byId = new Map(due.map((s) => [s.id, s]));
+    autoCompleted = await runSessionAutoCompletion(
+      due.map((s) => ({
+        id: s.id,
+        menteeUserId: s.mentorship.menteeProfile.userId,
+        mentorUserId: s.mentorship.mentorProfile.userId,
+      })),
+      {
+        markCompleted: async (id) => {
+          const res = await prisma.session.updateMany({
+            where: { id, status: 'SCHEDULED' },
+            data: { status: 'COMPLETED' },
+          });
+          return res.count === 1;
+        },
+        inviteReview: async (s) => {
+          const row = byId.get(s.id);
+          if (!row) return;
+          await notify(s.menteeUserId, 'SESSION_COMPLETED', {
+            sessionId: s.id,
+            mentorshipId: row.mentorshipId,
+            scheduledAt: row.scheduledAt.toISOString(),
+            counterpartUserId: s.mentorUserId,
+            autoCompleted: true,
+          });
+        },
+      },
+    );
+  } catch (err) {
+    console.error('[cron] session auto-completion failed', err);
+  }
+
   // Last-chance reminder to mentors whose PENDING MentorshipRequest
   // expires in the next 24-48 h — sent BEFORE expirePendingRequests so
   // the mentor gets a heads-up rather than just the EXPIRED notif. The
@@ -137,6 +197,7 @@ export async function GET(request: Request): Promise<Response> {
     candidates: due.length,
     remindersSent,
     stampFailures,
+    autoCompleted,
     requestReminders,
     expiredRequests,
     queueDrain,
