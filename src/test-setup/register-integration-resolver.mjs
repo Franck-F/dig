@@ -16,3 +16,15 @@ export function resolve(specifier, context, nextResolve) {
   if (file) return { url: new URL(`./doubles/${file}`, import.meta.url).href, shortCircuit: true };
   return nextResolve(specifier, context);
 }
+
+// Next's bundler loads `import('…/messages/fr.json')` without an import
+// attribute; plain Node ESM requires `with { type: 'json' }`. Serve JSON
+// files as ES modules so the code under test loads its messages unchanged.
+export async function load(url, context, nextLoad) {
+  if (url.startsWith('file:') && url.endsWith('.json')) {
+    const { readFile } = await import('node:fs/promises');
+    const source = await readFile(new URL(url), 'utf8');
+    return { format: 'module', source: `export default ${source};`, shortCircuit: true };
+  }
+  return nextLoad(url, context);
+}
