@@ -45,6 +45,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Mentora debt counters (inline styles, hard-coded text, name helpers,
+      # guard warnings) against scripts/mentora-metrics.baseline.json:
+      # fails only when one grows.
+      - name: Mentora debt baseline
+        run: npm run metrics:mentora
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -66,6 +72,52 @@ jobs:
         # workflow log so reviewers can see line/branch percentages
         # without leaving GitHub.
         run: npm run test:coverage
+
+  integration:
+    name: Integration tests (PostgreSQL)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    needs: lint-typecheck-test
+
+    # Throwaway database for this run only. The test setup refuses any URL
+    # whose database name does not end in _test (src/test-setup/test-db-url.mjs).
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: digizelle_test
+        ports:
+          - 54329:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d digizelle_test"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+
+    env:
+      DATABASE_URL_TEST: postgresql://test:test@localhost:54329/digizelle_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # Applies every migration to the empty service DB, then runs the
+      # server actions against it (todo cases = known bugs left for phase 2).
+      - name: Run integration tests
+        run: npm run test:integration
 
   build:
     name: Build (Next.js)
@@ -108,3 +160,8 @@ jobs:
           SENTRY_DSN: ''
           NEXT_PUBLIC_SENTRY_DSN: ''
           SENTRY_AUTH_TOKEN: ''
+
+      # Per-route JS weight of the Mentora pages from the build output;
+      # fails on a regression over 5 % against scripts/mentora-bundle.baseline.json.
+      - name: Mentora bundle report
+        run: npm run bundle:mentora

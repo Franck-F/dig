@@ -25,7 +25,7 @@ Règles valables pour toutes les phases :
 | 0.9 | Gardes rapides : refuser l'auto-demande et un mentorat déjà actif (M3) ; `expiresAt` et statut mentor à l'acceptation, capacité dans la transaction (M1, M2) ; URLs http(s) uniquement (M14) ; un helper `requireAdmin` avec step-up 2FA pour toutes les actions admin (M6) | `requests.ts`, `sessions.ts`, `messages.ts`, `profile.ts`, `cycles.ts`, `moderation.ts`, `_helpers.ts` | Tests de refus ; toute action admin échoue sans cookie 2FA frais |
 | 0.10 | Heures affichées (M10) : les formateurs de `format.ts` et de `sessions/page.tsx` reçoivent un `timeZone` (profil du viewer) et la locale active ; défaut `Europe/Paris` documenté | `dashboard/_components/format.ts`, `sessions/page.tsx`, `sessions/[id]/page.tsx`, overviews | Test unitaire : un instant UTC d'été s'affiche à l'heure de Paris et de Londres comme attendu |
 | 0.11 | Lien mort (M16) : retirer le bouton de modification de ressource ou créer la page | `dashboard/resources/page.tsx:489` | Aucun 404 depuis l'UI |
-| 0.12 | Séances jamais clôturées (B8, minimal) : le cron marque COMPLETED les séances SCHEDULED terminées depuis plus de 48 h (selon la décision du point ouvert 3) | `api/cron/sessions-reminder/route.ts` | Les avis deviennent possibles sans action du mentor |
+| 0.12 | Séances jamais clôturées (B8, minimal) : le cron marque COMPLETED les séances SCHEDULED terminées depuis plus de 48 h (point ouvert 3, décidé : 48 h) | `api/cron/sessions-reminder/route.ts` | Les avis deviennent possibles sans action du mentor |
 
 **Tests de la phase** : `src/lib/mentora/__tests__/notifications-contract.test.ts`, `errors-i18n.test.ts`, `format-tz.test.ts`, `role-decision.test.ts`, plus un test de parité fr/en sur le namespace `mentora`. Les cas nécessitant la base sont décrits comme checklist manuelle dans la PR et automatisés en phase 1.
 
@@ -60,7 +60,7 @@ Règles valables pour toutes les phases :
 
 **But** : exécuter E4 à E7 de `02-architecture.md` 8.3.
 
-- **Créer** : script de migration des photos (`scripts/migrate-photos.ts`, idempotent, par lots, `--dry-run` par défaut), `prisma/RAW-SQL.md`, contrôle CI de dérive des index bruts, job hebdomadaire de rétention RGPD.
+- **Créer** : script de migration des photos (`scripts/migrate-photos.ts`, idempotent, par lots, `--dry-run` par défaut), `prisma/RAW-SQL.md`, contrôle CI de dérive des index bruts, traitement hebdomadaire de rétention RGPD (3 ans, constante en code) dans le cron quotidien existant, le plan Hobby ne permettant pas un cron de plus.
 - **Modifier** : `schema.prisma` (suppression de `hourlyRate`, `AvailabilityRule.timezone`, `helpfulnessVotes` après vérification d'usage ; ajout `slug`), lecture des photos par URL de stockage.
 - **Acceptation** : après sauvegarde et une semaine d'observation sans erreur, suppression des anciennes colonnes ; payload HTML de la découverte sous 150 Ko ; export RGPD couvrant tous les modèles Mentora (test).
 - **Dépend** de la phase 2 déployée et stable, et d'actions du propriétaire (pré-vols en lecture seule, sauvegarde).
@@ -72,7 +72,7 @@ Règles valables pour toutes les phases :
 1. **4a Bibliothèque et shell** (M) : `src/components/mentora/ui/*`, layout unique `(app)`, `getViewer()` partagé, navigation par capacités, `format/` (formateur unique, fuseau du viewer), fusion de `OnboardingShell` dans `AppShell`, glossaire fr appliqué ; suppression des 4 copies de layout et des 21 helpers.
 2. **4b Parcours mentee** (L) : onboarding en étapes, découverte, profil mentor (`/mentora/mentors/[slug]`), demande, mentorats, séances, avis. Styles inline remplacés par la bibliothèque ; `loading.tsx` et états vides partout.
 3. **4c Parcours mentor** (M) : candidature par étapes, écran de statut, disponibilités, demandes, séances, notes.
-4. **4d Admin** (M) : pilotage, mentors (validation et modération), mentorats (matching et suivi), mentees, rapports, réglages ; suppression de `admin/cycles`, `admin/matching`, `admin/moderation` (selon le point ouvert 1).
+4. **4d Admin** (M) : pilotage, mentors (validation et modération), mentorats (matching et suivi), mentees, rapports, réglages ; suppression de `admin/cycles` et de la carte de réglages non appliqués (point ouvert 1, décidé : supprimer), fusion de `admin/matching` et `admin/moderation` dans les écrans mentors et mentorats.
 
 - **Supprimer** : `AdminPlaceholder.tsx`, `Wizard.tsx`, `dashboard/notifications/NotificationBell.tsx`, classes CSS mortes, clés i18n mortes (liste de `i18n-check.mjs`).
 - **Acceptation par écran** : zéro `style=` (règle ESLint passée en erreur à la fin de 4d), zéro texte en dur, budgets de bundle respectés, captures 360 et 1280 px relues, composants serveur par défaut.
@@ -92,7 +92,7 @@ Règles valables pour toutes les phases :
 
 ## Phase 7 : nettoyage et documentation (taille S)
 
-- **Supprimer** : tables et champs gelés (cycles, réglages non appliqués) si le point ouvert 1 est tranché, valeur d'enum `IN_PROGRESS` si faisable, exports orphelins restants (liste de `code-metrics.mjs`).
+- **Supprimer** : tables et champs gelés (cycles, réglages non appliqués ; point ouvert 1 décidé), valeur d'enum `IN_PROGRESS` si faisable, exports orphelins restants (liste de `code-metrics.mjs`).
 - **Documenter** : `PROJECT.md`, `ARCHITECTURE.md`, runbook (rappels, file d'emails, migrations), `CHANGELOG.md`.
 - **Acceptation** : `code-metrics.mjs` montre zéro export orphelin dans le périmètre, zéro composant non importé, zéro `style=` ; tous les budgets verts.
 

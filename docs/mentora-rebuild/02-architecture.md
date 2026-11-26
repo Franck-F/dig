@@ -63,7 +63,7 @@ Messagerie en lecture seule après COMPLETED ou TERMINATED (aujourd'hui seul TER
 | SCHEDULED | CANCELLED | mentor ou mentee | avant le début ; motif ; notifie |
 | SCHEDULED | COMPLETED | mentor (ou confirmation du mentee) | après le début ; déclenche la demande d'avis (nouveau type de notification, B7) |
 | SCHEDULED | NO_SHOW | mentor (absence du mentee) ou mentee (absence du mentor) | après le début |
-| SCHEDULED | COMPLETED (auto) | système | 48 h après la fin sans action : clôture automatique avec `autoCompleted = true` pour débloquer les avis (décision produit à confirmer) |
+| SCHEDULED | COMPLETED (auto) | système | 48 h après la fin sans action : clôture automatique avec `autoCompleted = true` pour débloquer les avis (décidé, point ouvert 3) |
 
 Colonnes ajoutées : `endsAt`, `mentorProfileId` et `menteeProfileId` dénormalisés (contrainte d'exclusion), `autoCompleted`.
 
@@ -103,7 +103,7 @@ Un utilisateur peut cumuler les trois. L'approbation d'un mentor n'écrit plus `
 
 - Toute lecture passe par des fonctions de requête qui appliquent `deletedAt: null` (règle unique, testée), ce qui corrige M11(c).
 - Suppression d'un compte : profils marqués `deletedAt`, mentorats ACTIVE et PAUSED en TERMINATED avec motif système, séances futures annulées, messages anonymisés (corps remplacé, expéditeur conservé pour l'intégrité du fil).
-- Rétention : un job hebdomadaire applique `menteeRetentionYears` (sans effet aujourd'hui, M5) en anonymisant les profils mentee inactifs depuis plus de N ans ; chaque exécution écrit dans l'audit (`lib/audit/log`).
+- Rétention : un traitement hebdomadaire, exécuté dans le cron quotidien existant (plan Hobby, point ouvert 6), anonymise les profils mentee inactifs depuis plus de 3 ans, durée promise par l'interface et fixée en code puisque le réglage `menteeRetentionYears` disparaît (point ouvert 1) ; chaque exécution écrit dans l'audit (`lib/audit/log`).
 - L'export de données (`src/lib/rgpd/export.ts`) doit couvrir tous les modèles Mentora ; test dédié.
 
 ## 3. Frontières de modules
@@ -158,11 +158,11 @@ Cible :
 2. Le gestionnaire d'événement, dans la même transaction, insère la `Notification` (avec `dedupeKey`) et une ligne dans la file d'emails existante (`src/lib/email/queue`, déjà drainée par le cron). Les emails ne sont donc plus perdus et ne ralentissent plus la requête.
 3. Le rendu email est fait à l'envoi, par type, dans la `locale` du destinataire (`User.locale`) et son fuseau, avec des templates versionnés en code. Un test de contrat vérifie, pour chaque type, que les clés existent en fr et en et que toutes les variables sont fournies (fin de B1).
 4. Types ajoutés : `SESSION_COMPLETED` (invitation à l'avis), `MENTORSHIP_PAUSED`, `MENTORSHIP_RESUMED`, `MENTORSHIP_ENDED`, `MENTOR_SUSPENDED`, `MENTOR_REINSTATED`. Messages : une notification par fil non lu (regroupement), pas une par message.
-5. Les crons (rappels, expiration, digest) deviennent des consommateurs idempotents de la même file, avec `dedupeKey` ; rappels à 24 h et 1 h avant (nécessite une cadence cron plus fine que le quotidien actuel : **dépend du plan Vercel, non vérifié**; à défaut, rappel à J-1 et à la réservation).
+5. Les crons (rappels, expiration, digest) deviennent des consommateurs idempotents de la même file, avec `dedupeKey`. Le projet est sur le plan Vercel Hobby (point ouvert 6, décidé) : un passage quotidien, donc rappel à la réservation et à J-1, sans rappel à 1 h.
 
 ### 3.5 Cycles et réglages : décision proposée
 
-Le code actuel n'applique ni la capacité programme, ni la fenêtre de candidature, ni la rétention, et les cycles n'ont aucun effet. Proposition par défaut (à valider par le propriétaire, point ouvert n°1) : supprimer de l'interface `admin/cycles` et la carte de réglages non appliqués, conserver les tables jusqu'à la phase de nettoyage, puis les supprimer. Si le programme par cohortes est un vrai besoin produit, alors lier `Mentorship.cycleId` et faire appliquer par `requests.send` la fenêtre de candidature et la capacité.
+Le code actuel n'applique ni la capacité programme, ni la fenêtre de candidature, ni la rétention, et les cycles n'ont aucun effet. **Décidé (point ouvert 1) : supprimer**, selon la proposition suivante : supprimer de l'interface `admin/cycles` et la carte de réglages non appliqués, conserver les tables jusqu'à la phase de nettoyage, puis les supprimer. Les valeurs encore utiles (durée de rétention) deviennent des constantes en code.
 
 ## 4. Stratégie de planification et fuseaux horaires
 
@@ -314,10 +314,12 @@ Chaque étape expand est réversible en supprimant l'ajout. E6 est irréversible
 
 ## 9. Points ouverts pour le propriétaire
 
-1. Cycles et réglages programme : supprimer (recommandé) ou rendre effectifs (3.5) ?
+Décisions du propriétaire au 2026-11-26 pour les points 1, 3, 5 et 6 ; les points 2, 4 et 7 restent ouverts.
+
+1. Cycles et réglages programme : supprimer (recommandé) ou rendre effectifs (3.5) ? **Décidé : supprimer.** L'interface `admin/cycles` et la carte de réglages non appliqués disparaissent en phase 4d ; les tables `Cycle` et `MentoraProgrammeSettings` et leurs champs sont supprimés en phase 7.
 2. Profil mentor public sans connexion (SEO, partage) ou réservé aux connectés comme aujourd'hui (M13) ?
-3. Clôture automatique d'une séance 48 h après sa fin (2.2) : acceptée ? Quel délai ?
+3. Clôture automatique d'une séance 48 h après sa fin (2.2) : acceptée ? Quel délai ? **Décidé : acceptée, 48 h** (constante `AUTO_COMPLETE_AFTER_HOURS`, cron en place depuis la phase 0).
 4. Modification d'un profil ACTIVE : journaliser seulement, ou re-valider les champs sensibles (photo, bio) ?
-5. Terme français retenu pour mentee (6.3) et traitement de "binôme".
-6. Cadence des crons : le plan Vercel actuel limite-t-il à un passage quotidien (le code le suppose, **non vérifié**) ? Détermine les rappels à 1 h.
+5. Terme français retenu pour mentee (6.3) et traitement de "binôme". **Décidé : « mentoré·e » partout, « binôme » pour le couple mentor et mentoré·e** (`messages/glossary.json`) ; alignement des textes en phase 4, le test de glossaire passe alors de `todo` à bloquant.
+6. Cadence des crons : le plan Vercel actuel limite-t-il à un passage quotidien (le code le suppose, **non vérifié**) ? Détermine les rappels à 1 h. **Décidé : plan Hobby, un passage par jour et par cron.** Pas de rappel à 1 h : rappel à la réservation et à J-1 (3.4, point 5), tous les traitements périodiques dans le cron quotidien existant.
 7. Newsletters et ressources : conservées telles quelles hors refonte ?

@@ -26,8 +26,15 @@
     "demo:record": "playwright test --config demo/playwright.config.ts",
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
     "_comment_test": "requires Node 22+ for stable type-stripping; Node 25 needs no flag",
-    "test": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts src/lib/rgpd/__tests__/*.test.ts",
-    "test:coverage": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts src/lib/rgpd/__tests__/*.test.ts",
+    "test": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts src/lib/rgpd/__tests__/*.test.ts src/test-setup/__tests__/*.test.ts",
+    "_comment_test_integration": "real PostgreSQL, never .env: needs DATABASE_URL_TEST (database name ending in _test); start a local one with test:db:up",
+    "test:integration": "node scripts/test-db-prepare.mjs && node --import ./src/test-setup/register-loader.mjs --import ./src/test-setup/integration-preload.mjs --test --experimental-strip-types --test-concurrency=1 src/lib/mentora/__integration__/*.int.test.ts",
+    "metrics:mentora": "node scripts/mentora-metrics.mjs",
+    "bundle:mentora": "node scripts/mentora-bundle-report.mjs",
+    "test:db:up":"docker compose -f docker-compose.test.yml up -d --wait",
+    "test:db:down": "docker compose -f docker-compose.test.yml down",
+    "test:db:reset": "docker compose -f docker-compose.test.yml down && docker compose -f docker-compose.test.yml up -d --wait",
+    "test:coverage":"node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts src/lib/rgpd/__tests__/*.test.ts",
     "test:coverage:lcov": "node --import ./src/test-setup/register-loader.mjs --test --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test-reporter=spec --test-reporter-destination=stdout --test-coverage-exclude=**/__tests__/** --test-coverage-exclude=**/node_modules/** src/lib/mentora/__tests__/*.test.ts src/lib/community/__tests__/*.test.ts src/lib/auth/__tests__/*.test.ts src/lib/email/__tests__/*.test.ts src/lib/images/__tests__/*.test.ts src/lib/storage/__tests__/*.test.ts src/lib/rgpd/__tests__/*.test.ts"
   },
   "prisma": {
