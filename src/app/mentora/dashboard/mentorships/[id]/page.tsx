@@ -115,7 +115,7 @@ export default async function MentorshipDetailPage({
         </Link>
       </div>
 
-      {tab === 'sessions' && <SessionsTab mentorshipId={mentorship.id} isLocked={isLocked} />}
+      {tab === 'sessions' && <SessionsTab mentorshipId={mentorship.id} isLocked={isLocked} viewerUserId={userId} />}
       {tab === 'messages' && (
         <MessagesTab mentorshipId={mentorship.id} myUserId={userId} isLocked={mentorship.status === 'TERMINATED'} />
       )}

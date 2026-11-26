@@ -5,6 +5,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import StatusPill from '../../_components/StatusPill';
 import { fmtDateTime } from '../../_components/format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
 import SessionActions from './SessionActions';
 
 /**
@@ -27,6 +28,7 @@ export default async function SessionDetailPage({
 
   const { id } = await params;
   const userId = session.user.id;
+  const viewerFormat = await getViewerFormat(userId);
   const t = await getTranslations('mentora.sessions.detail');
   const tShared = await getTranslations('mentora.sessions');
 
@@ -84,7 +86,7 @@ export default async function SessionDetailPage({
           }}
         >
           <dt style={{ fontWeight: 600 }}>{t('whenLabel')}</dt>
-          <dd style={{ margin: 0 }}>{fmtDateTime(s.scheduledAt)}</dd>
+          <dd style={{ margin: 0 }}>{fmtDateTime(s.scheduledAt, viewerFormat)}</dd>
 
           <dt style={{ fontWeight: 600 }}>{t('durationLabel')}</dt>
           <dd style={{ margin: 0 }}>{s.durationMinutes} min</dd>

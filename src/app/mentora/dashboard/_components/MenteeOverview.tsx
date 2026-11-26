@@ -12,6 +12,7 @@ import GoFurtherTiles from './home/GoFurtherTiles';
 import LatestMessages from './home/LatestMessages';
 import ProfileSummaryCard from './home/ProfileSummaryCard';
 import { fmtDateTime } from './format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
 
 /**
  * Mentee home, modelled on the Entourage Pro candidate dashboard
@@ -25,6 +26,7 @@ export default async function MenteeOverview({
   profile: Extract<CurrentRoleProfile, { kind: 'mentee' }>;
 }) {
   const user = profile.user;
+  const viewerFormat = await getViewerFormat(user.id);
   const mentee = profile.menteeProfile;
   const name = user.name ?? ([user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email);
 
@@ -129,7 +131,7 @@ export default async function MenteeOverview({
             <span aria-hidden style={{ color: '#7301FF', fontSize: 18 }}>◌</span>
             <span style={{ fontWeight: 700 }}>{t('nextSessionTitle')}</span>
             <span className="dz-small">
-              {t('nextSessionWith', { date: fmtDateTime(nextSession.scheduledAt), name: nextMentorName })}
+              {t('nextSessionWith', { date: fmtDateTime(nextSession.scheduledAt, viewerFormat), name: nextMentorName })}
             </span>
           </Link>
         )}

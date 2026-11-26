@@ -8,6 +8,7 @@ import AutoMarkRead from '@/components/notifications/AutoMarkRead';
 import MarkAllReadButton from '@/components/notifications/MarkAllReadButton';
 import { targetFor } from '@/components/notifications/targetFor';
 import { dayBucket } from '../_components/format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
 
 type Bucket = 'today' | 'yesterday' | 'earlier';
 
@@ -38,6 +39,7 @@ export default async function NotificationsPage({
   if (!session?.user?.id) redirect('/login?next=/mentora/dashboard/notifications');
 
   const userId = session.user.id;
+  const viewerFormat = await getViewerFormat(userId);
   const t = await getTranslations('mentora.notifications');
   const sp = await searchParams;
 
@@ -52,7 +54,7 @@ export default async function NotificationsPage({
     yesterday: [],
     earlier: [],
   };
-  for (const it of items) grouped[dayBucket(it.createdAt)].push(it);
+  for (const it of items) grouped[dayBucket(it.createdAt, { timeZone: viewerFormat.timeZone })].push(it);
 
   const selectedId = sp.selected;
   const selected = selectedId
@@ -68,13 +70,16 @@ export default async function NotificationsPage({
     return `/mentora/dashboard/notifications${qs ? `?${qs}` : ''}`;
   };
 
-  const dateFmt = new Intl.DateTimeFormat('fr-FR', {
+  const intlLocale = viewerFormat.locale === 'en' ? 'en-GB' : 'fr-FR';
+  const dateFmt = new Intl.DateTimeFormat(intlLocale, {
+    timeZone: viewerFormat.timeZone,
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
   });
-  const dateFmtFull = new Intl.DateTimeFormat('fr-FR', {
+  const dateFmtFull = new Intl.DateTimeFormat(intlLocale, {
+    timeZone: viewerFormat.timeZone,
     weekday: 'long',
     day: 'numeric',
     month: 'long',

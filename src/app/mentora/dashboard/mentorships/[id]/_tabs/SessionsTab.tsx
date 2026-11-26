@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { prisma } from '@/lib/prisma';
 import StatusPill from '../../../_components/StatusPill';
 import { fmtDateTime } from '../../../_components/format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
 
 /**
  * Sessions tab — list scoped to a single mentorship.
@@ -14,10 +15,13 @@ import { fmtDateTime } from '../../../_components/format';
 export default async function SessionsTab({
   mentorshipId,
   isLocked,
+  viewerUserId,
 }: {
   mentorshipId: string;
   isLocked: boolean;
+  viewerUserId: string;
 }) {
+  const viewerFormat = await getViewerFormat(viewerUserId);
   const t = await getTranslations('mentora.mentorships.detail');
   const tSessions = await getTranslations('mentora.sessions');
 
@@ -73,7 +77,7 @@ export default async function SessionsTab({
                     flexWrap: 'wrap',
                   }}
                 >
-                  <span style={{ fontWeight: 600, minWidth: 180 }}>{fmtDateTime(s.scheduledAt)}</span>
+                  <span style={{ fontWeight: 600, minWidth: 180 }}>{fmtDateTime(s.scheduledAt, viewerFormat)}</span>
                   <span className="dz-small">
                     {tSessions('card.duration', { minutes: s.durationMinutes })} ·{' '}
                     {tSessions(`formatLabels.${formatLabelKey}`)}

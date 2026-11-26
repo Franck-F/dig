@@ -5,6 +5,8 @@ import type { SessionStatus } from '@prisma/client';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { fmtParts } from '@/lib/mentora/format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
 
 type Tab = 'upcoming' | 'past' | 'cancelled';
 
@@ -120,12 +122,8 @@ export default async function SessionsListingPage({
     cancelled: cancelledCount,
   };
 
-  const dayFormatter = new Intl.DateTimeFormat('fr-FR', { day: '2-digit' });
-  const monthFormatter = new Intl.DateTimeFormat('fr-FR', { month: 'short' });
-  const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  // Viewer's time zone and locale, not the server's (M10).
+  const viewerFormat = await getViewerFormat(userId);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -237,9 +235,10 @@ export default async function SessionsListingPage({
               : [];
             const tags = Array.from(new Set(tagSource.slice(0, 2)));
 
-            const dayNum = dayFormatter.format(s.scheduledAt);
-            const monthAbbr = monthFormatter.format(s.scheduledAt).replace('.', '').toUpperCase();
-            const timeStr = timeFormatter.format(s.scheduledAt);
+            const parts = fmtParts(s.scheduledAt, viewerFormat);
+            const dayNum = parts.day;
+            const monthAbbr = parts.month.replace('.', '').toUpperCase();
+            const timeStr = parts.time;
             const locationOrUrl =
               s.format === 'IN_PERSON'
                 ? s.location ?? ''

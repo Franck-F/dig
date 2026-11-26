@@ -6,6 +6,8 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
 import StatusPill from '../_components/StatusPill';
 import { fmtDateTime } from '../_components/format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
+import type { FormatOptions } from '@/lib/mentora/format';
 import RequestActions from './RequestActions';
 
 type Tab = 'received' | 'sent';
@@ -27,6 +29,7 @@ export default async function RequestsPage({
   if (!session?.user?.id) redirect('/login?next=/mentora/dashboard/requests');
 
   const profile = await getCurrentRoleProfile(session.user.id);
+  const viewerFormat = await getViewerFormat(session.user.id);
   const t = await getTranslations('mentora.requests');
   const tShared = await getTranslations('mentora.dashboard.shared');
 
@@ -96,9 +99,9 @@ export default async function RequestsPage({
       )}
 
       {tab === 'received' && hasReceived ? (
-        <RequestList items={received} side="received" />
+        <RequestList items={received} side="received" viewerFormat={viewerFormat} />
       ) : tab === 'sent' && hasSent ? (
-        <RequestList items={sent} side="sent" />
+        <RequestList items={sent} side="sent" viewerFormat={viewerFormat} />
       ) : (
         <div className="dz-card" style={{ padding: 24 }}>
           <p className="dz-body">{tShared('empty')}</p>
@@ -139,9 +142,11 @@ type SentItem = Omit<ReceivedItem, 'fromMentee'> & {
 async function RequestList({
   items,
   side,
+  viewerFormat,
 }: {
   items: ReceivedItem[] | SentItem[];
   side: 'received' | 'sent';
+  viewerFormat: FormatOptions;
 }) {
   const t = await getTranslations('mentora.requests');
 
@@ -181,7 +186,7 @@ async function RequestList({
               </strong>
               <StatusPill status={r.status} label={t(`statusLabels.${statusKey}`)} />
               <span style={{ flex: 1 }} />
-              <span className="dz-small">{t('card.sentAt', { date: fmtDateTime(r.createdAt) })}</span>
+              <span className="dz-small">{t('card.sentAt', { date: fmtDateTime(r.createdAt, viewerFormat) })}</span>
             </header>
 
             <div className="dz-small" style={{ marginTop: 8 }}>
@@ -191,7 +196,7 @@ async function RequestList({
               {r.status === 'PENDING' && (
                 <>
                   {' · '}
-                  {t('card.expiresAt', { date: fmtDateTime(r.expiresAt) })}
+                  {t('card.expiresAt', { date: fmtDateTime(r.expiresAt, viewerFormat) })}
                 </>
               )}
             </div>
