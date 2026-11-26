@@ -46,6 +46,60 @@ const eslintConfig = [
       '@next/next/no-html-link-for-pages': 'warn',
     },
   },
+  // ── Mentora guards (docs/mentora-rebuild/03-plan.md, phase 1) ──────────
+  // Legacy patterns are warnings, not errors: existing code is counted by
+  // `scripts/mentora-metrics.mjs` against a recorded baseline, and CI only
+  // fails when a count grows. Phase 4 turns the style rule into an error.
+  {
+    files: ['src/app/mentora/**/*.{ts,tsx}'],
+    rules: {
+      'react/forbid-dom-props': [
+        'warn',
+        { forbid: [{ propName: 'style', message: 'Mentora: use the design-system classes, not inline style (phase 4 removes them).' }] },
+      ],
+    },
+  },
+  {
+    // One date formatter: `src/lib/mentora/format` (viewer's time zone and locale).
+    files: [
+      'src/app/mentora/**/*.{ts,tsx}',
+      'src/lib/mentora/**/*.ts',
+      'src/lib/actions/mentora/**/*.ts',
+      'src/components/app-shell/**/*.{ts,tsx}',
+    ],
+    ignores: ['src/lib/mentora/format.ts', 'src/lib/mentora/format/**', '**/__tests__/**', '**/__integration__/**'],
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'CallExpression[callee.property.name=/^toLocale(Date|Time)?String$/]',
+          message: 'Mentora: format dates with @/lib/mentora/format (viewer time zone and locale).',
+        },
+        {
+          selector: "NewExpression[callee.object.name='Intl'][callee.property.name='DateTimeFormat']",
+          message: 'Mentora: format dates with @/lib/mentora/format (viewer time zone and locale).',
+        },
+      ],
+    },
+  },
+  {
+    // The domain layer is pure (docs/mentora-rebuild/02-architecture.md 3.1).
+    // New code only, so this one is an error from day one.
+    files: ['src/lib/mentora/domain/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@prisma/client', '@/lib/prisma', 'next', 'next/*', 'server-only', '@/auth'],
+              message: 'domain/ is pure: no Prisma, no Next.js, no server-only.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;
