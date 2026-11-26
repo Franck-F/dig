@@ -594,6 +594,35 @@
     }
   },
   "mentora": {
+    "errors": {
+      "unauthorized": "Votre session a expiré. Reconnectez-vous pour continuer.",
+      "notFound": "Élément introuvable : il a peut-être été supprimé.",
+      "forbidden": "Vous n'avez pas les droits pour effectuer cette action.",
+      "profileIncomplete": "Complétez votre profil avant de continuer.",
+      "duplicateRequest": "Une demande est déjà en attente auprès de ce mentor.",
+      "capacityReached": "Ce mentor n'a plus de place disponible pour le moment.",
+      "slotTaken": "Ce créneau n'est plus disponible. Choisissez-en un autre.",
+      "invalidWindow": "Ce créneau est trop proche ou trop lointain pour être réservé.",
+      "cannotMessageTerminated": "Ce mentorat est terminé : la messagerie est en lecture seule.",
+      "selfReview": "Vous ne pouvez pas vous évaluer vous-même.",
+      "alreadyReviewed": "Vous avez déjà laissé un avis pour cette séance.",
+      "languageRequired": "Indiquez au moins une langue.",
+      "skillRequired": "Choisissez au moins une compétence.",
+      "invalidInput": "Certains champs sont invalides. Vérifiez votre saisie.",
+      "mentorNotAccepting": "Ce mentor n'accepte pas de nouvelles demandes en ce moment.",
+      "invalidStatus": "Cette action n'est plus possible dans l'état actuel.",
+      "imageMalformed": "L'image est illisible. Essayez un autre fichier.",
+      "imageMimeNotAllowed": "Format d'image non pris en charge.",
+      "imageTooLarge": "L'image est trop lourde. Choisissez un fichier plus léger.",
+      "imageMagicMismatch": "Le contenu du fichier ne correspond pas à son format.",
+      "sessionConflict": "Une autre séance est déjà prévue sur ce créneau pour l'un des participants.",
+      "mentorSuspended": "Ce mentor est suspendu : cette action n'est pas possible pour le moment.",
+      "selfRequest": "Vous ne pouvez pas vous envoyer une demande de mentorat.",
+      "alreadyMentored": "Un mentorat est déjà en cours avec cette personne.",
+      "requestExpired": "Cette demande a expiré et ne peut plus être acceptée.",
+      "twoFactorRequired": "Confirmez votre double authentification pour continuer, puis réessayez.",
+      "unexpected": "Une erreur inattendue est survenue. Réessayez dans un instant."
+    },
     "metaTitle": "Mentorat — votre mentor digital",
     "metaDescription": "Plateforme de mentorat 1-to-1 Digizelle qui connecte les jeunes à des professionnels du numérique.",
     "eyebrow": "Mentorat · nouveau programme",
@@ -1115,6 +1144,23 @@
         "title": "Votre contact Digizelle",
         "help": "Une question sur le programme, une difficulté sur la plateforme ? Écrivez-nous !"
       },
+      "application": {
+        "inReview": {
+          "title": "Votre candidature mentor est en cours d'examen",
+          "body": "L'équipe Digizelle relit votre profil. Vous recevrez un email dès qu'il sera validé."
+        },
+        "rejected": {
+          "title": "Votre candidature mentor est à revoir",
+          "body": "L'équipe a laissé un commentaire. Modifiez votre profil puis renvoyez-le pour validation."
+        },
+        "draft": {
+          "title": "Votre profil mentor est à compléter",
+          "body": "Ajoutez au moins 3 compétences et 1 créneau de disponibilité, puis envoyez votre profil pour validation."
+        },
+        "reviewNoteLabel": "Commentaire de l'équipe",
+        "editCta": "Compléter mon profil",
+        "viewCta": "Voir mon profil"
+      },
       "home": {
         "profileCompletion": "Complétion du profil",
         "presentation": "Présentation",
@@ -1455,6 +1501,7 @@
         "SESSION_REMINDER": "Rappel : votre session a lieu dans 24 h.",
         "SESSION_CANCELLED": "Une session a été annulée.",
         "SESSION_RESCHEDULED": "Une session a été reprogrammée.",
+        "SESSION_COMPLETED": "Session terminée : laissez votre avis",
         "NEW_MESSAGE": "Nouveau message dans un mentorat.",
         "REVIEW_RECEIVED": "Vous avez reçu un nouvel avis.",
         "MENTOR_APPROVED": "Votre profil mentor a été validé 🎉",
@@ -1498,6 +1545,10 @@
           "subject": "[Mentorat] Session annulée",
           "body": "Bonjour {recipientName},\n\nLa session du {date} avec {otherName} a été annulée.\n\nRaison : {reason}\n\nVous pouvez reprogrammer une session ici :\n{url}\n\nL'équipe Digizelle Mentorat"
         },
+        "sessionCompleted": {
+          "subject": "[Mentorat] Comment s'est passée votre session ?",
+          "body": "Bonjour {recipientName},\n\nVotre session du {date} avec {otherName} est terminée.\n\nVotre avis aide votre mentor à progresser et les autres mentorés à choisir. Laissez-le ici :\n{url}\n\nL'équipe Digizelle Mentorat"
+        },
         "mentorApproved": {
           "subject": "[Mentorat] Votre profil mentor est validé 🎉",
           "body": "Bonjour {recipientName},\n\nFélicitations, votre profil mentor a été validé par notre équipe. Il est désormais visible publiquement sur Mentorat.\n\nGérez vos disponibilités et vos demandes :\n{url}\n\nL'équipe Digizelle Mentorat"
@@ -1513,6 +1564,7 @@
         "SESSION_REMINDER": "Votre session approche. Préparez vos questions et rejoignez le créneau au moment voulu.",
         "SESSION_CANCELLED": "Une session a été annulée. Vous pouvez en planifier une autre depuis votre agenda.",
         "SESSION_RESCHEDULED": "Une session a été replanifiée. Vérifiez le nouveau créneau dans votre agenda.",
+        "SESSION_COMPLETED": "Votre session est terminée. Laissez votre avis : il aide votre mentor et les autres mentorés.",
         "NEW_MESSAGE": "Vous avez reçu un nouveau message.",
         "REVIEW_RECEIVED": "Vous avez reçu un nouvel avis. Consultez-le depuis votre profil.",
         "MENTOR_APPROVED": "Bienvenue dans le programme : votre candidature mentor a été acceptée.",

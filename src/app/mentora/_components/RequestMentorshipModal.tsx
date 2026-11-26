@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 
 import { sendMentorshipRequest } from '@/lib/actions/mentora/requests';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
@@ -41,6 +42,7 @@ export default function RequestMentorshipModal({
   hasMenteeProfile,
 }: Props) {
   const t = useTranslations('mentora.profile');
+  const tError = useActionErrorMessage();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -295,7 +297,7 @@ export default function RequestMentorshipModal({
                       fontSize: 14,
                     }}
                   >
-                    {t('modal.errorPrefix')}{error}
+                    {t('modal.errorPrefix')}{tError(error)}
                   </div>
                 )}
 

@@ -2365,6 +2365,48 @@
     }
   },
   "mentora": {
+    "errors": {
+      "unauthorized": "Your session has expired. Sign in again to continue.",
+      "notFound": "Not found: it may have been deleted.",
+      "forbidden": "You are not allowed to perform this action.",
+      "profileIncomplete": "Complete your profile before continuing.",
+      "duplicateRequest": "You already have a pending request with this mentor.",
+      "capacityReached": "This mentor has no spots available right now.",
+      "slotTaken": "This slot is no longer available. Please pick another one.",
+      "invalidWindow": "This slot is too soon or too far ahead to be booked.",
+      "cannotMessageTerminated": "This mentorship has ended: messages are read-only.",
+      "selfReview": "You cannot review yourself.",
+      "alreadyReviewed": "You have already reviewed this session.",
+      "languageRequired": "Add at least one language.",
+      "skillRequired": "Pick at least one skill.",
+      "invalidInput": "Some fields are invalid. Please check your input.",
+      "mentorNotAccepting": "This mentor is not accepting new requests right now.",
+      "invalidStatus": "This action is no longer possible in the current state.",
+      "imageMalformed": "The image could not be read. Try another file.",
+      "imageMimeNotAllowed": "Unsupported image format.",
+      "imageTooLarge": "The image is too large. Pick a smaller file.",
+      "imageMagicMismatch": "The file content does not match its format.",
+      "sessionConflict": "One of the participants already has another session at this time.",
+      "mentorSuspended": "This mentor is suspended: this action is not available for now.",
+      "selfRequest": "You cannot send a mentorship request to yourself.",
+      "alreadyMentored": "A mentorship with this person is already in progress.",
+      "requestExpired": "This request has expired and can no longer be accepted.",
+      "twoFactorRequired": "Confirm your two-factor authentication to continue, then try again.",
+      "unexpected": "Something went wrong. Please try again in a moment."
+    },
+    "menteePublic": {
+      "metaTitle": "Mentee profile · Digizelle",
+      "goals": "Goals",
+      "context": "Background & context",
+      "stats": "Statistics",
+      "history": "Our history",
+      "badges": "Badges",
+      "message": "Send a message",
+      "propose": "Offer mentorship",
+      "activeMentorship": "Active mentorship for {months} months",
+      "noMentorship": "No ongoing mentorship",
+      "memberSince": "Member since {date}"
+    },
     "metaTitle": "Mentorat — your digital mentor",
     "metaDescription": "Digizelle's 1-to-1 mentorship platform connecting young people with digital professionals.",
     "eyebrow": "Mentorat · new program",
@@ -2696,6 +2738,23 @@
       "referent": {
         "title": "Your Digizelle contact",
         "help": "A question about the programme or trouble with the platform? Write to us!"
+      },
+      "application": {
+        "inReview": {
+          "title": "Your mentor application is under review",
+          "body": "The Digizelle team is reviewing your profile. You will get an email as soon as it is approved."
+        },
+        "rejected": {
+          "title": "Your mentor application needs changes",
+          "body": "The team left a comment. Update your profile, then send it again for review."
+        },
+        "draft": {
+          "title": "Your mentor profile is incomplete",
+          "body": "Add at least 3 skills and 1 availability slot, then send your profile for review."
+        },
+        "reviewNoteLabel": "Comment from the team",
+        "editCta": "Complete my profile",
+        "viewCta": "View my profile"
       },
       "home": {
         "profileCompletion": "Profile completion",
@@ -3037,6 +3096,7 @@
         "SESSION_REMINDER": "Reminder: your session takes place in 24 hours.",
         "SESSION_CANCELLED": "A session has been cancelled.",
         "SESSION_RESCHEDULED": "A session has been rescheduled.",
+        "SESSION_COMPLETED": "Session completed: leave a review",
         "NEW_MESSAGE": "New message in a mentorship.",
         "REVIEW_RECEIVED": "You received a new review.",
         "MENTOR_APPROVED": "Your mentor profile has been approved 🎉",
@@ -3080,6 +3140,10 @@
           "subject": "[Mentorat] Session cancelled",
           "body": "Hello {recipientName},\n\nThe session on {date} with {otherName} has been cancelled.\n\nReason: {reason}\n\nYou can reschedule a session here:\n{url}\n\nThe Digizelle Mentorat team"
         },
+        "sessionCompleted": {
+          "subject": "[Mentorat] How did your session go?",
+          "body": "Hi {recipientName},\n\nYour session on {date} with {otherName} is over.\n\nYour review helps your mentor improve and helps other mentees choose. Leave it here:\n{url}\n\nThe Digizelle Mentorat team"
+        },
         "mentorApproved": {
           "subject": "[Mentorat] Your mentor profile is approved 🎉",
           "body": "Hello {recipientName},\n\nCongratulations, your mentor profile has been approved by our team. It is now publicly visible on Mentorat.\n\nManage your availability and requests:\n{url}\n\nThe Digizelle Mentorat team"
@@ -3095,6 +3159,7 @@
         "SESSION_REMINDER": "Your session is approaching. Prepare your questions and join at the scheduled time.",
         "SESSION_CANCELLED": "A session has been cancelled. You can schedule another from your agenda.",
         "SESSION_RESCHEDULED": "A session has been rescheduled. Check the new time slot in your agenda.",
+        "SESSION_COMPLETED": "Your session is over. Leave a review: it helps your mentor and other mentees.",
         "NEW_MESSAGE": "You have received a new message.",
         "REVIEW_RECEIVED": "You received a new review. View it from your profile.",
         "MENTOR_APPROVED": "Welcome to the program: your mentor application has been accepted.",
@@ -3394,6 +3459,22 @@
       }
     },
     "profile": {
+      "pageTitle": "My profile",
+      "pageSubtitle": "Everything about you on Mentora",
+      "edit": "Edit my profile",
+      "viewPublic": "View public profile",
+      "completeness": "Profile {pct}% complete",
+      "missing": "To reach 100%, you still need",
+      "badges": "My badges",
+      "engagement": "My engagement",
+      "expertises": "My expertise",
+      "objectives": "My goals",
+      "availability": "My recurring slots",
+      "upcomingSessions": "Upcoming sessions",
+      "quickAccess": "Quick access",
+      "noProfile": "Choose your path to get started",
+      "becomeMentee": "Become a mentee",
+      "becomeMentor": "Become a mentor",
       "metaTitleSuffix": "Mentor — Mentorat",
       "metaDescriptionFallback": "Mentor profile on Mentorat, Digizelle's 1-to-1 mentorship platform.",
       "breadcrumb": "Mentor profile",

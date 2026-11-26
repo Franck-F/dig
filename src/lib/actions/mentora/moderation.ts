@@ -7,14 +7,16 @@ import { MentorStatus, MentorshipStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { logAdmin } from '@/lib/audit/log';
 import { sendEmail } from '@/lib/email/resend';
-import { requireUser } from './_helpers';
+import { canReactivateMentor } from '@/lib/mentora/mentor-moderation';
+import { MentoratError, requireAdmin } from './_helpers';
 
 /**
  * Quick-action server actions exposed on `/mentora/admin/moderation`.
  * Every action is admin-only, audit-logged, and conservatively scoped:
- *   - `suspendMentor` flips a profile to PAUSED (reversible by the admin);
- *     it does NOT touch ACTIVE mentorships, which would also require a
- *     decision about ongoing sessions.
+ *   - `suspendMentor` flips a profile to SUSPENDED; `reactivateMentor` only
+ *     undoes that. A suspended mentor cannot accept requests, message or
+ *     have sessions booked (checked in those actions); ACTIVE mentorships
+ *     and planned sessions are not touched yet (phase 2f).
  *   - `sendMentorReminder` / `pingMentorship` send a transactional email
  *     via Resend (no in-app notification yet — adding a SYSTEM_REMINDER
  *     enum value requires a migration; the email is enough for v1 and
@@ -36,10 +38,18 @@ function ok(): ActionResult {
   return { status: 'success' };
 }
 
+const ADMIN_GUARD_CODES = new Set(['forbidden', 'two_factor_required']);
+
+/** Role + fresh 2FA (M6); failures surface as 'forbidden' / 'two_factor_required'. */
 async function ensureAdmin() {
-  const me = await requireUser();
-  if (me.role !== 'ADMIN') throw new Error('forbidden');
-  return me;
+  try {
+    return await requireAdmin();
+  } catch (e) {
+    if (e instanceof MentoratError) {
+      throw new Error(e.code === 'twoFactorRequired' ? 'two_factor_required' : 'forbidden');
+    }
+    throw e;
+  }
 }
 
 function fullName(u: { name: string | null; firstName: string | null; lastName: string | null; email: string }) {
@@ -75,7 +85,7 @@ export async function suspendMentor(input: { id: string }): Promise<ActionResult
     revalidatePath('/mentora/admin');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.suspendMentor]', e);
     return err('server_error');
   }
@@ -93,6 +103,9 @@ export async function reactivateMentor(input: { id: string }): Promise<ActionRes
     });
     if (!mentor) return err('not_found');
     if (mentor.status === MentorStatus.ACTIVE) return err('already_active');
+    // B10: only a suspension can be undone here; DRAFT / PENDING_REVIEW
+    // profiles go through the approval flow.
+    if (!canReactivateMentor(mentor.status)) return err('not_suspended');
 
     await prisma.mentorProfile.update({
       where: { id: mentor.id },
@@ -107,7 +120,7 @@ export async function reactivateMentor(input: { id: string }): Promise<ActionRes
     revalidatePath('/mentora/admin/moderation');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     return err('server_error');
   }
 }
@@ -154,7 +167,7 @@ export async function sendMentorReminder(input: { id: string }): Promise<ActionR
     });
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.sendMentorReminder]', e);
     return err('server_error');
   }
@@ -211,7 +224,7 @@ export async function pingMentorship(input: { id: string }): Promise<ActionResul
     });
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.pingMentorship]', e);
     return err('server_error');
   }
@@ -255,7 +268,7 @@ export async function closeMentorship(input: z.input<typeof closeSchema>): Promi
     revalidatePath('/mentora/admin');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.closeMentorship]', e);
     return err('server_error');
   }
@@ -285,7 +298,7 @@ export async function markReviewHandled(input: { id: string }): Promise<ActionRe
     revalidatePath('/mentora/admin/moderation');
     return ok();
   } catch (e) {
-    if ((e as Error).message === 'forbidden') return err('forbidden');
+    if (ADMIN_GUARD_CODES.has((e as Error).message)) return err((e as Error).message);
     console.error('[moderation.markReviewHandled]', e);
     return err('server_error');
   }

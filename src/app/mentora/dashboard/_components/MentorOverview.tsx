@@ -11,6 +11,7 @@ import GoFurtherTiles from './home/GoFurtherTiles';
 import LatestMessages from './home/LatestMessages';
 import ProfileSummaryCard from './home/ProfileSummaryCard';
 import { fmtDate, fmtDateTime } from './format';
+import { getViewerFormat } from '@/lib/mentora/viewer-format';
 
 type PersonName = { name: string | null; firstName: string | null; lastName: string | null };
 
@@ -31,6 +32,7 @@ export default async function MentorOverview({
   profile: Extract<CurrentRoleProfile, { kind: 'mentor' }>;
 }) {
   const user = profile.user;
+  const viewerFormat = await getViewerFormat(user.id);
   const mentor = profile.mentorProfile;
 
   const [t, pendingRequests, upcomingSessions, activeMentorships] = await Promise.all([
@@ -105,7 +107,7 @@ export default async function MentorOverview({
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                     <span style={{ fontWeight: 700 }}>{displayName(r.fromMentee.user)}</span>
-                    <span className="dz-small" style={{ fontSize: 12 }}>{fmtDate(r.createdAt)}</span>
+                    <span className="dz-small" style={{ fontSize: 12 }}>{fmtDate(r.createdAt, viewerFormat)}</span>
                   </div>
                   <p className="dz-small" style={{ margin: '4px 0 0' }}>{truncatePreview(r.message)}</p>
                 </li>
@@ -138,7 +140,7 @@ export default async function MentorOverview({
                       textDecoration: 'none',
                     }}
                   >
-                    <span style={{ fontWeight: 700 }}>{fmtDateTime(s.scheduledAt)}</span>
+                    <span style={{ fontWeight: 700 }}>{fmtDateTime(s.scheduledAt, viewerFormat)}</span>
                     <span className="dz-small">
                       {t('sessionWith', { name: displayName(s.mentorship.menteeProfile.user) })}
                     </span>

@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import {
   pauseMentorship,
   resumeMentorship,
@@ -29,6 +30,7 @@ export default function MentorshipLifecycleActions({
   iAmMentor: boolean;
 }) {
   const t = useTranslations('mentora.mentorships.detail');
+  const tError = useActionErrorMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [showClose, setShowClose] = useState(false);
@@ -148,7 +150,7 @@ export default function MentorshipLifecycleActions({
             color: '#a8235e',
           }}
         >
-          {error}
+          {tError(error)}
         </span>
       )}
     </div>

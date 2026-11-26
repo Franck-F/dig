@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import {
   addAvailabilityException,
   deleteAvailabilityException,
@@ -44,6 +45,7 @@ function formatDateFr(iso: string): string {
 
 export default function ExceptionsList({ initialExceptions }: Props) {
   const t = useTranslations('mentora.availability');
+  const tError = useActionErrorMessage();
   const [exceptions, setExceptions] = useState<LocalException[]>(initialExceptions);
   const [pending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState<{ kind: 'success' | 'error'; message: string } | null>(null);
@@ -90,7 +92,7 @@ export default function ExceptionsList({ initialExceptions }: Props) {
           setDraftNote('');
           setFeedback({ kind: 'success', message: t('addExceptionSuccess') });
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });
@@ -112,7 +114,7 @@ export default function ExceptionsList({ initialExceptions }: Props) {
           setExceptions((prev) => prev.filter((e) => e.id !== id));
           setFeedback({ kind: 'success', message: t('removeExceptionSuccess') });
         } else {
-          setFeedback({ kind: 'error', message: result.error });
+          setFeedback({ kind: 'error', message: tError(result.error) });
         }
       } catch {
         setFeedback({ kind: 'error', message: t('errors.unexpected') });

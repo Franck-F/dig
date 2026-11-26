@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApproveMentor, adminRejectMentor } from '@/lib/actions/mentora/profile';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 
 export type PendingMentorRow = {
   id: string;
@@ -40,6 +41,7 @@ export default function PendingMentorsList({ rows }: Props) {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectNote, setRejectNote] = useState('');
   const [errorByRow, setErrorByRow] = useState<Record<string, string | null>>({});
+  const tError = useActionErrorMessage();
 
   if (items.length === 0) {
     return (
@@ -85,7 +87,7 @@ export default function PendingMentorsList({ rows }: Props) {
     <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
       {items.map((m) => {
         const isRejecting = rejectingId === m.id;
-        const err = errorByRow[m.id];
+        const err = tError(errorByRow[m.id]);
         return (
           <li
             key={m.id}

@@ -159,6 +159,8 @@ function translateError(code: string): string {
   switch (code) {
     case 'forbidden':
       return 'Action réservée aux administrateurs.';
+    case 'two_factor_required':
+      return 'Session 2FA expirée : rechargez la page pour confirmer votre code.';
     case 'endsBeforeStart':
       return 'La date de fin doit être postérieure à la date de début.';
     case 'slug_collision':

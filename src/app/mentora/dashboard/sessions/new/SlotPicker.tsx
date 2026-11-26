@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import { scheduleSession } from '@/lib/actions/mentora/sessions';
 
 type Slot = { startsAt: string; endsAt: string };
@@ -30,6 +31,7 @@ export default function SlotPicker({
   iAmMentor: boolean;
 }) {
   const t = useTranslations('mentora.sessions.new');
+  const tError = useActionErrorMessage();
   const tFormat = useTranslations('mentora.sessions.formatLabels');
   const router = useRouter();
 
@@ -279,7 +281,7 @@ export default function SlotPicker({
                 fontSize: 13,
               }}
             >
-              {error}
+              {tError(error)}
             </div>
           )}
         </div>

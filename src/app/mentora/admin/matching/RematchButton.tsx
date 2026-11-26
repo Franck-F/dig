@@ -37,7 +37,9 @@ export default function RematchButton() {
           error:
             res.error === 'unauthorized'
               ? 'Action réservée aux administrateurs.'
-              : "Le déclenchement a échoué. Réessayez plus tard.",
+              : res.error === 'two_factor_required'
+                ? 'Session 2FA expirée : rechargez la page pour confirmer votre code.'
+                : "Le déclenchement a échoué. Réessayez plus tard.",
         });
       }
     });

@@ -485,25 +485,8 @@ async function MentorView({
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-                  <Link
-                    href={`/mentora/dashboard/resources/${r.id}/edit`}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      borderRadius: 10,
-                      border: 'none',
-                      background: 'rgba(115,1,255,0.10)',
-                      color: '#7301FF',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      textAlign: 'center',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    {t('editCta')}
-                  </Link>
+                  {/* M16: no edit page exists yet (it 404'd); the edit
+                      button comes back with the page in phase 4c. */}
                   <a
                     href={r.url}
                     target="_blank"

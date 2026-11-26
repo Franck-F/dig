@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 import {
   acceptMentorshipRequest,
   declineMentorshipRequest,
@@ -29,6 +30,7 @@ export default function RequestActions({
   side: Side;
 }) {
   const t = useTranslations('mentora.requests');
+  const tError = useActionErrorMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -213,7 +215,7 @@ export default function RequestActions({
             fontSize: 13,
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
     </div>

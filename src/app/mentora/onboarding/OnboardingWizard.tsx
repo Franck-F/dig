@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition, type CSSProperties, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 
 import { upsertMenteeProfile } from '@/lib/actions/mentora/mentee-profile';
 import { addMenteeGoalSkill } from '@/lib/actions/mentora/mentee-profile';
@@ -169,6 +170,7 @@ function GoalIcon({ kind, size = 22 }: { kind: (typeof GOAL_KEYS)[number]; size?
  */
 export default function OnboardingWizard({ prefill, redirectAfter, skills }: Props) {
   const t = useTranslations('mentora.onboarding');
+  const tError = useActionErrorMessage();
   const tStep1 = useTranslations('mentora.onboarding.step1');
   const tStep2 = useTranslations('mentora.onboarding.step2');
   const tStep3 = useTranslations('mentora.onboarding.step3');
@@ -1087,7 +1089,7 @@ export default function OnboardingWizard({ prefill, redirectAfter, skills }: Pro
             border: '1px solid rgba(217,78,146,0.20)',
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
 

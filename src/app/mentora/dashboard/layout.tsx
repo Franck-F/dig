@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { NotificationType } from '@prisma/client';
+import { targetFor } from '@/components/notifications/targetFor';
+import { MENTORA_NOTIFICATION_TYPES } from '@/lib/mentora/notification-types';
 
 import AppShell, { type AppShellNavItem } from '@/components/app-shell/AppShell';
 import { auth, signOut } from '@/auth';
@@ -17,21 +19,7 @@ import { buildMentoraNav, mentoraNavLabels } from '@/lib/mentora/nav';
  * only these in the dropdown so the user stays in her section context;
  * the full notifications page (linked via "Voir tout") still mixes both.
  */
-const MENTORA_NOTIF_TYPES: NotificationType[] = [
-  NotificationType.REQUEST_RECEIVED,
-  NotificationType.REQUEST_ACCEPTED,
-  NotificationType.REQUEST_DECLINED,
-  NotificationType.REQUEST_WITHDRAWN,
-  NotificationType.REQUEST_EXPIRED,
-  NotificationType.SESSION_SCHEDULED,
-  NotificationType.SESSION_REMINDER,
-  NotificationType.SESSION_CANCELLED,
-  NotificationType.SESSION_RESCHEDULED,
-  NotificationType.NEW_MESSAGE,
-  NotificationType.REVIEW_RECEIVED,
-  NotificationType.MENTOR_APPROVED,
-  NotificationType.MENTOR_REJECTED,
-];
+const MENTORA_NOTIF_TYPES: NotificationType[] = [...MENTORA_NOTIFICATION_TYPES];
 
 /**
  * Shared shell for every `/mentora/dashboard/*` route.
@@ -240,59 +228,7 @@ function safeT(t: Translator, key: string): string {
 }
 
 function hrefForNotif(type: string, payload: Record<string, unknown>): string | null {
-  const get = (k: string) => (typeof payload[k] === 'string' ? (payload[k] as string) : null);
-  switch (type) {
-    case 'REQUEST_RECEIVED':
-      return '/mentora/dashboard/requests?tab=received';
-    case 'REQUEST_ACCEPTED':
-    case 'REQUEST_DECLINED':
-    case 'REQUEST_WITHDRAWN':
-    case 'REQUEST_EXPIRED':
-      return '/mentora/dashboard/requests';
-    case 'SESSION_SCHEDULED':
-    case 'SESSION_REMINDER':
-    case 'SESSION_CANCELLED':
-    case 'SESSION_RESCHEDULED': {
-      const sid = get('sessionId');
-      return sid ? `/mentora/dashboard/sessions/${sid}` : '/mentora/dashboard/sessions';
-    }
-    case 'NEW_MESSAGE': {
-      const mid = get('mentorshipId');
-      return mid ? `/mentora/dashboard/mentorships/${mid}?tab=messages` : '/mentora/dashboard/messages';
-    }
-    case 'REVIEW_RECEIVED':
-    case 'MENTOR_APPROVED':
-    case 'MENTOR_REJECTED':
-      return '/mentora/dashboard/profile/edit';
-    case 'POST_REPLY':
-    case 'COMMENT_REPLY':
-    case 'MENTION':
-    case 'REACTION_RECEIVED': {
-      const pid = get('postId');
-      return pid ? `/community/posts/${pid}` : '/community';
-    }
-    case 'CHANNEL_INVITE':
-    case 'CHANNEL_JOIN_REQUESTED':
-    case 'CHANNEL_JOIN_APPROVED': {
-      const slug = get('channelSlug');
-      return slug ? `/community/c/${slug}` : '/community/channels';
-    }
-    case 'BADGE_AWARDED': {
-      const slug = get('badgeSlug');
-      return slug ? `/community/badges/${slug}` : '/community/badges';
-    }
-    case 'CHALLENGE_NEW':
-    case 'CHALLENGE_RESULT':
-    case 'CHALLENGE_VOTE_RECEIVED': {
-      const cid = get('challengeId');
-      return cid ? `/community/challenges/${cid}` : '/community/challenges';
-    }
-    case 'MODERATION_ACTION':
-    case 'REPORT_RECEIVED':
-      return '/community/notifications';
-    default:
-      return '/mentora/dashboard/notifications';
-  }
+  return targetFor(type, payload) ?? '/mentora/dashboard/notifications';
 }
 
 async function NoProfileBanner() {

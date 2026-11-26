@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition, type CSSProperties, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useActionErrorMessage } from '@/lib/mentora/use-action-error';
 
 import { submitMentorApplication } from '@/lib/actions/mentora/mentor-profile';
 import { resizeImageToDataUrl } from '@/lib/images/resize';
@@ -225,14 +226,16 @@ const CHARTE_COLOR = ['#F46FB1', '#7301FF', '#3B7BFF', '#23c55e', '#A34BF5'] as 
  *                   (3 ranges × 7 days)
  *   4. Charte — 5 commitment cards + e-signature checkbox
  *
- * On submit we (a) create the mentor profile in DRAFT, (b) attach skills
- * via `addMentorSkill`, (c) create one `AvailabilityRule` per ticked slot
- * cell, then redirect to /mentora/dashboard?pending=1. Step 5 of the
+ * On submit `submitMentorApplication` creates the profile, its skills and
+ * one `AvailabilityRule` per ticked slot cell in one transaction (straight
+ * to PENDING_REVIEW when complete), then we redirect to /mentora/dashboard,
+ * which shows the application status. Step 5 of the
  * design (admin-side validation visio) is post-submit and lives in the
  * admin panel.
  */
 export default function MentorApplicationWizard({ skills }: Props) {
   const t = useTranslations('mentora.becomeAMentor');
+  const tError = useActionErrorMessage();
   const tStep1 = useTranslations('mentora.becomeAMentor.step1');
   const tStep2 = useTranslations('mentora.becomeAMentor.step2');
   const tStep3 = useTranslations('mentora.becomeAMentor.step3');
@@ -456,7 +459,8 @@ export default function MentorApplicationWizard({ skills }: Props) {
           return;
         }
 
-        router.push('/mentora/dashboard?tab=profile&pending=1');
+        // The dashboard shows the application status card (B6).
+        router.push('/mentora/dashboard');
         router.refresh();
       } catch {
         setError(t('errors.generic'));
@@ -1245,7 +1249,7 @@ export default function MentorApplicationWizard({ skills }: Props) {
             border: '1px solid rgba(217,78,146,0.20)',
           }}
         >
-          {error}
+          {tError(error)}
         </div>
       )}
 

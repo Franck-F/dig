@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import { getCurrentRoleProfile } from '@/lib/mentora/current-profile';
 import MentorOverview from './_components/MentorOverview';
 import MenteeOverview from './_components/MenteeOverview';
+import MentorApplicationStatus from './_components/MentorApplicationStatus';
+import { mentorApplicationState } from '@/lib/mentora/mentor-application';
 
 /**
  * `/mentora/dashboard` — role dispatcher.
@@ -18,10 +20,32 @@ export default async function MentoratDashboardPage() {
   const profile = await getCurrentRoleProfile(session.user.id);
 
   if (profile.kind === 'mentor') {
+    // Candidates (DRAFT / PENDING_REVIEW) see their application status
+    // instead of an empty mentor overview.
+    if (mentorApplicationState(profile.mentorProfile)) {
+      return (
+        <MentorApplicationStatus
+          status={profile.mentorProfile.status}
+          reviewNote={profile.mentorProfile.reviewNote}
+        />
+      );
+    }
     return <MentorOverview profile={profile} />;
   }
   if (profile.kind === 'mentee') {
-    return <MenteeOverview profile={profile} />;
+    return (
+      <>
+        {profile.mentorProfile && (
+          <div style={{ marginBottom: 16 }}>
+            <MentorApplicationStatus
+              status={profile.mentorProfile.status}
+              reviewNote={profile.mentorProfile.reviewNote}
+            />
+          </div>
+        )}
+        <MenteeOverview profile={profile} />
+      </>
+    );
   }
 
   // Admin without a mentor/mentee profile — send them straight to the

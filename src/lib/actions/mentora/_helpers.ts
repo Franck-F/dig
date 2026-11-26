@@ -3,28 +3,12 @@ import * as Sentry from '@sentry/nextjs';
 import type { UserRole } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import type { MentoraErrorCode } from '@/lib/mentora/errors';
+import { adminAccessDecision } from '@/lib/mentora/admin-access';
+import { hasFreshAdmin2faCookie } from '@/lib/auth/admin-2fa-cookie';
 
-export type MentoratActionError =
-  | 'unauthorized'
-  | 'notFound'
-  | 'forbidden'
-  | 'profileIncomplete'
-  | 'duplicateRequest'
-  | 'capacityReached'
-  | 'slotTaken'
-  | 'invalidWindow'
-  | 'cannotMessageTerminated'
-  | 'selfReview'
-  | 'alreadyReviewed'
-  | 'languageRequired'
-  | 'skillRequired'
-  | 'invalidInput'
-  | 'mentorNotAccepting'
-  | 'invalidStatus'
-  | 'imageMalformed'
-  | 'imageMimeNotAllowed'
-  | 'imageTooLarge'
-  | 'imageMagicMismatch';
+/** Codes live in `@/lib/mentora/errors`, each with a fr and en label. */
+export type MentoratActionError = MentoraErrorCode;
 
 export type ActionResult<T = undefined> =
   | { status: 'success'; data?: T }
@@ -61,6 +45,21 @@ export async function requireUser(): Promise<{ userId: string; role: UserRole; e
   return { userId: user.id, role: user.role, email: user.email };
 }
 
+/**
+ * Every admin action: ADMIN role AND a fresh 2FA step-up cookie (M6). The
+ * admin layout's TOTP gate does not cover a server action invoked directly.
+ * Throws MentoratError('forbidden' | 'twoFactorRequired').
+ */
+export async function requireAdmin(): Promise<{ userId: string; role: UserRole; email: string | null }> {
+  const ctx = await requireUser();
+  const decision = adminAccessDecision({
+    role: ctx.role,
+    hasFresh2fa: ctx.role === 'ADMIN' && (await hasFreshAdmin2faCookie(ctx.userId)),
+  });
+  if (decision !== 'ok') throw new MentoratError(decision);
+  return ctx;
+}
+
 /** Require an active mentor (MentorProfile present + ACTIVE). */
 export async function requireMentor() {
   const ctx = await requireUser();
@@ -95,7 +94,7 @@ export async function requireMentorshipMember(mentorshipId: string) {
   const m = await prisma.mentorship.findUnique({
     where: { id: mentorshipId },
     include: {
-      mentorProfile: { select: { userId: true } },
+      mentorProfile: { select: { userId: true, status: true } },
       menteeProfile: { select: { userId: true } },
     },
   });
@@ -115,9 +114,8 @@ export async function requireMentorshipMentor(mentorshipId: string) {
 export function handleError(err: unknown): ActionResult<never> {
   if (err instanceof MentoratError) return errorResult(err.code);
   // Genuine unexpected error — surface it to Sentry (console.error is invisible
-  // in prod). The user-facing 'unauthorized' code is kept for now; swapping it
-  // for a dedicated 'unexpected' code is a follow-up (needs FR+EN i18n keys).
+  // in prod) and show a neutral message, never a fake rights problem.
   console.error('[mentora action] unexpected error', err);
   Sentry.captureException(err, { tags: { area: 'mentora-action' } });
-  return { status: 'error', error: 'mentora.errors.unauthorized' };
+  return errorResult('unexpected');
 }

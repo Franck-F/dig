@@ -20,10 +20,12 @@ type FlashState =
 
 const ERROR_LABEL: Record<string, string> = {
   forbidden: 'Action réservée aux administrateurs.',
+  two_factor_required: 'Session 2FA expirée : rechargez la page pour confirmer votre code.',
   not_found: 'Cible introuvable (peut-être déjà supprimée).',
   invalid_input: 'Paramètres invalides.',
   already_suspended: 'Le mentor est déjà suspendu.',
   already_active: 'Le mentor est déjà actif.',
+  not_suspended: 'Seul un mentor suspendu peut être réactivé. Une candidature passe par la validation.',
   already_closed: 'Le mentorship est déjà clôturé.',
   server_error: 'Erreur serveur — réessayez dans un instant.',
 };

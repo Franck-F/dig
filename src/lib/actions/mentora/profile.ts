@@ -9,11 +9,15 @@ import {
   errorResult,
   handleError,
   MentoratError,
+  requireAdmin,
   requireMentorOwner,
   requireUser,
   successResult,
 } from './_helpers';
 import { notify } from '@/lib/mentora/notifications';
+import { httpUrlSchema } from '@/lib/mentora/safe-url';
+import { ROLES_PROMOTED_ON_MENTOR_APPROVAL } from '@/lib/mentora/roles';
+import { isMentorApplicationComplete, isValidSlot } from '@/lib/mentora/mentor-application';
 import { logAdmin } from '@/lib/audit/log';
 import { validateImageDataUri, imageReasonToErrorCode, IMAGE_CAPS } from '@/lib/images/validate';
 
@@ -50,7 +54,7 @@ const createMentorProfileSchema = z.object({
   timezone: z.string().min(1),
   location: z.string().max(200).optional().nullable(),
   photoUrl: photoUrlSchema.optional().nullable(),
-  linkedinUrl: z.string().url().optional().nullable(),
+  linkedinUrl: httpUrlSchema.optional().nullable(),
   languages: z.array(z.string().min(2).max(5)).min(1),
   maxConcurrentMentees: z.number().int().min(1).max(20).optional(),
   responseTime: z.nativeEnum(ResponseTime).optional(),
@@ -145,10 +149,12 @@ export async function submitMentorForReview(): Promise<ActionResult<{ id: string
       prisma.availabilityRule.count({ where: { mentorProfileId: mentorProfile.id } }),
     ]);
     if (
-      !mentorProfile.headline ||
-      mentorProfile.bio.trim().length < 1 ||
-      skillCount < 3 ||
-      ruleCount < 1
+      !isMentorApplicationComplete({
+        headline: mentorProfile.headline,
+        bio: mentorProfile.bio,
+        skillCount,
+        slotCount: ruleCount,
+      })
     ) {
       return errorResult('profileIncomplete');
     }
@@ -174,18 +180,20 @@ const submitMentorApplicationSchema = z.object({
   timezone: z.string().min(1),
   languages: z.array(z.string().min(2).max(5)).min(1),
   photoUrl: photoUrlSchema.optional().nullable(),
-  linkedinUrl: z.string().url().optional().nullable(),
+  linkedinUrl: httpUrlSchema.optional().nullable(),
   maxConcurrentMentees: z.number().int().min(1).max(20).optional(),
   responseTime: z.nativeEnum(ResponseTime).optional(),
   skillSlugs: z.array(z.string().min(1).max(64)).max(50),
   skillLevel: z.nativeEnum(SkillLevel),
   slots: z
     .array(
-      z.object({
-        dayOfWeek: z.number().int().min(0).max(6),
-        startMinute: z.number().int().min(0).max(1440),
-        endMinute: z.number().int().min(0).max(1440),
-      }),
+      z
+        .object({
+          dayOfWeek: z.number().int().min(0).max(6),
+          startMinute: z.number().int().min(0).max(1440),
+          endMinute: z.number().int().min(0).max(1440),
+        })
+        .refine(isValidSlot),
     )
     .max(40),
 });
@@ -235,6 +243,16 @@ export async function submitMentorApplication(
           ).map((s) => s.id)
         : [];
 
+    // A complete application goes straight to the admin review queue, in
+    // the same transaction as its creation (M15); otherwise it stays a
+    // DRAFT the candidate finishes from the profile page.
+    const readyForReview = isMentorApplicationComplete({
+      headline: parsed.data.headline,
+      bio: parsed.data.bio,
+      skillCount: skillIds.length,
+      slotCount: parsed.data.slots.length,
+    });
+
     const created = await prisma.$transaction(async (tx) => {
       const profile = await tx.mentorProfile.create({
         data: {
@@ -250,7 +268,7 @@ export async function submitMentorApplication(
           languages: parsed.data.languages,
           maxConcurrentMentees: parsed.data.maxConcurrentMentees ?? 5,
           responseTime: parsed.data.responseTime ?? ResponseTime.WITHIN_WEEK,
-          status: 'DRAFT',
+          status: readyForReview ? 'PENDING_REVIEW' : 'DRAFT',
         },
         select: { id: true },
       });
@@ -502,8 +520,7 @@ export async function removeMenteeGoalSkill(
 // Admin approval (minimal — admin UI out of scope, action documented in spec)
 export async function adminApproveMentor(input: { mentorProfileId: string }): Promise<ActionResult> {
   try {
-    const ctx = await requireUser();
-    if (ctx.role !== 'ADMIN') return errorResult('forbidden');
+    const ctx = await requireAdmin();
     const profile = await prisma.mentorProfile.findUnique({
       where: { id: input.mentorProfileId },
       select: { id: true, userId: true, publishedAt: true, status: true },
@@ -519,7 +536,11 @@ export async function adminApproveMentor(input: { mentorProfileId: string }): Pr
           publishedAt: profile.publishedAt ?? new Date(),
         },
       }),
-      prisma.user.update({ where: { id: profile.userId }, data: { role: 'MENTOR' } }),
+      // Only the default STUDENT role is upgraded; ADMIN / PARTNER keep theirs (B5).
+      prisma.user.updateMany({
+        where: { id: profile.userId, role: { in: [...ROLES_PROMOTED_ON_MENTOR_APPROVAL] } },
+        data: { role: 'MENTOR' },
+      }),
     ]);
     await notify(profile.userId, 'MENTOR_APPROVED', { mentorProfileId: profile.id });
     await logAdmin(ctx.userId, {
@@ -537,8 +558,7 @@ export async function adminApproveMentor(input: { mentorProfileId: string }): Pr
 
 export async function adminRejectMentor(input: { mentorProfileId: string; reviewNote: string }): Promise<ActionResult> {
   try {
-    const ctx = await requireUser();
-    if (ctx.role !== 'ADMIN') return errorResult('forbidden');
+    const ctx = await requireAdmin();
     if (!input.reviewNote || input.reviewNote.length < 5) return errorResult('invalidInput');
     const profile = await prisma.mentorProfile.findUnique({
       where: { id: input.mentorProfileId },

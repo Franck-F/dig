@@ -10,6 +10,7 @@ import type {
 } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { resolveProfileKind } from './mentor-application';
 
 export type CurrentMentorProfile = MentorProfile & {
   skills: (MentorSkill & { skill: Skill })[];
@@ -45,7 +46,8 @@ export type CurrentRoleProfile =
       user: User;
       role: UserRole;
       profile: CurrentMenteeProfile;
-      mentorProfile: null;
+      /** Set only while a mentor application is in DRAFT or PENDING_REVIEW. */
+      mentorProfile: CurrentMentorProfile | null;
       menteeProfile: CurrentMenteeProfile;
     }
   | {
@@ -104,8 +106,12 @@ export async function getCurrentRoleProfile(userIdParam?: string): Promise<Curre
 
   const { mentorProfile, menteeProfile, ...bareUser } = user;
   const role = user.role;
+  const kind = resolveProfileKind({
+    mentorStatus: mentorProfile?.status ?? null,
+    hasMenteeProfile: !!menteeProfile,
+  });
 
-  if (mentorProfile && role === 'MENTOR') {
+  if (kind === 'mentor' && mentorProfile) {
     const mp = mentorProfile as CurrentMentorProfile;
     return {
       kind: 'mentor',
@@ -116,14 +122,15 @@ export async function getCurrentRoleProfile(userIdParam?: string): Promise<Curre
       menteeProfile: (menteeProfile as CurrentMenteeProfile | null) ?? null,
     };
   }
-  if (menteeProfile) {
+  if (kind === 'mentee' && menteeProfile) {
     const me = menteeProfile as CurrentMenteeProfile;
     return {
       kind: 'mentee',
       user: bareUser as User,
       role,
       profile: me,
-      mentorProfile: null,
+      // A mentee may also have a mentor application in progress.
+      mentorProfile: (mentorProfile as CurrentMentorProfile | null) ?? null,
       menteeProfile: me,
     };
   }
