@@ -1,0 +1,17 @@
+{
+  "_comment": "French terminology for Mentora (docs/mentora-rebuild/02-architecture.md 6.3). Proposed terms pending owner decision (open question 5). Not a locale bundle: next-intl never loads this file. src/lib/mentora/__tests__/glossary.test.ts checks messages/fr.json against it.",
+  "terms": [
+    {
+      "concept": "mentee",
+      "status": "proposed",
+      "preferred": "mentoré·e",
+      "forbidden": ["mentorée", "mentoré"]
+    },
+    {
+      "concept": "mentor-mentee pair",
+      "status": "proposed",
+      "preferred": "binôme",
+      "forbidden": []
+    }
+  ]
+}
