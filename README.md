@@ -42,17 +42,45 @@ npm run dev
 | Script                  | Effet                                                            |
 | ----------------------- | ---------------------------------------------------------------- |
 | `npm run dev`           | Dev server Next.js avec Turbopack                                |
-| `npm run build`         | Build production                                                 |
+| `npm run build`         | Build production : applique d'abord `prisma migrate deploy` sur la `DATABASE_URL` |
+| `npm run build:ci`      | Build sans migration (ce que lance la CI)                        |
 | `npm run build:analyze` | Build + génère le bundle analyzer treemap (`.next/analyze/`)     |
 | `npm run start`         | Serve le build                                                   |
 | `npm run lint`          | ESLint flat config                                               |
 | `npm run typecheck`     | `tsc --noEmit`                                                   |
-| `npm test`              | Tests unitaires (Node test runner, 76 tests)                     |
+| `npm test`              | Tests unitaires (Node test runner)                               |
 | `npm run test:coverage` | Idem + rapport de couverture stdout                              |
+| `npm run test:integration` | Tests d'intégration sur un vrai PostgreSQL de test (voir plus bas) |
+| `npm run test:db:up` / `test:db:down` / `test:db:reset` | Démarre, arrête ou recrée le PostgreSQL de test (Docker) |
+| `npm run metrics:mentora` | Compteurs de dette Mentora, échoue si l'un augmente            |
+| `npm run bundle:mentora` | Poids JS par route Mentora, après `build:ci`                    |
 | `npm run db:migrate`    | Crée et applique une migration en dev                            |
 | `npm run db:migrate:deploy` | Applique les migrations en staging/prod                      |
 | `npm run db:seed`       | Peuple la base de données                                        |
 | `npm run db:studio`     | Ouvre Prisma Studio                                              |
+
+### Tests d'intégration
+
+Ils exécutent les actions serveur Mentora contre une base PostgreSQL de test, jamais celle de `.env` :
+
+```bash
+npm run test:db:up
+export DATABASE_URL_TEST=postgresql://test:test@localhost:54329/digizelle_test
+npm run test:integration
+```
+
+Le setup refuse toute URL dont la base ne se termine pas par `_test`, qui n'est pas locale (sauf `TEST_DB_ALLOW_REMOTE=1`) ou qui est égale à `DATABASE_URL`. Les cas marqués `todo` décrivent des bugs connus, à corriger en phase 2 de `docs/mentora-rebuild/03-plan.md`. Après un changement de migration, `npm run test:db:reset` repart d'une base vide.
+
+### Build local et typecheck
+
+Supprimer `.next/dev` avant un build ou un `npm run typecheck` local. `tsconfig.json` inclut `.next/dev/types/**/*.ts`, et un `next dev` ancien y laisse des types de routes périmés : le typecheck échoue alors sur `.next/dev/types/routes.d.ts`. Le dossier n'est pas versionné, donc la CI n'est pas touchée.
+
+```bash
+rm -rf .next/dev
+DATABASE_URL=postgresql://user:pass@localhost:5432/db npm run build:ci
+```
+
+Avec une `DATABASE_URL` factice, le build ne lit pas la base de `.env`.
 
 ## Variables d'environnement
 
